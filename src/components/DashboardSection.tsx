@@ -224,29 +224,31 @@ export default function DashboardSection() {
 
         {/* Main dashboard panel */}
         <motion.div
-          className="bg-apex-panel border border-apex-line rounded-2xl overflow-hidden"
+          className="bg-apex-panel border border-apex-line overflow-hidden"
+          style={{ borderRadius: 0, borderTop: '2px solid #e0231f' }}
           initial={{ opacity: 0, y: 32 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.1 }}
         >
           {/* Dashboard header bar */}
-          <div className="flex items-center justify-between px-6 py-3 border-b border-apex-line bg-apex-black/50">
-            <div className="flex items-center gap-3">
-              <div className="flex gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-apex-red" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[#9a9aa6]/40" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[#9a9aa6]/40" />
+          <div className="flex items-center justify-between px-6 py-3 border-b border-apex-line bg-apex-black/60">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-apex-red" />
+                <span className="text-[10px] font-mono text-apex-grey tracking-[0.22em] uppercase">
+                  T-APEX Performance Monitor
+                </span>
               </div>
-              <span className="text-[10px] font-mono text-apex-grey tracking-[0.2em] uppercase">
-                T-APEX Performance Monitor v2.4
+              <span className="text-[8px] font-mono text-apex-grey-dim border border-apex-line/60 px-1.5 py-0.5 tracking-wider">
+                v2.4
               </span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[9px] font-mono text-emerald-400">LIVE SESSION</span>
+                <span className="text-[9px] font-mono text-emerald-400 tracking-wider">LIVE SESSION</span>
               </div>
-              <span className="text-[9px] font-mono text-apex-grey-dim border border-apex-line px-2 py-0.5 rounded">
+              <span className="text-[9px] font-mono text-apex-grey-dim border border-apex-line px-2 py-0.5 tracking-wider">
                 ATHLETE_01
               </span>
             </div>

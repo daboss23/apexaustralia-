@@ -98,7 +98,8 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
   return (
     <motion.div
       ref={ref}
-      className="group relative bg-apex-panel border border-apex-line rounded-xl p-5 overflow-hidden cursor-default hover:border-apex-red/30 transition-colors duration-300"
+      className="group relative bg-apex-panel border border-apex-line p-5 overflow-hidden cursor-default hover:border-apex-red/30 transition-colors duration-300"
+      style={{ borderRadius: 0 }}
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.07, ease: [0.16, 1, 0.3, 1] }}
