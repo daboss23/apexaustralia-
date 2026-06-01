@@ -1,7 +1,7 @@
 'use client'
 
-import { useRef, useState } from 'react'
-import { motion, useInView, useScroll, useTransform } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
+import { motion, useInView, useScroll, useTransform, useSpring } from 'framer-motion'
 import Image from 'next/image'
 
 // ─── Spec callouts that frame the unit ────────────────────────────────────────
@@ -58,6 +58,36 @@ export default function ProductShowcase() {
   // Graceful fallback until /machine.png render is added to /public
   const [imgError, setImgError] = useState(false)
 
+  // Respect reduced-motion
+  const [reduced, setReduced] = useState(false)
+  useEffect(() => {
+    const m = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setReduced(m.matches)
+    update()
+    m.addEventListener('change', update)
+    return () => m.removeEventListener('change', update)
+  }, [])
+
+  // Interactive 3D tilt — cursor-driven, spring-smoothed
+  const rotateX = useSpring(0, { stiffness: 80, damping: 14 })
+  const rotateY = useSpring(0, { stiffness: 80, damping: 14 })
+  const glare = useSpring(50, { stiffness: 80, damping: 16 })
+
+  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (reduced) return
+    const r = e.currentTarget.getBoundingClientRect()
+    const px = (e.clientX - r.left) / r.width - 0.5
+    const py = (e.clientY - r.top) / r.height - 0.5
+    rotateY.set(px * 16)
+    rotateX.set(-py * 12)
+    glare.set(px * 100 + 50)
+  }
+  const handleLeave = () => {
+    rotateX.set(0)
+    rotateY.set(0)
+    glare.set(50)
+  }
+
   return (
     <section ref={sectionRef} id="product" className="relative bg-apex-black overflow-hidden py-28 md:py-40">
       {/* Top divider */}
@@ -101,8 +131,8 @@ export default function ProductShowcase() {
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            PERFORMANCE<br />
-            <span style={{ color: 'transparent', WebkitTextStroke: '1.5px #e0231f' }}>WITHOUT LIMITS</span>
+            ENGINEERED LIKE<br />
+            <span style={{ color: 'transparent', WebkitTextStroke: '1.5px #e0231f' }}>NOTHING ELSE</span>
           </motion.h2>
         </div>
 
@@ -116,47 +146,90 @@ export default function ProductShowcase() {
             filter: 'blur(40px)',
           }} />
 
+          {/* Entrance + scroll parallax + 3D perspective */}
           <motion.div
-            className="relative overflow-hidden"
-            style={{ y: imgY, willChange: 'transform', borderRadius: 2 }}
+            className="relative"
+            style={{ y: imgY, perspective: 1400, willChange: 'transform' }}
             initial={{ opacity: 0, scale: 0.94 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="relative w-full" style={{ aspectRatio: '1290 / 1140' }}>
-              {!imgError ? (
-                <Image
-                  src="/machine.png"
-                  alt="The T-APEX intelligent resistance unit on an elite training track"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 1000px"
-                  className="object-cover object-center"
-                  priority={false}
-                  onError={() => setImgError(true)}
-                />
-              ) : (
-                /* Fallback shown only if /machine.png hasn't been added yet */
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-apex-panel/40 border border-dashed border-apex-line">
-                  <div className="w-12 h-12 border border-apex-red/40 flex items-center justify-center">
-                    <div className="w-4 h-4 bg-apex-red/70" />
-                  </div>
-                  <span className="font-mono text-[10px] tracking-[0.22em] text-apex-grey-dim uppercase">T-APEX Unit Render</span>
-                  <span className="font-mono text-[9px] tracking-wide text-apex-grey-dim/70">add /public/machine.png</span>
-                </div>
-              )}
-              {/* Edge vignette to blend render into the black section */}
-              <div className="absolute inset-0 pointer-events-none" style={{
-                boxShadow: 'inset 0 0 120px 24px #0a0a0c',
-              }} />
-            </div>
+            {/* Cursor-driven 3D tilt */}
+            <motion.div
+              className="relative"
+              style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+              onMouseMove={handleMove}
+              onMouseLeave={handleLeave}
+            >
+              {/* Idle hover float */}
+              <motion.div
+                animate={reduced ? {} : { y: [0, -14, 0] }}
+                transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                <div className="relative w-full overflow-hidden" style={{ aspectRatio: '1341 / 1173', borderRadius: 2 }}>
+                  {!imgError ? (
+                    <Image
+                      src="/machine.png"
+                      alt="The T-APEX intelligent resistance unit on an elite training track"
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 1000px"
+                      className="object-cover object-center"
+                      priority={false}
+                      onError={() => setImgError(true)}
+                    />
+                  ) : (
+                    /* Fallback shown only if /machine.png hasn't been added yet */
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-apex-panel/40 border border-dashed border-apex-line">
+                      <div className="w-12 h-12 border border-apex-red/40 flex items-center justify-center">
+                        <div className="w-4 h-4 bg-apex-red/70" />
+                      </div>
+                      <span className="font-mono text-[10px] tracking-[0.22em] text-apex-grey-dim uppercase">T-APEX Unit Render</span>
+                      <span className="font-mono text-[9px] tracking-wide text-apex-grey-dim/70">add /public/machine.png</span>
+                    </div>
+                  )}
 
-            {/* HUD corner brackets */}
-            <div className="absolute top-3 left-3 pointer-events-none opacity-50">
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M0 22V0h22" stroke="#e0231f" strokeWidth="1.2" /></svg>
-            </div>
-            <div className="absolute bottom-3 right-3 pointer-events-none opacity-50">
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M22 0v22H0" stroke="#e0231f" strokeWidth="1.2" /></svg>
-            </div>
+                  {/* Moving specular light sweep — "powered on" glint */}
+                  {!reduced && (
+                    <motion.div
+                      className="absolute inset-y-0 pointer-events-none"
+                      style={{
+                        width: '45%',
+                        background: 'linear-gradient(105deg, transparent, rgba(255,255,255,0.16) 45%, rgba(255,90,84,0.12) 55%, transparent)',
+                        mixBlendMode: 'screen',
+                        filter: 'blur(6px)',
+                      }}
+                      animate={{ x: ['-140%', '320%'] }}
+                      transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', repeatDelay: 2.2 }}
+                    />
+                  )}
+
+                  {/* Edge vignette to blend render into the black section */}
+                  <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: 'inset 0 0 120px 24px #0a0a0c' }} />
+
+                  {/* HUD corner brackets */}
+                  <div className="absolute top-3 left-3 pointer-events-none opacity-50">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M0 22V0h22" stroke="#e0231f" strokeWidth="1.2" /></svg>
+                  </div>
+                  <div className="absolute bottom-3 right-3 pointer-events-none opacity-50">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M22 0v22H0" stroke="#e0231f" strokeWidth="1.2" /></svg>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Interaction hint */}
+            <motion.div
+              className="hidden lg:flex items-center justify-center gap-2 mt-5"
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.6, delay: 1.1 }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-apex-grey-dim">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+              </svg>
+              <span className="font-mono text-[9px] tracking-[0.22em] text-apex-grey-dim uppercase">Move cursor to inspect</span>
+            </motion.div>
           </motion.div>
         </div>
 
