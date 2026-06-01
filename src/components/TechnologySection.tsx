@@ -244,7 +244,7 @@ export default function TechnologySection() {
               <div ref={titleRef} className="flex items-center gap-3 mb-8">
                 <div className="w-8 h-px bg-apex-red" />
                 <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-                  03 — How The Technology Works
+                  04 — How The Technology Works
                 </span>
               </div>
 

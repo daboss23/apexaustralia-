@@ -88,7 +88,7 @@ export default function FinalCTA() {
           >
             <div className="w-8 h-px bg-apex-red" />
             <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-              07 — The Future Is Here
+              08 — The Future Is Here
             </span>
             <div className="w-8 h-px bg-apex-red" />
           </motion.div>

@@ -6,8 +6,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 const NAV_LINKS = [
+  { label: 'The Unit', href: '#product' },
   { label: 'Technology', href: '#technology' },
-  { label: 'Performance', href: '#performance' },
   { label: 'Sports', href: '#sports' },
   { label: 'Results', href: '#results' },
 ]
