@@ -1,33 +1,42 @@
-# T-APEX Australia
+# T-APEX Australia — Cinematic Performance Experience
 
-Premium, high-tech marketing site for **T-APEX** — an intelligent, portable
-resistance training device powered by Quasi Direct Drive (QDD) technology.
+A futuristic, data-driven homepage for **T-APEX** — intelligent resistance
+training technology for elite Australian sport. Built to feel like Tesla /
+Apple Vision Pro / F1 telemetry, not a Shopify store.
 
-Static site — no build step. Open `index.html` or serve the folder:
+## Stack
+- **Next.js 14** (App Router, TypeScript)
+- **React Three Fiber + drei + three** — WebGL particle field, light trails, 3D exploded device
+- **Framer Motion** — scroll-triggered reveals, parallax, page choreography
+- **GSAP** — available for advanced scroll sequencing
+- **Tailwind CSS** — design tokens (black / carbon / electric blue / cyan / white)
 
+## Run
 ```bash
-python3 -m http.server 8000   # then visit http://localhost:8000
+npm install
+npm run dev      # http://localhost:3000
+npm run build && npm start
 ```
 
-## Architecture
+## Homepage sections (`app/page.tsx`)
+1. **Preloader** — premium boot sequence
+2. **Hero** — full-screen WebGL particles + floating holographic metrics, parallax headline "Train Beyond Human Limits"
+3. **Telemetry** — animated acceleration / power / resistance curves
+4. **How It Works** — 5-step scroll storytelling with sticky cinematic panel
+5. **Product Showcase** — interactive 3D device, scroll-driven exploded view, hover hotspots
+6. **Dashboard** — glassmorphism, live-updating metrics + velocity & symmetry
+7. **Sport Selector** — immersive scene that recolours per sport
+8. **Built For Elite Australian Performance** — AFL, Rugby League, Rugby Union, Cricket, Swimming, Track & Field
+9. **Social Proof** — video wall + coach quotes + metric strip
+10. **Final CTA** + footer
 
-| Page | File | Purpose |
-|------|------|---------|
-| Home | `index.html` | Hero, why-it-matters, what it is, benefits, how it works, who it's for, why T-APEX Australia, comparison teaser, FAQ teaser, final CTA |
-| Product / How It Works | `product.html` | Overview, training mechanics, intelligence/data, features, use cases, full comparison |
-| Who It's For | `who.html` | Audience blocks + elite environments |
-| About | `about.html` | T-APEX Australia positioning, Piero, trust pillars |
-| FAQ | `faq.html` | Objection-handling accordion |
-| Contact / Book Demo | `contact.html` | Enquiry form |
-| Order / Enquire | `order.html` | Premium configure → enquire-to-order → confirmation flow |
+## Asset slots (search `ASSET SLOT`)
+The build uses procedural WebGL + animated placeholders. Drop real media to upgrade:
+- `/public/video/hero-athlete.webm` — hero athlete loop (`components/Hero.tsx`)
+- `/public/video/how-it-works.webm` — process loop (`components/HowItWorks.tsx`)
+- `/public/video/sport-{id}.webm` — per-sport loops (`components/SportSelector.tsx`)
+- `/public/video/proof-{i}.webm` — athlete clips (`components/SocialProof.tsx`)
+- `/public/models/*.glb` — real device model (`components/three/DeviceModel.tsx`)
 
-Shared design system in `styles.css`, interaction layer in `script.js`.
-
-## Design system
-- **Palette:** black / white / red `#e0231f` with gold `#caa24a` accents
-- **Type:** Space Grotesk (display) + Inter (body)
-- **Motion:** scroll-driven reveals, mechanical assembly (parts locking into
-  place), rotating QDD rotor, scanning schematic, count-up stats, marquee,
-  scroll-progress rail. All respect `prefers-reduced-motion`.
-
-Product facts sourced from myt-apex.com.
+## Legacy
+The previous static multi-page site is preserved under `/legacy`.
