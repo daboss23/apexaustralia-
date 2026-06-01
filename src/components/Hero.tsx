@@ -340,6 +340,7 @@ function TelemetryCard({
           border: '1px solid rgba(255,255,255,0.05)',
           borderLeft: `2px solid ${datum.color}`,
           borderTop: `1px solid ${datum.color}40`,
+          boxShadow: `0 4px 36px -10px ${datum.color}28, inset 0 0 0 0.5px rgba(255,255,255,0.03)`,
           minWidth: 150,
         }}
       >
@@ -443,6 +444,7 @@ function SystemCard() {
           border: '1px solid rgba(255,255,255,0.05)',
           borderLeft: '2px solid rgba(0,163,255,0.85)',
           borderTop: '1px solid rgba(0,163,255,0.22)',
+          boxShadow: '0 4px 36px -10px rgba(0,163,255,0.2), inset 0 0 0 0.5px rgba(255,255,255,0.03)',
           minWidth: 196,
         }}
       >
@@ -576,7 +578,7 @@ export default function Hero() {
 
       {/* LAYER 2 — Background: Athlete */}
       <div className="absolute inset-0 z-[2] pointer-events-none">
-        <motion.div className="absolute inset-0" style={{ scale: athleteScale, transformOrigin: 'center center' }}>
+        <motion.div className="absolute inset-0" style={{ scale: athleteScale, transformOrigin: 'center center', willChange: 'transform' }}>
           <Image
             src="/hero.png"
             alt="T-APEX athlete Ross sprinting with performance technology"
@@ -628,7 +630,7 @@ export default function Hero() {
       {/* LAYER 4 — Midground: Headline + CTAs */}
       <motion.div
         className="relative z-10 max-w-7xl mx-auto w-full px-6 md:px-10 lg:px-16 pt-28 md:pt-32 pb-24"
-        style={{ y: contentY, opacity: contentOpacity }}
+        style={{ y: contentY, opacity: contentOpacity, willChange: 'transform, opacity' }}
       >
         {/* Pre-label */}
         <motion.div

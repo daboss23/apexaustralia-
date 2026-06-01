@@ -61,35 +61,6 @@ const SPORT_CARDS = [
   },
 ]
 
-function CounterNumber({ value, unit }: { value: string; unit: string }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-10% 0px' })
-
-  return (
-    <div ref={ref} className="flex items-start gap-1 leading-none">
-      <motion.span
-        className="font-display font-black text-apex-white metric-value"
-        style={{ fontSize: 'clamp(3.5rem, 6vw, 5.5rem)' }}
-        initial={{ opacity: 0, y: 30 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-      >
-        {value}
-      </motion.span>
-      {unit && (
-        <motion.span
-          className="text-apex-red font-display font-black mt-2"
-          style={{ fontSize: 'clamp(1.5rem, 2.5vw, 2.5rem)' }}
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          {unit}
-        </motion.span>
-      )}
-    </div>
-  )
-}
 
 function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -194,23 +165,71 @@ export default function PerformanceSection() {
           From Olympic sprinters to professional rugby players — T-APEX adapts to every sport, every movement, every athlete.
         </motion.p>
 
-        {/* Headline metric counters */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20 pb-20 border-b border-apex-line/40">
-          {HEADLINE_METRICS.map(({ value, unit, label, sub }, i) => (
-            <motion.div
-              key={label}
-              className="flex flex-col gap-2"
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.1 + i * 0.1 }}
-            >
-              <CounterNumber value={value} unit={unit} />
-              <div className="flex flex-col gap-0.5 border-l-2 border-apex-red pl-3">
-                <span className="text-apex-white font-display font-bold text-sm tracking-wide">{label}</span>
-                <span className="text-apex-grey-dim font-body text-[11px]">{sub}</span>
-              </div>
-            </motion.div>
-          ))}
+        {/* Headline metrics — editorial asymmetric layout */}
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 mb-20 pb-20 border-b border-apex-line/40 items-start lg:items-center">
+          {/* Primary stat: oversized editorial anchor */}
+          <motion.div
+            className="flex-shrink-0"
+            initial={{ opacity: 0, x: -24 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="flex items-baseline leading-none">
+              <span
+                className="font-display font-bold text-apex-white metric-value"
+                style={{ fontSize: 'clamp(5.5rem, 13vw, 10.5rem)', letterSpacing: '-0.01em' }}
+              >
+                {HEADLINE_METRICS[0].value}
+              </span>
+              <span
+                className="text-apex-red font-display font-bold ml-1"
+                style={{ fontSize: 'clamp(2rem, 4.5vw, 4rem)' }}
+              >
+                {HEADLINE_METRICS[0].unit}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 mt-1">
+              <div className="w-6 h-px bg-apex-red" />
+              <span className="font-display font-semibold text-apex-white tracking-[0.14em] uppercase text-sm">
+                {HEADLINE_METRICS[0].label}
+              </span>
+            </div>
+            <span className="text-apex-grey-dim font-body text-[11px] mt-1 block">{HEADLINE_METRICS[0].sub}</span>
+          </motion.div>
+
+          {/* Vertical divider */}
+          <div className="hidden lg:block w-px self-stretch bg-apex-line flex-shrink-0" />
+
+          {/* Three secondary stats — compact stacked */}
+          <div className="flex flex-col gap-5 justify-center">
+            {HEADLINE_METRICS.slice(1).map(({ value, unit, label, sub }, i) => (
+              <motion.div
+                key={label}
+                className="flex items-center gap-5"
+                initial={{ opacity: 0, x: 18 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.25 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="flex items-baseline gap-0.5 min-w-[80px]">
+                  <span
+                    className="font-display font-bold text-apex-white leading-none metric-value"
+                    style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
+                  >
+                    {value}
+                  </span>
+                  {unit && (
+                    <span className="text-apex-red font-display font-bold" style={{ fontSize: 'clamp(0.9rem, 1.4vw, 1.3rem)' }}>
+                      {unit}
+                    </span>
+                  )}
+                </div>
+                <div className="border-l border-apex-line pl-4">
+                  <div className="text-apex-white font-display font-semibold text-sm tracking-wide">{label}</div>
+                  <div className="text-apex-grey-dim font-body text-[10px]">{sub}</div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         {/* Sport cards grid */}

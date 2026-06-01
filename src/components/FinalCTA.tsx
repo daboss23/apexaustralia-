@@ -47,11 +47,11 @@ export default function FinalCTA() {
             src="/hero.png"
             alt=""
             fill
-            className="object-cover object-center"
-            style={{ opacity: 0.05, mixBlendMode: 'luminosity' }}
+            className="object-cover object-right-top"
+            style={{ opacity: 0.14 }}
           />
           <div className="absolute inset-0" style={{
-            background: 'linear-gradient(180deg, #0f0f12 0%, rgba(15,15,18,0.5) 30%, rgba(15,15,18,0.5) 70%, #0f0f12 100%)'
+            background: 'linear-gradient(180deg, #0f0f12 0%, rgba(15,15,18,0.35) 25%, rgba(15,15,18,0.35) 70%, #0f0f12 100%)'
           }} />
         </div>
 
