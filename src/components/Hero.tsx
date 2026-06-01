@@ -97,14 +97,14 @@ function SpeedBackground() {
       alpha: number; w: number; isRed: boolean
     }
 
-    const streaks: Streak[] = Array.from({ length: 58 }, () => ({
+    const streaks: Streak[] = Array.from({ length: 35 }, () => ({
       x: Math.random() * W * 1.5,
       y: Math.random() * H,
-      len: 30 + Math.random() * 240,
-      speed: 1.2 + Math.random() * 7.5,
-      alpha: 0.025 + Math.random() * 0.095,
-      w: 0.4 + Math.random() * 1.3,
-      isRed: Math.random() > 0.87,
+      len: 20 + Math.random() * 160,
+      speed: 1.0 + Math.random() * 5,
+      alpha: 0.015 + Math.random() * 0.05,
+      w: 0.3 + Math.random() * 0.9,
+      isRed: Math.random() > 0.9,
     }))
 
     const render = () => {
@@ -324,18 +324,20 @@ export default function Hero() {
       {/* Animated speed-lines canvas */}
       <SpeedBackground />
 
-      {/* Hero athlete image – faded silhouette */}
+      {/* Hero athlete image – prominent */}
       <div className="absolute inset-0 z-[2] pointer-events-none">
         <Image
           src="/hero.png"
-          alt=""
+          alt="T-APEX athlete Ross sprinting with performance technology"
           fill
           priority
-          className="object-cover object-center"
-          style={{ opacity: 0.09, mixBlendMode: 'luminosity' }}
+          className="object-cover object-right-top"
+          style={{ opacity: 0.72 }}
         />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, #0a0a0c 0%, rgba(10,10,12,0.35) 45%, rgba(10,10,12,0.35) 55%, #0a0a0c 100%)' }} />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(10,10,12,0.5) 0%, transparent 25%, transparent 65%, #0a0a0c 100%)' }} />
+        {/* Dark left overlay — keeps text readable, athlete visible on right */}
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, #0a0a0c 0%, rgba(10,10,12,0.88) 28%, rgba(10,10,12,0.55) 48%, rgba(10,10,12,0.15) 68%, transparent 100%)' }} />
+        {/* Top + bottom fades */}
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(10,10,12,0.6) 0%, transparent 18%, transparent 72%, #0a0a0c 100%)' }} />
       </div>
 
       {/* Top red accent line */}
