@@ -8,22 +8,22 @@ import Image from 'next/image'
 
 const TELEMETRY = [
   {
-    id: 'velocity',
-    label: 'VELOCITY',
+    id: 'speed',
+    label: 'SPEED',
     unit: 'm/s',
-    values: [11.8, 12.1, 12.4, 11.9, 12.7, 12.2, 12.6],
-    decimals: 1,
+    values: [9.42, 9.51, 9.38, 9.64, 9.47, 9.58, 9.42],
+    decimals: 2,
     color: '#e0231f',
     delta: '+0.3',
-    tag: 'NOMINAL',
+    tag: 'MAX',
     sparkline: [42, 51, 38, 62, 70, 56, 78, 65, 84],
   },
   {
     id: 'force',
-    label: 'GRF',
-    unit: 'N',
-    values: [823, 847, 891, 834, 876, 855, 902],
-    decimals: 0,
+    label: 'FORCE',
+    unit: 'kN',
+    values: [2.81, 2.84, 2.78, 2.91, 2.86, 2.89, 2.81],
+    decimals: 2,
     color: '#7B2FBE',
     delta: '+2.4%',
     tag: 'PEAK',
@@ -33,8 +33,8 @@ const TELEMETRY = [
     id: 'power',
     label: 'POWER',
     unit: 'kW',
-    values: [3.8, 4.1, 4.2, 3.9, 4.6, 4.3, 4.7],
-    decimals: 1,
+    values: [4.21, 4.35, 4.18, 4.42, 4.31, 4.38, 4.21],
+    decimals: 2,
     color: '#00A3FF',
     delta: '+12%',
     tag: 'HIGH',
@@ -44,9 +44,9 @@ const TELEMETRY = [
     id: 'accel',
     label: 'ACCEL',
     unit: 'm/s²',
-    values: [7.8, 8.1, 8.3, 7.9, 8.7, 8.4, 8.6],
-    decimals: 1,
-    color: '#e0231f',
+    values: [8.72, 8.81, 8.65, 8.94, 8.77, 8.88, 8.72],
+    decimals: 2,
+    color: '#f59e0b',
     delta: '+0.6',
     tag: 'ACTIVE',
     sparkline: [48, 56, 42, 62, 70, 58, 76, 68, 80],
@@ -57,10 +57,10 @@ const SYSTEM_RESISTANCE = [287, 312, 298, 325, 308, 341, 319]
 const SYSTEM_MODES = ['ADAPTIVE', 'ADAPTIVE', 'SPRINT-A', 'ADAPTIVE', 'ADAPTIVE', 'PEAK', 'ADAPTIVE']
 
 const POSITIONS = [
-  { className: 'top-[20%] left-[1.5%]', delay: 1.05 },
-  { className: 'top-[55%] left-[1.5%]', delay: 1.3 },
-  { className: 'top-[18%] right-[1.5%]', delay: 1.15 },
-  { className: 'top-[52%] right-[1.5%]', delay: 1.4 },
+  { className: 'top-[13%] right-[1.5%]', delay: 1.0 },
+  { className: 'top-[31%] right-[1.5%]', delay: 1.15 },
+  { className: 'top-[49%] right-[1.5%]', delay: 1.3 },
+  { className: 'top-[67%] right-[1.5%]', delay: 1.45 },
 ]
 
 // ─── Atmosphere Canvas ────────────────────────────────────────────────────────
@@ -576,30 +576,37 @@ export default function Hero() {
       {/* LAYER 1 — Deep background: atmosphere canvas */}
       <AtmosphereBackground />
 
-      {/* LAYER 2 — Background: Athlete */}
+      {/* LAYER 2 — Background: Athlete — runs in from the right */}
       <div className="absolute inset-0 z-[2] pointer-events-none">
-        <motion.div className="absolute inset-0" style={{ scale: athleteScale, transformOrigin: 'center center', willChange: 'transform' }}>
-          <Image
-            src="/hero.png"
-            alt="T-APEX athlete Ross sprinting with performance technology"
-            fill
-            priority
-            className="object-cover"
-            style={{ objectPosition: '68% center', opacity: 0.88 }}
-          />
+        <motion.div
+          className="absolute inset-0"
+          initial={{ opacity: 0, x: 90 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+        >
+          <motion.div className="absolute inset-0" style={{ scale: athleteScale, transformOrigin: 'center center', willChange: 'transform' }}>
+            <Image
+              src="/hero.png"
+              alt="T-APEX athlete Ross sprinting with performance technology"
+              fill
+              priority
+              className="object-cover"
+              style={{ objectPosition: '65% center', opacity: 0.92 }}
+            />
+          </motion.div>
         </motion.div>
 
-        {/* Gradient: hard fade left for readability, open right to show athlete */}
+        {/* Gradient: left fade for text readability, right stays open to show Ross */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(90deg, #0a0a0c 0%, rgba(10,10,12,0.92) 20%, rgba(10,10,12,0.65) 40%, rgba(10,10,12,0.22) 62%, rgba(10,10,12,0.05) 78%, transparent 100%)'
+          background: 'linear-gradient(90deg, #0a0a0c 0%, rgba(10,10,12,0.88) 18%, rgba(10,10,12,0.55) 36%, rgba(10,10,12,0.15) 56%, rgba(10,10,12,0.04) 72%, transparent 100%)'
         }} />
         {/* Top and bottom atmosphere */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(180deg, rgba(10,10,12,0.65) 0%, transparent 14%, transparent 68%, rgba(10,10,12,0.9) 88%, #0a0a0c 100%)'
+          background: 'linear-gradient(180deg, rgba(10,10,12,0.55) 0%, transparent 12%, transparent 70%, rgba(10,10,12,0.85) 90%, #0a0a0c 100%)'
         }} />
-        {/* Right edge blend */}
+        {/* Right edge — light vignette only */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(270deg, rgba(10,10,12,0.32) 0%, transparent 20%)'
+          background: 'linear-gradient(270deg, rgba(10,10,12,0.14) 0%, transparent 16%)'
         }} />
       </div>
 
@@ -626,6 +633,43 @@ export default function Hero() {
         <TelemetryCard key={d.id} datum={d} pos={POSITIONS[i]} index={i} />
       ))}
       <SystemCard />
+
+      {/* Athlete ID badge — appears after Ross runs in */}
+      <motion.div
+        className="absolute bottom-[18%] right-[22%] xl:right-[26%] z-20 hidden lg:block"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.65, delay: 1.9, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div
+          className="relative"
+          style={{
+            background: 'rgba(5,5,8,0.88)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255,255,255,0.05)',
+            borderTop: '2px solid #e0231f',
+            borderLeft: '1px solid rgba(224,35,31,0.25)',
+          }}
+        >
+          <div className="absolute inset-0 pointer-events-none" style={{
+            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.012) 3px, rgba(255,255,255,0.012) 4px)',
+          }} />
+          <div className="px-4 py-2.5 relative">
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <div className="w-1.5 h-1.5" style={{ background: '#e0231f', clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }} />
+              <span className="text-[7px] font-mono text-apex-grey-dim tracking-[0.28em] uppercase">Athlete Profile</span>
+            </div>
+            <div className="text-[15px] font-display font-black text-apex-white tracking-[0.12em] uppercase leading-none">C. ROSS</div>
+            <div className="flex items-center gap-2.5 mt-1.5">
+              <span className="text-[8px] font-mono text-apex-red tracking-[0.18em] uppercase">Sprint Specialist</span>
+              <div className="flex items-center gap-1">
+                <div className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[7px] font-mono text-emerald-400 tracking-wider">ACTIVE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
 
       {/* LAYER 4 — Midground: Headline + CTAs */}
       <motion.div
@@ -655,7 +699,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 1.05 }}
         >
-          Intelligent resistance technology that reads athlete intent in under 5ms — engineered for the world&apos;s most demanding performance environments.
+          T-Apex Australia brings advanced resistance training technology to athletes, coaches, performance centres, and rehabilitation environments that want more than guesswork.
         </motion.p>
 
         {/* CTAs */}
