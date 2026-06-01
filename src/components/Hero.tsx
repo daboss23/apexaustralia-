@@ -2,7 +2,6 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
-import Image from 'next/image'
 
 // ─── Telemetry HUD Data ───────────────────────────────────────────────────────
 
@@ -62,202 +61,6 @@ const POSITIONS = [
   { className: 'top-[49%] right-[1.5%]', delay: 1.3 },
   { className: 'top-[67%] right-[1.5%]', delay: 1.45 },
 ]
-
-// ─── Atmosphere Canvas ────────────────────────────────────────────────────────
-
-function AtmosphereBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const rafRef = useRef<number>(0)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    let W = window.innerWidth
-    let H = window.innerHeight
-    canvas.width = W
-    canvas.height = H
-
-    const onResize = () => {
-      W = window.innerWidth
-      H = window.innerHeight
-      canvas.width = W
-      canvas.height = H
-      init()
-    }
-    window.addEventListener('resize', onResize)
-
-    interface Streak {
-      x: number; y: number; len: number; speed: number
-      alpha: number; w: number; isRed: boolean
-    }
-    interface Particle {
-      x: number; y: number; vx: number; vy: number
-      alpha: number; life: number; maxLife: number; r: number; isRed: boolean
-    }
-
-    let streaks: Streak[] = []
-    let particles: Particle[] = []
-
-    function init() {
-      streaks = Array.from({ length: 28 }, () => ({
-        x: Math.random() * W * 1.4,
-        y: Math.random() * H * 0.88,
-        len: 30 + Math.random() * 200,
-        speed: 0.9 + Math.random() * 4.5,
-        alpha: 0.007 + Math.random() * 0.028,
-        w: 0.2 + Math.random() * 0.8,
-        isRed: Math.random() > 0.87,
-      }))
-      particles = Array.from({ length: 50 }, () => ({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        vx: 0.3 + Math.random() * 1.8,
-        vy: (Math.random() - 0.5) * 0.35,
-        alpha: 0.03 + Math.random() * 0.1,
-        life: Math.random() * 100,
-        maxLife: 80 + Math.random() * 130,
-        r: 0.4 + Math.random() * 1.2,
-        isRed: Math.random() > 0.82,
-      }))
-    }
-
-    init()
-
-    function drawGrid(c: CanvasRenderingContext2D) {
-      c.strokeStyle = 'rgba(38,38,46,0.28)'
-      c.lineWidth = 0.3
-      const cols = 24, rows = 14
-      for (let col = 0; col <= cols; col++) {
-        c.beginPath(); c.moveTo((col / cols) * W, 0); c.lineTo((col / cols) * W, H); c.stroke()
-      }
-      for (let row = 0; row <= rows; row++) {
-        c.beginPath(); c.moveTo(0, (row / rows) * H); c.lineTo(W, (row / rows) * H); c.stroke()
-      }
-    }
-
-    function drawStadiumAtmosphere(c: CanvasRenderingContext2D) {
-      const lights: [number, number][] = [[W * 0.14, 0.036], [W * 0.87, 0.028]]
-      for (const [lx, a] of lights) {
-        const g = c.createRadialGradient(lx, -H * 0.05, 0, lx, H * 0.5, H * 0.65)
-        g.addColorStop(0, `rgba(255,215,130,${a})`)
-        g.addColorStop(0.4, `rgba(255,210,120,${a * 0.4})`)
-        g.addColorStop(1, 'rgba(255,200,100,0)')
-        c.fillStyle = g
-        c.fillRect(0, 0, W, H)
-      }
-      const rg = c.createRadialGradient(W * 0.72, H * 0.42, 0, W * 0.72, H * 0.42, W * 0.5)
-      rg.addColorStop(0, 'rgba(224,35,31,0.055)')
-      rg.addColorStop(0.5, 'rgba(224,35,31,0.02)')
-      rg.addColorStop(1, 'rgba(224,35,31,0)')
-      c.fillStyle = rg
-      c.fillRect(0, 0, W, H)
-    }
-
-    function drawTrack(c: CanvasRenderingContext2D) {
-      const trackTop = H * 0.75
-      const tw = W * 0.88
-      const lTop = (W - tw * 0.48) / 2
-      const rTop = (W + tw * 0.48) / 2
-      const lBot = (W - tw) / 2
-      const rBot = (W + tw) / 2
-
-      const tg = c.createLinearGradient(0, trackTop, 0, H)
-      tg.addColorStop(0, 'rgba(55,6,5,0.12)')
-      tg.addColorStop(1, 'rgba(80,10,7,0.2)')
-      c.fillStyle = tg
-      c.beginPath()
-      c.moveTo(lTop, trackTop); c.lineTo(rTop, trackTop)
-      c.lineTo(rBot, H); c.lineTo(lBot, H)
-      c.closePath()
-      c.fill()
-
-      c.setLineDash([])
-      for (let i = 0; i <= 8; i++) {
-        const t = i / 8
-        const tx = lTop + (rTop - lTop) * t
-        const bx = lBot + (rBot - lBot) * t
-        c.beginPath(); c.moveTo(tx, trackTop); c.lineTo(bx, H)
-        const edge = i === 0 || i === 8
-        c.strokeStyle = edge ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.03)'
-        c.lineWidth = edge ? 1 : 0.5
-        c.stroke()
-      }
-
-      c.setLineDash([3, 9])
-      for (let d = 0; d < 3; d++) {
-        const t = 0.25 + d * 0.27
-        const y = trackTop + (H - trackTop) * t
-        const lx = lTop + (lBot - lTop) * t
-        const rx = rTop + (rBot - rTop) * t
-        c.beginPath(); c.moveTo(lx, y); c.lineTo(rx, y)
-        c.strokeStyle = 'rgba(255,255,255,0.025)'
-        c.lineWidth = 0.4
-        c.stroke()
-      }
-      c.setLineDash([])
-    }
-
-    const render = () => {
-      ctx.clearRect(0, 0, W, H)
-      ctx.fillStyle = '#0a0a0c'
-      ctx.fillRect(0, 0, W, H)
-
-      drawGrid(ctx)
-      drawStadiumAtmosphere(ctx)
-      drawTrack(ctx)
-
-      for (const s of streaks) {
-        const rgb = s.isRed ? '224,35,31' : '244,244,246'
-        const g = ctx.createLinearGradient(s.x - s.len, s.y, s.x, s.y)
-        g.addColorStop(0, `rgba(${rgb},0)`)
-        g.addColorStop(1, `rgba(${rgb},${s.alpha})`)
-        ctx.beginPath()
-        ctx.strokeStyle = g
-        ctx.lineWidth = s.w
-        ctx.moveTo(s.x - s.len, s.y)
-        ctx.lineTo(s.x, s.y)
-        ctx.stroke()
-        s.x += s.speed
-        if (s.x - s.len > W) {
-          s.x = -s.len
-          s.y = Math.random() * H * 0.82
-          s.len = 35 + Math.random() * 210
-          s.speed = 1 + Math.random() * 5.5
-          s.alpha = 0.007 + Math.random() * 0.025
-        }
-      }
-
-      for (const p of particles) {
-        p.x += p.vx; p.y += p.vy; p.life++
-        if (p.x > W || p.y < 0 || p.y > H || p.life > p.maxLife) {
-          p.x = 0; p.y = Math.random() * H * 0.9
-          p.vx = 0.3 + Math.random() * 1.8
-          p.vy = (Math.random() - 0.5) * 0.35
-          p.life = 0; p.maxLife = 80 + Math.random() * 130
-          p.isRed = Math.random() > 0.82
-        }
-        const la = Math.sin((p.life / p.maxLife) * Math.PI) * p.alpha
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = p.isRed ? `rgba(224,35,31,${la})` : `rgba(244,244,246,${la * 0.55})`
-        ctx.fill()
-      }
-
-      rafRef.current = requestAnimationFrame(render)
-    }
-
-    render()
-    return () => {
-      cancelAnimationFrame(rafRef.current)
-      window.removeEventListener('resize', onResize)
-    }
-  }, [])
-
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" aria-hidden="true" />
-}
 
 // ─── Sparkline ────────────────────────────────────────────────────────────────
 
@@ -565,48 +368,57 @@ function Headline() {
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
 export default function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null)
   const { scrollY } = useScroll()
   const contentY = useTransform(scrollY, [0, 700], [0, -55])
   const contentOpacity = useTransform(scrollY, [0, 520], [1, 0])
-  const athleteScale = useTransform(scrollY, [0, 600], [1, 1.045])
+  const videoScale = useTransform(scrollY, [0, 600], [1, 1.06])
+
+  // Slow the video to 65% — cinematic, not rushed
+  useEffect(() => {
+    const vid = videoRef.current
+    if (!vid) return
+    vid.playbackRate = 0.65
+    const onCanPlay = () => { vid.playbackRate = 0.65 }
+    vid.addEventListener('canplay', onCanPlay)
+    return () => vid.removeEventListener('canplay', onCanPlay)
+  }, [])
 
   return (
     <section id="hero" className="relative min-h-screen flex flex-col justify-center overflow-hidden">
 
-      {/* LAYER 1 — Deep background: atmosphere canvas */}
-      <AtmosphereBackground />
-
-      {/* LAYER 2 — Background: Athlete — runs in from the right */}
-      <div className="absolute inset-0 z-[2] pointer-events-none">
+      {/* LAYER 1 — Full-bleed video background */}
+      <div className="absolute inset-0 z-[1] pointer-events-none">
         <motion.div
           className="absolute inset-0"
-          initial={{ opacity: 0, x: 90 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+          style={{ scale: videoScale, transformOrigin: 'center center', willChange: 'transform' }}
         >
-          <motion.div className="absolute inset-0" style={{ scale: athleteScale, transformOrigin: 'center center', willChange: 'transform' }}>
-            <Image
-              src="/hero.png"
-              alt="T-APEX athlete Ross sprinting with performance technology"
-              fill
-              priority
-              className="object-cover"
-              style={{ objectPosition: '65% center', opacity: 0.92 }}
-            />
-          </motion.div>
+          <video
+            ref={videoRef}
+            className="absolute inset-0 w-full h-full object-cover"
+            src="/hero-video.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            aria-hidden="true"
+            style={{ objectPosition: '55% center' }}
+          />
         </motion.div>
 
-        {/* Gradient: left fade for text readability, right stays open to show Ross */}
+        {/* Left column: heavy dark ramp — text lives here, fully readable */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(90deg, #0a0a0c 0%, rgba(10,10,12,0.88) 18%, rgba(10,10,12,0.55) 36%, rgba(10,10,12,0.15) 56%, rgba(10,10,12,0.04) 72%, transparent 100%)'
+          background: 'linear-gradient(90deg, #0a0a0c 0%, rgba(10,10,12,0.97) 12%, rgba(10,10,12,0.88) 24%, rgba(10,10,12,0.6) 38%, rgba(10,10,12,0.28) 52%, rgba(10,10,12,0.1) 65%, rgba(10,10,12,0.04) 78%, transparent 92%)'
         }} />
-        {/* Top and bottom atmosphere */}
+
+        {/* Top vignette — keeps nav area grounded */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(180deg, rgba(10,10,12,0.55) 0%, transparent 12%, transparent 70%, rgba(10,10,12,0.85) 90%, #0a0a0c 100%)'
+          background: 'linear-gradient(180deg, rgba(10,10,12,0.72) 0%, transparent 18%, transparent 68%, rgba(10,10,12,0.9) 90%, #0a0a0c 100%)'
         }} />
-        {/* Right edge — light vignette only */}
+
+        {/* Right edge soft vignette — frames video, doesn't crush it */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(270deg, rgba(10,10,12,0.14) 0%, transparent 16%)'
+          background: 'linear-gradient(270deg, rgba(10,10,12,0.22) 0%, transparent 20%)'
         }} />
       </div>
 
@@ -628,124 +440,92 @@ export default function Hero() {
         </svg>
       </div>
 
-      {/* LAYER 3 — Foreground: Telemetry HUD cards */}
+      {/* LAYER 2 — Telemetry HUD cards (float over right-side video) */}
       {TELEMETRY.map((d, i) => (
         <TelemetryCard key={d.id} datum={d} pos={POSITIONS[i]} index={i} />
       ))}
       <SystemCard />
 
-      {/* Athlete ID badge — appears after Ross runs in */}
-      <motion.div
-        className="absolute bottom-[18%] right-[22%] xl:right-[26%] z-20 hidden lg:block"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.65, delay: 1.9, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <div
-          className="relative"
-          style={{
-            background: 'rgba(5,5,8,0.88)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255,255,255,0.05)',
-            borderTop: '2px solid #e0231f',
-            borderLeft: '1px solid rgba(224,35,31,0.25)',
-          }}
-        >
-          <div className="absolute inset-0 pointer-events-none" style={{
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.012) 3px, rgba(255,255,255,0.012) 4px)',
-          }} />
-          <div className="px-4 py-2.5 relative">
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <div className="w-1.5 h-1.5" style={{ background: '#e0231f', clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }} />
-              <span className="text-[7px] font-mono text-apex-grey-dim tracking-[0.28em] uppercase">Athlete Profile</span>
-            </div>
-            <div className="text-[15px] font-display font-black text-apex-white tracking-[0.12em] uppercase leading-none">C. ROSS</div>
-            <div className="flex items-center gap-2.5 mt-1.5">
-              <span className="text-[8px] font-mono text-apex-red tracking-[0.18em] uppercase">Sprint Specialist</span>
-              <div className="flex items-center gap-1">
-                <div className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[7px] font-mono text-emerald-400 tracking-wider">ACTIVE</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* LAYER 4 — Midground: Headline + CTAs */}
+      {/* LAYER 3 — Headline + CTAs — anchored LEFT so video action is visible right */}
       <motion.div
         className="relative z-10 max-w-7xl mx-auto w-full px-6 md:px-10 lg:px-16 pt-28 md:pt-32 pb-24"
         style={{ y: contentY, opacity: contentOpacity, willChange: 'transform, opacity' }}
       >
-        {/* Pre-label */}
-        <motion.div
-          className="flex items-center gap-3 mb-7"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.55, delay: 0.08 }}
-        >
-          <div className="w-8 h-px bg-apex-red" />
-          <span className="text-apex-red font-mono text-[9px] font-medium tracking-[0.32em] uppercase">
-            Elite Sports Performance Technology
-          </span>
-        </motion.div>
+        {/* Content column — constrained to left ~48% on desktop so video shows right */}
+        <div className="w-full lg:max-w-[580px] xl:max-w-[620px]">
 
-        <Headline />
+          {/* Pre-label */}
+          <motion.div
+            className="flex items-center gap-3 mb-7"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.55, delay: 0.08 }}
+          >
+            <div className="w-8 h-px bg-apex-red" />
+            <span className="text-apex-red font-mono text-[9px] font-medium tracking-[0.32em] uppercase">
+              Elite Sports Performance Technology
+            </span>
+          </motion.div>
 
-        {/* Subheadline — technology-forward tone */}
-        <motion.p
-          className="mt-7 max-w-[480px] text-apex-grey font-body leading-[1.75]"
-          style={{ fontSize: 'clamp(0.88rem, 1.2vw, 1.02rem)' }}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 1.05 }}
-        >
-          T-Apex Australia brings advanced resistance training technology to athletes, coaches, performance centres, and rehabilitation environments that want more than guesswork.
-        </motion.p>
+          <Headline />
 
-        {/* CTAs */}
-        <motion.div
-          className="flex flex-wrap items-center gap-4 mt-9"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 1.28 }}
-        >
-          <button className="group inline-flex items-center gap-2.5 bg-apex-red hover:bg-apex-red-bright text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.6)] hover:-translate-y-0.5 active:translate-y-0">
-            Book Demo
-            <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </button>
+          {/* Subheadline */}
+          <motion.p
+            className="mt-7 text-apex-grey font-body leading-[1.75]"
+            style={{ fontSize: 'clamp(0.88rem, 1.2vw, 1.02rem)' }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 1.05 }}
+          >
+            T-Apex Australia brings advanced resistance training technology to athletes, coaches, performance centres, and rehabilitation environments that want more than guesswork.
+          </motion.p>
 
-          <button className="group inline-flex items-center gap-2.5 bg-transparent border border-apex-line hover:border-apex-grey-dim text-apex-grey hover:text-apex-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5">
-            Explore Technology
-            <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-            </svg>
-          </button>
-        </motion.div>
+          {/* CTAs */}
+          <motion.div
+            className="flex flex-wrap items-center gap-4 mt-9"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 1.28 }}
+          >
+            <button className="group inline-flex items-center gap-2.5 bg-apex-red hover:bg-apex-red-bright text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
+              Book Demo
+              <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </button>
 
-        {/* Technical specs row */}
-        <motion.div
-          className="flex flex-wrap items-center gap-5 mt-14 pt-7 border-t border-apex-line/35"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.65 }}
-        >
-          {[
-            { v: '200', u: 'Hz', l: 'Telemetry Rate' },
-            { v: '<5', u: 'ms', l: 'Response Time' },
-            { v: '450', u: 'N', l: 'Peak Resistance' },
-            { v: 'Real-time', u: '', l: 'AI Adaptation' },
-          ].map(({ v, u, l }) => (
-            <div key={l} className="flex flex-col gap-0.5">
-              <div className="flex items-baseline gap-0.5">
-                <span className="text-apex-white font-mono font-semibold text-sm leading-none">{v}</span>
-                {u && <span className="text-apex-red font-mono text-[10px]">{u}</span>}
+            <button className="group inline-flex items-center gap-2.5 bg-transparent border border-apex-line hover:border-apex-grey-dim text-apex-grey hover:text-apex-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5" style={{ borderRadius: 0 }}>
+              Explore Technology
+              <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          </motion.div>
+
+          {/* Technical specs row */}
+          <motion.div
+            className="flex flex-wrap items-center gap-5 mt-14 pt-7 border-t border-apex-line/35"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1.65 }}
+          >
+            {[
+              { v: '200', u: 'Hz', l: 'Telemetry Rate' },
+              { v: '<5', u: 'ms', l: 'Response Time' },
+              { v: '450', u: 'N', l: 'Peak Resistance' },
+              { v: 'Real-time', u: '', l: 'AI Adaptation' },
+            ].map(({ v, u, l }) => (
+              <div key={l} className="flex flex-col gap-0.5">
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-apex-white font-mono font-semibold text-sm leading-none">{v}</span>
+                  {u && <span className="text-apex-red font-mono text-[10px]">{u}</span>}
+                </div>
+                <span className="text-apex-grey-dim font-body text-[10px] tracking-wide">{l}</span>
               </div>
-              <span className="text-apex-grey-dim font-body text-[10px] tracking-wide">{l}</span>
-            </div>
-          ))}
-        </motion.div>
+            ))}
+          </motion.div>
+
+        </div>{/* end left column */}
 
         {/* Scroll cue */}
         <motion.div
@@ -768,6 +548,7 @@ export default function Hero() {
             Scroll
           </span>
         </motion.div>
+
       </motion.div>
     </section>
   )
