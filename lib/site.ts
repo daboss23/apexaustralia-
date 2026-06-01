@@ -51,13 +51,75 @@ export const DASH_METRICS = [
   { k: "Symmetry", v: "98.2", u: "%", d: "+1.4" },
 ];
 
-export const SPORTS = [
-  { id: "sprinting", name: "Sprinting", tint: "#22d3ee", line: "Explosive acceleration & top-end speed." },
-  { id: "swimming", name: "Swimming", tint: "#0a84ff", line: "Resisted & assisted in-water power transfer." },
-  { id: "rugby", name: "Rugby", tint: "#e0231f", line: "Contact-ready force and collision power." },
-  { id: "soccer", name: "Soccer", tint: "#34d399", line: "Repeat-sprint ability and change of direction." },
-  { id: "afl", name: "AFL", tint: "#f59e0b", line: "Endurance running power across the ground." },
-  { id: "strength", name: "Strength", tint: "#a78bfa", line: "Eccentric, tempo and overload progressions." },
+// Each sport swaps its own KPIs / readouts in the selector.
+export type Sport = {
+  id: string;
+  name: string;
+  line: string;
+  kpis: { k: string; v: string; u: string }[];
+};
+
+export const SPORTS: Sport[] = [
+  {
+    id: "sprint",
+    name: "Sprint",
+    line: "Explosive acceleration and top-end speed, measured stride by stride.",
+    kpis: [
+      { k: "Acceleration", v: "9.6", u: "m/s²" },
+      { k: "Top Speed", v: "11.2", u: "m/s" },
+      { k: "Ground Contact", v: "0.089", u: "s" },
+    ],
+  },
+  {
+    id: "afl",
+    name: "AFL",
+    line: "Two-way running power and repeat efforts across the ground.",
+    kpis: [
+      { k: "Acceleration", v: "8.9", u: "m/s²" },
+      { k: "Repeat Sprint", v: "94", u: "%" },
+      { k: "Explosive Power", v: "1.8", u: "kW" },
+    ],
+  },
+  {
+    id: "rugby",
+    name: "Rugby",
+    line: "Collision-ready force and acceleration off the mark.",
+    kpis: [
+      { k: "Collision Force", v: "1240", u: "N" },
+      { k: "Leg Drive", v: "38", u: "kgf" },
+      { k: "Acceleration", v: "8.4", u: "m/s²" },
+    ],
+  },
+  {
+    id: "swimming",
+    name: "Swimming",
+    line: "Dryland and in-water power that transfers to the pool.",
+    kpis: [
+      { k: "Stroke Power", v: "612", u: "W" },
+      { k: "Pull Force", v: "284", u: "N" },
+      { k: "Efficiency", v: "91", u: "%" },
+    ],
+  },
+  {
+    id: "cricket",
+    name: "Cricket",
+    line: "Fast-bowling velocity and explosive fielding power.",
+    kpis: [
+      { k: "Bowling Velocity", v: "142", u: "km/h" },
+      { k: "Explosive Power", v: "1.6", u: "kW" },
+      { k: "Throw Force", v: "520", u: "N" },
+    ],
+  },
+  {
+    id: "strength",
+    name: "Strength Training",
+    line: "Eccentric, tempo and overload progressions with exact load.",
+    kpis: [
+      { k: "Peak Force", v: "2180", u: "N" },
+      { k: "Eccentric Load", v: "42", u: "kgf" },
+      { k: "Power Output", v: "2.4", u: "kW" },
+    ],
+  },
 ];
 
 export const AU_SPORTS = [

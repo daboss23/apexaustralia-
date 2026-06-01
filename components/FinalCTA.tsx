@@ -15,7 +15,7 @@ export default function FinalCTA() {
         transition={{ duration: 0.8 }}
         className="relative mx-auto max-w-3xl px-6 text-center"
       >
-        <p className="font-mono text-xs uppercase tracking-[0.4em] text-cyan/80">T-APEX Australia</p>
+        <p className="font-mono text-xs uppercase tracking-[0.4em] text-red/80">T-APEX Australia</p>
         <h2 className="mt-5 font-display text-5xl font-bold leading-[0.98] tracking-tight sm:text-6xl">
           Bring the future into <span className="electric-grad text-glow">your environment.</span>
         </h2>
@@ -38,11 +38,11 @@ export default function FinalCTA() {
             type="email"
             required
             placeholder="Your email"
-            className="flex-1 rounded-full border border-white/10 bg-white/[0.03] px-5 py-3.5 text-sm text-white placeholder-white/35 outline-none transition-colors focus:border-cyan/50"
+            className="flex-1 rounded-full border border-white/10 bg-white/[0.03] px-5 py-3.5 text-sm text-white placeholder-white/35 outline-none transition-colors focus:border-red/50"
           />
           <button
             type="submit"
-            className="rounded-full bg-gradient-to-r from-electric to-cyan px-7 py-3.5 text-sm font-semibold text-black shadow-electric transition-transform hover:scale-105"
+            className="rounded-full bg-gradient-to-r from-red-deep to-red-bright px-7 py-3.5 text-sm font-semibold text-black shadow-electric transition-transform hover:scale-105"
           >
             Book Demo
           </button>

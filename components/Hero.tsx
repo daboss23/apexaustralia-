@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { HERO_METRICS } from "@/lib/site";
 
-const ParticleField = dynamic(() => import("./three/ParticleField"), { ssr: false });
+const SprintScene = dynamic(() => import("./three/SprintScene"), { ssr: false });
 
 export default function Hero() {
   const ref = useRef<HTMLDivElement>(null);
@@ -15,20 +15,24 @@ export default function Hero() {
 
   return (
     <section ref={ref} id="top" className="relative h-[100svh] min-h-[640px] w-full overflow-hidden">
-      {/* WebGL particle/light-trail field */}
-      <div className="absolute inset-0">
-        <ParticleField />
+      {/* Cinematic athlete loop */}
+      <video
+        className="absolute inset-0 h-full w-full object-cover opacity-70"
+        autoPlay
+        muted
+        loop
+        playsInline
+        poster=""
+        src="/video/hero.mp4"
+      />
+      {/* Sports-science motion-capture overlay (telemetry feel on top of footage) */}
+      <div className="absolute inset-0 opacity-60 mix-blend-screen">
+        <SprintScene />
       </div>
 
-      {/*
-        ASSET SLOT — cinematic athlete loop. Drop a muted, looping mp4/webm at
-        /public/video/hero-athlete.webm and uncomment to layer behind the particles.
-        <video className="absolute inset-0 h-full w-full object-cover opacity-50 mix-blend-screen"
-               autoPlay muted loop playsInline src="/video/hero-athlete.webm" />
-      */}
-
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,transparent_30%,#000_82%)]" />
-      <div className="grid-floor pointer-events-none absolute inset-x-0 bottom-0 h-1/2 opacity-25 [mask-image:linear-gradient(to_top,#000,transparent)]" />
+      {/* legibility + lab vignette */}
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,#000_8%,transparent_55%),radial-gradient(ellipse_at_50%_40%,transparent_30%,#000_92%)]" />
+      <div className="lab-grid pointer-events-none absolute inset-0 opacity-[0.08]" />
 
       {/* Floating holographic metrics */}
       {HERO_METRICS.map((m, i) => (
@@ -40,7 +44,7 @@ export default function Hero() {
           animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
           transition={{ delay: 1.1 + i * 0.18, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p className="font-mono text-[10px] tracking-[0.24em] text-cyan/80">{m.label}</p>
+          <p className="font-mono text-[10px] tracking-[0.24em] text-red/80">{m.label}</p>
           <p className="font-display text-xl font-semibold text-white">
             {m.value}
             <span className="ml-1 text-xs font-normal text-white/50">{m.unit}</span>
@@ -54,7 +58,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.6 }}
-          className="mb-5 font-mono text-xs uppercase tracking-[0.4em] text-cyan/80"
+          className="mb-5 font-mono text-xs uppercase tracking-[0.4em] text-red/80"
         >
           Intelligent Resistance Training
         </motion.p>
@@ -87,10 +91,10 @@ export default function Hero() {
           transition={{ delay: 1.5, duration: 0.7 }}
           className="pointer-events-auto mt-10 flex flex-wrap items-center justify-center gap-4"
         >
-          <a href="#contact" className="rounded-full bg-gradient-to-r from-electric to-cyan px-7 py-3.5 text-sm font-semibold text-black shadow-electric transition-transform hover:scale-105">
+          <a href="#contact" className="rounded-full bg-gradient-to-r from-red-deep to-red-bright px-7 py-3.5 text-sm font-semibold text-black shadow-electric transition-transform hover:scale-105">
             Book Demo
           </a>
-          <a href="#technology" className="glass rounded-full px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:border-cyan/40">
+          <a href="#technology" className="glass rounded-full px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:border-red/40">
             Explore Technology
           </a>
         </motion.div>

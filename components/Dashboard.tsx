@@ -28,12 +28,12 @@ function VelocityCurve() {
     <svg viewBox="0 0 600 140" className="h-auto w-full">
       <defs>
         <linearGradient id="vfill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="rgba(34,211,238,0.35)" />
-          <stop offset="100%" stopColor="rgba(34,211,238,0)" />
+          <stop offset="0%" stopColor="rgba(226,32,32,0.32)" />
+          <stop offset="100%" stopColor="rgba(226,32,32,0)" />
         </linearGradient>
       </defs>
       <polyline points={`0,140 ${pts} 600,140`} fill="url(#vfill)" stroke="none" />
-      <polyline points={pts} fill="none" stroke="#22d3ee" strokeWidth={2} style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
+      <polyline points={pts} fill="none" stroke="#ff2d2d" strokeWidth={2} style={{ filter: "drop-shadow(0 0 6px #ff2d2d)" }} />
     </svg>
   );
 }
@@ -60,7 +60,7 @@ export default function Dashboard() {
           transition={{ duration: 0.7 }}
           className="max-w-2xl"
         >
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-cyan/80">Performance Dashboard</p>
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-red/80">Performance Dashboard</p>
           <h2 className="mt-4 font-display text-4xl font-bold leading-tight sm:text-5xl">The pit wall for human performance.</h2>
         </motion.div>
 
@@ -71,12 +71,12 @@ export default function Dashboard() {
           transition={{ duration: 0.8 }}
           className="glass-strong relative mt-12 overflow-hidden rounded-3xl p-6 sm:p-8"
         >
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-px animate-scanline bg-gradient-to-r from-transparent via-cyan to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px animate-scanline bg-gradient-to-r from-transparent via-red to-transparent" />
 
           <div className="mb-6 flex items-center justify-between">
             <span className="font-mono text-[11px] tracking-[0.2em] text-white/50">ATHLETE · A. NOVAK · SESSION 04</span>
-            <span className="flex items-center gap-2 font-mono text-[11px] text-cyan">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-cyan" /> RECORDING
+            <span className="flex items-center gap-2 font-mono text-[11px] text-red">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-red" /> RECORDING
             </span>
           </div>
 
@@ -88,7 +88,7 @@ export default function Dashboard() {
                   <LiveValue base={parseFloat(m.v)} decimals={(m.v.split(".")[1] || "").length} />
                   <span className="ml-1 text-sm font-normal text-white/40">{m.u}</span>
                 </p>
-                <p className="mt-1 font-mono text-[11px] text-cyan">▲ {m.d}</p>
+                <p className="mt-1 font-mono text-[11px] text-red">▲ {m.d}</p>
               </div>
             ))}
           </div>
@@ -96,7 +96,7 @@ export default function Dashboard() {
           <div className="mt-6 grid gap-4 lg:grid-cols-[2fr_1fr]">
             <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
               <div className="mb-3 flex items-center justify-between font-mono text-[11px] text-white/50">
-                <span>VELOCITY CURVE</span><span className="text-cyan">m/s</span>
+                <span>VELOCITY CURVE</span><span className="text-red">m/s</span>
               </div>
               <VelocityCurve />
             </div>
@@ -112,7 +112,7 @@ export default function Dashboard() {
                   </div>
                   <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/5">
                     <motion.div
-                      className="h-full rounded-full bg-gradient-to-r from-electric to-cyan"
+                      className="h-full rounded-full bg-gradient-to-r from-red-deep to-red-bright"
                       initial={{ width: 0 }}
                       whileInView={{ width: `${s.pct}%` }}
                       viewport={{ once: true }}
@@ -121,7 +121,7 @@ export default function Dashboard() {
                   </div>
                 </div>
               ))}
-              <p className="mt-2 font-mono text-[11px] text-cyan">SESSION REPORT · READY</p>
+              <p className="mt-2 font-mono text-[11px] text-red">SESSION REPORT · READY</p>
             </div>
           </div>
         </motion.div>

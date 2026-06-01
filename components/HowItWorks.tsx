@@ -14,10 +14,10 @@ function Step({ step, index, total }: { step: (typeof WORK_STEPS)[number]; index
   return (
     <motion.div ref={ref} style={{ opacity, x, scale }} className="relative grid grid-cols-[auto_1fr] gap-6 py-10">
       <div className="flex flex-col items-center">
-        <div className="grid h-12 w-12 place-items-center rounded-full border border-cyan/40 bg-black font-display font-bold text-cyan shadow-glow">
+        <div className="grid h-12 w-12 place-items-center rounded-full border border-red/40 bg-black font-display font-bold text-red shadow-glow">
           {step.no}
         </div>
-        {index < total - 1 && <div className="mt-2 w-px flex-1 bg-gradient-to-b from-cyan/50 to-transparent" />}
+        {index < total - 1 && <div className="mt-2 w-px flex-1 bg-gradient-to-b from-red/50 to-transparent" />}
       </div>
       <div className="pb-4">
         <h3 className="font-display text-2xl font-semibold sm:text-3xl">{step.title}</h3>
@@ -41,21 +41,22 @@ export default function HowItWorks() {
             transition={{ duration: 0.8 }}
             className="glass relative flex h-full min-h-[360px] flex-col justify-between overflow-hidden rounded-3xl p-8"
           >
-            <div className="grid-floor pointer-events-none absolute inset-0 opacity-20" />
-            {/*
-              ASSET SLOT — process loop video. Drop /public/video/how-it-works.webm
-              and replace the abstract pulse block below with a <video> element.
-            */}
+            {/* Real training footage */}
+            <video
+              className="absolute inset-0 h-full w-full object-cover opacity-45"
+              autoPlay
+              muted
+              loop
+              playsInline
+              src="/video/hero.mp4"
+            />
+            <div className="lab-grid pointer-events-none absolute inset-0 opacity-20" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
             <div className="relative">
-              <p className="font-mono text-xs tracking-[0.3em] text-cyan/80">SYSTEM SEQUENCE</p>
+              <p className="font-mono text-xs tracking-[0.3em] text-red/80">SYSTEM SEQUENCE</p>
               <h3 className="mt-3 font-display text-3xl font-bold leading-tight">From connection to calibrated performance.</h3>
             </div>
-            <div className="relative mx-auto my-8 grid place-items-center">
-              <div className="absolute h-40 w-40 animate-ping rounded-full border border-cyan/20" />
-              <div className="absolute h-28 w-28 rounded-full border border-cyan/30" />
-              <div className="h-16 w-16 rounded-full bg-gradient-to-br from-electric to-cyan shadow-glow" />
-            </div>
-            <p className="relative font-mono text-[11px] tracking-[0.2em] text-white/50">
+            <p className="relative mt-auto font-mono text-[11px] tracking-[0.2em] text-white/60">
               AI CALIBRATION · TELEMETRY · ADAPTIVE LOAD
             </p>
           </motion.div>
@@ -63,7 +64,7 @@ export default function HowItWorks() {
 
         {/* Steps */}
         <div>
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-cyan/80">How T-APEX Works</p>
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-red/80">How T-APEX Works</p>
           <h2 className="mt-4 font-display text-4xl font-bold leading-tight sm:text-5xl">
             Five steps. One intelligent loop.
           </h2>

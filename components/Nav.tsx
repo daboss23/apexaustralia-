@@ -20,7 +20,7 @@ export default function Nav() {
   return (
     <>
       <motion.span
-        className="fixed left-0 top-0 z-[120] h-0.5 w-full origin-left bg-gradient-to-r from-electric via-cyan to-electric"
+        className="fixed left-0 top-0 z-[120] h-0.5 w-full origin-left bg-gradient-to-r from-red-deep via-red to-red-bright"
         style={{ scaleX: progress }}
       />
       <header
@@ -29,14 +29,14 @@ export default function Nav() {
         }`}
       >
         <a href="#top" className="font-display text-lg font-bold tracking-[0.18em]">
-          T<span className="text-cyan">·</span>APEX<span className="ml-2 text-[10px] font-medium tracking-[0.34em] text-cyan/70">AUSTRALIA</span>
+          T<span className="text-red">·</span>APEX<span className="ml-2 text-[10px] font-medium tracking-[0.34em] text-red/70">AUSTRALIA</span>
         </a>
 
         <nav className="hidden items-center gap-8 md:flex">
           {NAV_LINKS.map((l) => (
             <a key={l.href} href={l.href} className="group relative font-mono text-xs uppercase tracking-[0.18em] text-white/60 transition-colors hover:text-white">
               {l.label}
-              <span className="absolute -bottom-1 left-0 h-px w-0 bg-cyan transition-all duration-300 group-hover:w-full" />
+              <span className="absolute -bottom-1 left-0 h-px w-0 bg-red transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
         </nav>
@@ -44,7 +44,7 @@ export default function Nav() {
         <div className="flex items-center gap-3">
           <a
             href="#contact"
-            className="rounded-full bg-gradient-to-r from-electric to-cyan px-5 py-2 text-xs font-semibold text-black shadow-electric transition-transform hover:scale-105"
+            className="rounded-full bg-gradient-to-r from-red-deep to-red-bright px-5 py-2 text-xs font-semibold text-black shadow-electric transition-transform hover:scale-105"
           >
             Book Demo
           </a>

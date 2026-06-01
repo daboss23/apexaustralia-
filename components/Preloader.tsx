@@ -35,12 +35,12 @@ export default function Preloader() {
             animate={{ opacity: 1, y: 0 }}
             className="font-display text-2xl font-bold tracking-[0.3em] text-white"
           >
-            T<span className="text-cyan">·</span>APEX
+            T<span className="text-red">·</span>APEX
           </motion.div>
           <div className="mt-6 h-px w-56 overflow-hidden bg-white/10">
-            <motion.div className="h-full bg-gradient-to-r from-electric to-cyan" style={{ width: `${pct}%` }} />
+            <motion.div className="h-full bg-gradient-to-r from-red-deep to-red-bright" style={{ width: `${pct}%` }} />
           </div>
-          <div className="mt-3 font-mono text-[11px] tracking-[0.3em] text-cyan/80">
+          <div className="mt-3 font-mono text-[11px] tracking-[0.3em] text-red/80">
             INITIALISING SYSTEMS · {pct}%
           </div>
         </motion.div>

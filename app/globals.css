@@ -28,27 +28,34 @@ body {
 @layer utilities {
   .text-balance { text-wrap: balance; }
   .glass {
-    background: rgba(18, 23, 29, 0.55);
+    background: rgba(18, 19, 23, 0.55);
     backdrop-filter: blur(18px) saturate(140%);
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
   .glass-strong {
-    background: rgba(10, 12, 16, 0.7);
+    background: rgba(8, 9, 11, 0.72);
     backdrop-filter: blur(26px) saturate(150%);
-    border: 1px solid rgba(34, 211, 238, 0.14);
+    border: 1px solid rgba(226, 32, 32, 0.16);
   }
   .grid-floor {
     background-image:
-      linear-gradient(rgba(34,211,238,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(34,211,238,0.06) 1px, transparent 1px);
+      linear-gradient(rgba(226,32,32,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(226,32,32,0.05) 1px, transparent 1px);
     background-size: 60px 60px;
   }
-  .text-glow { text-shadow: 0 0 24px rgba(34, 211, 238, 0.45); }
+  .text-glow { text-shadow: 0 0 26px rgba(226, 32, 32, 0.5); }
   .electric-grad {
-    background: linear-gradient(120deg, #fff 0%, #9fdcff 45%, #22d3ee 100%);
+    background: linear-gradient(120deg, #ffffff 0%, #ff8a85 55%, #e22020 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+  /* faint sensor/measurement grid used in lab backdrops */
+  .lab-grid {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 }
 
