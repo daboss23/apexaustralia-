@@ -6,45 +6,45 @@ import { motion, useInView } from 'framer-motion'
 const BENEFITS = [
   {
     num: '01',
-    title: 'Precision That Removes Guesswork',
-    body: 'Every force application, every velocity rep, every power output — quantified at 200Hz. Coaches program from fact, not intuition. Athletes train to objective targets, not subjective effort.',
+    title: 'Precision Resistance Application',
+    body: 'Apply resistance or assistance with greater control across acceleration, deceleration, change of direction, and movement-specific performance work.',
     accent: '#e0231f',
-    tag: 'DATA PRECISION',
+    tag: 'PRECISION',
   },
   {
     num: '02',
-    title: 'Measurable Progression, Session by Session',
-    body: 'T-Apex records every session. Progression is not a feeling — it is a number. Plateaus are visible before they cost you a competition. Load, force, power, and velocity trends are tracked automatically.',
+    title: 'More Measurable Performance',
+    body: 'Move beyond guesswork with a system that supports clearer progression, better monitoring, and more informed coaching decisions.',
     accent: '#e0231f',
-    tag: 'ATHLETE DEVELOPMENT',
+    tag: 'MEASURABLE',
   },
   {
     num: '03',
-    title: 'Coaching Decisions Built on Real Data',
-    body: 'Stop choosing loads based on last week\'s programme. See how the athlete responded to yesterday\'s session. Make today\'s decision with yesterday\'s data. That is how elite programs pull ahead.',
-    accent: '#00A3FF',
-    tag: 'COACHING INTELLIGENCE',
-  },
-  {
-    num: '04',
-    title: 'Athlete Engagement Through Visibility',
-    body: 'When athletes can see their own performance data in real time, engagement lifts. Accountability becomes inherent. The athlete is no longer working in the dark — they are competing against their own numbers.',
+    title: 'More Engaging Athlete Training',
+    body: 'Create a training environment that feels more dynamic, more responsive, and more aligned with the demands of modern performance development.',
     accent: '#00A3FF',
     tag: 'ENGAGEMENT',
   },
   {
-    num: '05',
-    title: 'Performance and Rehab in One System',
-    body: 'The same platform that drives elite performance also provides graduated, measurable loading for injured athletes. Physios specify exact force targets. Loads are verified. Guesswork in return-to-play is eliminated.',
-    accent: '#e0231f',
+    num: '04',
+    title: 'Performance And Return-To-Play Utility',
+    body: 'Use T-Apex across athlete development, rehabilitation, reconditioning, and return-to-play progressions with more control and flexibility.',
+    accent: '#00A3FF',
     tag: 'VERSATILITY',
   },
   {
+    num: '05',
+    title: 'Better Coaching Feedback',
+    body: 'Give coaches a better way to observe, adjust, and guide movement in real time rather than relying on broad assumptions.',
+    accent: '#e0231f',
+    tag: 'FEEDBACK',
+  },
+  {
     num: '06',
-    title: 'Technology That Works Across Every Code',
-    body: 'AFL, NRL, Rugby Union, Football, Basketball, Athletics, Olympic programs, S&C. T-Apex is not sport-specific hardware — it is a universal performance measurement and resistance platform.',
+    title: 'Serious Operator Advantage',
+    body: 'Stand out as a facility, performance centre, or coaching environment using technology built for serious application — not commodity training.',
     accent: '#7B2FBE',
-    tag: 'MULTI-SPORT',
+    tag: 'ADVANTAGE',
   },
 ]
 
@@ -74,7 +74,7 @@ export default function BenefitsSection() {
         <div ref={titleRef} className="flex items-center gap-3 mb-8">
           <div className="w-8 h-px bg-apex-red" />
           <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-            04 — Why It Matters
+            04 — Key Benefits
           </span>
         </div>
 
@@ -99,13 +99,13 @@ export default function BenefitsSection() {
           >
             <p className="text-apex-grey font-body leading-relaxed mb-6"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
-              T-Apex does not add more volume to your training programme.
-              It adds precision, accountability, and measurability to everything you already do.
+              T-Apex does not add more volume to your training programme. It adds precision,
+              responsiveness, and measurability to everything you already do.
             </p>
             <p className="text-apex-grey font-body leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
-              The result: better athlete outcomes, better coaching decisions, and a facility
-              that operates with a clear competitive advantage over those still training without data.
+              The result: better athlete outcomes, better coaching decisions, and a facility that
+              operates with a clear advantage over environments still training without it.
             </p>
           </motion.div>
         </div>

@@ -5,22 +5,19 @@ import { motion, useInView } from 'framer-motion'
 
 const SOLUTION_PILLARS = [
   {
-    label: 'Intelligent Resistance',
-    body: 'Electromagnetic drive that adapts in real time to every athlete\'s velocity, force output, and intent. Not a fixed load — a responsive system.',
-    stat: '450N',
-    statLabel: 'Peak Resistance',
+    label: 'Precision Loading',
+    tag: 'Control',
+    body: 'Apply resistance and assistance with greater control across acceleration, deceleration, change of direction, and movement-specific performance work.',
   },
   {
-    label: 'Real-Time Telemetry',
-    body: '200Hz multi-axis sensor array captures force, speed, power, and acceleration simultaneously. Every rep, every sprint — quantified.',
-    stat: '200Hz',
-    statLabel: 'Data Capture Rate',
+    label: 'Adaptive Response',
+    tag: 'Intelligence',
+    body: 'Resistance designed to respond to athlete movement and intent — a more responsive loading environment than a fixed, preset stimulus.',
   },
   {
-    label: 'AI Adaptation Engine',
-    body: 'Machine learning trained on elite athlete datasets continuously optimises every session protocol. The system learns as your athletes improve.',
-    stat: '<5ms',
-    statLabel: 'Response Latency',
+    label: 'Multi-Phase Utility',
+    tag: 'Versatility',
+    body: 'One system across speed development, force production, control work, progressive reconditioning, and controlled return-to-play.',
   },
 ]
 
@@ -62,55 +59,74 @@ export default function SolutionSection() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             >
-              MEET THE<br />
-              <span className="text-apex-red">SMARTER TOOL.</span>
+              MEET THE SMARTER<br />
+              <span className="text-apex-red">RESISTANCE SYSTEM.</span>
             </motion.h2>
 
             <motion.p
-              className="text-apex-grey font-body mb-8 leading-relaxed"
+              className="text-apex-grey font-body mb-6 leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
               initial={{ opacity: 0, y: 18 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.15 }}
             >
-              T-Apex is an intelligent resistance training device built for serious performance
-              environments. It replaces guesswork with precision — delivering real-time biomechanical
-              data, adaptive electromagnetic resistance, and AI-driven training optimisation in one
-              professional-grade platform.
+              T-Apex is an intelligent resistance training device built to challenge movement with
+              greater precision, responsiveness, and performance intent.
             </motion.p>
 
             <motion.p
-              className="text-apex-grey font-body mb-10 leading-relaxed"
+              className="text-apex-grey font-body mb-6 leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
               initial={{ opacity: 0, y: 16 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.25 }}
             >
-              T-Apex does not require a lab. It rolls onto any track, court, or performance floor and
-              begins measuring from the first rep. Coaches see the data in real time. Athletes feel
-              the difference within sessions. Programs improve because the feedback loop finally closes.
+              It gives coaches and performance operators a more advanced way to load, guide, and
+              develop athletes across multiple phases of training — from acceleration and speed
+              development through to controlled return-to-play and progressive reconditioning.
             </motion.p>
 
-            {/* Outcome statement */}
             <motion.div
-              className="border-l-4 border-apex-red pl-6 py-2"
+              className="border-l-4 border-apex-red pl-6 py-2 mb-8"
               initial={{ opacity: 0, x: -14 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              transition={{ duration: 0.6, delay: 0.35 }}
             >
               <p
                 className="font-display font-black text-apex-white leading-tight"
-                style={{ fontSize: 'clamp(1rem, 1.8vw, 1.3rem)' }}
+                style={{ fontSize: 'clamp(1.05rem, 1.9vw, 1.4rem)' }}
               >
-                This is not another piece of gym equipment.
-                It is the measurement and adaptation engine that makes every other part of your
-                training system more intelligent.
+                This is not just another resistance tool. It is a smarter training system for
+                environments that demand more.
+              </p>
+            </motion.div>
+
+            {/* ARI mechanism support line */}
+            <motion.div
+              className="relative p-6"
+              style={{
+                background: 'rgba(20,20,24,0.7)',
+                border: '1px solid rgba(224,35,31,0.22)',
+                borderLeft: '3px solid #e0231f',
+              }}
+              initial={{ opacity: 0, y: 14 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.45 }}
+            >
+              <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-3" style={{ color: 'rgba(224,35,31,0.85)' }}>
+                The Core Mechanism
+              </div>
+              <p className="text-apex-grey font-body leading-relaxed" style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
+                At the core of T-Apex is{' '}
+                <span className="text-apex-white font-display font-bold">Adaptive Resistance Intelligence</span>{' '}
+                — a broader performance approach designed to make resistance training more precise,
+                more adaptable, and more useful inside serious coaching environments.
               </p>
             </motion.div>
           </div>
 
           {/* Right — three pillars */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 lg:pt-4">
             {SOLUTION_PILLARS.map((pillar, i) => (
               <SolutionPillar key={pillar.label} pillar={pillar} index={i} parentInView={inView} />
             ))}
@@ -138,7 +154,6 @@ function SolutionPillar({
       animate={parentInView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.65, delay: 0.2 + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
     >
-      {/* Hover glow */}
       <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 100%, rgba(224,35,31,0.06), transparent)' }}
@@ -146,16 +161,15 @@ function SolutionPillar({
 
       <div className="flex items-start justify-between gap-4 mb-3">
         <h3 className="font-display font-black text-apex-white tracking-wide"
-          style={{ fontSize: 'clamp(1rem, 1.6vw, 1.2rem)' }}>
+          style={{ fontSize: 'clamp(1.05rem, 1.7vw, 1.3rem)' }}>
           {pillar.label}
         </h3>
-        <div className="text-right flex-shrink-0">
-          <div className="font-mono font-bold text-apex-red leading-none"
-            style={{ fontSize: 'clamp(1.1rem, 1.8vw, 1.4rem)' }}>
-            {pillar.stat}
-          </div>
-          <div className="text-[9px] font-mono text-apex-grey-dim tracking-wide mt-0.5">{pillar.statLabel}</div>
-        </div>
+        <span
+          className="flex-shrink-0 text-[8px] font-mono font-semibold tracking-[0.18em] uppercase px-2 py-1 border"
+          style={{ color: '#e0231f', borderColor: 'rgba(224,35,31,0.35)', background: 'rgba(224,35,31,0.08)' }}
+        >
+          {pillar.tag}
+        </span>
       </div>
 
       <p className="text-apex-grey font-body text-sm leading-relaxed">{pillar.body}</p>

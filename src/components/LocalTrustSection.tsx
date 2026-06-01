@@ -3,28 +3,38 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 
-const PROOF_STATS = [
-  { value: '6+', label: 'Professional Codes', sub: 'AFL, NRL, Rugby Union, Football, Basketball, Athletics' },
-  { value: '200Hz', label: 'Telemetry Rate', sub: 'Continuous biomechanical data capture' },
-  { value: '450N', label: 'Peak Resistance', sub: 'Electromagnetic, adaptive, programmable' },
-  { value: '<5ms', label: 'System Response', sub: 'Real-time adaptive resistance engine' },
+const CREDENTIALS = [
+  'Olympic-level sprint coach',
+  'Coached Joshua Ross — 7× Australian sprint champion',
+  'Experience working with NFL athletes',
+  'Reputation built on serious athlete development, speed, and performance systems',
 ]
 
-const TRUST_POINTS = [
-  'T-Apex Australia is operated by performance practitioners with direct, hands-on experience running elite training environments — not technology salespeople.',
-  'The decision to bring T-Apex to Australia came from first-hand exposure to the results it produces in international elite performance programs.',
-  'Every T-Apex enquiry in Australia is handled personally — you will speak to someone who understands your training environment, not a call centre.',
-  'T-Apex Australia is committed to long-term partnerships with the facilities and programs it works with. This is not a transactional equipment sale.',
+const SUPPORTING_POINTS = [
+  {
+    title: 'Real performance and coaching credibility',
+    body: 'Grounded in genuine high-performance coaching experience — not a product catalogue.',
+  },
+  {
+    title: 'Serious Australian operator leadership',
+    body: 'Led locally by someone who has worked at the sharp end of elite sprint performance.',
+  },
+  {
+    title: 'Built for environments that care',
+    body: 'For operators who value better movement and better decisions, not novelty.',
+  },
+  {
+    title: 'Chosen for practical elite application',
+    body: 'Technology selected for real-world performance use — not gimmicks.',
+  },
 ]
 
 export default function LocalTrustSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
-  const statsRef = useRef<HTMLDivElement>(null)
-  const statsInView = useInView(statsRef, { once: true, margin: '-5% 0px' })
 
   return (
-    <section id="about" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
+    <section id="about" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
@@ -33,10 +43,8 @@ export default function LocalTrustSection() {
 
       {/* Gold ambient — trust signal */}
       <div
-        className="absolute top-0 right-0 w-[40vw] h-[40vh] pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse at top right, rgba(180,140,60,0.06), transparent 60%)',
-        }}
+        className="absolute top-0 right-0 w-[45vw] h-[45vh] pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at top right, rgba(180,140,60,0.07), transparent 60%)' }}
         aria-hidden="true"
       />
 
@@ -49,20 +57,20 @@ export default function LocalTrustSection() {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
-          {/* Left: Copy */}
-          <div>
-            <motion.h2
-              className="font-display font-black text-apex-white leading-[0.88] mb-6"
-              style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            >
-              BROUGHT TO AUSTRALIA<br />
-              <span className="text-apex-red">BY PEOPLE WHO USE IT.</span>
-            </motion.h2>
+        {/* Headline */}
+        <motion.h2
+          className="font-display font-black text-apex-white leading-[0.9] mb-12 max-w-4xl"
+          style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        >
+          WHY T-APEX<br /><span className="text-apex-red">AUSTRALIA</span>
+        </motion.h2>
 
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
+          {/* Left: narrative */}
+          <div>
             <motion.p
               className="text-apex-grey font-body leading-relaxed mb-6"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}
@@ -70,127 +78,138 @@ export default function LocalTrustSection() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.15 }}
             >
-              T-Apex Australia was not assembled by a distribution company looking for the next
-              product to move. It was built by a performance practitioner who saw what this
-              technology did to training outcomes in international elite environments and made a
-              deliberate decision to bring it to the Australian market.
+              T-Apex Australia exists to bring advanced resistance training technology into serious
+              performance environments that value precision, development, and long-term athlete outcomes.
             </motion.p>
 
             <motion.p
-              className="text-apex-grey font-body leading-relaxed mb-8"
+              className="text-apex-grey font-body leading-relaxed mb-6"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}
               initial={{ opacity: 0, y: 16 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.25 }}
             >
-              The person behind T-Apex Australia understands what coaches need, what athletes
-              expect, and what facility operators require from a technology partner. That understanding
-              shapes every part of how T-Apex is sold, deployed, and supported in this market.
+              Led by <span className="text-apex-white font-semibold">Piero Sacchetta</span>, the
+              Australian side of T-Apex is grounded in real high-performance experience — not just
+              product distribution.
             </motion.p>
 
-            {/* Founder signal */}
-            <motion.div
-              className="border border-apex-line p-6 relative"
-              style={{
-                borderRadius: 0,
-                borderTop: '2px solid rgba(180,140,60,0.7)',
-                background: 'rgba(180,140,60,0.04)',
-              }}
+            <motion.p
+              className="text-apex-white font-display font-bold leading-snug mb-8"
+              style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.3rem)' }}
               initial={{ opacity: 0, y: 14 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              transition={{ duration: 0.6, delay: 0.35 }}
             >
-              <div className="text-[9px] font-mono tracking-[0.25em] uppercase mb-3"
-                style={{ color: 'rgba(180,140,60,0.8)' }}>
-                Why T-Apex Australia Exists
-              </div>
-              <p
-                className="text-apex-white font-body leading-relaxed italic"
-                style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}
-              >
-                &ldquo;I have worked in performance environments that operated without meaningful data.
-                I have seen what happens when athletes and coaches finally have access to objective measurement.
-                The difference is not marginal. T-Apex Australia exists because Australian performance
-                programs deserve the same tool that is already changing outcomes internationally.&rdquo;
-              </p>
-              <div className="mt-4 flex items-center gap-3">
-                <div className="w-6 h-px" style={{ background: 'rgba(180,140,60,0.6)' }} />
-                <span className="text-apex-grey-dim font-mono text-[11px] tracking-wide">
-                  Piero — Founder, T-Apex Australia
-                </span>
-              </div>
-            </motion.div>
+              That matters.
+            </motion.p>
+
+            <motion.p
+              className="text-apex-grey font-body leading-relaxed"
+              style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}
+              initial={{ opacity: 0, y: 14 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.42 }}
+            >
+              Because T-Apex Australia is not being brought to market by people chasing hype or
+              novelty. It is being introduced by operators who understand what high-performance
+              environments actually demand, what separates impressive-looking equipment from
+              genuinely useful systems, and why better coaching tools create better outcomes over time.
+            </motion.p>
           </div>
 
-          {/* Right: Trust points */}
-          <div className="flex flex-col gap-5 justify-center">
-            {TRUST_POINTS.map((point, i) => (
-              <TrustPoint key={i} text={point} index={i} parentInView={inView} />
-            ))}
-          </div>
+          {/* Right: Founder credential card */}
+          <motion.div
+            className="relative p-8"
+            style={{
+              borderRadius: 0,
+              borderTop: '2px solid rgba(180,140,60,0.8)',
+              border: '1px solid rgba(180,140,60,0.25)',
+              background: 'rgba(180,140,60,0.04)',
+            }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {/* Corner accent */}
+            <div className="absolute top-0 right-0 opacity-25 pointer-events-none">
+              <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+                <path d="M44 44V0H0" stroke="rgba(180,140,60,1)" strokeWidth="1" />
+              </svg>
+            </div>
+
+            <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-2" style={{ color: 'rgba(180,140,60,0.85)' }}>
+              Australian Leadership
+            </div>
+            <h3 className="font-display font-black text-apex-white leading-none mb-1"
+              style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)' }}>
+              Piero Sacchetta
+            </h3>
+            <div className="text-apex-grey font-mono text-[11px] tracking-[0.12em] uppercase mb-6">
+              Founder — T-Apex Australia
+            </div>
+
+            <div className="flex flex-col gap-3.5">
+              {CREDENTIALS.map((cred, i) => (
+                <motion.div
+                  key={cred}
+                  className="flex items-start gap-3"
+                  initial={{ opacity: 0, x: 14 }}
+                  animate={inView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
+                >
+                  <div
+                    className="flex-shrink-0 w-5 h-5 mt-0.5 border flex items-center justify-center"
+                    style={{ borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.1)' }}
+                  >
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="rgba(180,140,60,1)">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                  </div>
+                  <span className="text-apex-grey font-body text-sm leading-snug">{cred}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
 
-        {/* Stats strip */}
-        <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-4 border border-apex-line/50 divide-x divide-apex-line/40">
-          {PROOF_STATS.map(({ value, label, sub }, i) => (
-            <motion.div
-              key={label}
-              className="p-6 text-center"
-              initial={{ opacity: 0, y: 14 }}
-              animate={statsInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-            >
-              <div
-                className="font-display font-black text-apex-white leading-none mb-1"
-                style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)' }}
-              >
-                {value}
-              </div>
-              <div className="text-[10px] font-display font-semibold text-apex-white tracking-wider uppercase mb-1">{label}</div>
-              <div className="text-[10px] font-body text-apex-grey-dim">{sub}</div>
-            </motion.div>
+        {/* Supporting points strip */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {SUPPORTING_POINTS.map((point, i) => (
+            <SupportPoint key={point.title} point={point} index={i} parentInView={inView} />
           ))}
         </div>
-
-        {/* Testimonial */}
-        <motion.div
-          className="mt-12 border-l-4 border-apex-red pl-8 py-3 max-w-3xl"
-          initial={{ opacity: 0, x: -14 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.7 }}
-        >
-          <p
-            className="text-apex-white font-body leading-relaxed italic mb-4"
-            style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
-          >
-            &ldquo;The data doesn&apos;t lie. T-Apex has changed how we approach performance
-            training at the elite level. Every coaching decision is now built on something measurable.&rdquo;
-          </p>
-          <div className="text-apex-grey-dim font-mono text-[11px] tracking-wide">
-            — Head of Athletic Performance, AFL Program
-          </div>
-        </motion.div>
       </div>
     </section>
   )
 }
 
-function TrustPoint({ text, index, parentInView }: { text: string; index: number; parentInView: boolean }) {
+function SupportPoint({
+  point,
+  index,
+  parentInView,
+}: {
+  point: typeof SUPPORTING_POINTS[0]
+  index: number
+  parentInView: boolean
+}) {
   return (
     <motion.div
-      className="flex items-start gap-4"
-      initial={{ opacity: 0, x: 18 }}
-      animate={parentInView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.6, delay: 0.3 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+      className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-red/30 transition-colors duration-300 cursor-default"
+      style={{ borderRadius: 0, borderTop: '2px solid rgba(224,35,31,0.5)' }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={parentInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.55, delay: 0.5 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
     >
       <div
-        className="flex-shrink-0 w-5 h-5 mt-0.5 border border-apex-red/40 bg-apex-red/10 flex items-center justify-center"
-      >
-        <svg className="w-3 h-3 text-apex-red" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-        </svg>
-      </div>
-      <p className="text-apex-grey font-body text-sm leading-relaxed">{text}</p>
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(224,35,31,0.05), transparent)' }}
+      />
+      <h4 className="font-display font-black text-apex-white mb-2 leading-tight"
+        style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
+        {point.title}
+      </h4>
+      <p className="text-apex-grey font-body text-[12px] leading-relaxed">{point.body}</p>
     </motion.div>
   )
 }

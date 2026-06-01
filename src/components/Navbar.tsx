@@ -6,10 +6,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 const NAV_LINKS = [
-  { label: 'The Unit', href: '#product' },
-  { label: 'How It Works', href: '#technology' },
-  { label: 'Who It\'s For', href: '#who' },
-  { label: 'Sports', href: '#sports' },
+  { label: 'How It Works', href: '#how' },
+  { label: 'The Machine', href: '#product' },
+  { label: 'Every Code', href: '#sports' },
+  { label: 'vs 1080', href: '#vs-1080' },
   { label: 'FAQ', href: '#faq' },
 ]
 

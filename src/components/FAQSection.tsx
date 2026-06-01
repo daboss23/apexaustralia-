@@ -5,36 +5,32 @@ import { motion, useInView, AnimatePresence } from 'framer-motion'
 
 const FAQS = [
   {
-    q: 'What exactly is T-Apex?',
-    a: 'T-Apex is an intelligent resistance training device that combines electromagnetic resistance, a 200Hz multi-axis sensor array, and an adaptive AI engine into one professional-grade unit. It captures force, velocity, power, and acceleration in real time — providing coaches and athletes with biomechanical data that conventional equipment cannot produce.',
+    q: 'What is T-Apex?',
+    a: 'T-Apex is an intelligent resistance training device built for serious performance, coaching, and rehabilitation environments.',
   },
   {
-    q: 'Who is T-Apex designed for?',
-    a: 'T-Apex is built for any performance environment that takes measurable outcomes seriously. This includes elite athletes, coaches and S&C professionals, performance centres, rehabilitation and return-to-play programs, schools and development academies, and private facility operators. If you measure athletic performance, T-Apex belongs in your programme.',
+    q: 'Who is T-Apex for?',
+    a: 'T-Apex is suited to athletes, coaches, performance centres, rehabilitation environments, academies, and operators who want more precision in how resistance is applied.',
   },
   {
-    q: 'How is T-Apex different from a cable machine or conventional resistance trainer?',
-    a: 'Conventional resistance machines apply a fixed load with no awareness of the athlete using them. T-Apex uses electromagnetic resistance that adapts in real time to the athlete\'s velocity, force output, and intent — at sub-5ms response speed. It also captures 200Hz biomechanical data throughout every movement, something no conventional equipment can do. The result is a training system that is both smarter and more measurable.',
+    q: 'How is T-Apex different from traditional resistance systems?',
+    a: 'T-Apex creates a more responsive, measurable, and adaptable training environment, helping support better coaching decisions, stronger athlete engagement, and more purposeful progression.',
   },
   {
-    q: 'Is T-Apex suitable for rehabilitation and return-to-play?',
-    a: 'Yes — and this is one of T-Apex\'s most commercially important applications. In rehabilitation, load verification is critical. T-Apex allows physios to prescribe exact force targets and then verify that those loads are actually applied. This eliminates the guesswork that causes re-injury. The same platform that drives elite sprint performance can also manage graduated, measured return-to-play loading for injured athletes.',
+    q: 'How is T-Apex different from sprint-focused resistance systems?',
+    a: 'T-Apex is built around Adaptive Resistance Intelligence, giving coaches and operators a broader performance system that extends beyond narrow straight-line sprint application.',
   },
   {
-    q: 'Can I see T-Apex in action before committing?',
-    a: 'Yes. T-Apex Australia offers demonstrations to serious operators and programs. A demo is the best way to understand what the technology does and how it fits your specific environment. Book a session via the form on this page and a member of the T-Apex Australia team will make contact to arrange it.',
+    q: 'Can T-Apex be used for rehabilitation and return-to-play?',
+    a: 'Yes. T-Apex can support controlled loading and more precise progression strategies, making it valuable in both performance and rehabilitation settings.',
   },
   {
-    q: 'What sports and movements does T-Apex support?',
-    a: 'T-Apex is not sport-specific hardware. It is a universal performance measurement and resistance platform that has been applied across AFL, NRL, Rugby Union, Football/Soccer, Basketball, Athletics, Olympic development programs, and general strength and conditioning. Sprint training, acceleration, strength output, and rehabilitation loading are all within its operational scope.',
+    q: 'Can I see T-Apex in action before making a decision?',
+    a: 'Yes. You can book a demo or enquire to learn more about how T-Apex may fit your environment.',
   },
   {
-    q: 'How does the coaching dashboard work?',
-    a: 'T-Apex transmits real-time telemetry to a coaching display — coaches can see force output, velocity, power, and acceleration as each rep is performed. Session data is recorded automatically and available for post-session review, trending, and programming decisions. Athletes can also access their own performance data, which significantly improves accountability and engagement.',
-  },
-  {
-    q: 'How do I enquire about bringing T-Apex to my facility?',
-    a: 'Use the enquiry form or booking links on this page. T-Apex Australia handles every enquiry personally — you will speak directly with someone who understands performance environments, not a generic sales team. Initial conversations focus on understanding your specific environment, training objectives, and commercial requirements before any pricing discussion.',
+    q: 'Is T-Apex available in Australia?',
+    a: 'Yes. T-Apex Australia is the local contact point for demos, enquiries, and opportunities within the Australian market.',
   },
 ]
 
@@ -56,7 +52,7 @@ export default function FAQSection() {
         <div ref={titleRef} className="flex items-center gap-3 mb-8">
           <div className="w-8 h-px bg-apex-red" />
           <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-            11 — Questions & Answers
+            10 — Frequently Asked Questions
           </span>
         </div>
 
@@ -72,14 +68,14 @@ export default function FAQSection() {
               className="font-display font-black text-apex-white leading-[0.88] mb-6"
               style={{ fontSize: 'clamp(2.4rem, 5vw, 4.5rem)' }}
             >
-              QUESTIONS<br />
-              <span className="text-apex-red">ANSWERED.</span>
+              FREQUENTLY<br />
+              ASKED<br />
+              <span className="text-apex-red">QUESTIONS.</span>
             </h2>
             <p className="text-apex-grey font-body leading-relaxed mb-8"
               style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
-              If you do not find what you need here, reach out directly.
-              Every enquiry to T-Apex Australia is handled by someone with hands-on performance
-              experience — not a script.
+              If you do not find what you need here, reach out directly. Every enquiry to T-Apex
+              Australia is handled by someone with real performance experience.
             </p>
             <div className="flex flex-col gap-3">
               <button
@@ -95,7 +91,7 @@ export default function FAQSection() {
                 className="inline-flex items-center gap-2 border border-apex-line hover:border-apex-grey/40 text-apex-grey hover:text-apex-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
                 style={{ borderRadius: 0 }}
               >
-                Talk to the Team
+                Enquire Now
               </button>
             </div>
           </motion.div>

@@ -3,8 +3,8 @@ import Hero from '@/components/Hero'
 import ProblemSection from '@/components/ProblemSection'
 import SolutionSection from '@/components/SolutionSection'
 import BenefitsSection from '@/components/BenefitsSection'
-import TechnologySection from '@/components/TechnologySection'
-import WhoItsForSection from '@/components/WhoItsForSection'
+import HowItWorksSection from '@/components/TechnologySection'
+import ProductShowcase from '@/components/ProductShowcase'
 import SportsSection from '@/components/SportsSection'
 import TApexVs1080Section from '@/components/TApexVs1080Section'
 import LocalTrustSection from '@/components/LocalTrustSection'
@@ -19,34 +19,34 @@ export default function Home() {
       {/* 01 — HERO / BIG PROMISE */}
       <Hero />
 
-      {/* 02 — PROBLEM / PAIN OF THE CURRENT WAY */}
+      {/* 02 — PROBLEM / PAIN */}
       <ProblemSection />
 
-      {/* 03 — SOLUTION / WHAT T-APEX IS */}
+      {/* 03 — SOLUTION / PRODUCT INTRO */}
       <SolutionSection />
 
-      {/* 04 — KEY BENEFITS / VALUE STACK */}
+      {/* 04 — KEY BENEFITS */}
       <BenefitsSection />
 
       {/* 05 — HOW IT WORKS */}
-      <TechnologySection />
+      <HowItWorksSection />
 
-      {/* 06 — WHO IT'S FOR */}
-      <WhoItsForSection />
+      {/* 06 — PRODUCT / ENGINEERING */}
+      <ProductShowcase />
 
       {/* 07 — BUILT FOR EVERY CODE */}
       <SportsSection />
 
-      {/* 08 — T-APEX VS 1080 SPRINT / WHY IT'S DIFFERENT */}
+      {/* 08 — MORE THAN A SPRINT RESISTANCE TOOL (T-Apex vs 1080) */}
       <TApexVs1080Section />
 
-      {/* 09 — WHY T-APEX AUSTRALIA / LOCAL TRUST */}
+      {/* 09 — WHY T-APEX AUSTRALIA */}
       <LocalTrustSection />
 
-      {/* 10 — FAQ / OBJECTION HANDLING */}
+      {/* 10 — FAQ */}
       <FAQSection />
 
-      {/* 11 — FINAL CTA / CLOSE */}
+      {/* 11 — FINAL CTA */}
       <FinalCTA />
     </main>
   )

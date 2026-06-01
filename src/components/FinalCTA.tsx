@@ -88,56 +88,44 @@ export default function FinalCTA() {
           >
             <div className="w-8 h-px bg-apex-red" />
             <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-              12 — Take the Next Step
+              11 — Take the Next Step
             </span>
             <div className="w-8 h-px bg-apex-red" />
           </motion.div>
 
           {/* Main headline */}
-          <div className="overflow-hidden mb-4">
+          <div className="overflow-hidden mb-3">
             <motion.h2
-              className="font-display font-black text-apex-white leading-[0.85]"
-              style={{ fontSize: 'clamp(3rem, 9vw, 9rem)' }}
+              className="font-display font-black text-apex-white leading-[0.86]"
+              style={{ fontSize: 'clamp(2.2rem, 5.6vw, 5.6rem)' }}
               initial={{ y: 120, opacity: 0 }}
               animate={inView ? { y: 0, opacity: 1 } : {}}
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             >
-              BRING T-APEX
+              BRING T-APEX INTO YOUR
             </motion.h2>
           </div>
-          <div className="overflow-hidden mb-4">
+          <div className="overflow-hidden mb-10">
             <motion.h2
-              className="font-display font-black leading-[0.85]"
-              style={{ fontSize: 'clamp(3rem, 9vw, 9rem)', WebkitTextStroke: '2px #e0231f', WebkitTextFillColor: 'transparent' }}
+              className="font-display font-black leading-[0.86]"
+              style={{ fontSize: 'clamp(2.2rem, 5.6vw, 5.6rem)', WebkitTextStroke: '2px #e0231f', WebkitTextFillColor: 'transparent' }}
               initial={{ y: 120, opacity: 0 }}
               animate={inView ? { y: 0, opacity: 1 } : {}}
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
             >
-              TO YOUR FACILITY.
+              PERFORMANCE ENVIRONMENT.
             </motion.h2>
           </div>
 
           {/* Subtext */}
           <motion.p
-            className="text-apex-grey font-body max-w-2xl mx-auto mb-6 mt-8 leading-relaxed"
+            className="text-apex-grey font-body max-w-2xl mx-auto mb-12 leading-relaxed"
             style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.4 }}
           >
-            The next step is a conversation. Tell us about your training environment, your performance objectives, and what you need from a technology partner. We will show you exactly how T-Apex fits.
-          </motion.p>
-
-          {/* Urgency / commitment signal */}
-          <motion.p
-            className="font-display font-bold max-w-xl mx-auto mb-12 leading-tight"
-            style={{ fontSize: 'clamp(1rem, 1.8vw, 1.3rem)', color: 'rgba(244,244,246,0.75)' }}
-            initial={{ opacity: 0, y: 16 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.65, delay: 0.52 }}
-          >
-            T-Apex Australia is working with a select number of programs in the 2025–2026 period.{' '}
-            <span className="text-apex-red">Enquire now to secure your placement.</span>
+            If you are looking for a smarter way to train speed, force, movement quality, and progression inside a serious performance environment, T-Apex Australia is ready to help you explore what that can look like in practice.
           </motion.p>
 
           {/* CTA buttons */}
@@ -162,35 +150,9 @@ export default function FinalCTA() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
               </svg>
             </button>
-
-            <button className="group inline-flex items-center gap-3 text-apex-grey-dim hover:text-apex-grey font-display font-semibold px-4 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer"
-              style={{ fontSize: 'clamp(0.7rem, 0.9vw, 0.82rem)', borderRadius: 0 }}>
-              Talk to the Team
-              <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-              </svg>
-            </button>
           </motion.div>
 
-          {/* Micro social proof strip */}
-          <motion.div
-            className="flex flex-wrap items-center justify-center gap-6 mb-16 pb-2 border-t border-apex-line/30 pt-10"
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.7, delay: 0.85 }}
-          >
-            {[
-              { val: '6+', label: 'Professional Codes' },
-              { val: '200Hz', label: 'Data Capture' },
-              { val: '450N', label: 'Peak Resistance' },
-              { val: 'Real-Time', label: 'AI Adaptation' },
-            ].map(({ val, label }) => (
-              <div key={label} className="flex flex-col items-center gap-0.5">
-                <span className="font-mono font-bold text-apex-white text-sm">{val}</span>
-                <span className="font-body text-apex-grey-dim text-[9px] tracking-wide">{label}</span>
-              </div>
-            ))}
-          </motion.div>
+          <div className="mb-16" />
 
           {/* Logo + tagline */}
           <motion.div

@@ -477,7 +477,17 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 1.05 }}
           >
-            T-Apex Australia brings advanced resistance training technology to athletes, coaches, performance centres, and rehabilitation environments that want more than guesswork.
+            Built for serious performance environments that demand more speed, more force, more control, and far greater transfer than conventional resistance tools were ever designed to deliver.
+          </motion.p>
+
+          <motion.p
+            className="mt-4 text-apex-grey-dim font-body leading-[1.7]"
+            style={{ fontSize: 'clamp(0.82rem, 1.1vw, 0.94rem)' }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 1.18 }}
+          >
+            Built for coaches, athletes, performance centres, and return-to-play environments, T-Apex helps create more precise resistance, clearer feedback, and stronger transfer where it matters most.
           </motion.p>
 
           {/* CTAs */}
@@ -488,39 +498,35 @@ export default function Hero() {
             transition={{ duration: 0.65, delay: 1.28 }}
           >
             <button className="group inline-flex items-center gap-2.5 bg-apex-red hover:bg-apex-red-bright text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
-              Book Demo
+              Book a Demo
               <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
             </button>
 
             <button className="group inline-flex items-center gap-2.5 bg-transparent border border-apex-line hover:border-apex-grey-dim text-apex-grey hover:text-apex-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5" style={{ borderRadius: 0 }}>
-              Explore Technology
+              See T-Apex In Action
               <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
               </svg>
             </button>
           </motion.div>
 
-          {/* Technical specs row */}
+          {/* Supporting credibility points */}
           <motion.div
-            className="flex flex-wrap items-center gap-5 mt-14 pt-7 border-t border-apex-line/35"
+            className="flex flex-col gap-3 mt-12 pt-7 border-t border-apex-line/35"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1.65 }}
           >
             {[
-              { v: '200', u: 'Hz', l: 'Telemetry Rate' },
-              { v: '<5', u: 'ms', l: 'Response Time' },
-              { v: '450', u: 'N', l: 'Peak Resistance' },
-              { v: 'Real-time', u: '', l: 'AI Adaptation' },
-            ].map(({ v, u, l }) => (
-              <div key={l} className="flex flex-col gap-0.5">
-                <div className="flex items-baseline gap-0.5">
-                  <span className="text-apex-white font-mono font-semibold text-sm leading-none">{v}</span>
-                  {u && <span className="text-apex-red font-mono text-[10px]">{u}</span>}
-                </div>
-                <span className="text-apex-grey-dim font-body text-[10px] tracking-wide">{l}</span>
+              'Intelligent resistance for modern high-performance training',
+              'Built for speed, force, control, and measurable progression',
+              'Designed for serious operators, not generic gym floors',
+            ].map((point) => (
+              <div key={point} className="flex items-center gap-3">
+                <div className="w-1.5 h-1.5 flex-shrink-0" style={{ background: '#e0231f', clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }} />
+                <span className="text-apex-grey font-body text-[12px] md:text-[13px] tracking-wide leading-snug">{point}</span>
               </div>
             ))}
           </motion.div>

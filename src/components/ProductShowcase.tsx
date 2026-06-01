@@ -4,21 +4,16 @@ import { useRef, useState, useEffect } from 'react'
 import { motion, useInView, useScroll, useTransform, useSpring } from 'framer-motion'
 import Image from 'next/image'
 
-// ─── Spec callouts that frame the unit ────────────────────────────────────────
+// ─── Capability callouts that frame the unit (claim-safe, descriptive) ────────
 
 const CALLOUTS = [
-  { id: 'drive', label: 'ELECTROMAGNETIC DRIVE', value: '0–450N', side: 'left', top: '14%', delay: 0.55 },
-  { id: 'sample', label: 'SENSOR SAMPLING', value: '200Hz', side: 'left', top: '58%', delay: 0.7 },
-  { id: 'latency', label: 'RESPONSE LATENCY', value: '<5ms', side: 'right', top: '20%', delay: 0.62 },
-  { id: 'ai', label: 'ADAPTIVE AI ENGINE', value: 'REAL-TIME', side: 'right', top: '62%', delay: 0.78 },
+  { id: 'modes', tag: '01', text: 'Intelligent resistance and assistance modes', side: 'left', top: '15%', delay: 0.55 },
+  { id: 'overspeed', tag: '02', text: 'Controlled overspeed capability', side: 'left', top: '60%', delay: 0.7 },
+  { id: 'feedback', tag: '03', text: 'Real-time performance feedback', side: 'right', top: '20%', delay: 0.62 },
+  { id: 'build', tag: '04', text: 'Serious build quality for high-demand environments', side: 'right', top: '62%', delay: 0.78 },
 ]
 
-const BUILD_SPECS = [
-  { k: 'Chassis', v: 'Aerospace-Grade Alloy' },
-  { k: 'Drive', v: 'Direct Electromagnetic' },
-  { k: 'Mobility', v: 'Integrated Transport' },
-  { k: 'Class', v: 'Professional Grade' },
-]
+const CAPABILITIES = CALLOUTS.map(c => ({ tag: c.tag, text: c.text }))
 
 // ─── Callout ──────────────────────────────────────────────────────────────────
 
@@ -26,25 +21,25 @@ function Callout({ c, inView }: { c: typeof CALLOUTS[0]; inView: boolean }) {
   const isLeft = c.side === 'left'
   return (
     <motion.div
-      className={`absolute hidden xl:flex items-center gap-3 z-20 ${isLeft ? '-left-4 flex-row' : '-right-4 flex-row-reverse'}`}
+      className={`absolute hidden xl:flex items-center gap-3 z-20 max-w-[210px] ${isLeft ? '-left-8 flex-row' : '-right-8 flex-row-reverse'}`}
       style={{ top: c.top }}
       initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
       animate={inView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.7, delay: c.delay, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className={`flex flex-col ${isLeft ? 'items-end text-right' : 'items-start text-left'}`}>
-        <span className="text-[9px] font-mono tracking-[0.22em] text-apex-grey-dim uppercase">{c.label}</span>
-        <span className="font-mono font-bold text-apex-white text-lg metric-value leading-tight">{c.value}</span>
+        <span className="text-[8px] font-mono tracking-[0.24em] text-apex-red uppercase mb-1">{c.tag}</span>
+        <span className="font-display font-semibold text-apex-white text-[13px] leading-snug">{c.text}</span>
       </div>
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 flex-shrink-0">
         <div className="w-1.5 h-1.5 rounded-full bg-apex-red" style={{ boxShadow: '0 0 8px #e0231f' }} />
-        <div className="w-14 h-px" style={{ background: isLeft ? 'linear-gradient(90deg, #e0231f, transparent)' : 'linear-gradient(270deg, #e0231f, transparent)' }} />
+        <div className="w-10 h-px" style={{ background: isLeft ? 'linear-gradient(90deg, #e0231f, transparent)' : 'linear-gradient(270deg, #e0231f, transparent)' }} />
       </div>
     </motion.div>
   )
 }
 
-// ─── Product Showcase ──────────────────────────────────────────────────────────
+// ─── Product / Engineering Showcase ───────────────────────────────────────────
 
 export default function ProductShowcase() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -55,7 +50,6 @@ export default function ProductShowcase() {
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })
   const imgY = useTransform(scrollYProgress, [0, 1], [50, -50])
 
-  // Graceful fallback until /machine.png render is added to /public
   const [imgError, setImgError] = useState(false)
 
   // Respect reduced-motion
@@ -89,13 +83,13 @@ export default function ProductShowcase() {
   }
 
   return (
-    <section ref={sectionRef} id="product" className="relative bg-apex-black overflow-hidden py-28 md:py-40">
+    <section ref={sectionRef} id="product" className="relative bg-apex-black-2 overflow-hidden py-28 md:py-40">
       {/* Top divider */}
       <div className="absolute top-0 left-0 right-0 h-px" style={{
         background: 'linear-gradient(90deg, transparent, rgba(224,35,31,0.3) 30%, rgba(224,35,31,0.3) 70%, transparent)'
       }} />
 
-      {/* Atmosphere: subtle volumetric wash — the render carries its own lighting */}
+      {/* Atmosphere */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110vw] h-[110vh]" style={{
           background: 'radial-gradient(ellipse 42% 46% at 50% 50%, rgba(224,35,31,0.1) 0%, rgba(123,47,190,0.05) 38%, transparent 66%)'
@@ -120,19 +114,19 @@ export default function ProductShowcase() {
             transition={{ duration: 0.5 }}
           >
             <div className="w-8 h-px bg-apex-red" />
-            <span className="text-apex-red font-mono text-[10px] tracking-[0.32em] uppercase font-medium">06 — The T-APEX Unit</span>
+            <span className="text-apex-red font-mono text-[10px] tracking-[0.32em] uppercase font-medium">06 — Product & Engineering</span>
             <div className="w-8 h-px bg-apex-red" />
           </motion.div>
 
           <motion.h2
-            className="font-display font-bold text-apex-white leading-[0.86] mx-auto"
-            style={{ fontSize: 'clamp(3rem, 8vw, 7.5rem)', letterSpacing: '0.01em' }}
+            className="font-display font-bold text-apex-white leading-[0.9] mx-auto max-w-4xl"
+            style={{ fontSize: 'clamp(2.6rem, 6.5vw, 6rem)', letterSpacing: '0.01em' }}
             initial={{ opacity: 0, y: 30 }}
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            ENGINEERED LIKE<br />
-            <span style={{ color: 'transparent', WebkitTextStroke: '1.5px #e0231f' }}>NOTHING ELSE</span>
+            ENGINEERED LIKE NOTHING ELSE{' '}
+            <span style={{ color: 'transparent', WebkitTextStroke: '1.5px #e0231f' }}>IN THE ROOM</span>
           </motion.h2>
         </div>
 
@@ -146,7 +140,6 @@ export default function ProductShowcase() {
             filter: 'blur(40px)',
           }} />
 
-          {/* Entrance + scroll parallax + 3D perspective */}
           <motion.div
             className="relative"
             style={{ y: imgY, perspective: 1400, willChange: 'transform' }}
@@ -154,14 +147,12 @@ export default function ProductShowcase() {
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            {/* Cursor-driven 3D tilt */}
             <motion.div
               className="relative"
               style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
               onMouseMove={handleMove}
               onMouseLeave={handleLeave}
             >
-              {/* Idle hover float */}
               <motion.div
                 animate={reduced ? {} : { y: [0, -14, 0] }}
                 transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
@@ -171,7 +162,7 @@ export default function ProductShowcase() {
                   {!imgError ? (
                     <Image
                       src="/machine.png"
-                      alt="The T-APEX intelligent resistance unit on an elite training track"
+                      alt="The T-APEX intelligent resistance unit, engineered for serious performance environments"
                       fill
                       sizes="(max-width: 1024px) 100vw, 1000px"
                       className="object-cover object-center"
@@ -179,7 +170,6 @@ export default function ProductShowcase() {
                       onError={() => setImgError(true)}
                     />
                   ) : (
-                    /* Fallback shown only if /machine.png hasn't been added yet */
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-apex-panel/40 border border-dashed border-apex-line">
                       <div className="w-12 h-12 border border-apex-red/40 flex items-center justify-center">
                         <div className="w-4 h-4 bg-apex-red/70" />
@@ -189,7 +179,7 @@ export default function ProductShowcase() {
                     </div>
                   )}
 
-                  {/* Moving specular light sweep — "powered on" glint */}
+                  {/* Moving specular light sweep */}
                   {!reduced && (
                     <motion.div
                       className="absolute inset-y-0 pointer-events-none"
@@ -204,8 +194,8 @@ export default function ProductShowcase() {
                     />
                   )}
 
-                  {/* Edge vignette to blend render into the black section */}
-                  <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: 'inset 0 0 120px 24px #0a0a0c' }} />
+                  {/* Edge vignette */}
+                  <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: 'inset 0 0 120px 24px #0f0f12' }} />
 
                   {/* HUD corner brackets */}
                   <div className="absolute top-3 left-3 pointer-events-none opacity-50">
@@ -233,37 +223,58 @@ export default function ProductShowcase() {
           </motion.div>
         </div>
 
-        {/* Caption */}
-        <motion.p
-          className="text-apex-grey font-body text-center max-w-2xl mx-auto leading-[1.8] mt-14 mb-12"
-          style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.1rem)' }}
+        {/* Body copy */}
+        <motion.div
+          className="max-w-3xl mx-auto text-center mt-14 mb-12 flex flex-col gap-5"
           initial={{ opacity: 0, y: 18 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.9 }}
         >
-          A direct-drive electromagnetic core, a 200Hz multi-axis sensor array, and an adaptive AI engine — fused into one professional-grade platform. Engineered to be wheeled onto any track, court or performance floor, and to read athlete intent in real time.
-        </motion.p>
+          <p className="text-apex-grey font-body leading-[1.8]" style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.1rem)' }}>
+            From its physical build to the way it applies resistance in motion, T-Apex is designed
+            for serious use in serious environments.
+          </p>
+          <p className="text-apex-white font-display font-semibold leading-snug" style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.4rem)' }}>
+            This is not consumer-grade equipment dressed up as innovation.
+          </p>
+          <p className="text-apex-grey font-body leading-[1.8]" style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.1rem)' }}>
+            It is an engineered training system built for operators who care about movement quality,
+            repeatability, measurable progression, and real-world performance application.
+          </p>
+        </motion.div>
 
-        {/* Build spec strip */}
+        {/* Capabilities strip (mirrors callouts, readable on every breakpoint) */}
         <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 border-t border-b border-apex-line/50 divide-x divide-apex-line/40"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-b border-apex-line/50 divide-y sm:divide-y-0 sm:divide-x divide-apex-line/40"
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ duration: 0.8, delay: 1 }}
         >
-          {BUILD_SPECS.map(({ k, v }, i) => (
+          {CAPABILITIES.map(({ tag, text }, i) => (
             <motion.div
-              key={k}
-              className="px-5 py-6 text-center"
+              key={tag}
+              className="px-5 py-6 flex flex-col gap-2"
               initial={{ opacity: 0, y: 14 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 1 + i * 0.08 }}
             >
-              <div className="text-[9px] font-mono tracking-[0.22em] text-apex-grey-dim uppercase mb-2">{k}</div>
-              <div className="font-display font-semibold text-apex-white tracking-wide text-sm md:text-base">{v}</div>
+              <span className="text-[10px] font-mono tracking-[0.22em] text-apex-red">{tag}</span>
+              <span className="font-display font-semibold text-apex-white tracking-wide text-[13px] leading-snug">{text}</span>
             </motion.div>
           ))}
         </motion.div>
+
+        {/* Closing line */}
+        <motion.p
+          className="text-center font-display font-black text-apex-white leading-tight mt-12 max-w-3xl mx-auto"
+          style={{ fontSize: 'clamp(1.2rem, 2.4vw, 2rem)' }}
+          initial={{ opacity: 0, y: 16 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 1.3 }}
+        >
+          T-Apex is built for coaches and facilities that want a better training tool,{' '}
+          <span className="text-apex-red">not just a different-looking machine.</span>
+        </motion.p>
       </div>
     </section>
   )
