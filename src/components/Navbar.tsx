@@ -7,9 +7,10 @@ import Link from 'next/link'
 
 const NAV_LINKS = [
   { label: 'The Unit', href: '#product' },
-  { label: 'Technology', href: '#technology' },
+  { label: 'How It Works', href: '#technology' },
+  { label: 'Who It\'s For', href: '#who' },
   { label: 'Sports', href: '#sports' },
-  { label: 'Results', href: '#results' },
+  { label: 'FAQ', href: '#faq' },
 ]
 
 export default function Navbar() {

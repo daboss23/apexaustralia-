@@ -88,7 +88,7 @@ export default function FinalCTA() {
           >
             <div className="w-8 h-px bg-apex-red" />
             <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-              08 — The Future Is Here
+              12 — Take the Next Step
             </span>
             <div className="w-8 h-px bg-apex-red" />
           </motion.div>
@@ -102,7 +102,7 @@ export default function FinalCTA() {
               animate={inView ? { y: 0, opacity: 1 } : {}}
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             >
-              THE FUTURE
+              BRING T-APEX
             </motion.h2>
           </div>
           <div className="overflow-hidden mb-4">
@@ -113,54 +113,83 @@ export default function FinalCTA() {
               animate={inView ? { y: 0, opacity: 1 } : {}}
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
             >
-              OF PERFORMANCE
-            </motion.h2>
-          </div>
-          <div className="overflow-hidden mb-12">
-            <motion.h2
-              className="font-display font-black text-apex-red leading-[0.85]"
-              style={{ fontSize: 'clamp(3rem, 9vw, 9rem)' }}
-              initial={{ y: 120, opacity: 0 }}
-              animate={inView ? { y: 0, opacity: 1 } : {}}
-              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.26 }}
-            >
-              IS ALREADY HERE.
+              TO YOUR FACILITY.
             </motion.h2>
           </div>
 
           {/* Subtext */}
           <motion.p
-            className="text-apex-grey font-body max-w-2xl mx-auto mb-12 leading-relaxed"
+            className="text-apex-grey font-body max-w-2xl mx-auto mb-6 mt-8 leading-relaxed"
             style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.5 }}
+            transition={{ duration: 0.7, delay: 0.4 }}
           >
-            Join the elite programs and professional athletes already training with T-APEX technology. Book your demonstration and experience the difference.
+            The next step is a conversation. Tell us about your training environment, your performance objectives, and what you need from a technology partner. We will show you exactly how T-Apex fits.
+          </motion.p>
+
+          {/* Urgency / commitment signal */}
+          <motion.p
+            className="font-display font-bold max-w-xl mx-auto mb-12 leading-tight"
+            style={{ fontSize: 'clamp(1rem, 1.8vw, 1.3rem)', color: 'rgba(244,244,246,0.75)' }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.65, delay: 0.52 }}
+          >
+            T-Apex Australia is working with a select number of programs in the 2025–2026 period.{' '}
+            <span className="text-apex-red">Enquire now to secure your placement.</span>
           </motion.p>
 
           {/* CTA buttons */}
           <motion.div
-            className="flex flex-wrap items-center justify-center gap-4 mb-16"
+            className="flex flex-wrap items-center justify-center gap-4 mb-10"
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.65 }}
           >
-            <button className="group inline-flex items-center gap-3 bg-apex-red hover:bg-apex-red-bright text-white font-display font-bold px-10 py-5 rounded-xl tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(224,35,31,0.7)] hover:-translate-y-0.5 active:translate-y-0"
-              style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)' }}>
+            <button className="group inline-flex items-center gap-3 bg-apex-red hover:bg-apex-red-bright text-white font-display font-bold px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(224,35,31,0.7)] hover:-translate-y-0.5 active:translate-y-0"
+              style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', borderRadius: 0 }}>
               Book a Demo
               <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
             </button>
 
-            <button className="group inline-flex items-center gap-3 border border-apex-line hover:border-apex-grey/50 text-apex-grey hover:text-apex-white font-display font-bold px-10 py-5 rounded-xl tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
-              style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)' }}>
-              Contact Our Team
+            <button className="group inline-flex items-center gap-3 border border-apex-line hover:border-apex-grey/50 text-apex-grey hover:text-apex-white font-display font-bold px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
+              style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', borderRadius: 0 }}>
+              Enquire Now
               <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
               </svg>
             </button>
+
+            <button className="group inline-flex items-center gap-3 text-apex-grey-dim hover:text-apex-grey font-display font-semibold px-4 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer"
+              style={{ fontSize: 'clamp(0.7rem, 0.9vw, 0.82rem)', borderRadius: 0 }}>
+              Talk to the Team
+              <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          </motion.div>
+
+          {/* Micro social proof strip */}
+          <motion.div
+            className="flex flex-wrap items-center justify-center gap-6 mb-16 pb-2 border-t border-apex-line/30 pt-10"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.7, delay: 0.85 }}
+          >
+            {[
+              { val: '6+', label: 'Professional Codes' },
+              { val: '200Hz', label: 'Data Capture' },
+              { val: '450N', label: 'Peak Resistance' },
+              { val: 'Real-Time', label: 'AI Adaptation' },
+            ].map(({ val, label }) => (
+              <div key={label} className="flex flex-col items-center gap-0.5">
+                <span className="font-mono font-bold text-apex-white text-sm">{val}</span>
+                <span className="font-body text-apex-grey-dim text-[9px] tracking-wide">{label}</span>
+              </div>
+            ))}
           </motion.div>
 
           {/* Logo + tagline */}

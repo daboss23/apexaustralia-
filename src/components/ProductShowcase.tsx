@@ -120,7 +120,7 @@ export default function ProductShowcase() {
             transition={{ duration: 0.5 }}
           >
             <div className="w-8 h-px bg-apex-red" />
-            <span className="text-apex-red font-mono text-[10px] tracking-[0.32em] uppercase font-medium">03 — The T-APEX Unit</span>
+            <span className="text-apex-red font-mono text-[10px] tracking-[0.32em] uppercase font-medium">06 — The T-APEX Unit</span>
             <div className="w-8 h-px bg-apex-red" />
           </motion.div>
 

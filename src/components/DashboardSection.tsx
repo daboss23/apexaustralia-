@@ -198,7 +198,7 @@ export default function DashboardSection() {
         <div ref={titleRef} className="flex items-center gap-3 mb-6">
           <div className="w-8 h-px bg-apex-red" />
           <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-            05 — Live Performance Dashboard
+            05b — Live Performance Dashboard
           </span>
         </div>
 
