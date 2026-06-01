@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
-import { Barlow_Condensed, DM_Sans, JetBrains_Mono } from 'next/font/google'
+import { Oswald, DM_Sans, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
-const barlow = Barlow_Condensed({
-  weight: ['600', '700', '800', '900'],
+const oswald = Oswald({
+  weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
   variable: '--font-barlow',
   display: 'swap',
@@ -49,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${barlow.variable} ${dmSans.variable} ${jetbrains.variable}`}
+      className={`${oswald.variable} ${dmSans.variable} ${jetbrains.variable}`}
     >
       <body className="font-body antialiased overflow-x-hidden grain">{children}</body>
     </html>

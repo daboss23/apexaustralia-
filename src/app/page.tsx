@@ -1,6 +1,7 @@
 import Navbar from '@/components/Navbar'
 import Hero from '@/components/Hero'
 import PerformanceSection from '@/components/PerformanceSection'
+import ProductShowcase from '@/components/ProductShowcase'
 import TechnologySection from '@/components/TechnologySection'
 import DashboardSection from '@/components/DashboardSection'
 import SportsSection from '@/components/SportsSection'
@@ -13,6 +14,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <PerformanceSection />
+      <ProductShowcase />
       <TechnologySection />
       <DashboardSection />
       <SportsSection />

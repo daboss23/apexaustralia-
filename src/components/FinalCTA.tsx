@@ -47,11 +47,11 @@ export default function FinalCTA() {
             src="/hero.png"
             alt=""
             fill
-            className="object-cover object-center"
-            style={{ opacity: 0.05, mixBlendMode: 'luminosity' }}
+            className="object-cover object-right-top"
+            style={{ opacity: 0.14 }}
           />
           <div className="absolute inset-0" style={{
-            background: 'linear-gradient(180deg, #0f0f12 0%, rgba(15,15,18,0.5) 30%, rgba(15,15,18,0.5) 70%, #0f0f12 100%)'
+            background: 'linear-gradient(180deg, #0f0f12 0%, rgba(15,15,18,0.35) 25%, rgba(15,15,18,0.35) 70%, #0f0f12 100%)'
           }} />
         </div>
 
@@ -88,7 +88,7 @@ export default function FinalCTA() {
           >
             <div className="w-8 h-px bg-apex-red" />
             <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-              07 — The Future Is Here
+              08 — The Future Is Here
             </span>
             <div className="w-8 h-px bg-apex-red" />
           </motion.div>
