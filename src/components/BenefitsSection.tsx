@@ -70,16 +70,8 @@ export default function BenefitsSection() {
       />
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        {/* Section label */}
-        <div ref={titleRef} className="flex items-center gap-3 mb-8">
-          <div className="w-8 h-px bg-apex-red" />
-          <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-            04 — Key Benefits
-          </span>
-        </div>
-
         {/* Headline */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
+        <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
           <motion.h2
             className="font-display font-black text-apex-white leading-[0.88]"
             style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}

@@ -41,15 +41,7 @@ export default function SolutionSection() {
       />
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        {/* Section label */}
-        <div ref={titleRef} className="flex items-center gap-3 mb-8">
-          <div className="w-8 h-px bg-apex-red" />
-          <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-            03 — The Solution
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+        <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
           {/* Left — copy */}
           <div>
             <motion.h2

@@ -79,20 +79,6 @@ export default function FinalCTA() {
 
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto">
-          {/* Section label */}
-          <motion.div
-            className="flex items-center justify-center gap-3 mb-10"
-            initial={{ opacity: 0, y: 16 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="w-8 h-px bg-apex-red" />
-            <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-              11 — Take the Next Step
-            </span>
-            <div className="w-8 h-px bg-apex-red" />
-          </motion.div>
-
           {/* Main headline */}
           <div className="overflow-hidden mb-3">
             <motion.h2

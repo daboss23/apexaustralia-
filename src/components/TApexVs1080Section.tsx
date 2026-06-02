@@ -40,7 +40,7 @@ const ROWS = [
 ]
 
 export default function TApexVs1080Section() {
-  const titleRef = useRef<HTMLDivElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
   const tableRef = useRef<HTMLDivElement>(null)
   const tableInView = useInView(tableRef, { once: true, margin: '-5% 0px' })
@@ -66,16 +66,9 @@ export default function TApexVs1080Section() {
       />
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        {/* Section label */}
-        <div ref={titleRef} className="flex items-center gap-3 mb-8">
-          <div className="w-8 h-px bg-apex-red" />
-          <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-            08 — More Than A Sprint Resistance Tool
-          </span>
-        </div>
-
         {/* Headline */}
         <motion.h2
+          ref={titleRef}
           className="font-display font-black text-apex-white leading-[0.9] mb-6 max-w-5xl"
           style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}
           initial={{ opacity: 0, y: 30 }}

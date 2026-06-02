@@ -76,19 +76,8 @@ export default function ProductShowcase() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        {/* Eyebrow + headline */}
+        {/* Headline */}
         <div ref={titleRef} className="text-center mb-12">
-          <motion.div
-            className="inline-flex items-center gap-3 mb-7"
-            initial={{ opacity: 0, y: 14 }}
-            animate={titleInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="w-8 h-px bg-apex-red" />
-            <span className="text-apex-red font-mono text-[10px] tracking-[0.32em] uppercase font-medium">06 — Product & Engineering</span>
-            <div className="w-8 h-px bg-apex-red" />
-          </motion.div>
-
           <motion.h2
             className="font-display font-bold text-apex-white leading-[0.9] mx-auto max-w-4xl"
             style={{ fontSize: 'clamp(2.6rem, 6.5vw, 6rem)', letterSpacing: '0.01em' }}

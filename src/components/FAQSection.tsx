@@ -48,15 +48,7 @@ export default function FAQSection() {
       />
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        {/* Section label */}
-        <div ref={titleRef} className="flex items-center gap-3 mb-8">
-          <div className="w-8 h-px bg-apex-red" />
-          <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-            10 — Frequently Asked Questions
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr,2fr] gap-12 lg:gap-20">
+        <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-[1fr,2fr] gap-12 lg:gap-20">
           {/* Left: Headline + CTA */}
           <motion.div
             className="lg:sticky lg:top-28 self-start"

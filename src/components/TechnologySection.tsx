@@ -45,16 +45,8 @@ export default function HowItWorksSection() {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        {/* Section label */}
-        <div ref={titleRef} className="flex items-center gap-3 mb-8">
-          <div className="w-8 h-px bg-apex-red" />
-          <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-            05 — How It Works
-          </span>
-        </div>
-
         {/* Headline + intro */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16 items-end">
+        <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16 items-end">
           <motion.h2
             className="font-display font-black text-apex-white leading-[0.9]"
             style={{ fontSize: 'clamp(2.4rem, 5.2vw, 4.8rem)' }}
