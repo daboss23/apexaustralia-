@@ -165,6 +165,38 @@ export default function PerformanceSection() {
           From Olympic sprinters to professional rugby players — T-APEX adapts to every sport, every movement, every athlete.
         </motion.p>
 
+        {/* Cinematic product film */}
+        <motion.div
+          className="relative mb-20 overflow-hidden aspect-video"
+          style={{ border: '1px solid rgba(0,163,255,0.22)', borderTop: '2px solid #00A3FF' }}
+          initial={{ opacity: 0, y: 26 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <video
+            className="absolute inset-0 w-full h-full object-cover"
+            src="/athlete-intro.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+          />
+          {/* Cinematic vignette */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: 'linear-gradient(180deg, rgba(10,10,12,0.4) 0%, transparent 24%, transparent 68%, rgba(10,10,12,0.72) 100%)'
+          }} />
+          {/* HUD label */}
+          <div className="absolute top-4 left-4 flex items-center gap-2 pointer-events-none">
+            <div className="w-1.5 h-1.5 rounded-full bg-apex-blue animate-pulse" />
+            <span className="text-[9px] font-mono tracking-[0.28em] uppercase text-apex-white/90">T-APEX // In Motion</span>
+          </div>
+          {/* Corner reticles */}
+          <svg className="absolute top-3 right-3 pointer-events-none" width="9" height="9" viewBox="0 0 9 9" aria-hidden="true"><path d="M0 0 L9 0 L9 9" fill="none" stroke="#00A3FF" strokeWidth="1.2" opacity="0.6" /></svg>
+          <svg className="absolute bottom-3 left-3 pointer-events-none" width="9" height="9" viewBox="0 0 9 9" aria-hidden="true"><path d="M0 0 L0 9 L9 9" fill="none" stroke="#00A3FF" strokeWidth="1.2" opacity="0.6" /></svg>
+        </motion.div>
+
         {/* Headline metrics — editorial asymmetric layout */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 mb-20 pb-20 border-b border-apex-line/40 items-start lg:items-center">
           {/* Primary stat: oversized editorial anchor */}
