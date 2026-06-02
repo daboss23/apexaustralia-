@@ -539,7 +539,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 1.05 }}
           >
-            Built for elite coaches, athletes, and performance centres that demand more speed, more force, more control, and greater transfer than conventional resistance tools were ever designed to deliver.
+            Real-time, intelligent resistance — engineered to add measurable speed, force, and control to every session. Built for the coaches and programs chasing the next tenth of a second.
           </motion.p>
 
           {/* CTAs */}
@@ -550,7 +550,7 @@ export default function Hero() {
             transition={{ duration: 0.65, delay: 1.22 }}
           >
             <button className="group inline-flex items-center gap-2.5 bg-apex-red hover:bg-apex-red-bright text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
-              Book a Demo
+              Book Your Free Demo
               <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
@@ -563,6 +563,16 @@ export default function Hero() {
               </svg>
             </button>
           </motion.div>
+
+          {/* Reassurance microcopy — lowers the cost of clicking */}
+          <motion.p
+            className="mt-5 text-apex-grey-dim font-mono text-[10px] tracking-[0.18em] uppercase"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 1.5 }}
+          >
+            On-site or virtual · No obligation · Shipping Australia-wide
+          </motion.p>
 
         </div>{/* end left column */}
 
