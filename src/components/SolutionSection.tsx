@@ -30,13 +30,13 @@ export default function SolutionSection() {
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(224,35,31,0.25) 30%, rgba(224,35,31,0.25) 70%, transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(123,47,190,0.25) 30%, rgba(123,47,190,0.25) 70%, transparent)' }}
       />
 
       {/* Ambient glow */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse 50% 50% at 50% 30%, rgba(224,35,31,0.07), transparent 65%)' }}
+        style={{ background: 'radial-gradient(ellipse 50% 50% at 50% 30%, rgba(123,47,190,0.07), transparent 65%)' }}
         aria-hidden="true"
       />
 
@@ -52,7 +52,7 @@ export default function SolutionSection() {
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             >
               MEET THE SMARTER<br />
-              <span className="text-apex-red">RESISTANCE SYSTEM.</span>
+              <span className="text-apex-purple">RESISTANCE SYSTEM.</span>
             </motion.h2>
 
             <motion.p
@@ -79,7 +79,7 @@ export default function SolutionSection() {
             </motion.p>
 
             <motion.div
-              className="border-l-4 border-apex-red pl-6 py-2 mb-8"
+              className="border-l-4 border-apex-purple pl-6 py-2 mb-8"
               initial={{ opacity: 0, x: -14 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.35 }}
@@ -98,14 +98,14 @@ export default function SolutionSection() {
               className="relative p-6"
               style={{
                 background: 'rgba(20,20,24,0.7)',
-                border: '1px solid rgba(224,35,31,0.22)',
-                borderLeft: '3px solid #e0231f',
+                border: '1px solid rgba(123,47,190,0.22)',
+                borderLeft: '3px solid #7B2FBE',
               }}
               initial={{ opacity: 0, y: 14 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.45 }}
             >
-              <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-3" style={{ color: 'rgba(224,35,31,0.85)' }}>
+              <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-3" style={{ color: 'rgba(123,47,190,0.85)' }}>
                 The Core Mechanism
               </div>
               <p className="text-apex-grey font-body leading-relaxed" style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
@@ -140,15 +140,15 @@ function SolutionPillar({
 }) {
   return (
     <motion.div
-      className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-red/30 transition-colors duration-300 cursor-default"
-      style={{ borderLeft: '2px solid rgba(224,35,31,0.6)', borderRadius: 0 }}
+      className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-purple/30 transition-colors duration-300 cursor-default"
+      style={{ borderLeft: '2px solid rgba(123,47,190,0.6)', borderRadius: 0 }}
       initial={{ opacity: 0, x: 24 }}
       animate={parentInView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.65, delay: 0.2 + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
     >
       <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 100%, rgba(224,35,31,0.06), transparent)' }}
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 100%, rgba(123,47,190,0.06), transparent)' }}
       />
 
       <div className="flex items-start justify-between gap-4 mb-3">
@@ -158,7 +158,7 @@ function SolutionPillar({
         </h3>
         <span
           className="flex-shrink-0 text-[8px] font-mono font-semibold tracking-[0.18em] uppercase px-2 py-1 border"
-          style={{ color: '#e0231f', borderColor: 'rgba(224,35,31,0.35)', background: 'rgba(224,35,31,0.08)' }}
+          style={{ color: '#7B2FBE', borderColor: 'rgba(123,47,190,0.35)', background: 'rgba(123,47,190,0.08)' }}
         >
           {pillar.tag}
         </span>

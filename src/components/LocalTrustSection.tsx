@@ -38,7 +38,7 @@ export default function LocalTrustSection() {
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(224,35,31,0.25) 30%, rgba(224,35,31,0.25) 70%, transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(0,163,255,0.25) 30%, rgba(0,163,255,0.25) 70%, transparent)' }}
       />
 
       {/* Gold ambient — trust signal */}
@@ -58,7 +58,7 @@ export default function LocalTrustSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          WHY T-APEX<br /><span className="text-apex-red">AUSTRALIA</span>
+          WHY T-APEX<br /><span className="text-apex-blue">AUSTRALIA</span>
         </motion.h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
@@ -188,15 +188,15 @@ function SupportPoint({
 }) {
   return (
     <motion.div
-      className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-red/30 transition-colors duration-300 cursor-default"
-      style={{ borderRadius: 0, borderTop: '2px solid rgba(224,35,31,0.5)' }}
+      className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-blue/30 transition-colors duration-300 cursor-default"
+      style={{ borderRadius: 0, borderTop: '2px solid rgba(0,163,255,0.5)' }}
       initial={{ opacity: 0, y: 20 }}
       animate={parentInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.55, delay: 0.5 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
     >
       <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(224,35,31,0.05), transparent)' }}
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,163,255,0.05), transparent)' }}
       />
       <h4 className="font-display font-black text-apex-white mb-2 leading-tight"
         style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
