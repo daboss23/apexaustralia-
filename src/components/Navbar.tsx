@@ -48,7 +48,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex-shrink-0">
           <Image
-            src="/logo.png"
+            src="/tapexlogo.png"
             alt="T-APEX Australia"
             width={140}
             height={46}

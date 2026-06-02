@@ -148,7 +148,7 @@ export default function FinalCTA() {
             transition={{ duration: 0.8, delay: 0.9 }}
           >
             <Image
-              src="/logo.png"
+              src="/tapexlogo.png"
               alt="T-APEX Australia"
               width={280}
               height={90}
