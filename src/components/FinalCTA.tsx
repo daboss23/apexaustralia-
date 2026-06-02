@@ -156,7 +156,7 @@ export default function FinalCTA() {
 
           {/* Logo + tagline */}
           <motion.div
-            className="flex flex-col items-center gap-3"
+            className="flex flex-col items-center gap-4"
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.8, delay: 0.9 }}
@@ -164,9 +164,9 @@ export default function FinalCTA() {
             <Image
               src="/logo.png"
               alt="T-APEX Australia"
-              width={180}
-              height={60}
-              className="h-12 w-auto object-contain opacity-60"
+              width={280}
+              height={90}
+              className="h-20 w-auto object-contain opacity-70"
             />
             <span className="text-apex-grey-dim font-mono text-[10px] tracking-[0.4em] uppercase">
               Performance Without Limits
@@ -176,10 +176,8 @@ export default function FinalCTA() {
       </motion.div>
 
       {/* Footer bar */}
-      <div className="relative border-t border-apex-line/40 px-6 md:px-16 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <span className="text-apex-grey-dim font-mono text-[10px] tracking-wide">
-          © 2026 T-APEX Australia. All rights reserved.
-        </span>
+      <div className="relative border-t border-apex-line/40 px-6 md:px-16 py-8 flex flex-col items-center gap-4">
+        {/* Nav links — centred */}
         <div className="flex items-center gap-6">
           {['Privacy', 'Terms', 'Contact'].map(label => (
             <button
@@ -190,9 +188,15 @@ export default function FinalCTA() {
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-emerald-400 font-mono text-[10px] tracking-wider">System Online</span>
+        {/* Bottom row — copyright + status */}
+        <div className="flex items-center gap-6">
+          <span className="text-apex-grey-dim font-mono text-[10px] tracking-wide">
+            © 2026 T-APEX Australia. All rights reserved.
+          </span>
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-emerald-400 font-mono text-[10px] tracking-wider">System Online</span>
+          </div>
         </div>
       </div>
     </section>
