@@ -463,7 +463,7 @@ export default function Hero() {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/logo.png"
+              src="/tapexlogo.png"
               alt="T-APEX Australia"
               className="h-28 md:h-36 w-auto object-contain"
               style={{ filter: 'brightness(1.1)' }}
