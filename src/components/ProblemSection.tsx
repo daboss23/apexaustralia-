@@ -10,7 +10,7 @@ const PROBLEM_POINTS = [
   },
   {
     num: '02',
-    text: 'Limited feedback makes progression harder to measure',
+    text: 'Limited feedback makes progress harder to measure',
   },
   {
     num: '03',
@@ -18,7 +18,7 @@ const PROBLEM_POINTS = [
   },
   {
     num: '04',
-    text: 'Athletes need more engaging, responsive training environments',
+    text: 'Athletes need training that engages and responds in real time',
   },
   {
     num: '05',
@@ -29,7 +29,7 @@ const PROBLEM_POINTS = [
 const GAP_LINES = [
   'A gap between effort and transfer.',
   'A gap between what an athlete is doing and what the coach can actually see.',
-  'A gap between standard training tools and what high-performance environments now require.',
+  'A gap between standard training tools and what elite programs now require.',
 ]
 
 export default function ProblemSection() {
@@ -96,7 +96,7 @@ export default function ProblemSection() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.25 }}
             >
-              For serious coaches and operators, that creates a major gap.
+              For elite coaches, that creates a major gap.
             </motion.p>
 
             {/* Gap lines — staggered emphasis */}
@@ -125,7 +125,7 @@ export default function ProblemSection() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.8 }}
             >
-              When precision matters, generic tools are not enough.
+              When control matters, generic tools are not enough.
             </motion.p>
           </div>
 

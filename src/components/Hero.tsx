@@ -539,7 +539,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 1.05 }}
           >
-            Built for serious coaches, athletes, and high-performance environments that demand more speed, more force, more control, and greater transfer than conventional resistance tools were ever designed to deliver.
+            Built for elite coaches, athletes, and performance centres that demand more speed, more force, more control, and greater transfer than conventional resistance tools were ever designed to deliver.
           </motion.p>
 
           {/* CTAs */}

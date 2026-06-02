@@ -7,7 +7,7 @@ const SOLUTION_PILLARS = [
   {
     label: 'Precision Loading',
     tag: 'Control',
-    body: 'Apply resistance and assistance with greater control across acceleration, deceleration, change of direction, and movement-specific performance work.',
+    body: 'Apply resistance and assistance with fine control across acceleration, deceleration, change of direction, and movement-specific work.',
   },
   {
     label: 'Adaptive Response',
@@ -63,7 +63,7 @@ export default function SolutionSection() {
               transition={{ duration: 0.65, delay: 0.15 }}
             >
               T-Apex is an intelligent resistance training device built to challenge movement with
-              greater precision, responsiveness, and performance intent.
+              real control, fast response, and clear intent.
             </motion.p>
 
             <motion.p
@@ -73,9 +73,9 @@ export default function SolutionSection() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.25 }}
             >
-              It gives coaches and performance operators a more advanced way to load, guide, and
-              develop athletes across multiple phases of training — from acceleration and speed
-              development through to controlled return-to-play and progressive reconditioning.
+              It gives coaches a smarter way to load, guide, and
+              develop athletes across every phase of training — from acceleration and speed
+              work through to controlled return-to-play and progressive reconditioning.
             </motion.p>
 
             <motion.div
@@ -88,8 +88,8 @@ export default function SolutionSection() {
                 className="font-display font-black text-apex-white leading-tight"
                 style={{ fontSize: 'clamp(1.05rem, 1.9vw, 1.4rem)' }}
               >
-                This is not just another resistance tool. It is a smarter training system for
-                environments that demand more.
+                Not just another resistance tool — a smarter training system for
+                coaches who demand more.
               </p>
             </motion.div>
 
@@ -111,8 +111,8 @@ export default function SolutionSection() {
               <p className="text-apex-grey font-body leading-relaxed" style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
                 At the core of T-Apex is{' '}
                 <span className="text-apex-white font-display font-bold">Adaptive Resistance Intelligence</span>{' '}
-                — a broader performance approach designed to make resistance training more precise,
-                more adaptable, and more useful inside serious coaching environments.
+                — an approach designed to make resistance training more accurate,
+                more adaptable, and more useful on real training floors.
               </p>
             </motion.div>
           </div>

@@ -9,7 +9,7 @@ const CALLOUTS = [
   { id: 'modes', tag: '01', text: 'Intelligent resistance and assistance modes', side: 'left', top: '16%', delay: 0.55 },
   { id: 'overspeed', tag: '02', text: 'Controlled overspeed capability', side: 'left', top: '64%', delay: 0.7 },
   { id: 'feedback', tag: '03', text: 'Real-time performance feedback', side: 'right', top: '20%', delay: 0.62 },
-  { id: 'build', tag: '04', text: 'Serious build quality for high-demand environments', side: 'right', top: '66%', delay: 0.78 },
+  { id: 'build', tag: '04', text: 'Rugged build quality for high-demand facilities', side: 'right', top: '66%', delay: 0.78 },
 ]
 
 const CAPABILITIES = CALLOUTS.map(c => ({ tag: c.tag, text: c.text }))
@@ -208,15 +208,15 @@ export default function ProductShowcase() {
           transition={{ duration: 0.7, delay: 0.85 }}
         >
           <p className="text-apex-grey font-body leading-[1.8]" style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.1rem)' }}>
-            From its physical build to the way it applies resistance in motion, T-Apex is designed
-            for serious use in serious environments.
+            From its physical build to the way it applies resistance in motion, T-Apex is engineered
+            for hard use on demanding training floors.
           </p>
           <p className="text-apex-white font-display font-semibold leading-snug" style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.4rem)' }}>
             This is not consumer-grade equipment dressed up as innovation.
           </p>
           <p className="text-apex-grey font-body leading-[1.8]" style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.1rem)' }}>
-            It is an engineered training system built for operators who care about movement quality,
-            repeatability, measurable progression, and real-world performance application.
+            It is an engineered training system built for coaches who care about movement quality,
+            repeatability, measurable progress, and real-world results.
           </p>
         </motion.div>
 

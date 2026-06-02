@@ -26,7 +26,7 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   title: 'T-APEX Australia | Adaptive Resistance Intelligence',
   description:
-    'T-Apex is an intelligent resistance training device built around Adaptive Resistance Intelligence — for serious performance, coaching, and rehabilitation environments. Led in Australia by Olympic-level sprint coach Piero Sacchetta.',
+    'T-Apex is an intelligent resistance training device built around Adaptive Resistance Intelligence — for elite coaching, performance, and rehabilitation. Led in Australia by Olympic-level sprint coach Piero Sacchetta.',
   keywords: [
     'intelligent resistance training',
     'adaptive resistance intelligence',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'T-APEX Australia | Adaptive Resistance Intelligence',
-    description: 'An intelligent resistance training system for serious performance environments — speed, force, control, progression, and return-to-play.',
+    description: 'An intelligent resistance training system for elite performance facilities — speed, force, control, athlete progress, and return-to-play.',
     type: 'website',
   },
 }

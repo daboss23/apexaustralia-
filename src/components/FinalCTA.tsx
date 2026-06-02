@@ -111,7 +111,7 @@ export default function FinalCTA() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.4 }}
           >
-            If you are looking for a smarter way to train speed, force, movement quality, and progression inside a serious performance environment, T-Apex Australia is ready to help you explore what that can look like in practice.
+            If you want a smarter way to train speed, force, movement quality, and athlete progress, T-Apex Australia is ready to show you what that looks like in practice.
           </motion.p>
 
           {/* CTA buttons */}

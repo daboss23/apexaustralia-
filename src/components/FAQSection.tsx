@@ -6,27 +6,27 @@ import { motion, useInView, AnimatePresence } from 'framer-motion'
 const FAQS = [
   {
     q: 'What is T-Apex?',
-    a: 'T-Apex is an intelligent resistance training device built for serious performance, coaching, and rehabilitation environments.',
+    a: 'T-Apex is an intelligent resistance training device built for elite performance, coaching, and rehabilitation.',
   },
   {
     q: 'Who is T-Apex for?',
-    a: 'T-Apex is suited to athletes, coaches, performance centres, rehabilitation environments, academies, and operators who want more precision in how resistance is applied.',
+    a: 'T-Apex suits athletes, coaches, performance centres, rehab clinics, academies, and facilities that want more control over how resistance is applied.',
   },
   {
     q: 'How is T-Apex different from traditional resistance systems?',
-    a: 'T-Apex creates a more responsive, measurable, and adaptable training environment, helping support better coaching decisions, stronger athlete engagement, and more purposeful progression.',
+    a: 'T-Apex creates a more responsive, measurable, and adaptable session, supporting better coaching decisions, stronger athlete engagement, and more purposeful loading over time.',
   },
   {
     q: 'How is T-Apex different from sprint-focused resistance systems?',
-    a: 'T-Apex is built around Adaptive Resistance Intelligence, giving coaches and operators a broader performance system that extends beyond narrow straight-line sprint application.',
+    a: 'T-Apex is built around Adaptive Resistance Intelligence, giving coaches a wider performance system that extends well beyond straight-line sprint work.',
   },
   {
     q: 'Can T-Apex be used for rehabilitation and return-to-play?',
-    a: 'Yes. T-Apex can support controlled loading and more precise progression strategies, making it valuable in both performance and rehabilitation settings.',
+    a: 'Yes. T-Apex supports controlled loading and finely graded progressions, making it valuable in both performance and rehabilitation settings.',
   },
   {
     q: 'Can I see T-Apex in action before making a decision?',
-    a: 'Yes. You can book a demo or enquire to learn more about how T-Apex may fit your environment.',
+    a: 'Yes. You can book a demo or enquire to learn more about how T-Apex may fit your set-up.',
   },
   {
     q: 'Is T-Apex available in Australia?',

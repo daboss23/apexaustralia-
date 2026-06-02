@@ -7,25 +7,25 @@ const CREDENTIALS = [
   'Olympic-level sprint coach',
   'Coached Joshua Ross — 7× Australian sprint champion',
   'Experience working with NFL athletes',
-  'Reputation built on serious athlete development, speed, and performance systems',
+  'Reputation built on genuine athlete development, speed, and performance systems',
 ]
 
 const SUPPORTING_POINTS = [
   {
-    title: 'Real performance and coaching credibility',
+    title: 'Real coaching credibility',
     body: 'Grounded in genuine high-performance coaching experience — not a product catalogue.',
   },
   {
-    title: 'Serious Australian operator leadership',
-    body: 'Led locally by someone who has worked at the sharp end of elite sprint performance.',
+    title: 'Credible Australian leadership',
+    body: 'Led locally by someone who has worked at the sharp end of elite sprinting.',
   },
   {
-    title: 'Built for environments that care',
-    body: 'For operators who value better movement and better decisions, not novelty.',
+    title: 'Built for teams that care',
+    body: 'For coaches who value better movement and better decisions, not novelty.',
   },
   {
     title: 'Chosen for practical elite application',
-    body: 'Technology selected for real-world performance use — not gimmicks.',
+    body: 'Technology chosen for real-world use — not gimmicks.',
   },
 ]
 
@@ -71,8 +71,8 @@ export default function LocalTrustSection() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.15 }}
             >
-              T-Apex Australia exists to bring advanced resistance training technology into serious
-              performance environments that value precision, development, and long-term athlete outcomes.
+              T-Apex Australia exists to bring intelligent resistance training technology to the
+              facilities that value control, development, and long-term athlete outcomes.
             </motion.p>
 
             <motion.p
@@ -105,8 +105,8 @@ export default function LocalTrustSection() {
               transition={{ duration: 0.6, delay: 0.42 }}
             >
               Because T-Apex Australia is not being brought to market by people chasing hype or
-              novelty. It is being introduced by operators who understand what high-performance
-              environments actually demand, what separates impressive-looking equipment from
+              novelty. It is being introduced by coaches who understand what elite programs
+              actually demand, what separates impressive-looking equipment from
               genuinely useful systems, and why better coaching tools create better outcomes over time.
             </motion.p>
           </div>
