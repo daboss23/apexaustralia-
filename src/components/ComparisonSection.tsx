@@ -95,7 +95,7 @@ export default function ComparisonSection() {
             transition={{ duration: 0.6 }}
           >
             <span className="rounded-md px-3 py-2" style={{ background: 'rgba(8,6,7,0.55)' }}>
-              <Image src="/tapexlogo.png" alt="T-APEX" width={200} height={64} className="h-7 sm:h-8 w-auto object-contain" />
+              <Image src="/apexaustralialogo.png" alt="T-APEX" width={200} height={64} className="h-7 sm:h-8 w-auto object-contain" />
             </span>
           </motion.div>
           <div className="flex items-end justify-center px-3 pb-5 text-center">

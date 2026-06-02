@@ -156,7 +156,7 @@ export default function FinalCTA() {
             transition={{ duration: 0.8, delay: 0.9 }}
           >
             <Image
-              src="/tapexlogo.png"
+              src="/apexaustralialogo.png"
               alt="T-APEX Australia"
               width={280}
               height={90}
@@ -182,15 +182,11 @@ export default function FinalCTA() {
             </button>
           ))}
         </div>
-        {/* Bottom row — copyright + status */}
+        {/* Bottom row — copyright */}
         <div className="flex items-center gap-6">
           <span className="text-apex-grey-dim font-mono text-[10px] tracking-wide">
             © 2026 T-APEX Australia. All rights reserved.
           </span>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-emerald-400 font-mono text-[10px] tracking-wider">System Online</span>
-          </div>
         </div>
       </div>
     </section>
