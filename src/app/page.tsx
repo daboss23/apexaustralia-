@@ -4,6 +4,7 @@ import PerformanceSection from '@/components/PerformanceSection'
 import ProblemSection from '@/components/ProblemSection'
 import SolutionSection from '@/components/SolutionSection'
 import BenefitsSection from '@/components/BenefitsSection'
+import ComparisonSection from '@/components/ComparisonSection'
 import HowItWorksSection from '@/components/TechnologySection'
 import ProductShowcase from '@/components/ProductShowcase'
 import DashboardSection from '@/components/DashboardSection'
@@ -34,7 +35,10 @@ export default function Home() {
       {/* 05 — KEY BENEFITS */}
       <BenefitsSection />
 
-      {/* 06 — HOW IT WORKS */}
+      {/* 06 — US VS THEM (T-Apex vs conventional tools) */}
+      <ComparisonSection />
+
+      {/* 07 — HOW IT WORKS */}
       <HowItWorksSection />
 
       {/* 07 — PRODUCT / ENGINEERING */}
