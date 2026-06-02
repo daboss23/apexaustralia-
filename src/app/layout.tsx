@@ -24,23 +24,23 @@ const jetbrains = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'T-APEX Australia | Elite Sports Performance Technology',
+  title: 'T-APEX Australia | Adaptive Resistance Intelligence',
   description:
-    'Real-time intelligent resistance technology engineered to unlock elite athletic performance. Used by professional AFL, NRL, Rugby Union, and Olympic programs.',
+    'T-Apex is an intelligent resistance training device built around Adaptive Resistance Intelligence — for serious performance, coaching, and rehabilitation environments. Led in Australia by Olympic-level sprint coach Piero Sacchetta.',
   keywords: [
-    'sports performance technology',
     'intelligent resistance training',
-    'athletic telemetry',
-    'AFL performance',
-    'NRL performance',
+    'adaptive resistance intelligence',
+    'sports performance technology',
+    'resisted sprint training',
+    'return to play technology',
+    'strength and conditioning equipment',
     'elite athlete training',
-    'force production',
-    'power output',
-    'acceleration training',
+    'performance centre technology',
+    'T-Apex Australia',
   ],
   openGraph: {
-    title: 'T-APEX Australia | Elite Sports Performance Technology',
-    description: 'Real-time intelligent resistance technology engineered to unlock elite athletic performance.',
+    title: 'T-APEX Australia | Adaptive Resistance Intelligence',
+    description: 'An intelligent resistance training system for serious performance environments — speed, force, control, progression, and return-to-play.',
     type: 'website',
   },
 }

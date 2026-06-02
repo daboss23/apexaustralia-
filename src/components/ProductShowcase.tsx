@@ -1,24 +1,18 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
-import { motion, useInView, useScroll, useTransform, useSpring } from 'framer-motion'
-import Image from 'next/image'
+import { useRef, useEffect } from 'react'
+import { motion, useInView } from 'framer-motion'
 
-// ─── Spec callouts that frame the unit ────────────────────────────────────────
+// ─── Capability callouts that flank the video (claim-safe, descriptive) ────────
 
 const CALLOUTS = [
-  { id: 'drive', label: 'ELECTROMAGNETIC DRIVE', value: '0–450N', side: 'left', top: '14%', delay: 0.55 },
-  { id: 'sample', label: 'SENSOR SAMPLING', value: '200Hz', side: 'left', top: '58%', delay: 0.7 },
-  { id: 'latency', label: 'RESPONSE LATENCY', value: '<5ms', side: 'right', top: '20%', delay: 0.62 },
-  { id: 'ai', label: 'ADAPTIVE AI ENGINE', value: 'REAL-TIME', side: 'right', top: '62%', delay: 0.78 },
+  { id: 'modes', tag: '01', text: 'Intelligent resistance and assistance modes', side: 'left', top: '16%', delay: 0.55 },
+  { id: 'overspeed', tag: '02', text: 'Controlled overspeed capability', side: 'left', top: '64%', delay: 0.7 },
+  { id: 'feedback', tag: '03', text: 'Real-time performance feedback', side: 'right', top: '20%', delay: 0.62 },
+  { id: 'build', tag: '04', text: 'Serious build quality for high-demand environments', side: 'right', top: '66%', delay: 0.78 },
 ]
 
-const BUILD_SPECS = [
-  { k: 'Chassis', v: 'Aerospace-Grade Alloy' },
-  { k: 'Drive', v: 'Direct Electromagnetic' },
-  { k: 'Mobility', v: 'Integrated Transport' },
-  { k: 'Class', v: 'Professional Grade' },
-]
+const CAPABILITIES = CALLOUTS.map(c => ({ tag: c.tag, text: c.text }))
 
 // ─── Callout ──────────────────────────────────────────────────────────────────
 
@@ -26,76 +20,47 @@ function Callout({ c, inView }: { c: typeof CALLOUTS[0]; inView: boolean }) {
   const isLeft = c.side === 'left'
   return (
     <motion.div
-      className={`absolute hidden xl:flex items-center gap-3 z-20 ${isLeft ? '-left-4 flex-row' : '-right-4 flex-row-reverse'}`}
+      className={`absolute hidden xl:flex items-center gap-3 z-30 w-[210px] ${isLeft ? 'right-full mr-4 flex-row' : 'left-full ml-4 flex-row-reverse'}`}
       style={{ top: c.top }}
-      initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
+      initial={{ opacity: 0, x: isLeft ? -20 : 20 }}
       animate={inView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.7, delay: c.delay, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className={`flex flex-col ${isLeft ? 'items-end text-right' : 'items-start text-left'}`}>
-        <span className="text-[9px] font-mono tracking-[0.22em] text-apex-grey-dim uppercase">{c.label}</span>
-        <span className="font-mono font-bold text-apex-white text-lg metric-value leading-tight">{c.value}</span>
+        <span className="text-[8px] font-mono tracking-[0.24em] text-apex-red uppercase mb-1">{c.tag}</span>
+        <span className="font-display font-semibold text-apex-white text-[13px] leading-snug">{c.text}</span>
       </div>
-      <div className="flex items-center gap-1.5">
+      <div className={`flex items-center gap-1.5 flex-shrink-0 ${isLeft ? '' : 'flex-row-reverse'}`}>
         <div className="w-1.5 h-1.5 rounded-full bg-apex-red" style={{ boxShadow: '0 0 8px #e0231f' }} />
-        <div className="w-14 h-px" style={{ background: isLeft ? 'linear-gradient(90deg, #e0231f, transparent)' : 'linear-gradient(270deg, #e0231f, transparent)' }} />
+        <div className="w-8 h-px" style={{ background: isLeft ? 'linear-gradient(90deg, #e0231f, transparent)' : 'linear-gradient(270deg, #e0231f, transparent)' }} />
       </div>
     </motion.div>
   )
 }
 
-// ─── Product Showcase ──────────────────────────────────────────────────────────
+// ─── Product / Engineering Showcase ───────────────────────────────────────────
 
 export default function ProductShowcase() {
   const sectionRef = useRef<HTMLElement>(null)
   const inView = useInView(sectionRef, { once: true, margin: '-15% 0px' })
   const titleRef = useRef<HTMLDivElement>(null)
   const titleInView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const videoRef = useRef<HTMLVideoElement>(null)
 
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })
-  const imgY = useTransform(scrollYProgress, [0, 1], [50, -50])
-
-  // Graceful fallback until /machine.png render is added to /public
-  const [imgError, setImgError] = useState(false)
-
-  // Respect reduced-motion
-  const [reduced, setReduced] = useState(false)
   useEffect(() => {
-    const m = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const update = () => setReduced(m.matches)
-    update()
-    m.addEventListener('change', update)
-    return () => m.removeEventListener('change', update)
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 0.75
+    }
   }, [])
 
-  // Interactive 3D tilt — cursor-driven, spring-smoothed
-  const rotateX = useSpring(0, { stiffness: 80, damping: 14 })
-  const rotateY = useSpring(0, { stiffness: 80, damping: 14 })
-  const glare = useSpring(50, { stiffness: 80, damping: 16 })
-
-  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (reduced) return
-    const r = e.currentTarget.getBoundingClientRect()
-    const px = (e.clientX - r.left) / r.width - 0.5
-    const py = (e.clientY - r.top) / r.height - 0.5
-    rotateY.set(px * 16)
-    rotateX.set(-py * 12)
-    glare.set(px * 100 + 50)
-  }
-  const handleLeave = () => {
-    rotateX.set(0)
-    rotateY.set(0)
-    glare.set(50)
-  }
-
   return (
-    <section ref={sectionRef} id="product" className="relative bg-apex-black overflow-hidden py-28 md:py-40">
+    <section ref={sectionRef} id="product" className="relative bg-apex-black-2 overflow-hidden py-28 md:py-40">
       {/* Top divider */}
       <div className="absolute top-0 left-0 right-0 h-px" style={{
         background: 'linear-gradient(90deg, transparent, rgba(224,35,31,0.3) 30%, rgba(224,35,31,0.3) 70%, transparent)'
       }} />
 
-      {/* Atmosphere: subtle volumetric wash — the render carries its own lighting */}
+      {/* Atmosphere */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110vw] h-[110vh]" style={{
           background: 'radial-gradient(ellipse 42% 46% at 50% 50%, rgba(224,35,31,0.1) 0%, rgba(123,47,190,0.05) 38%, transparent 66%)'
@@ -111,159 +76,161 @@ export default function ProductShowcase() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        {/* Eyebrow + headline */}
+        {/* Headline */}
         <div ref={titleRef} className="text-center mb-12">
-          <motion.div
-            className="inline-flex items-center gap-3 mb-7"
-            initial={{ opacity: 0, y: 14 }}
-            animate={titleInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="w-8 h-px bg-apex-red" />
-            <span className="text-apex-red font-mono text-[10px] tracking-[0.32em] uppercase font-medium">03 — The T-APEX Unit</span>
-            <div className="w-8 h-px bg-apex-red" />
-          </motion.div>
-
           <motion.h2
-            className="font-display font-bold text-apex-white leading-[0.86] mx-auto"
-            style={{ fontSize: 'clamp(3rem, 8vw, 7.5rem)', letterSpacing: '0.01em' }}
+            className="font-display font-bold text-apex-white leading-[0.9] mx-auto max-w-4xl"
+            style={{ fontSize: 'clamp(2.6rem, 6.5vw, 6rem)', letterSpacing: '0.01em' }}
             initial={{ opacity: 0, y: 30 }}
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            ENGINEERED LIKE<br />
-            <span style={{ color: 'transparent', WebkitTextStroke: '1.5px #e0231f' }}>NOTHING ELSE</span>
+            ENGINEERED LIKE NOTHING ELSE{' '}
+            <span style={{ color: 'transparent', WebkitTextStroke: '1.5px #e0231f' }}>IN THE ROOM</span>
           </motion.h2>
         </div>
 
-        {/* Stage: machine render + callouts */}
-        <div className="relative mx-auto" style={{ maxWidth: 1000 }}>
-          {CALLOUTS.map(c => <Callout key={c.id} c={c} inView={inView} />)}
+        {/* ── CINEMATIC PRODUCT VIDEO — native 4:3, flanked by callouts on xl ── */}
+        <div className="max-w-3xl mx-auto mb-16">
+          {/* Positioning context for the flanking callouts */}
+          <div className="relative">
+            {CALLOUTS.map(c => <Callout key={c.id} c={c} inView={inView} />)}
 
-          {/* Ambient glow behind the render */}
-          <div className="absolute inset-0 -z-0 pointer-events-none" aria-hidden="true" style={{
-            background: 'radial-gradient(ellipse 60% 55% at 50% 55%, rgba(224,35,31,0.22), transparent 70%)',
-            filter: 'blur(40px)',
-          }} />
-
-          {/* Entrance + scroll parallax + 3D perspective */}
-          <motion.div
-            className="relative"
-            style={{ y: imgY, perspective: 1400, willChange: 'transform' }}
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={inView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {/* Cursor-driven 3D tilt */}
             <motion.div
-              className="relative"
-              style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-              onMouseMove={handleMove}
-              onMouseLeave={handleLeave}
+              className="relative w-full overflow-hidden border border-apex-line/50"
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={inView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 1.1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             >
-              {/* Idle hover float */}
-              <motion.div
-                animate={reduced ? {} : { y: [0, -14, 0] }}
-                transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-                style={{ transformStyle: 'preserve-3d' }}
+              <div
+                className="relative w-full overflow-hidden"
+                style={{ aspectRatio: '4 / 3', background: '#07070a' }}
               >
-                <div className="relative w-full overflow-hidden" style={{ aspectRatio: '1341 / 1173', borderRadius: 2 }}>
-                  {!imgError ? (
-                    <Image
-                      src="/machine.png"
-                      alt="The T-APEX intelligent resistance unit on an elite training track"
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 1000px"
-                      className="object-cover object-center"
-                      priority={false}
-                      onError={() => setImgError(true)}
-                    />
-                  ) : (
-                    /* Fallback shown only if /machine.png hasn't been added yet */
-                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-apex-panel/40 border border-dashed border-apex-line">
-                      <div className="w-12 h-12 border border-apex-red/40 flex items-center justify-center">
-                        <div className="w-4 h-4 bg-apex-red/70" />
-                      </div>
-                      <span className="font-mono text-[10px] tracking-[0.22em] text-apex-grey-dim uppercase">T-APEX Unit Render</span>
-                      <span className="font-mono text-[9px] tracking-wide text-apex-grey-dim/70">add /public/machine.png</span>
-                    </div>
-                  )}
+                <video
+                  ref={videoRef}
+                  src="/product-video.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-contain"
+                  style={{ filter: 'brightness(0.97) contrast(1.04)' }}
+                />
 
-                  {/* Moving specular light sweep — "powered on" glint */}
-                  {!reduced && (
-                    <motion.div
-                      className="absolute inset-y-0 pointer-events-none"
-                      style={{
-                        width: '45%',
-                        background: 'linear-gradient(105deg, transparent, rgba(255,255,255,0.16) 45%, rgba(255,90,84,0.12) 55%, transparent)',
-                        mixBlendMode: 'screen',
-                        filter: 'blur(6px)',
-                      }}
-                      animate={{ x: ['-140%', '320%'] }}
-                      transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', repeatDelay: 2.2 }}
-                    />
-                  )}
+                {/* Top fade — seats video under the headline (vertical only, keeps sides clear) */}
+                <div
+                  className="absolute top-0 left-0 right-0 h-[12%] pointer-events-none"
+                  style={{ background: 'linear-gradient(180deg, rgba(15,15,18,0.6) 0%, transparent 100%)' }}
+                />
 
-                  {/* Edge vignette to blend render into the black section */}
-                  <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: 'inset 0 0 120px 24px #0a0a0c' }} />
+                {/* Bottom fade */}
+                <div
+                  className="absolute bottom-0 left-0 right-0 h-[14%] pointer-events-none"
+                  style={{ background: 'linear-gradient(180deg, transparent 0%, #0f0f12 100%)' }}
+                />
 
-                  {/* HUD corner brackets */}
-                  <div className="absolute top-3 left-3 pointer-events-none opacity-50">
-                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M0 22V0h22" stroke="#e0231f" strokeWidth="1.2" /></svg>
-                  </div>
-                  <div className="absolute bottom-3 right-3 pointer-events-none opacity-50">
-                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M22 0v22H0" stroke="#e0231f" strokeWidth="1.2" /></svg>
+                {/* Scanlines */}
+                <div
+                  className="absolute inset-0 pointer-events-none opacity-[0.03]"
+                  style={{
+                    backgroundImage: 'repeating-linear-gradient(0deg, rgba(255,255,255,0.2) 0px, rgba(255,255,255,0.2) 1px, transparent 1px, transparent 3px)',
+                  }}
+                />
+
+                {/* Subtle red glow at base */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{ background: 'radial-gradient(ellipse 60% 28% at 50% 100%, rgba(224,35,31,0.09) 0%, transparent 70%)' }}
+                />
+
+                {/* HUD corner brackets */}
+                <div className="absolute top-4 left-4 pointer-events-none opacity-45">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                    <path d="M0 28V0h28" stroke="#e0231f" strokeWidth="1.2" />
+                  </svg>
+                </div>
+                <div className="absolute top-4 right-4 pointer-events-none opacity-45">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                    <path d="M28 28V0H0" stroke="#e0231f" strokeWidth="1.2" />
+                  </svg>
+                </div>
+                <div className="absolute bottom-4 left-4 pointer-events-none opacity-45">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                    <path d="M0 0v28h28" stroke="#e0231f" strokeWidth="1.2" />
+                  </svg>
+                </div>
+                <div className="absolute bottom-4 right-4 pointer-events-none opacity-45">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                    <path d="M28 0v28H0" stroke="#e0231f" strokeWidth="1.2" />
+                  </svg>
+                </div>
+
+                {/* Status HUD — bottom left */}
+                <div className="absolute bottom-5 left-5 pointer-events-none">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-apex-red animate-pulse" />
+                    <span className="font-mono text-[9px] tracking-[0.28em] text-apex-grey-dim uppercase">
+                      T-Apex · Adaptive Resistance Intelligence
+                    </span>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </motion.div>
+          </div>
 
-            {/* Interaction hint */}
-            <motion.div
-              className="hidden lg:flex items-center justify-center gap-2 mt-5"
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 1.1 }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-apex-grey-dim">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-              </svg>
-              <span className="font-mono text-[9px] tracking-[0.22em] text-apex-grey-dim uppercase">Move cursor to inspect</span>
-            </motion.div>
+          {/* Capability strip — shown on smaller screens where the flanking callouts are hidden */}
+          <motion.div
+            className="xl:hidden grid grid-cols-1 sm:grid-cols-2 border border-apex-line/50 border-t-0 divide-y sm:divide-y-0 sm:divide-x divide-apex-line/40"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            {CAPABILITIES.map(({ tag, text }, i) => (
+              <motion.div
+                key={tag}
+                className="px-5 py-6 flex flex-col gap-2"
+                initial={{ opacity: 0, y: 14 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.65 + i * 0.09 }}
+              >
+                <span className="text-[10px] font-mono tracking-[0.22em] text-apex-red">{tag}</span>
+                <span className="font-display font-semibold text-apex-white tracking-wide text-[13px] leading-snug">{text}</span>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
 
-        {/* Caption */}
-        <motion.p
-          className="text-apex-grey font-body text-center max-w-2xl mx-auto leading-[1.8] mt-14 mb-12"
-          style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.1rem)' }}
+        {/* Body copy */}
+        <motion.div
+          className="max-w-3xl mx-auto text-center mb-16 flex flex-col gap-5"
           initial={{ opacity: 0, y: 18 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.9 }}
+          transition={{ duration: 0.7, delay: 0.85 }}
         >
-          A direct-drive electromagnetic core, a 200Hz multi-axis sensor array, and an adaptive AI engine — fused into one professional-grade platform. Engineered to be wheeled onto any track, court or performance floor, and to read athlete intent in real time.
-        </motion.p>
-
-        {/* Build spec strip */}
-        <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 border-t border-b border-apex-line/50 divide-x divide-apex-line/40"
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.8, delay: 1 }}
-        >
-          {BUILD_SPECS.map(({ k, v }, i) => (
-            <motion.div
-              key={k}
-              className="px-5 py-6 text-center"
-              initial={{ opacity: 0, y: 14 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 1 + i * 0.08 }}
-            >
-              <div className="text-[9px] font-mono tracking-[0.22em] text-apex-grey-dim uppercase mb-2">{k}</div>
-              <div className="font-display font-semibold text-apex-white tracking-wide text-sm md:text-base">{v}</div>
-            </motion.div>
-          ))}
+          <p className="text-apex-grey font-body leading-[1.8]" style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.1rem)' }}>
+            From its physical build to the way it applies resistance in motion, T-Apex is designed
+            for serious use in serious environments.
+          </p>
+          <p className="text-apex-white font-display font-semibold leading-snug" style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.4rem)' }}>
+            This is not consumer-grade equipment dressed up as innovation.
+          </p>
+          <p className="text-apex-grey font-body leading-[1.8]" style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.1rem)' }}>
+            It is an engineered training system built for operators who care about movement quality,
+            repeatability, measurable progression, and real-world performance application.
+          </p>
         </motion.div>
+
+        {/* Closing line */}
+        <motion.p
+          className="text-center font-display font-black text-apex-white leading-tight max-w-3xl mx-auto"
+          style={{ fontSize: 'clamp(1.2rem, 2.4vw, 2rem)' }}
+          initial={{ opacity: 0, y: 16 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 1 }}
+        >
+          T-Apex is built for coaches and facilities that want a better training tool,{' '}
+          <span className="text-apex-red">not just a different-looking machine.</span>
+        </motion.p>
       </div>
     </section>
   )
