@@ -42,7 +42,7 @@ const BENEFITS = [
   {
     num: '06',
     title: 'Serious Operator Advantage',
-    body: 'Stand out as a facility, performance centre, or coaching environment using technology built for serious application — not commodity training.',
+    body: 'Stand out as a facility, performance centre, or coaching environment using technology designed for serious operators and high-performance application — not generic gym floors.',
     accent: '#7B2FBE',
     tag: 'ADVANTAGE',
   },

@@ -471,23 +471,13 @@ export default function Hero() {
 
           {/* Subheadline */}
           <motion.p
-            className="mt-7 text-apex-grey font-body leading-[1.75]"
-            style={{ fontSize: 'clamp(0.88rem, 1.2vw, 1.02rem)' }}
+            className="mt-7 text-apex-grey font-body leading-[1.75] max-w-[560px]"
+            style={{ fontSize: 'clamp(0.92rem, 1.25vw, 1.08rem)' }}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 1.05 }}
           >
-            Built for serious performance environments that demand more speed, more force, more control, and far greater transfer than conventional resistance tools were ever designed to deliver.
-          </motion.p>
-
-          <motion.p
-            className="mt-4 text-apex-grey-dim font-body leading-[1.7]"
-            style={{ fontSize: 'clamp(0.82rem, 1.1vw, 0.94rem)' }}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, delay: 1.18 }}
-          >
-            Built for coaches, athletes, performance centres, and return-to-play environments, T-Apex helps create more precise resistance, clearer feedback, and stronger transfer where it matters most.
+            Built for serious coaches, athletes, and high-performance environments that demand more speed, more force, more control, and greater transfer than conventional resistance tools were ever designed to deliver.
           </motion.p>
 
           {/* CTAs */}
@@ -495,7 +485,7 @@ export default function Hero() {
             className="flex flex-wrap items-center gap-4 mt-9"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, delay: 1.28 }}
+            transition={{ duration: 0.65, delay: 1.22 }}
           >
             <button className="group inline-flex items-center gap-2.5 bg-apex-red hover:bg-apex-red-bright text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
               Book a Demo
@@ -510,25 +500,6 @@ export default function Hero() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
               </svg>
             </button>
-          </motion.div>
-
-          {/* Supporting credibility points */}
-          <motion.div
-            className="flex flex-col gap-3 mt-12 pt-7 border-t border-apex-line/35"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.65 }}
-          >
-            {[
-              'Intelligent resistance for modern high-performance training',
-              'Built for speed, force, control, and measurable progression',
-              'Designed for serious operators, not generic gym floors',
-            ].map((point) => (
-              <div key={point} className="flex items-center gap-3">
-                <div className="w-1.5 h-1.5 flex-shrink-0" style={{ background: '#e0231f', clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }} />
-                <span className="text-apex-grey font-body text-[12px] md:text-[13px] tracking-wide leading-snug">{point}</span>
-              </div>
-            ))}
           </motion.div>
 
         </div>{/* end left column */}
