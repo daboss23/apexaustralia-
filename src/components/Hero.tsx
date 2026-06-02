@@ -374,14 +374,59 @@ export default function Hero() {
   const contentOpacity = useTransform(scrollY, [0, 520], [1, 0])
   const videoScale = useTransform(scrollY, [0, 600], [1, 1.06])
 
-  // Slow the video to 65% — cinematic, not rushed
+  // Seamless crossfade loop — two stacked copies dissolve into each other
+  // near the end so the loop boundary "jump" is never visible. Also slows
+  // playback to 65% for a cinematic feel.
+  const RATE = 0.65
+  const FADE = 1.2 // seconds (in video time) before the end to begin the crossfade
+  const vidBRef = useRef<HTMLVideoElement>(null)
   useEffect(() => {
-    const vid = videoRef.current
-    if (!vid) return
-    vid.playbackRate = 0.65
-    const onCanPlay = () => { vid.playbackRate = 0.65 }
-    vid.addEventListener('canplay', onCanPlay)
-    return () => vid.removeEventListener('canplay', onCanPlay)
+    const a = videoRef.current
+    const b = vidBRef.current
+    if (!a || !b) return
+
+    let active = a
+    let hidden = b
+    let fading = false
+
+    ;[a, b].forEach((v) => {
+      v.muted = true
+      v.playbackRate = RATE
+    })
+    active.style.opacity = '1'
+    hidden.style.opacity = '0'
+    active.play().catch(() => {})
+
+    const onTime = (e: Event) => {
+      const v = e.target as HTMLVideoElement
+      if (v !== active || fading || !v.duration) return
+      if (v.currentTime < v.duration - FADE) return
+
+      fading = true
+      hidden.currentTime = 0
+      hidden.playbackRate = RATE
+      hidden.play().catch(() => {})
+      hidden.style.opacity = '1'
+      active.style.opacity = '0'
+
+      const finished = active
+      active = hidden
+      hidden = finished
+
+      // After the crossfade completes, reset the now-hidden copy for reuse.
+      window.setTimeout(() => {
+        finished.pause()
+        finished.currentTime = 0
+        fading = false
+      }, (FADE / RATE) * 1000)
+    }
+
+    a.addEventListener('timeupdate', onTime)
+    b.addEventListener('timeupdate', onTime)
+    return () => {
+      a.removeEventListener('timeupdate', onTime)
+      b.removeEventListener('timeupdate', onTime)
+    }
   }, [])
 
   return (
@@ -398,11 +443,19 @@ export default function Hero() {
             className="absolute inset-0 w-full h-full object-cover"
             src="/hero-video.mp4"
             autoPlay
-            loop
             muted
             playsInline
             aria-hidden="true"
-            style={{ objectPosition: '55% center' }}
+            style={{ objectPosition: '55% center', transition: `opacity ${(FADE / RATE).toFixed(2)}s linear` }}
+          />
+          <video
+            ref={vidBRef}
+            className="absolute inset-0 w-full h-full object-cover"
+            src="/hero-video.mp4"
+            muted
+            playsInline
+            aria-hidden="true"
+            style={{ objectPosition: '55% center', opacity: 0, transition: `opacity ${(FADE / RATE).toFixed(2)}s linear` }}
           />
         </motion.div>
 
