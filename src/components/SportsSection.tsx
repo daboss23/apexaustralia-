@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
+import SportTransitionStage from './SportTransitionStage'
 
 const SPORTS = [
   {
@@ -120,10 +121,23 @@ const SPORTS = [
 
 export default function SportsSection() {
   const [activeSport, setActiveSport] = useState('afl')
+  const [userPicked, setUserPicked] = useState(false)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-15% 0px' })
 
   const sport = SPORTS.find(s => s.id === activeSport) ?? SPORTS[0]
+
+  // Auto-cycle through codes to showcase breadth — until the visitor takes over.
+  useEffect(() => {
+    if (userPicked) return
+    const ids = SPORTS.map(s => s.id)
+    const iv = setInterval(() => {
+      setActiveSport(prev => ids[(ids.indexOf(prev) + 1) % ids.length])
+    }, 3400)
+    return () => clearInterval(iv)
+  }, [userPicked])
+
+  const pickSport = (id: string) => { setUserPicked(true); setActiveSport(id) }
 
   return (
     <section id="sports" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
@@ -188,13 +202,23 @@ export default function SportsSection() {
           </motion.div>
         </div>
 
+        {/* Multi-sport transition stage — "one system, every code" */}
+        <motion.div
+          className="mb-10"
+          initial={{ opacity: 0, y: 24 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.75, delay: 0.32 }}
+        >
+          <SportTransitionStage sports={SPORTS} sport={sport} activeId={activeSport} />
+        </motion.div>
+
         <motion.p
           className="text-apex-grey-dim font-body mb-8 text-sm"
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          Select a code to see where T-Apex applies.
+          Select a code to lock the view — or watch how T-Apex translates across every one.
         </motion.p>
 
         {/* Sport selector tabs */}
@@ -207,7 +231,7 @@ export default function SportsSection() {
           {SPORTS.map((s) => (
             <button
               key={s.id}
-              onClick={() => setActiveSport(s.id)}
+              onClick={() => pickSport(s.id)}
               className={`relative text-[11px] font-display font-bold tracking-[0.12em] uppercase px-4 py-2 border transition-all duration-300 cursor-pointer ${
                 activeSport === s.id
                   ? 'text-white border-transparent'
@@ -336,7 +360,7 @@ export default function SportsSection() {
                     className="inline-flex items-center gap-2 text-[11px] font-display font-bold tracking-[0.12em] uppercase px-5 py-2.5 border transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
                     style={{ borderRadius: 0, color: sport.color, borderColor: `${sport.color}50` }}
                   >
-                    Book a Demo
+                    Book Your Free Demo
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>

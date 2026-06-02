@@ -88,7 +88,7 @@ export default function FinalCTA() {
               animate={inView ? { y: 0, opacity: 1 } : {}}
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             >
-              BRING T-APEX INTO YOUR
+              THE FUTURE OF PERFORMANCE
             </motion.h2>
           </div>
           <div className="overflow-hidden mb-10">
@@ -99,7 +99,7 @@ export default function FinalCTA() {
               animate={inView ? { y: 0, opacity: 1 } : {}}
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
             >
-              PERFORMANCE ENVIRONMENT.
+              IS ALREADY HERE.
             </motion.h2>
           </div>
 
@@ -111,7 +111,7 @@ export default function FinalCTA() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.4 }}
           >
-            If you want a smarter way to train speed, force, movement quality, and athlete progress, T-Apex Australia is ready to show you what that looks like in practice.
+            Join the coaches, clubs, and athletes raising the standard. See T-Apex measure speed, force, and control in real time — then decide. We&apos;re placing units with select Australian programs now.
           </motion.p>
 
           {/* CTA buttons */}
@@ -123,7 +123,7 @@ export default function FinalCTA() {
           >
             <button className="group inline-flex items-center gap-3 bg-apex-red hover:bg-apex-red-bright text-white font-display font-bold px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(224,35,31,0.7)] hover:-translate-y-0.5 active:translate-y-0"
               style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', borderRadius: 0 }}>
-              Book a Demo
+              Book Your Free Demo
               <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
@@ -138,7 +138,15 @@ export default function FinalCTA() {
             </button>
           </motion.div>
 
-          <div className="mb-16" />
+          {/* Risk reversal — removes the last reason not to act */}
+          <motion.p
+            className="text-apex-grey-dim font-mono text-[10px] tracking-[0.18em] uppercase mb-16"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.6, delay: 0.85 }}
+          >
+            On-site or virtual · No obligation · Direct from the Australian team
+          </motion.p>
 
           {/* Logo + tagline */}
           <motion.div
