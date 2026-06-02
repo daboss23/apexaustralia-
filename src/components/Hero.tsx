@@ -549,7 +549,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 1.22 }}
           >
-            <button className="group inline-flex items-center gap-2.5 bg-apex-red hover:bg-apex-red-bright text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
+            <button className="group inline-flex items-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
               Book Your Free Demo
               <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />

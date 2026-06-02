@@ -2,6 +2,7 @@
 
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
+import Image from 'next/image'
 
 const CREDENTIALS = [
   'Olympic-level sprint coach',
@@ -129,6 +130,32 @@ export default function LocalTrustSection() {
               <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
                 <path d="M44 44V0H0" stroke="rgba(180,140,60,1)" strokeWidth="1" />
               </svg>
+            </div>
+
+            {/* Founder portrait — engineered frame */}
+            <div className="relative mb-6 overflow-hidden aspect-[4/5] sm:aspect-square"
+              style={{ border: '1px solid rgba(180,140,60,0.28)' }}>
+              <Image
+                src="/piero.png"
+                alt="Piero Sacchetta — Founder, T-Apex Australia"
+                fill
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                className="object-cover object-top"
+                style={{ filter: 'saturate(0.94) contrast(1.04)' }}
+              />
+              {/* bottom fade into the card */}
+              <div className="absolute inset-0 pointer-events-none"
+                style={{ background: 'linear-gradient(180deg, transparent 50%, rgba(15,15,18,0.55) 80%, rgba(15,15,18,0.92) 100%)' }} />
+              {/* gold top edge + corner reticle */}
+              <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'rgba(180,140,60,0.85)' }} />
+              <div className="absolute top-2 left-2 pointer-events-none" aria-hidden="true">
+                <svg width="10" height="10" viewBox="0 0 10 10"><path d="M0 10 L0 0 L10 0" fill="none" stroke="rgba(180,140,60,0.9)" strokeWidth="1.2" /></svg>
+              </div>
+              {/* live tag */}
+              <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[8px] font-mono tracking-[0.24em] uppercase text-apex-white/90">Olympic-Level Coach</span>
+              </div>
             </div>
 
             <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-2" style={{ color: 'rgba(180,140,60,0.85)' }}>

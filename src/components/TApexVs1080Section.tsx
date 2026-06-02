@@ -294,7 +294,7 @@ export default function TApexVs1080Section() {
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
               <button
-                className="flex-1 bg-apex-red hover:bg-apex-red-bright text-white font-display font-bold text-[11px] px-6 py-4 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.55)] hover:-translate-y-0.5"
+                className="flex-1 cta-glow text-white font-display font-bold text-[11px] px-6 py-4 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.55)] hover:-translate-y-0.5"
                 style={{ borderRadius: 0 }}
               >
                 Book a Demo

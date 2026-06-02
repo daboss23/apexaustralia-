@@ -151,7 +151,7 @@ export default function ComparisonSection() {
             You&apos;re not choosing between products — you&apos;re choosing whether to measure, or keep guessing.
           </h3>
           <button
-            className="flex-shrink-0 inline-flex items-center gap-2.5 bg-apex-red hover:bg-apex-red-bright text-white font-display font-bold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_12px_40px_-8px_rgba(224,35,31,0.6)] hover:-translate-y-0.5"
+            className="flex-shrink-0 inline-flex items-center gap-2.5 cta-glow text-white font-display font-bold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_12px_40px_-8px_rgba(224,35,31,0.6)] hover:-translate-y-0.5"
             style={{ borderRadius: 0 }}
           >
             Book Your Free Demo

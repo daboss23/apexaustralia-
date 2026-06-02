@@ -121,7 +121,7 @@ export default function FinalCTA() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.65 }}
           >
-            <button className="group inline-flex items-center gap-3 bg-apex-red hover:bg-apex-red-bright text-white font-display font-bold px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(224,35,31,0.7)] hover:-translate-y-0.5 active:translate-y-0"
+            <button className="group inline-flex items-center gap-3 cta-glow text-white font-display font-bold px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(224,35,31,0.7)] hover:-translate-y-0.5 active:translate-y-0"
               style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', borderRadius: 0 }}>
               Book Your Free Demo
               <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
