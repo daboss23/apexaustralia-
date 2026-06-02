@@ -8,14 +8,14 @@ const BENEFITS = [
     num: '01',
     title: 'Precision Resistance Application',
     body: 'Dial resistance or assistance to the movement — acceleration, deceleration, change of direction, and the sport-specific work that drives transfer.',
-    accent: '#e0231f',
+    accent: '#00A3FF',
     tag: 'PRECISION',
   },
   {
     num: '02',
     title: 'More Measurable Performance',
     body: 'Move beyond guesswork with a system that shows clear progress, sharper monitoring, and better-informed coaching decisions.',
-    accent: '#e0231f',
+    accent: '#00A3FF',
     tag: 'MEASURABLE',
   },
   {
@@ -36,7 +36,7 @@ const BENEFITS = [
     num: '05',
     title: 'Better Coaching Feedback',
     body: 'Give coaches a better way to observe, adjust, and guide movement in real time rather than relying on broad assumptions.',
-    accent: '#e0231f',
+    accent: '#00A3FF',
     tag: 'FEEDBACK',
   },
   {
@@ -57,14 +57,14 @@ export default function BenefitsSection() {
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(224,35,31,0.25) 30%, rgba(224,35,31,0.25) 70%, transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(0,163,255,0.25) 30%, rgba(0,163,255,0.25) 70%, transparent)' }}
       />
 
       {/* Subtle diagonal pattern */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
-          backgroundImage: 'repeating-linear-gradient(45deg, rgba(224,35,31,1) 0px, rgba(224,35,31,1) 1px, transparent 1px, transparent 60px)',
+          backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,163,255,1) 0px, rgba(0,163,255,1) 1px, transparent 1px, transparent 60px)',
         }}
         aria-hidden="true"
       />
@@ -80,7 +80,7 @@ export default function BenefitsSection() {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             SIX REASONS<br />
-            <span className="text-apex-red">IT CHANGES</span><br />
+            <span className="text-apex-blue">IT CHANGES</span><br />
             EVERYTHING.
           </motion.h2>
           <motion.div
@@ -120,7 +120,7 @@ function BenefitCard({ benefit, index }: { benefit: typeof BENEFITS[0]; index: n
   return (
     <motion.div
       ref={ref}
-      className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-red/30 transition-colors duration-300 cursor-default flex flex-col"
+      className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-blue/30 transition-colors duration-300 cursor-default flex flex-col"
       style={{ borderRadius: 0 }}
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}

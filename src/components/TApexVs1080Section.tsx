@@ -50,18 +50,18 @@ export default function TApexVs1080Section() {
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(224,35,31,0.25) 30%, rgba(224,35,31,0.25) 70%, transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(123,47,190,0.25) 30%, rgba(123,47,190,0.25) 70%, transparent)' }}
       />
 
       {/* Background texture */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.025]"
-        style={{ backgroundImage: 'radial-gradient(circle, rgba(224,35,31,1) 1px, transparent 1px)', backgroundSize: '40px 40px' }}
+        style={{ backgroundImage: 'radial-gradient(circle, rgba(123,47,190,1) 1px, transparent 1px)', backgroundSize: '40px 40px' }}
         aria-hidden="true"
       />
       <div
         className="absolute bottom-0 left-0 right-0 h-1/2 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse 55% 45% at 50% 100%, rgba(224,35,31,0.06), transparent 70%)' }}
+        style={{ background: 'radial-gradient(ellipse 55% 45% at 50% 100%, rgba(123,47,190,0.06), transparent 70%)' }}
         aria-hidden="true"
       />
 
@@ -76,7 +76,7 @@ export default function TApexVs1080Section() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           MORE THAN A<br />
-          <span className="text-apex-red">SPRINT RESISTANCE TOOL.</span>
+          <span className="text-apex-purple">SPRINT RESISTANCE TOOL.</span>
         </motion.h2>
 
         {/* Subheadline */}
@@ -124,17 +124,17 @@ export default function TApexVs1080Section() {
             <div
               className="mt-6 p-6 relative overflow-hidden"
               style={{
-                background: 'linear-gradient(135deg, rgba(20,20,24,1) 0%, rgba(15,15,18,1) 55%, rgba(224,35,31,0.08) 100%)',
-                border: '1px solid rgba(224,35,31,0.3)',
-                borderLeft: '4px solid #e0231f',
+                background: 'linear-gradient(135deg, rgba(20,20,24,1) 0%, rgba(15,15,18,1) 55%, rgba(123,47,190,0.08) 100%)',
+                border: '1px solid rgba(123,47,190,0.3)',
+                borderLeft: '4px solid #7B2FBE',
               }}
             >
               <div className="absolute top-0 right-0 opacity-20 pointer-events-none">
                 <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                  <path d="M40 40V0H0" stroke="#e0231f" strokeWidth="1" />
+                  <path d="M40 40V0H0" stroke="#7B2FBE" strokeWidth="1" />
                 </svg>
               </div>
-              <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-2" style={{ color: 'rgba(224,35,31,0.85)' }}>
+              <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-2" style={{ color: 'rgba(123,47,190,0.85)' }}>
                 The Core Principle
               </div>
               <div className="font-display font-black text-apex-white leading-none"
@@ -167,7 +167,7 @@ export default function TApexVs1080Section() {
                   animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.45 + i * 0.08 }}
                 >
-                  <span className="font-mono text-[10px] text-apex-red tracking-[0.1em] flex-shrink-0">
+                  <span className="font-mono text-[10px] text-apex-purple tracking-[0.1em] flex-shrink-0">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <span className="text-apex-grey font-body leading-snug"
@@ -205,11 +205,11 @@ export default function TApexVs1080Section() {
             </div>
             <div
               className="px-5 py-4 border"
-              style={{ background: 'rgba(224,35,31,0.08)', borderColor: 'rgba(224,35,31,0.3)', borderTop: '2px solid #e0231f', borderRight: 'none' }}
+              style={{ background: 'rgba(123,47,190,0.08)', borderColor: 'rgba(123,47,190,0.3)', borderTop: '2px solid #7B2FBE', borderRight: 'none' }}
             >
               <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-apex-red" style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }} />
-                <span className="text-[9px] font-mono font-bold text-apex-red tracking-[0.22em] uppercase">T-Apex</span>
+                <div className="w-1.5 h-1.5 bg-apex-purple" style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }} />
+                <span className="text-[9px] font-mono font-bold text-apex-purple tracking-[0.22em] uppercase">T-Apex</span>
               </div>
             </div>
             <div className="px-5 py-4 bg-apex-panel/40 border border-apex-line/40">
@@ -236,10 +236,10 @@ export default function TApexVs1080Section() {
               {/* T-Apex (highlighted) */}
               <div
                 className="px-5 py-4 flex items-start gap-2.5 border border-t-0"
-                style={{ background: 'rgba(224,35,31,0.05)', borderColor: 'rgba(224,35,31,0.22)', borderRight: 'none' }}
+                style={{ background: 'rgba(123,47,190,0.05)', borderColor: 'rgba(123,47,190,0.22)', borderRight: 'none' }}
               >
                 <div className="flex-shrink-0 mt-0.5">
-                  <svg className="w-3.5 h-3.5 text-apex-red" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                  <svg className="w-3.5 h-3.5 text-apex-purple" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
                 </div>
@@ -277,8 +277,8 @@ export default function TApexVs1080Section() {
 
         {/* Closing line + CTA */}
         <motion.div
-          className="mt-10 p-8 md:p-10 border border-apex-red/25"
-          style={{ borderRadius: 0, background: 'rgba(224,35,31,0.05)', borderTop: '2px solid #e0231f' }}
+          className="mt-10 p-8 md:p-10 border border-apex-purple/25"
+          style={{ borderRadius: 0, background: 'rgba(123,47,190,0.05)', borderTop: '2px solid #7B2FBE' }}
           initial={{ opacity: 0, y: 14 }}
           animate={tableInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -288,13 +288,13 @@ export default function TApexVs1080Section() {
               <p className="font-display font-black text-apex-white leading-tight"
                 style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.7rem)' }}>
                 This is not just another sprint tool. It is an{' '}
-                <span className="text-apex-red">Adaptive Resistance Intelligence system</span>{' '}
+                <span className="text-apex-purple">Adaptive Resistance Intelligence system</span>{' '}
                 for elite performance programs.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
               <button
-                className="flex-1 bg-apex-red hover:bg-apex-red-bright text-white font-display font-bold text-[11px] px-6 py-4 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.55)] hover:-translate-y-0.5"
+                className="flex-1 cta-glow text-white font-display font-bold text-[11px] px-6 py-4 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.55)] hover:-translate-y-0.5"
                 style={{ borderRadius: 0 }}
               >
                 Book a Demo

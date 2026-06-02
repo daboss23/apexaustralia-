@@ -132,7 +132,7 @@ export default function WhoItsForSection() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="flex-1 bg-apex-red hover:bg-apex-red-bright text-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.55)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
+              <button className="flex-1 cta-glow text-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.55)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
                 Book a Demo
                 <svg className="inline-block ml-2 w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
