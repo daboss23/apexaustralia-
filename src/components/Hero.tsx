@@ -385,7 +385,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section id="hero" className="relative min-h-screen flex flex-col justify-center overflow-hidden">
+    <section id="hero" className="relative min-h-screen flex flex-col justify-start overflow-hidden">
 
       {/* LAYER 1 — Full-bleed video background */}
       <div className="absolute inset-0 z-[1] pointer-events-none">
@@ -465,7 +465,7 @@ export default function Hero() {
             <img
               src="/logo.png"
               alt="T-APEX Australia"
-              className="h-40 md:h-52 w-auto object-contain"
+              className="h-28 md:h-36 w-auto object-contain"
               style={{ filter: 'brightness(1.1)' }}
             />
             <div className="flex items-center gap-3">
