@@ -15,13 +15,13 @@ const SEGMENTS = [
     id: 'coaches',
     title: 'Coaches & S&C Staff',
     description: 'Your decisions are only as good as your data. T-Apex gives you the measurement layer that transforms intuition into evidence — so you programme with confidence, not estimates.',
-    outcomes: ['Session-by-session progression data', 'Load management visibility', 'AI-optimised program outputs'],
+    outcomes: ['Session-by-session progress data', 'Load management visibility', 'AI-optimised program outputs'],
     accent: '#e0231f',
   },
   {
     id: 'centres',
     title: 'Performance Centres',
-    description: 'You run the facility that elite athletes trust. T-Apex positions your centre as a technology-forward environment — attracting serious operators and justifying premium positioning.',
+    description: 'You run the facility that elite athletes trust. T-Apex positions your centre as a technology-forward destination — attracting committed coaches and justifying premium positioning.',
     outcomes: ['Commercial differentiation', 'Multi-athlete session management', 'Coach and athlete data platforms'],
     accent: '#00A3FF',
   },
@@ -84,7 +84,7 @@ export default function WhoItsForSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          BUILT FOR ENVIRONMENTS<br />
+          BUILT FOR PROGRAMS<br />
           <span className="text-apex-red">THAT TAKE PERFORMANCE SERIOUSLY.</span>
         </motion.h2>
 
@@ -95,9 +95,9 @@ export default function WhoItsForSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.65, delay: 0.15 }}
         >
-          T-Apex is not a consumer product. It is professional-grade technology designed for
-          operators who want measurable outcomes — not just equipment that looks impressive.
-          Read below and identify where your environment sits.
+          T-Apex is not a consumer product. It is professional-grade technology built for
+          coaches and facilities that want measurable outcomes — not just equipment that looks
+          impressive. Read on and find where you fit.
         </motion.p>
 
         {/* Segments grid */}
@@ -118,7 +118,7 @@ export default function WhoItsForSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <div className="text-[9px] font-mono text-apex-red tracking-[0.25em] uppercase mb-3">
-                Not sure if T-Apex fits your environment?
+                Not sure if T-Apex fits your set-up?
               </div>
               <h3
                 className="font-display font-black text-apex-white leading-tight mb-3"
@@ -127,7 +127,7 @@ export default function WhoItsForSection() {
                 If you measure athletic performance, T-Apex belongs in your programme.
               </h3>
               <p className="text-apex-grey font-body text-sm leading-relaxed">
-                Every serious performance environment — from national programs to private academies —
+                Every high-level program — from national squads to private academies —
                 needs a data layer. T-Apex provides that layer in a single, mobile, professional-grade unit.
               </p>
             </div>

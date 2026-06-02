@@ -78,7 +78,7 @@ const SPORTS = [
     id: 'athletics',
     name: 'Athletics',
     tagline: 'Hundredths Of A Second',
-    description: 'Track and field demands absolute precision. T-Apex supports the marginal gains that matter most at the highest level of competition.',
+    description: 'Track and field is decided by the smallest of margins. T-Apex supports the marginal gains that matter most at the highest level of competition.',
     color: '#e0231f',
     focuses: [
       'Block clearance and early acceleration',
@@ -92,7 +92,7 @@ const SPORTS = [
     id: 'olympic',
     name: 'Olympic Programs',
     tagline: 'The Margin Between Gold And Silver',
-    description: 'Olympic performance exists at the edge of human capability. T-Apex is built for national-level programs that demand precision in preparation.',
+    description: 'Olympic results live at the edge of human capability. T-Apex is built for national-level programs that leave nothing to chance in preparation.',
     color: '#e0231f',
     focuses: [
       'Peak power expression',
@@ -106,7 +106,7 @@ const SPORTS = [
     id: 'sc',
     name: 'Strength & Conditioning',
     tagline: 'Scientific Programming',
-    description: 'T-Apex gives S&C professionals a more measurable, adaptable tool to program with precision across the full athletic development continuum.',
+    description: 'T-Apex gives S&C professionals a more measurable, adaptable tool to program with control across the full athletic development continuum.',
     color: '#7B2FBE',
     focuses: [
       'Progressive overload with control',
@@ -160,14 +160,14 @@ export default function SportsSection() {
           >
             <p className="text-apex-grey font-body mb-5 leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
-              T-Apex is not built for a single narrow training use case. It is built for serious
-              performance environments that need a more adaptable way to train speed, force, control,
-              and progression across multiple sporting demands.
+              T-Apex was never built for one narrow use case. It suits demanding programs that need
+              a more adaptable way to train speed, force, control, and athlete progress across
+              multiple sporting demands.
             </p>
             <p className="text-apex-grey font-body leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
               Whether the goal is acceleration, repeat effort, change of direction, return-to-play,
-              or movement efficiency, T-Apex gives coaches a more responsive performance tool that
+              or movement efficiency, T-Apex gives coaches a more responsive tool that
               can translate across different athletes, codes, and phases of development.
             </p>
           </motion.div>

@@ -7,17 +7,17 @@ const STEPS = [
   {
     num: '01',
     title: 'Set The Training Objective',
-    body: 'Build the session around the exact outcome you want to target — speed, force production, acceleration, control, deceleration, athletic development, or return-to-play progression.',
+    body: 'Build the session around the exact outcome you want — speed, force production, acceleration, control, deceleration, athletic development, or return-to-play.',
   },
   {
     num: '02',
     title: 'Apply Intelligent Resistance',
-    body: 'Use T-Apex to create a more responsive loading environment that challenges movement with more purpose than conventional resistance methods alone.',
+    body: 'Use T-Apex to load movement more responsively, challenging athletes with more purpose than conventional resistance methods alone.',
   },
   {
     num: '03',
     title: 'Coach, Measure, Progress',
-    body: 'Observe more clearly, coach more intentionally, and build stronger progression over time using a more intelligent training tool.',
+    body: 'Observe more clearly, coach more intentionally, and track how athletes develop over time with a smarter training tool.',
   },
 ]
 
@@ -65,8 +65,7 @@ export default function HowItWorksSection() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.65, delay: 0.2 }}
           >
-            T-Apex is designed to fit into serious high-performance environments without creating
-            unnecessary complexity.
+            T-Apex slots into demanding programs without adding unnecessary complexity.
           </motion.p>
         </div>
 
@@ -92,7 +91,7 @@ export default function HowItWorksSection() {
           <p className="font-display font-black text-apex-white leading-tight"
             style={{ fontSize: 'clamp(1.2rem, 2.4vw, 2rem)' }}>
             T-Apex is not about adding complexity for the sake of technology.{' '}
-            <span className="text-apex-red">It is about giving serious operators a better system for better outcomes.</span>
+            <span className="text-apex-red">It is about giving coaches a better system for better outcomes.</span>
           </p>
         </motion.div>
       </div>

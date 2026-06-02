@@ -7,28 +7,28 @@ const BENEFITS = [
   {
     num: '01',
     title: 'Precision Resistance Application',
-    body: 'Apply resistance or assistance with greater control across acceleration, deceleration, change of direction, and movement-specific performance work.',
+    body: 'Dial resistance or assistance to the movement — acceleration, deceleration, change of direction, and the sport-specific work that drives transfer.',
     accent: '#e0231f',
     tag: 'PRECISION',
   },
   {
     num: '02',
     title: 'More Measurable Performance',
-    body: 'Move beyond guesswork with a system that supports clearer progression, better monitoring, and more informed coaching decisions.',
+    body: 'Move beyond guesswork with a system that shows clear progress, sharper monitoring, and better-informed coaching decisions.',
     accent: '#e0231f',
     tag: 'MEASURABLE',
   },
   {
     num: '03',
     title: 'More Engaging Athlete Training',
-    body: 'Create a training environment that feels more dynamic, more responsive, and more aligned with the demands of modern performance development.',
+    body: 'Give athletes a session that feels dynamic and responsive — and that mirrors the real demands of their sport.',
     accent: '#00A3FF',
     tag: 'ENGAGEMENT',
   },
   {
     num: '04',
     title: 'Performance And Return-To-Play Utility',
-    body: 'Use T-Apex across athlete development, rehabilitation, reconditioning, and return-to-play progressions with more control and flexibility.',
+    body: 'Use T-Apex across athlete development, rehab, reconditioning, and return-to-play with more control and flexibility at every stage.',
     accent: '#00A3FF',
     tag: 'VERSATILITY',
   },
@@ -41,8 +41,8 @@ const BENEFITS = [
   },
   {
     num: '06',
-    title: 'Serious Operator Advantage',
-    body: 'Stand out as a facility, performance centre, or coaching environment using technology designed for serious operators and high-performance application — not generic gym floors.',
+    title: 'Professional Edge',
+    body: 'Set your facility or performance centre apart with technology built for elite coaching — not generic gym floors.',
     accent: '#7B2FBE',
     tag: 'ADVANTAGE',
   },
@@ -91,13 +91,13 @@ export default function BenefitsSection() {
           >
             <p className="text-apex-grey font-body leading-relaxed mb-6"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
-              T-Apex does not add more volume to your training programme. It adds precision,
+              T-Apex does not add more volume to your training programme. It adds control,
               responsiveness, and measurability to everything you already do.
             </p>
             <p className="text-apex-grey font-body leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
               The result: better athlete outcomes, better coaching decisions, and a facility that
-              operates with a clear advantage over environments still training without it.
+              operates with a clear advantage over those still training without it.
             </p>
           </motion.div>
         </div>

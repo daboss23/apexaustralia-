@@ -14,27 +14,27 @@ const COACH_OUTCOMES = [
 const ROWS = [
   {
     dimension: 'Primary performance idea',
-    tapex: 'Adaptive Resistance Intelligence for broader performance application',
+    tapex: 'Adaptive Resistance Intelligence across a wide range of training',
     sprint: 'Sprint resistance and overspeed emphasis',
   },
   {
     dimension: 'Training application',
-    tapex: 'Speed, force, control, acceleration, deceleration, COD, progression, rehab',
+    tapex: 'Speed, force, control, acceleration, deceleration, COD, progress, rehab',
     sprint: 'Stronger straight-line sprint and overspeed association',
   },
   {
     dimension: 'Coaching flexibility',
-    tapex: 'Broader use across multiple training environments and movement demands',
+    tapex: 'Wide-ranging use across many settings and movement demands',
     sprint: 'More sprint-specific in perception and primary use case',
   },
   {
     dimension: 'Environment fit',
-    tapex: 'Built for coaches, facilities, rehab, and broader performance system use',
+    tapex: 'Built for coaches, facilities, rehab, and whole-system use',
     sprint: 'Best known in sprint-focused and speed-development contexts',
   },
   {
     dimension: 'System philosophy',
-    tapex: 'A broader adaptive resistance performance system',
+    tapex: 'A complete adaptive resistance performance system',
     sprint: 'A highly recognised sprint resistance category product',
   },
 ]
@@ -116,7 +116,7 @@ export default function TApexVs1080Section() {
             <p className="text-apex-grey font-body leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
               While 1080 Sprint is widely recognised for sprint resistance, overspeed application,
-              and straight-line performance work, T-Apex is built around a broader high-performance
+              and straight-line speed work, T-Apex is built around a wider high-performance
               principle:
             </p>
 
@@ -188,7 +188,7 @@ export default function TApexVs1080Section() {
           animate={tableInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          For environments that need more than a narrow sprint tool, the difference becomes clear.
+          For programs that need more than a narrow sprint tool, the difference becomes clear.
         </motion.p>
 
         {/* Comparison table */}
@@ -270,9 +270,8 @@ export default function TApexVs1080Section() {
           </p>
           <p className="text-apex-grey font-body leading-relaxed"
             style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
-            If your priority is a broader performance system that can support serious coaching
-            environments beyond one-dimensional sprint application, T-Apex creates a different
-            category of value.
+            If your priority is a complete performance system that can support demanding coaching
+            well beyond one-dimensional sprint work, T-Apex creates a different category of value.
           </p>
         </motion.div>
 
@@ -290,7 +289,7 @@ export default function TApexVs1080Section() {
                 style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.7rem)' }}>
                 This is not just another sprint tool. It is an{' '}
                 <span className="text-apex-red">Adaptive Resistance Intelligence system</span>{' '}
-                for serious performance environments.
+                for elite performance programs.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
