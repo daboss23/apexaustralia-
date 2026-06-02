@@ -448,7 +448,7 @@ export default function Hero() {
 
       {/* LAYER 3 — Headline + CTAs — anchored LEFT so video action is visible right */}
       <motion.div
-        className="relative z-10 max-w-7xl mx-auto w-full px-6 md:px-10 lg:px-16 pt-28 md:pt-32 pb-24"
+        className="relative z-10 max-w-7xl mx-auto w-full px-6 md:px-10 lg:px-16 pt-[5.5rem] md:pt-[5.75rem] pb-24"
         style={{ y: contentY, opacity: contentOpacity, willChange: 'transform, opacity' }}
       >
         {/* Content column — constrained to left ~48% on desktop so video shows right */}
@@ -465,7 +465,7 @@ export default function Hero() {
             <img
               src="/logo.png"
               alt="T-APEX Australia"
-              className="h-24 md:h-28 w-auto object-contain"
+              className="h-40 md:h-52 w-auto object-contain"
               style={{ filter: 'brightness(1.1)' }}
             />
             <div className="flex items-center gap-3">
