@@ -454,9 +454,9 @@ export default function Hero() {
         {/* Content column — constrained to left ~48% on desktop so video shows right */}
         <div className="w-full lg:max-w-[580px] xl:max-w-[620px]">
 
-          {/* Pre-label — logo + eyebrow */}
+          {/* Pre-label — large logo on top, eyebrow below */}
           <motion.div
-            className="flex items-center gap-4 mb-7"
+            className="flex flex-col items-start gap-5 mb-8"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.55, delay: 0.08 }}
@@ -465,13 +465,15 @@ export default function Hero() {
             <img
               src="/logo.png"
               alt="T-APEX Australia"
-              className="h-10 w-auto object-contain flex-shrink-0"
+              className="h-24 md:h-28 w-auto object-contain"
               style={{ filter: 'brightness(1.1)' }}
             />
-            <div className="w-px h-6 bg-apex-line flex-shrink-0" />
-            <span className="text-apex-red font-mono text-[9px] font-medium tracking-[0.32em] uppercase">
-              Elite Sports Performance Technology
-            </span>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-px bg-apex-red" />
+              <span className="text-apex-red font-mono text-[9px] font-medium tracking-[0.32em] uppercase">
+                Elite Sports Performance Technology
+              </span>
+            </div>
           </motion.div>
 
           <Headline />
