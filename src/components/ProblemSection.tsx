@@ -65,14 +65,14 @@ export default function ProblemSection() {
         {/* Headline */}
         <motion.h2
           ref={titleRef}
-          className="h-luxia text-apex-white leading-[0.88] mb-10 max-w-4xl"
+          className="h-luxia t-silver leading-[0.88] mb-10 max-w-4xl"
           style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           MOST PERFORMANCE ENVIRONMENTS<br />
-          <span className="text-apex-red">ARE STILL TRAINING BLIND.</span>
+          <span className="t-red">ARE STILL TRAINING BLIND.</span>
         </motion.h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
@@ -110,7 +110,7 @@ export default function ProblemSection() {
                   transition={{ duration: 0.55, delay: 0.4 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <div className="w-6 h-px bg-apex-red/60 mt-2.5 flex-shrink-0" />
-                  <p className="font-display font-semibold text-apex-white leading-snug"
+                  <p className="font-display font-semibold t-feature leading-snug"
                     style={{ fontSize: 'clamp(1rem, 1.7vw, 1.25rem)' }}>
                     {line}
                   </p>

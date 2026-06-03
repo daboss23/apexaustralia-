@@ -80,8 +80,8 @@ export default function ComparisonSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <span className="headline-machined">EVERYTHING THEY DO.</span><br />
-          <span className="headline-machined-red">PLUS EVERYTHING THEY CAN&apos;T.</span>
+          <span className="t-silver">EVERYTHING THEY DO.</span><br />
+          <span className="t-red">PLUS EVERYTHING THEY CAN&apos;T.</span>
         </motion.h2>
         <motion.p
           className="font-body leading-relaxed max-w-2xl mb-14"
@@ -200,7 +200,7 @@ export default function ComparisonSection() {
           {/* Red accent rule, left */}
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-12 pointer-events-none" style={{ background: C.red, boxShadow: `0 0 16px ${C.red}` }} />
 
-          <h3 className="h-luxia leading-tight flex-1" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.6rem)', color: C.text }}>
+          <h3 className="h-luxia t-silver leading-tight flex-1" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.6rem)' }}>
             You&apos;re not choosing between products — you&apos;re choosing whether to measure, or keep guessing.
           </h3>
           <button

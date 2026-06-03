@@ -81,14 +81,14 @@ export default function ProductShowcase() {
         {/* Headline */}
         <div ref={titleRef} className="text-center mb-12">
           <motion.h2
-            className="h-luxia text-apex-white leading-[0.9] mx-auto max-w-4xl"
+            className="h-luxia t-silver leading-[0.9] mx-auto max-w-4xl"
             style={{ fontSize: 'clamp(2rem, 5.5vw, 4.6rem)', letterSpacing: '0.01em' }}
             initial={{ opacity: 0, y: 30 }}
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
             ENGINEERED LIKE NOTHING ELSE{' '}
-            <span style={{ color: 'transparent', WebkitTextStroke: '1.5px #00AEEF' }}>IN THE ROOM</span>
+            <span className="t-blue">IN THE ROOM</span>
           </motion.h2>
         </div>
 

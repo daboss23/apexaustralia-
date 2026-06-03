@@ -188,7 +188,7 @@ export default function SportTransitionStage({
           <AnimatePresence mode="wait">
             <motion.p
               key={`tag-${activeId}`}
-              className="font-display font-bold text-apex-white leading-snug"
+              className="font-display font-bold t-feature leading-snug"
               style={{ fontSize: 'clamp(0.95rem, 1.7vw, 1.35rem)' }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}

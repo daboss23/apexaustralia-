@@ -125,11 +125,11 @@ export default function ResultsSection() {
           transition={{ duration: 0.7 }}
         >
           <h2
-            className="h-luxia text-apex-white leading-[0.88]"
+            className="h-luxia t-silver leading-[0.88]"
             style={{ fontSize: 'clamp(2.1rem, 5.2vw, 4.3rem)' }}
           >
             ENGINEERED RESULTS.<br />
-            <span className="text-apex-red">ELITE OUTCOMES.</span>
+            <span className="t-red">ELITE OUTCOMES.</span>
           </h2>
         </motion.div>
 
@@ -155,7 +155,7 @@ export default function ResultsSection() {
               <CounterStat stat={stat} unit={unit} prefix={prefix} inView={statsInView} />
 
               <div className="mt-4 flex flex-col gap-1">
-                <h3 className="font-display font-black text-apex-white tracking-wide leading-tight"
+                <h3 className="font-display font-black t-feature tracking-wide leading-tight"
                   style={{ fontSize: 'clamp(1rem, 1.8vw, 1.4rem)' }}>
                   {label}
                 </h3>
@@ -173,7 +173,7 @@ export default function ResultsSection() {
           transition={{ duration: 0.6, delay: 0.5 }}
         >
           <div>
-            <h3 className="font-display font-black text-apex-white mb-6 leading-tight"
+            <h3 className="font-display font-black t-feature mb-6 leading-tight"
               style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)' }}>
               Validated Across<br />Elite Programs.
             </h3>

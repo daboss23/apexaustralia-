@@ -78,14 +78,14 @@ export default function WhoItsForSection() {
 
         {/* Headline */}
         <motion.h2
-          className="h-luxia text-apex-white leading-[0.88] mb-6 max-w-4xl"
+          className="h-luxia t-silver leading-[0.88] mb-6 max-w-4xl"
           style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           BUILT FOR PROGRAMS<br />
-          <span className="text-apex-red">THAT TAKE PERFORMANCE SERIOUSLY.</span>
+          <span className="t-red">THAT TAKE PERFORMANCE SERIOUSLY.</span>
         </motion.h2>
 
         <motion.p
@@ -121,7 +121,7 @@ export default function WhoItsForSection() {
                 Not sure if T-Apex fits your set-up?
               </div>
               <h3
-                className="font-display font-black text-apex-white leading-tight mb-3"
+                className="font-display font-black t-feature leading-tight mb-3"
                 style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.8rem)' }}
               >
                 If you measure athletic performance, T-Apex belongs in your programme.
@@ -175,7 +175,7 @@ function SegmentCard({ seg, index }: { seg: typeof SEGMENTS[0]; index: number })
       />
 
       <h3
-        className="font-display font-black text-apex-white mb-3 leading-tight"
+        className="font-display font-black t-feature mb-3 leading-tight"
         style={{ fontSize: 'clamp(1rem, 1.6vw, 1.15rem)' }}
       >
         {seg.title}

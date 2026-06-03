@@ -145,14 +145,14 @@ export default function PerformanceSection() {
 
         {/* Title */}
         <motion.h2
-          className="h-luxia text-apex-white mb-4 leading-[0.9]"
+          className="h-luxia t-silver mb-4 leading-[0.9]"
           style={{ fontSize: 'clamp(2.1rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.1 }}
         >
           ENGINEERED FOR<br />
-          <span className="text-apex-red">EVERY ATHLETE</span>
+          <span className="t-red">EVERY ATHLETE</span>
         </motion.h2>
 
         <motion.p

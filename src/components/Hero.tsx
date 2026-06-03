@@ -348,15 +348,14 @@ function Headline() {
       animate="show"
     >
       <div className="overflow-hidden">
-        <motion.span variants={word} className="inline-block text-apex-white">TRAIN&nbsp;</motion.span>
-        <motion.span variants={word} className="inline-block text-apex-white">BEYOND</motion.span>
+        <motion.span variants={word} className="inline-block t-silver">TRAIN&nbsp;</motion.span>
+        <motion.span variants={word} className="inline-block t-silver">BEYOND</motion.span>
       </div>
       <div className="overflow-hidden">
-        <motion.span variants={word} className="inline-block text-apex-red">HUMAN&nbsp;</motion.span>
+        <motion.span variants={word} className="inline-block t-red">HUMAN&nbsp;</motion.span>
         <motion.span
           variants={word}
-          className="inline-block"
-          style={{ color: 'transparent', WebkitTextStroke: '2px #E10600' }}
+          className="inline-block t-red"
         >
           LIMITS
         </motion.span>
