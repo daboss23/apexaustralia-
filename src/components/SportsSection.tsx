@@ -10,7 +10,7 @@ const SPORTS = [
     name: 'AFL',
     tagline: 'Explosive, Game-Breaking Athleticism',
     description: 'T-Apex supports the explosive qualities that win contested possessions, break lines, and cover ground — trained with more control and clearer feedback.',
-    color: '#E10600',
+    color: '#D61F26',
     focuses: [
       'Acceleration and repeat-sprint capacity',
       'Contest and aerial power development',
@@ -24,7 +24,7 @@ const SPORTS = [
     name: 'NRL',
     tagline: 'Power From Every Position',
     description: 'Rugby league demands explosive power in every collision. T-Apex helps develop the force, speed, and conditioning to compete for the full 80 minutes.',
-    color: '#E10600',
+    color: '#D61F26',
     focuses: [
       'Collision and contact force development',
       'Defensive line-speed and acceleration',
@@ -38,7 +38,7 @@ const SPORTS = [
     name: 'Rugby Union',
     tagline: 'Set Piece To Open Field',
     description: 'From scrum power to backline speed, T-Apex supports the resistance training that develops technically demanding, Test-level athletic qualities.',
-    color: '#E10600',
+    color: '#D61F26',
     focuses: [
       'Set-piece and scrum force',
       'Explosive elevation for the lineout',
@@ -80,7 +80,7 @@ const SPORTS = [
     name: 'Athletics',
     tagline: 'Hundredths Of A Second',
     description: 'Track and field is decided by the smallest of margins. T-Apex supports the marginal gains that matter most at the highest level of competition.',
-    color: '#E10600',
+    color: '#D61F26',
     focuses: [
       'Block clearance and early acceleration',
       'Maximum velocity development',
@@ -94,7 +94,7 @@ const SPORTS = [
     name: 'Olympic Programs',
     tagline: 'The Margin Between Gold And Silver',
     description: 'Olympic results live at the edge of human capability. T-Apex is built for national-level programs that leave nothing to chance in preparation.',
-    color: '#E10600',
+    color: '#D61F26',
     focuses: [
       'Peak power expression',
       'Force–velocity profiling support',
@@ -143,14 +143,14 @@ export default function SportsSection() {
     <section id="sports" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute inset-0 opacity-15" style={{
-          backgroundImage: `radial-gradient(circle at 50% 80%, rgba(225,6,0,0.06) 0%, transparent 55%)`
+          backgroundImage: `radial-gradient(circle at 50% 80%, rgba(214,31,38,0.06) 0%, transparent 55%)`
         }} />
       </div>
 
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(225,6,0,0.25) 30%, rgba(225,6,0,0.25) 70%, transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(214,31,38,0.25) 30%, rgba(214,31,38,0.25) 70%, transparent)' }}
       />
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">

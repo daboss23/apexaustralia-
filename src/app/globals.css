@@ -17,7 +17,7 @@
   }
 
   ::selection {
-    background: #E10600;
+    background: #D61F26;
     color: #fff;
   }
 
@@ -60,11 +60,11 @@
 
   /* Red glow utility */
   .glow-red {
-    box-shadow: 0 0 40px -8px rgba(225,6,0, 0.5);
+    box-shadow: 0 0 40px -8px rgba(214,31,38, 0.5);
   }
 
   .glow-red-sm {
-    box-shadow: 0 8px 24px -6px rgba(225,6,0, 0.45);
+    box-shadow: 0 8px 24px -6px rgba(214,31,38, 0.45);
   }
 
   /* ── Performance display headline font: Orbitron (motorsport / F1 /
@@ -162,15 +162,15 @@
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background: linear-gradient(115deg, #9c0f0d 0%, #E10600 32%, #ff3b30 56%, #E10600 80%, #9c0f0d 100%);
+  background: linear-gradient(115deg, #9c0f0d 0%, #D61F26 32%, #ff3b30 56%, #D61F26 80%, #9c0f0d 100%);
   background-size: 160% 160%;
-  box-shadow: 0 8px 28px -10px rgba(225,6,0, 0.55), 0 8px 28px -12px rgba(156,15,13, 0.5);
+  box-shadow: 0 8px 28px -10px rgba(214,31,38, 0.55), 0 8px 28px -12px rgba(156,15,13, 0.5);
   animation: cta-glow-pulse 3.6s ease-in-out infinite, cta-gradient-shift 7s ease infinite;
   transition: transform 0.25s ease, box-shadow 0.3s ease;
 }
 .cta-glow:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 44px -10px rgba(225,6,0, 0.7), 0 16px 44px -12px rgba(156,15,13, 0.6);
+  box-shadow: 0 16px 44px -10px rgba(214,31,38, 0.7), 0 16px 44px -12px rgba(156,15,13, 0.6);
 }
 .cta-glow:active { transform: translateY(0); }
 /* Diagonal sheen that sweeps across on a loop (and again, faster, on hover) */
@@ -189,8 +189,8 @@
   60%, 100% { transform: translateX(130%); }
 }
 @keyframes cta-glow-pulse {
-  0%, 100% { box-shadow: 0 8px 28px -10px rgba(225,6,0, 0.5), 0 8px 28px -12px rgba(156,15,13, 0.45); }
-  50% { box-shadow: 0 10px 34px -8px rgba(225,6,0, 0.7), 0 10px 34px -10px rgba(156,15,13, 0.6); }
+  0%, 100% { box-shadow: 0 8px 28px -10px rgba(214,31,38, 0.5), 0 8px 28px -12px rgba(156,15,13, 0.45); }
+  50% { box-shadow: 0 10px 34px -8px rgba(214,31,38, 0.7), 0 10px 34px -10px rgba(156,15,13, 0.6); }
 }
 @keyframes cta-gradient-shift {
   0%, 100% { background-position: 0% 50%; }

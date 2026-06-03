@@ -71,7 +71,7 @@ export default function FAQSection() {
             </p>
             <div className="flex flex-col gap-3">
               <button
-                className="inline-flex items-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(225,6,0,0.55)] hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(214,31,38,0.55)] hover:-translate-y-0.5"
                 style={{ borderRadius: 0 }}
               >
                 Book a Demo

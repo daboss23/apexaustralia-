@@ -10,7 +10,7 @@ const RESULTS = [
     prefix: '+',
     label: 'Faster Acceleration',
     description: 'Out of the blocks and through transition zones',
-    color: '#E10600',
+    color: '#D61F26',
   },
   {
     stat: 18,
@@ -18,7 +18,7 @@ const RESULTS = [
     prefix: '+',
     label: 'Greater Power Output',
     description: 'At peak training and competition intensities',
-    color: '#E10600',
+    color: '#D61F26',
   },
   {
     stat: 15,
@@ -26,7 +26,7 @@ const RESULTS = [
     prefix: '+',
     label: 'Improved Force Production',
     description: 'In measured resistance and ground reaction force',
-    color: '#E10600',
+    color: '#D61F26',
   },
   {
     stat: 21,
@@ -34,7 +34,7 @@ const RESULTS = [
     prefix: '+',
     label: 'Enhanced Athletic Performance',
     description: 'Across composite sport-specific testing protocols',
-    color: '#E10600',
+    color: '#D61F26',
   },
 ]
 
@@ -96,23 +96,23 @@ export default function ResultsSection() {
         {/* Large diagonal accent */}
         <div
           className="absolute -left-20 top-1/2 -translate-y-1/2 w-[60vw] h-px opacity-20"
-          style={{ background: 'linear-gradient(90deg, transparent, #E10600 80%)' }}
+          style={{ background: 'linear-gradient(90deg, transparent, #D61F26 80%)' }}
         />
         <div
           className="absolute -right-20 top-1/2 -translate-y-1/2 w-[60vw] h-px opacity-20"
-          style={{ background: 'linear-gradient(270deg, transparent, #E10600 80%)' }}
+          style={{ background: 'linear-gradient(270deg, transparent, #D61F26 80%)' }}
         />
         {/* Subtle radial */}
         <div className="absolute inset-0 opacity-20" style={{
-          background: 'radial-gradient(ellipse 70% 50% at 50% 50%, rgba(225,6,0,0.06), transparent)'
+          background: 'radial-gradient(ellipse 70% 50% at 50% 50%, rgba(214,31,38,0.06), transparent)'
         }} />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         {/* Section label */}
         <div ref={titleRef} className="flex items-center gap-3 mb-6">
-          <div className="w-8 h-px bg-apex-red" />
-          <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
+          <div className="w-8 h-px bg-apex-blue" />
+          <span className="text-apex-blue font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
             07 — Results
           </span>
         </div>
@@ -146,7 +146,7 @@ export default function ResultsSection() {
               {/* Animated top border */}
               <motion.div
                 className="absolute -top-px left-0 h-px"
-                style={{ background: '#E10600' }}
+                style={{ background: '#D61F26' }}
                 initial={{ width: 0 }}
                 animate={statsInView ? { width: '100%' } : {}}
                 transition={{ duration: 1, delay: 0.3 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
