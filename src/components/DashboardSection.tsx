@@ -18,10 +18,10 @@ function genData(base: number, spread: number, points: number): number[] {
 const CHART_POINTS = 32
 
 const GAUGES = [
-  { id: 'speed', label: 'SPEED', unit: 'm/s', value: 12.4, max: 16, color: '#7B2FBE', pct: 77 },
-  { id: 'power', label: 'POWER', unit: 'kW', value: 4.2, max: 6, color: '#00A3FF', pct: 70 },
-  { id: 'force', label: 'FORCE', unit: 'N', value: 847, max: 1200, color: '#7B2FBE', pct: 71 },
-  { id: 'accel', label: 'ACCEL', unit: 'm/s²', value: 8.3, max: 12, color: '#00A3FF', pct: 69 },
+  { id: 'speed', label: 'SPEED', unit: 'm/s', value: 12.4, max: 16, color: '#00AEEF', pct: 77 },
+  { id: 'power', label: 'POWER', unit: 'kW', value: 4.2, max: 6, color: '#E10600', pct: 70 },
+  { id: 'force', label: 'FORCE', unit: 'N', value: 847, max: 1200, color: '#E10600', pct: 71 },
+  { id: 'accel', label: 'ACCEL', unit: 'm/s²', value: 8.3, max: 12, color: '#00AEEF', pct: 69 },
 ]
 
 const LIVE_METRICS = [
@@ -189,15 +189,15 @@ export default function DashboardSection() {
           backgroundSize: '60px 60px',
         }} />
         <div className="absolute top-0 left-0 right-0 h-px" style={{
-          background: 'linear-gradient(90deg, transparent, rgba(123,47,190,0.25) 30%, rgba(123,47,190,0.25) 70%, transparent)'
+          background: 'linear-gradient(90deg, transparent, rgba(0,174,239,0.25) 30%, rgba(0,174,239,0.25) 70%, transparent)'
         }} />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         {/* Section label */}
         <div ref={titleRef} className="flex items-center gap-3 mb-6">
-          <div className="w-8 h-px bg-apex-purple" />
-          <span className="text-apex-purple font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
+          <div className="w-8 h-px bg-apex-blue" />
+          <span className="text-apex-blue font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
             05b — Live Performance Dashboard
           </span>
         </div>
@@ -209,7 +209,7 @@ export default function DashboardSection() {
           animate={titleInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
         >
-          RACE-GRADE<br /><span className="text-apex-purple">TELEMETRY</span>
+          RACE-GRADE<br /><span className="text-apex-blue">TELEMETRY</span>
         </motion.h2>
 
         <motion.p
@@ -225,7 +225,7 @@ export default function DashboardSection() {
         {/* Main dashboard panel */}
         <motion.div
           className="bg-apex-panel border border-apex-line overflow-hidden"
-          style={{ borderRadius: 0, borderTop: '2px solid #7B2FBE' }}
+          style={{ borderRadius: 0, borderTop: '2px solid #00AEEF' }}
           initial={{ opacity: 0, y: 32 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.1 }}
@@ -234,7 +234,7 @@ export default function DashboardSection() {
           <div className="flex items-center justify-between px-6 py-3 border-b border-apex-line bg-apex-black/60">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-apex-purple" />
+                <div className="w-2 h-2 bg-apex-blue" />
                 <span className="text-[10px] font-mono text-apex-grey tracking-[0.22em] uppercase">
                   T-APEX Performance Monitor
                 </span>
@@ -289,17 +289,17 @@ export default function DashboardSection() {
 
               {/* Speed chart */}
               <div className="bg-apex-black/60 rounded-xl p-4 border border-apex-line/50">
-                <LiveChart color="#7B2FBE" label="Velocity (m/s)" inView={inView} />
+                <LiveChart color="#00AEEF" label="Velocity (m/s)" inView={inView} />
               </div>
 
               {/* Power chart */}
               <div className="bg-apex-black/60 rounded-xl p-4 border border-apex-line/50">
-                <LiveChart color="#00A3FF" label="Power Output (kW)" inView={inView} />
+                <LiveChart color="#E10600" label="Power Output (kW)" inView={inView} />
               </div>
 
               {/* Force chart */}
               <div className="bg-apex-black/60 rounded-xl p-4 border border-apex-line/50">
-                <LiveChart color="#7B2FBE" label="Force Production (N)" inView={inView} />
+                <LiveChart color="#E10600" label="Force Production (N)" inView={inView} />
               </div>
 
               {/* Bottom status row */}

@@ -9,42 +9,42 @@ const SEGMENTS = [
     title: 'Elite Athletes',
     description: 'You train to outperform everyone else. T-Apex gives you the feedback loop that makes every session count — and the data to prove you\'re getting faster, stronger, and more powerful.',
     outcomes: ['Objective performance tracking', 'Adaptive resistance stimulus', 'Real-time session feedback'],
-    accent: '#e0231f',
+    accent: '#E10600',
   },
   {
     id: 'coaches',
     title: 'Coaches & S&C Staff',
     description: 'Your decisions are only as good as your data. T-Apex gives you the measurement layer that transforms intuition into evidence — so you programme with confidence, not estimates.',
     outcomes: ['Session-by-session progress data', 'Load management visibility', 'AI-optimised program outputs'],
-    accent: '#e0231f',
+    accent: '#E10600',
   },
   {
     id: 'centres',
     title: 'Performance Centres',
     description: 'You run the facility that elite athletes trust. T-Apex positions your centre as a technology-forward destination — attracting committed coaches and justifying premium positioning.',
     outcomes: ['Commercial differentiation', 'Multi-athlete session management', 'Coach and athlete data platforms'],
-    accent: '#00A3FF',
+    accent: '#00AEEF',
   },
   {
     id: 'rehab',
     title: 'Rehab & Return-to-Play',
     description: 'Graduated loading is the most critical part of return-to-play. T-Apex makes every prescribed load measurable and verifiable — eliminating the guesswork that causes re-injury.',
     outcomes: ['Objective load verification', 'Safe, graduated protocols', 'Physio-to-coach data handoff'],
-    accent: '#00A3FF',
+    accent: '#00AEEF',
   },
   {
     id: 'academies',
     title: 'Schools & Academies',
     description: 'Developing the next generation requires a system that tracks and proves long-term athlete development. T-Apex gives academies the data infrastructure that professional clubs use.',
     outcomes: ['Long-term athlete development tracking', 'Group session telemetry', 'Talent identification data'],
-    accent: '#e0231f',
+    accent: '#E10600',
   },
   {
     id: 'operators',
     title: 'Private Facility Operators',
     description: 'Your commercial edge is your capability. T-Apex adds a category-defining piece of technology that separates your offering from every standard gym and training space in your market.',
     outcomes: ['Premium service offering', 'Technology-forward positioning', 'Revenue-driving capability'],
-    accent: '#7B2FBE',
+    accent: '#00AEEF',
   },
 ]
 
@@ -57,13 +57,13 @@ export default function WhoItsForSection() {
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(224,35,31,0.25) 30%, rgba(224,35,31,0.25) 70%, transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(225,6,0,0.25) 30%, rgba(225,6,0,0.25) 70%, transparent)' }}
       />
 
       {/* Ambient glow */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse 55% 40% at 50% 80%, rgba(224,35,31,0.06), transparent 65%)' }}
+        style={{ background: 'radial-gradient(ellipse 55% 40% at 50% 80%, rgba(225,6,0,0.06), transparent 65%)' }}
         aria-hidden="true"
       />
 
@@ -110,7 +110,7 @@ export default function WhoItsForSection() {
         {/* Bridge to sports */}
         <motion.div
           className="mt-16 p-8 border border-apex-line/50 bg-apex-panel/40"
-          style={{ borderTop: '2px solid rgba(224,35,31,0.6)' }}
+          style={{ borderTop: '2px solid rgba(225,6,0,0.6)' }}
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.7 }}
@@ -132,7 +132,7 @@ export default function WhoItsForSection() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="flex-1 cta-glow text-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.55)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
+              <button className="flex-1 cta-glow text-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(225,6,0,0.55)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
                 Book a Demo
                 <svg className="inline-block ml-2 w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />

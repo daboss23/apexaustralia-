@@ -31,8 +31,8 @@ function Callout({ c, inView }: { c: typeof CALLOUTS[0]; inView: boolean }) {
         <span className="font-display font-semibold text-apex-white text-[13px] leading-snug">{c.text}</span>
       </div>
       <div className={`flex items-center gap-1.5 flex-shrink-0 ${isLeft ? '' : 'flex-row-reverse'}`}>
-        <div className="w-1.5 h-1.5 rounded-full bg-apex-blue" style={{ boxShadow: '0 0 8px #00A3FF' }} />
-        <div className="w-8 h-px" style={{ background: isLeft ? 'linear-gradient(90deg, #00A3FF, transparent)' : 'linear-gradient(270deg, #00A3FF, transparent)' }} />
+        <div className="w-1.5 h-1.5 rounded-full bg-apex-blue" style={{ boxShadow: '0 0 8px #00AEEF' }} />
+        <div className="w-8 h-px" style={{ background: isLeft ? 'linear-gradient(90deg, #00AEEF, transparent)' : 'linear-gradient(270deg, #00AEEF, transparent)' }} />
       </div>
     </motion.div>
   )
@@ -57,16 +57,16 @@ export default function ProductShowcase() {
     <section ref={sectionRef} id="product" className="relative bg-apex-black-2 overflow-hidden py-28 md:py-40">
       {/* Top divider */}
       <div className="absolute top-0 left-0 right-0 h-px" style={{
-        background: 'linear-gradient(90deg, transparent, rgba(0,163,255,0.3) 30%, rgba(0,163,255,0.3) 70%, transparent)'
+        background: 'linear-gradient(90deg, transparent, rgba(0,174,239,0.3) 30%, rgba(0,174,239,0.3) 70%, transparent)'
       }} />
 
       {/* Atmosphere */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110vw] h-[110vh]" style={{
-          background: 'radial-gradient(ellipse 42% 46% at 50% 50%, rgba(0,163,255,0.1) 0%, rgba(123,47,190,0.05) 38%, transparent 66%)'
+          background: 'radial-gradient(ellipse 42% 46% at 50% 50%, rgba(0,174,239,0.1) 0%, rgba(0,174,239,0.05) 38%, transparent 66%)'
         }} />
         <div className="absolute bottom-0 left-0 right-0 h-[34%] opacity-[0.12]" style={{
-          backgroundImage: 'linear-gradient(rgba(0,163,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(0,163,255,0.22) 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(rgba(0,174,239,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(0,174,239,0.22) 1px, transparent 1px)',
           backgroundSize: '60px 60px',
           transform: 'perspective(420px) rotateX(62deg)',
           transformOrigin: 'bottom',
@@ -86,7 +86,7 @@ export default function ProductShowcase() {
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
             ENGINEERED LIKE NOTHING ELSE{' '}
-            <span style={{ color: 'transparent', WebkitTextStroke: '1.5px #00A3FF' }}>IN THE ROOM</span>
+            <span style={{ color: 'transparent', WebkitTextStroke: '1.5px #00AEEF' }}>IN THE ROOM</span>
           </motion.h2>
         </div>
 
@@ -120,13 +120,13 @@ export default function ProductShowcase() {
                 {/* Top fade — seats video under the headline (vertical only, keeps sides clear) */}
                 <div
                   className="absolute top-0 left-0 right-0 h-[12%] pointer-events-none"
-                  style={{ background: 'linear-gradient(180deg, rgba(15,15,18,0.6) 0%, transparent 100%)' }}
+                  style={{ background: 'linear-gradient(180deg, rgba(10,13,16,0.6) 0%, transparent 100%)' }}
                 />
 
                 {/* Bottom fade */}
                 <div
                   className="absolute bottom-0 left-0 right-0 h-[14%] pointer-events-none"
-                  style={{ background: 'linear-gradient(180deg, transparent 0%, #0f0f12 100%)' }}
+                  style={{ background: 'linear-gradient(180deg, transparent 0%, #0A0D10 100%)' }}
                 />
 
                 {/* Scanlines */}
@@ -140,28 +140,28 @@ export default function ProductShowcase() {
                 {/* Subtle red glow at base */}
                 <div
                   className="absolute inset-0 pointer-events-none"
-                  style={{ background: 'radial-gradient(ellipse 60% 28% at 50% 100%, rgba(0,163,255,0.09) 0%, transparent 70%)' }}
+                  style={{ background: 'radial-gradient(ellipse 60% 28% at 50% 100%, rgba(0,174,239,0.09) 0%, transparent 70%)' }}
                 />
 
                 {/* HUD corner brackets */}
                 <div className="absolute top-4 left-4 pointer-events-none opacity-45">
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                    <path d="M0 28V0h28" stroke="#00A3FF" strokeWidth="1.2" />
+                    <path d="M0 28V0h28" stroke="#00AEEF" strokeWidth="1.2" />
                   </svg>
                 </div>
                 <div className="absolute top-4 right-4 pointer-events-none opacity-45">
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                    <path d="M28 28V0H0" stroke="#00A3FF" strokeWidth="1.2" />
+                    <path d="M28 28V0H0" stroke="#00AEEF" strokeWidth="1.2" />
                   </svg>
                 </div>
                 <div className="absolute bottom-4 left-4 pointer-events-none opacity-45">
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                    <path d="M0 0v28h28" stroke="#00A3FF" strokeWidth="1.2" />
+                    <path d="M0 0v28h28" stroke="#00AEEF" strokeWidth="1.2" />
                   </svg>
                 </div>
                 <div className="absolute bottom-4 right-4 pointer-events-none opacity-45">
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                    <path d="M28 0v28H0" stroke="#00A3FF" strokeWidth="1.2" />
+                    <path d="M28 0v28H0" stroke="#00AEEF" strokeWidth="1.2" />
                   </svg>
                 </div>
 

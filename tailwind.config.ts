@@ -10,19 +10,23 @@ const config: Config = {
     extend: {
       colors: {
         apex: {
-          red: '#e0231f',
+          // Accent — Red = force/resistance/power
+          red: '#E10600',
           'red-bright': '#ff3b30',
           'red-deep': '#9c0f0d',
-          black: '#0a0a0c',
-          'black-2': '#0f0f12',
-          panel: '#141418',
-          'panel-2': '#1a1a20',
-          line: '#26262e',
-          'line-soft': '#1e1e24',
-          white: '#f4f4f6',
-          grey: '#9a9aa6',
-          'grey-dim': '#62626c',
-          blue: '#00A3FF',
+          // Neutrals — engineering / premium product surfaces
+          black: '#050505',        // Matte Black
+          'black-2': '#0A0D10',    // Carbon Black
+          panel: '#14181D',        // Dark Graphite
+          'panel-2': '#1a1f26',
+          gunmetal: '#2A3038',     // Gunmetal
+          line: '#2A3038',
+          'line-soft': '#1e232a',
+          white: '#F5F7FA',
+          grey: '#9aa0ab',
+          'grey-dim': '#62686f',
+          // Accent — Blue = intelligence/telemetry/data
+          blue: '#00AEEF',
           purple: '#7B2FBE',
         },
       },

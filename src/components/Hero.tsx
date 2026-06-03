@@ -12,7 +12,7 @@ const TELEMETRY = [
     unit: 'm/s',
     values: [9.42, 9.51, 9.38, 9.64, 9.47, 9.58, 9.42],
     decimals: 2,
-    color: '#e0231f',
+    color: '#00AEEF',
     delta: '+0.3',
     tag: 'MAX',
     sparkline: [42, 51, 38, 62, 70, 56, 78, 65, 84],
@@ -23,7 +23,7 @@ const TELEMETRY = [
     unit: 'kN',
     values: [2.81, 2.84, 2.78, 2.91, 2.86, 2.89, 2.81],
     decimals: 2,
-    color: '#7B2FBE',
+    color: '#E10600',
     delta: '+2.4%',
     tag: 'PEAK',
     sparkline: [52, 60, 46, 70, 64, 74, 60, 80, 72],
@@ -34,7 +34,7 @@ const TELEMETRY = [
     unit: 'kW',
     values: [4.21, 4.35, 4.18, 4.42, 4.31, 4.38, 4.21],
     decimals: 2,
-    color: '#00A3FF',
+    color: '#E10600',
     delta: '+12%',
     tag: 'HIGH',
     sparkline: [38, 52, 46, 60, 56, 68, 62, 76, 70],
@@ -45,7 +45,7 @@ const TELEMETRY = [
     unit: 'm/s²',
     values: [8.72, 8.81, 8.65, 8.94, 8.77, 8.88, 8.72],
     decimals: 2,
-    color: '#f59e0b',
+    color: '#00AEEF',
     delta: '+0.6',
     tag: 'ACTIVE',
     sparkline: [48, 56, 42, 62, 70, 58, 76, 68, 80],
@@ -245,14 +245,14 @@ function SystemCard() {
           background: 'rgba(5,5,8,0.94)',
           backdropFilter: 'blur(24px)',
           border: '1px solid rgba(255,255,255,0.05)',
-          borderLeft: '2px solid rgba(0,163,255,0.85)',
-          borderTop: '1px solid rgba(0,163,255,0.22)',
-          boxShadow: '0 4px 36px -10px rgba(0,163,255,0.2), inset 0 0 0 0.5px rgba(255,255,255,0.03)',
+          borderLeft: '2px solid rgba(0,174,239,0.85)',
+          borderTop: '1px solid rgba(0,174,239,0.22)',
+          boxShadow: '0 4px 36px -10px rgba(0,174,239,0.2), inset 0 0 0 0.5px rgba(255,255,255,0.03)',
           minWidth: 196,
         }}
       >
         <div className="absolute top-1.5 right-1.5 pointer-events-none">
-          <Reticle corner="tr" color="#00A3FF" />
+          <Reticle corner="tr" color="#00AEEF" />
         </div>
         <div className="absolute bottom-1.5 left-1.5 pointer-events-none">
           <Reticle corner="bl" color="rgba(255,255,255,0.14)" />
@@ -264,8 +264,8 @@ function SystemCard() {
         <div className="px-3.5 py-2.5 pl-4">
           <div className="flex items-center justify-between mb-2.5">
             <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5" style={{ background: '#00A3FF', clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }} />
-              <span className="text-[8px] font-mono font-bold tracking-[0.24em] uppercase text-[#00A3FF]">T-APEX UNIT</span>
+              <div className="w-1.5 h-1.5" style={{ background: '#00AEEF', clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }} />
+              <span className="text-[8px] font-mono font-bold tracking-[0.24em] uppercase text-[#00AEEF]">T-APEX UNIT</span>
             </div>
             <div className="flex items-center gap-1">
               <span className="text-[7px] font-mono text-emerald-400 tracking-wider">ENGAGED</span>
@@ -297,7 +297,7 @@ function SystemCard() {
               <div className="text-[7px] font-mono text-apex-grey-dim tracking-wider uppercase mb-0.5">Mode</div>
               <AnimatePresence mode="wait">
                 <motion.div key={mode} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
-                  <span className="text-[10px] font-mono font-bold tracking-[0.22em] text-[#00A3FF]">{mode}</span>
+                  <span className="text-[10px] font-mono font-bold tracking-[0.22em] text-[#00AEEF]">{mode}</span>
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -308,7 +308,7 @@ function SystemCard() {
             <div className="h-[2px] bg-apex-line rounded-full overflow-hidden">
               <motion.div
                 className="h-full rounded-full"
-                style={{ background: 'linear-gradient(90deg, #00A3FF, #7B2FBE)' }}
+                style={{ background: 'linear-gradient(90deg, #00AEEF, #E10600)' }}
                 animate={{ width: `${(resistance / 450) * 100}%` }}
                 transition={{ duration: 0.65, ease: 'easeOut' }}
               />
@@ -356,7 +356,7 @@ function Headline() {
         <motion.span
           variants={word}
           className="inline-block"
-          style={{ color: 'transparent', WebkitTextStroke: '2px #e0231f' }}
+          style={{ color: 'transparent', WebkitTextStroke: '2px #E10600' }}
         >
           LIMITS
         </motion.span>
@@ -461,35 +461,35 @@ export default function Hero() {
 
         {/* Left column: heavy dark ramp — text lives here, fully readable */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(90deg, #0a0a0c 0%, rgba(10,10,12,0.97) 12%, rgba(10,10,12,0.88) 24%, rgba(10,10,12,0.6) 38%, rgba(10,10,12,0.28) 52%, rgba(10,10,12,0.1) 65%, rgba(10,10,12,0.04) 78%, transparent 92%)'
+          background: 'linear-gradient(90deg, #050505 0%, rgba(5,5,5,0.97) 12%, rgba(5,5,5,0.88) 24%, rgba(5,5,5,0.6) 38%, rgba(5,5,5,0.28) 52%, rgba(5,5,5,0.1) 65%, rgba(5,5,5,0.04) 78%, transparent 92%)'
         }} />
 
         {/* Top vignette — keeps nav area grounded */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(180deg, rgba(10,10,12,0.72) 0%, transparent 18%, transparent 68%, rgba(10,10,12,0.9) 90%, #0a0a0c 100%)'
+          background: 'linear-gradient(180deg, rgba(5,5,5,0.72) 0%, transparent 18%, transparent 68%, rgba(5,5,5,0.9) 90%, #050505 100%)'
         }} />
 
         {/* Right edge soft vignette — frames video, doesn't crush it */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(270deg, rgba(10,10,12,0.22) 0%, transparent 20%)'
+          background: 'linear-gradient(270deg, rgba(5,5,5,0.22) 0%, transparent 20%)'
         }} />
       </div>
 
       {/* Top performance line */}
       <div
         className="absolute top-0 left-0 right-0 h-[1.5px] z-10 pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent 0%, #e0231f 18%, #e0231f 82%, transparent 100%)' }}
+        style={{ background: 'linear-gradient(90deg, transparent 0%, #E10600 18%, #E10600 82%, transparent 100%)' }}
       />
 
       {/* Corner HUD brackets */}
       <div className="absolute top-16 left-0 z-10 pointer-events-none opacity-22">
         <svg viewBox="0 0 72 72" width={72} height={72} fill="none">
-          <path d="M0 72V0h72" stroke="#e0231f" strokeWidth="1" />
+          <path d="M0 72V0h72" stroke="#E10600" strokeWidth="1" />
         </svg>
       </div>
       <div className="absolute top-16 right-0 z-10 pointer-events-none opacity-22">
         <svg viewBox="0 0 72 72" width={72} height={72} fill="none">
-          <path d="M72 72V0H0" stroke="#e0231f" strokeWidth="1" />
+          <path d="M72 72V0H0" stroke="#E10600" strokeWidth="1" />
         </svg>
       </div>
 
@@ -549,7 +549,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 1.22 }}
           >
-            <button className="group inline-flex items-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
+            <button className="group inline-flex items-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(225,6,0,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
               Book Your Free Demo
               <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -586,7 +586,7 @@ export default function Hero() {
         >
           <motion.div
             className="w-px h-10"
-            style={{ background: 'linear-gradient(to bottom, #e0231f, transparent)' }}
+            style={{ background: 'linear-gradient(to bottom, #E10600, transparent)' }}
             animate={{ scaleY: [1, 0.3, 1] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           />

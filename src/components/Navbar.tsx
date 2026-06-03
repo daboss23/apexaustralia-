@@ -40,7 +40,7 @@ export default function Navbar() {
             ? 'bg-[rgba(8,8,10,0.95)] border-apex-line/70 backdrop-blur-xl'
             : 'bg-transparent border-transparent'
         }`}
-        style={{ borderRadius: 0, borderLeft: scrolled ? '2px solid rgba(224,35,31,0.5)' : 'none' }}
+        style={{ borderRadius: 0, borderLeft: scrolled ? '2px solid rgba(225,6,0,0.5)' : 'none' }}
         initial={{ y: -90, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
@@ -71,7 +71,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop CTA */}
-        <button className="hidden md:inline-flex items-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-5 py-2.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_8px_28px_-6px_rgba(224,35,31,0.55)] hover:-translate-y-px active:translate-y-0" style={{ borderRadius: 0 }}>
+        <button className="hidden md:inline-flex items-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-5 py-2.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_8px_28px_-6px_rgba(225,6,0,0.55)] hover:-translate-y-px active:translate-y-0" style={{ borderRadius: 0 }}>
           Book Demo
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />

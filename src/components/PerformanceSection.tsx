@@ -17,7 +17,7 @@ const SPORT_CARDS = [
     metric: 'Acceleration',
     detail: 'Out of blocks to top speed',
     bar: 82,
-    color: '#00A3FF',
+    color: '#E10600',
   },
   {
     sport: 'RUGBY',
@@ -25,7 +25,7 @@ const SPORT_CARDS = [
     metric: 'Force Output',
     detail: 'Tackle & contact strength',
     bar: 70,
-    color: '#00A3FF',
+    color: '#E10600',
   },
   {
     sport: 'AFL',
@@ -33,7 +33,7 @@ const SPORT_CARDS = [
     metric: 'Sprint Speed',
     detail: 'Repeat sprint ability',
     bar: 76,
-    color: '#00A3FF',
+    color: '#E10600',
   },
   {
     sport: 'FOOTBALL',
@@ -41,7 +41,7 @@ const SPORT_CARDS = [
     metric: 'Explosiveness',
     detail: 'First step quickness',
     bar: 68,
-    color: '#00A3FF',
+    color: '#E10600',
   },
   {
     sport: 'BASKETBALL',
@@ -49,7 +49,7 @@ const SPORT_CARDS = [
     metric: 'Vertical Power',
     detail: 'Jump height & force',
     bar: 88,
-    color: '#00A3FF',
+    color: '#E10600',
   },
   {
     sport: 'OLYMPIC',
@@ -57,7 +57,7 @@ const SPORT_CARDS = [
     metric: 'Peak Output',
     detail: 'Podium-level performance',
     bar: 64,
-    color: '#00A3FF',
+    color: '#E10600',
   },
 ]
 
@@ -69,7 +69,7 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
   return (
     <motion.div
       ref={ref}
-      className="group relative bg-apex-panel border border-apex-line p-5 overflow-hidden cursor-default hover:border-apex-blue/30 transition-colors duration-300"
+      className="group relative bg-apex-panel border border-apex-line p-5 overflow-hidden cursor-default hover:border-apex-red/30 transition-colors duration-300"
       style={{ borderRadius: 0 }}
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -78,7 +78,7 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
       {/* Background accent */}
       <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: `radial-gradient(ellipse 80% 60% at 50% 100%, rgba(0,163,255,0.06), transparent)` }}
+        style={{ background: `radial-gradient(ellipse 80% 60% at 50% 100%, rgba(225,6,0,0.06), transparent)` }}
       />
 
       {/* Sport label */}
@@ -91,7 +91,7 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
 
       {/* Stat */}
       <div className="flex items-baseline gap-1.5 mb-1">
-        <span className="font-display font-black text-4xl text-apex-blue leading-none">{card.stat}</span>
+        <span className="font-display font-black text-4xl text-apex-red leading-none">{card.stat}</span>
       </div>
       <div className="text-sm font-display font-bold text-apex-white tracking-wide mb-0.5">{card.metric}</div>
       <div className="text-[11px] font-body text-apex-grey mb-4">{card.detail}</div>
@@ -139,8 +139,8 @@ export default function PerformanceSection() {
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.5 }}
         >
-          <div className="w-8 h-px bg-apex-blue" />
-          <span className="text-apex-blue font-mono text-[10px] tracking-[0.3em] uppercase font-medium">02 — Performance In Motion</span>
+          <div className="w-8 h-px bg-apex-red" />
+          <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">02 — Performance In Motion</span>
         </motion.div>
 
         {/* Title */}
@@ -152,7 +152,7 @@ export default function PerformanceSection() {
           transition={{ duration: 0.7, delay: 0.1 }}
         >
           ENGINEERED FOR<br />
-          <span className="text-apex-blue">EVERY ATHLETE</span>
+          <span className="text-apex-red">EVERY ATHLETE</span>
         </motion.h2>
 
         <motion.p
@@ -168,7 +168,7 @@ export default function PerformanceSection() {
         {/* Cinematic product film */}
         <motion.div
           className="relative mb-20 overflow-hidden aspect-video"
-          style={{ border: '1px solid rgba(0,163,255,0.22)', borderTop: '2px solid #00A3FF' }}
+          style={{ border: '1px solid rgba(225,6,0,0.22)', borderTop: '2px solid #E10600' }}
           initial={{ opacity: 0, y: 26 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
@@ -185,16 +185,16 @@ export default function PerformanceSection() {
           />
           {/* Cinematic vignette */}
           <div className="absolute inset-0 pointer-events-none" style={{
-            background: 'linear-gradient(180deg, rgba(10,10,12,0.4) 0%, transparent 24%, transparent 68%, rgba(10,10,12,0.72) 100%)'
+            background: 'linear-gradient(180deg, rgba(5,5,5,0.4) 0%, transparent 24%, transparent 68%, rgba(5,5,5,0.72) 100%)'
           }} />
           {/* HUD label */}
           <div className="absolute top-4 left-4 flex items-center gap-2 pointer-events-none">
-            <div className="w-1.5 h-1.5 rounded-full bg-apex-blue animate-pulse" />
+            <div className="w-1.5 h-1.5 rounded-full bg-apex-red animate-pulse" />
             <span className="text-[9px] font-mono tracking-[0.28em] uppercase text-apex-white/90">T-APEX // In Motion</span>
           </div>
           {/* Corner reticles */}
-          <svg className="absolute top-3 right-3 pointer-events-none" width="9" height="9" viewBox="0 0 9 9" aria-hidden="true"><path d="M0 0 L9 0 L9 9" fill="none" stroke="#00A3FF" strokeWidth="1.2" opacity="0.6" /></svg>
-          <svg className="absolute bottom-3 left-3 pointer-events-none" width="9" height="9" viewBox="0 0 9 9" aria-hidden="true"><path d="M0 0 L0 9 L9 9" fill="none" stroke="#00A3FF" strokeWidth="1.2" opacity="0.6" /></svg>
+          <svg className="absolute top-3 right-3 pointer-events-none" width="9" height="9" viewBox="0 0 9 9" aria-hidden="true"><path d="M0 0 L9 0 L9 9" fill="none" stroke="#E10600" strokeWidth="1.2" opacity="0.6" /></svg>
+          <svg className="absolute bottom-3 left-3 pointer-events-none" width="9" height="9" viewBox="0 0 9 9" aria-hidden="true"><path d="M0 0 L0 9 L9 9" fill="none" stroke="#E10600" strokeWidth="1.2" opacity="0.6" /></svg>
         </motion.div>
 
         {/* Headline metrics — editorial asymmetric layout */}
@@ -214,14 +214,14 @@ export default function PerformanceSection() {
                 {HEADLINE_METRICS[0].value}
               </span>
               <span
-                className="text-apex-blue font-display font-bold ml-1"
+                className="text-apex-red font-display font-bold ml-1"
                 style={{ fontSize: 'clamp(2rem, 4.5vw, 4rem)' }}
               >
                 {HEADLINE_METRICS[0].unit}
               </span>
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <div className="w-6 h-px bg-apex-blue" />
+              <div className="w-6 h-px bg-apex-red" />
               <span className="font-display font-semibold text-apex-white tracking-[0.14em] uppercase text-sm">
                 {HEADLINE_METRICS[0].label}
               </span>
@@ -250,7 +250,7 @@ export default function PerformanceSection() {
                     {value}
                   </span>
                   {unit && (
-                    <span className="text-apex-blue font-display font-bold" style={{ fontSize: 'clamp(0.9rem, 1.4vw, 1.3rem)' }}>
+                    <span className="text-apex-red font-display font-bold" style={{ fontSize: 'clamp(0.9rem, 1.4vw, 1.3rem)' }}>
                       {unit}
                     </span>
                   )}
@@ -278,7 +278,7 @@ export default function PerformanceSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
-          <button className="group inline-flex items-center gap-2.5 border border-apex-line hover:border-apex-blue/60 text-apex-grey hover:text-apex-white font-display font-bold text-[11px] px-8 py-4 rounded-xl tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5">
+          <button className="group inline-flex items-center gap-2.5 border border-apex-line hover:border-apex-red/60 text-apex-grey hover:text-apex-white font-display font-bold text-[11px] px-8 py-4 rounded-xl tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5">
             View All Sports Applications
             <svg className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-300" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />

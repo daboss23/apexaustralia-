@@ -35,10 +35,7 @@ export default function Home() {
       {/* 05 — KEY BENEFITS */}
       <BenefitsSection />
 
-      {/* 06 — US VS THEM (T-Apex vs conventional tools) */}
-      <ComparisonSection />
-
-      {/* 07 — HOW IT WORKS */}
+      {/* 06 — HOW IT WORKS */}
       <HowItWorksSection />
 
       {/* 07 — PRODUCT / ENGINEERING */}
@@ -50,8 +47,11 @@ export default function Home() {
       {/* 09 — BUILT FOR EVERY CODE (multi-sport transition) */}
       <SportsSection />
 
-      {/* 10 — MORE THAN A SPRINT RESISTANCE TOOL (T-Apex vs 1080) */}
+      {/* 10 — THE COMPARISON
+            a) Intelligence (blue) section = strategic framing (category, philosophy, ARI)
+            b) Red table = visual proof / quick-scan comparison directly beneath */}
       <TApexVs1080Section />
+      <ComparisonSection />
 
       {/* 11 — ENGINEERED RESULTS / PROOF */}
       <ResultsSection />
