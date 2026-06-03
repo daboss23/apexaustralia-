@@ -86,32 +86,43 @@
     color: transparent;
     background-repeat: no-repeat;
   }
+  /* Machined titanium: bright crown, dark core, sharp reflective horizon,
+     dark base — high contrast so each letter reads as a physical metal face. */
   .t-silver {
     background-image:
-      linear-gradient(180deg, #FFFFFF 0%, #F2F5F8 28%, #AEB8C4 50%, #FFFFFF 55%, #C2CBD6 62%, #97A1AE 100%);
+      linear-gradient(180deg, #FFFFFF 0%, #DCE3EA 17%, #8B95A2 40%, #565F6B 49%, #FCFDFF 52%, #AEB8C4 58%, #6E7884 80%, #434B56 100%);
     text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.65),
-      0 2px 3px rgba(0, 0, 0, 0.5);
+      0 -1px 0 rgba(255, 255, 255, 0.5),
+      0 1px 0 rgba(0, 0, 0, 0.55),
+      0 2px 1px rgba(0, 0, 0, 0.55),
+      0 4px 6px rgba(0, 0, 0, 0.6);
   }
   .t-blue {
     background-image:
-      linear-gradient(180deg, #9BEBFF 0%, #25C3FB 34%, #00AEEF 50%, #79DCFF 56%, #019BDC 70%, #0079B8 100%);
+      linear-gradient(180deg, #CBF2FF 0%, #34C7FB 22%, #0084BC 42%, #014A6C 49%, #EAFAFF 52%, #19B2F0 58%, #0179AE 80%, #014463 100%);
     text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.35),
-      0 2px 3px rgba(0, 0, 0, 0.45);
+      0 -1px 0 rgba(180, 240, 255, 0.45),
+      0 1px 0 rgba(0, 0, 0, 0.5),
+      0 2px 1px rgba(0, 0, 0, 0.5),
+      0 4px 6px rgba(0, 0, 0, 0.55);
   }
+  /* Anodised performance metal: bright crown, deep core, hot flash, dark base. */
   .t-red {
-    /* glossy anodised red — saturated and punchy, no desaturating wash */
     background-image:
-      linear-gradient(180deg, #FF8A82 0%, #FF3B30 28%, #FF130A 50%, #FF7068 56%, #ED0700 72%, #C40400 100%);
+      linear-gradient(180deg, #FFB0A6 0%, #FF4133 20%, #C00F0A 44%, #6E0301 49%, #FF8278 52%, #F01007 60%, #B70400 80%, #6F0200 100%);
     text-shadow:
-      0 1px 0 rgba(255, 200, 200, 0.4),
-      0 2px 3px rgba(0, 0, 0, 0.42);
+      0 -1px 0 rgba(255, 200, 195, 0.45),
+      0 1px 0 rgba(0, 0, 0, 0.5),
+      0 2px 1px rgba(0, 0, 0, 0.5),
+      0 4px 6px rgba(0, 0, 0, 0.55);
   }
   /* Lighter version for feature / card titles */
   .t-feature {
-    background-image: linear-gradient(180deg, #FFFFFF 0%, #E4EAF0 52%, #BCC4CF 100%);
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45), 0 1px 2px rgba(0, 0, 0, 0.42);
+    background-image: linear-gradient(180deg, #FFFFFF 0%, #C9D1DB 50%, #7E8893 100%);
+    text-shadow:
+      0 -1px 0 rgba(255, 255, 255, 0.4),
+      0 1px 1px rgba(0, 0, 0, 0.5),
+      0 2px 3px rgba(0, 0, 0, 0.45);
   }
 
   /* Carbon-fibre twill — subtle engineered texture for dark surfaces */
