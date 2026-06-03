@@ -63,7 +63,7 @@ export default function ProductShowcase() {
       {/* Atmosphere */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110vw] h-[110vh]" style={{
-          background: 'radial-gradient(ellipse 42% 46% at 50% 50%, rgba(0,174,239,0.1) 0%, rgba(123,47,190,0.05) 38%, transparent 66%)'
+          background: 'radial-gradient(ellipse 42% 46% at 50% 50%, rgba(0,174,239,0.1) 0%, rgba(0,174,239,0.05) 38%, transparent 66%)'
         }} />
         <div className="absolute bottom-0 left-0 right-0 h-[34%] opacity-[0.12]" style={{
           backgroundImage: 'linear-gradient(rgba(0,174,239,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(0,174,239,0.22) 1px, transparent 1px)',

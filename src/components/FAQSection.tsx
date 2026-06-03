@@ -44,7 +44,7 @@ export default function FAQSection() {
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(123,47,190,0.25) 30%, rgba(123,47,190,0.25) 70%, transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(0,174,239,0.25) 30%, rgba(0,174,239,0.25) 70%, transparent)' }}
       />
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
@@ -62,7 +62,7 @@ export default function FAQSection() {
             >
               FREQUENTLY<br />
               ASKED<br />
-              <span className="text-apex-purple">QUESTIONS.</span>
+              <span className="text-apex-blue">QUESTIONS.</span>
             </h2>
             <p className="text-apex-grey font-body leading-relaxed mb-8"
               style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
@@ -133,23 +133,23 @@ function FAQItem({
         aria-expanded={isOpen}
       >
         <div className="flex items-start gap-4">
-          <span className="font-mono text-[9px] text-apex-purple tracking-[0.2em] mt-1 flex-shrink-0">
+          <span className="font-mono text-[9px] text-apex-blue tracking-[0.2em] mt-1 flex-shrink-0">
             {String(index + 1).padStart(2, '0')}
           </span>
           <span
-            className="font-display font-bold text-apex-white group-hover:text-apex-purple transition-colors duration-200"
+            className="font-display font-bold text-apex-white group-hover:text-apex-blue transition-colors duration-200"
             style={{ fontSize: 'clamp(0.9rem, 1.4vw, 1.05rem)' }}
           >
             {faq.q}
           </span>
         </div>
         <motion.div
-          className="flex-shrink-0 w-5 h-5 mt-0.5 border border-apex-line flex items-center justify-center group-hover:border-apex-purple/40 transition-colors duration-200"
+          className="flex-shrink-0 w-5 h-5 mt-0.5 border border-apex-line flex items-center justify-center group-hover:border-apex-blue/40 transition-colors duration-200"
           animate={{ rotate: isOpen ? 45 : 0 }}
           transition={{ duration: 0.25 }}
         >
           <svg
-            className="w-3 h-3 text-apex-grey-dim group-hover:text-apex-purple transition-colors duration-200"
+            className="w-3 h-3 text-apex-grey-dim group-hover:text-apex-blue transition-colors duration-200"
             fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"
           >
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

@@ -43,7 +43,7 @@ const BENEFITS = [
     num: '06',
     title: 'Professional Edge',
     body: 'Set your facility or performance centre apart with technology built for elite coaching — not generic gym floors.',
-    accent: '#7B2FBE',
+    accent: '#00AEEF',
     tag: 'ADVANTAGE',
   },
 ]

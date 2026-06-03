@@ -44,7 +44,7 @@ const SEGMENTS = [
     title: 'Private Facility Operators',
     description: 'Your commercial edge is your capability. T-Apex adds a category-defining piece of technology that separates your offering from every standard gym and training space in your market.',
     outcomes: ['Premium service offering', 'Technology-forward positioning', 'Revenue-driving capability'],
-    accent: '#7B2FBE',
+    accent: '#00AEEF',
   },
 ]
 

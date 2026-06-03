@@ -12,7 +12,7 @@ const TELEMETRY = [
     unit: 'm/s',
     values: [9.42, 9.51, 9.38, 9.64, 9.47, 9.58, 9.42],
     decimals: 2,
-    color: '#E10600',
+    color: '#00AEEF',
     delta: '+0.3',
     tag: 'MAX',
     sparkline: [42, 51, 38, 62, 70, 56, 78, 65, 84],
@@ -23,7 +23,7 @@ const TELEMETRY = [
     unit: 'kN',
     values: [2.81, 2.84, 2.78, 2.91, 2.86, 2.89, 2.81],
     decimals: 2,
-    color: '#7B2FBE',
+    color: '#E10600',
     delta: '+2.4%',
     tag: 'PEAK',
     sparkline: [52, 60, 46, 70, 64, 74, 60, 80, 72],
@@ -34,7 +34,7 @@ const TELEMETRY = [
     unit: 'kW',
     values: [4.21, 4.35, 4.18, 4.42, 4.31, 4.38, 4.21],
     decimals: 2,
-    color: '#00AEEF',
+    color: '#E10600',
     delta: '+12%',
     tag: 'HIGH',
     sparkline: [38, 52, 46, 60, 56, 68, 62, 76, 70],
@@ -45,7 +45,7 @@ const TELEMETRY = [
     unit: 'm/s²',
     values: [8.72, 8.81, 8.65, 8.94, 8.77, 8.88, 8.72],
     decimals: 2,
-    color: '#E10600',
+    color: '#00AEEF',
     delta: '+0.6',
     tag: 'ACTIVE',
     sparkline: [48, 56, 42, 62, 70, 58, 76, 68, 80],
@@ -308,7 +308,7 @@ function SystemCard() {
             <div className="h-[2px] bg-apex-line rounded-full overflow-hidden">
               <motion.div
                 className="h-full rounded-full"
-                style={{ background: 'linear-gradient(90deg, #00AEEF, #7B2FBE)' }}
+                style={{ background: 'linear-gradient(90deg, #00AEEF, #E10600)' }}
                 animate={{ width: `${(resistance / 450) * 100}%` }}
                 transition={{ duration: 0.65, ease: 'easeOut' }}
               />

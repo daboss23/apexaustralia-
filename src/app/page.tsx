@@ -48,7 +48,7 @@ export default function Home() {
       <SportsSection />
 
       {/* 10 — THE COMPARISON
-            a) Purple section = strategic framing (category, philosophy, ARI)
+            a) Intelligence (blue) section = strategic framing (category, philosophy, ARI)
             b) Red table = visual proof / quick-scan comparison directly beneath */}
       <TApexVs1080Section />
       <ComparisonSection />

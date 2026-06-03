@@ -108,7 +108,7 @@ const SPORTS = [
     name: 'Strength & Conditioning',
     tagline: 'Scientific Programming',
     description: 'T-Apex gives S&C professionals a more measurable, adaptable tool to program with control across the full athletic development continuum.',
-    color: '#7B2FBE',
+    color: '#00AEEF',
     focuses: [
       'Progressive overload with control',
       'Load tolerance development',
