@@ -70,13 +70,13 @@ function CounterStat({
 
   return (
     <div className="flex items-start gap-0.5 leading-none">
-      <span className="font-display font-black text-apex-red" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', marginTop: '0.15em' }}>
+      <span className="font-luxia font-black t-red" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', marginTop: '0.15em' }}>
         {prefix}
       </span>
-      <span className="font-display font-black text-apex-white metric-value" style={{ fontSize: 'clamp(4rem, 8vw, 7.5rem)' }}>
+      <span className="font-luxia font-black t-silver metric-value" style={{ fontSize: 'clamp(4rem, 8vw, 7.5rem)' }}>
         {current}
       </span>
-      <span className="font-display font-black text-apex-red" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', marginTop: '0.3em' }}>
+      <span className="font-luxia font-black t-red" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', marginTop: '0.3em' }}>
         {unit}
       </span>
     </div>

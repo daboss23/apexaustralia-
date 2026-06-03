@@ -76,10 +76,9 @@
     letter-spacing: -0.03em;
   }
 
-  /* ── Metallic typography system ─────────────────────────────────────────────
-     Every major heading wears one of these: a brushed-metal gradient fill clipped
-     to the glyphs, a bevel highlight, directional blue + red light contamination,
-     and a soft bloom — as if lit by the site's environment (F1 telemetry / AMG). */
+  /* ── Metallic typography system — brushed-titanium, CNC-machined ────────────
+     Physically-manufactured, not digitally projected. Crisp edge highlights,
+     tight bevel depth and a contact shadow — no bloom, blur, fog or outer glow. */
   .t-silver, .t-blue, .t-red, .t-feature {
     -webkit-background-clip: text;
     background-clip: text;
@@ -89,39 +88,35 @@
   }
   .t-silver {
     background-image:
-      repeating-linear-gradient(96deg, rgba(255, 255, 255, 0.05) 0 1px, rgba(0, 0, 0, 0) 1px 4px),
-      linear-gradient(180deg, #FFFFFF 0%, #ECEEF1 28%, #D9DDE3 56%, #A8AFB8 100%);
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, rgba(0, 0, 0, 0) 1px 3px),
+      linear-gradient(180deg, #F5F7FA 0%, #E2E6EC 42%, #D9DEE5 60%, #AEB7C2 100%);
     text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.25),
-      -10px 1px 30px rgba(0, 174, 239, 0.32),
-      11px 3px 30px rgba(255, 42, 42, 0.26),
-      0 0 30px rgba(220, 235, 245, 0.12),
-      0 22px 46px rgba(0, 0, 0, 0.55);
+      0 1px 0 rgba(255, 255, 255, 0.45),
+      0 -1px 0 rgba(0, 0, 0, 0.22),
+      0 2px 2px rgba(0, 0, 0, 0.45);
   }
   .t-blue {
     background-image:
-      repeating-linear-gradient(96deg, rgba(255, 255, 255, 0.06) 0 1px, rgba(0, 0, 0, 0) 1px 4px),
-      linear-gradient(180deg, #4FD7FF 0%, #00AEEF 52%, #0077C8 100%);
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, rgba(0, 0, 0, 0) 1px 3px),
+      linear-gradient(180deg, #5FD3F6 0%, #00AEEF 50%, #0089C2 100%);
     text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.2),
-      0 0 26px rgba(0, 174, 239, 0.6),
-      0 0 52px rgba(0, 174, 239, 0.25),
-      0 20px 44px rgba(0, 0, 0, 0.5);
+      0 1px 0 rgba(255, 255, 255, 0.28),
+      0 -1px 0 rgba(0, 0, 0, 0.22),
+      0 2px 2px rgba(0, 0, 0, 0.42);
   }
   .t-red {
     background-image:
-      repeating-linear-gradient(96deg, rgba(255, 255, 255, 0.06) 0 1px, rgba(0, 0, 0, 0) 1px 4px),
-      linear-gradient(180deg, #FF6A6A 0%, #FF2A2A 52%, #C30000 100%);
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, rgba(0, 0, 0, 0) 1px 3px),
+      linear-gradient(180deg, #E84A50 0%, #D61F26 50%, #9C141A 100%);
     text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.18),
-      0 0 26px rgba(255, 42, 42, 0.55),
-      0 0 52px rgba(255, 42, 42, 0.22),
-      0 20px 44px rgba(0, 0, 0, 0.5);
+      0 1px 0 rgba(255, 255, 255, 0.22),
+      0 -1px 0 rgba(0, 0, 0, 0.26),
+      0 2px 2px rgba(0, 0, 0, 0.45);
   }
   /* Lighter version for feature / card titles */
   .t-feature {
-    background-image: linear-gradient(180deg, #FFFFFF 0%, #DDE1E6 55%, #B6BCC4 100%);
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4), 0 0 14px rgba(210, 228, 240, 0.1);
+    background-image: linear-gradient(180deg, #F5F7FA 0%, #DDE2E8 55%, #B7BFC9 100%);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.42);
   }
 
   /* Carbon-fibre twill — subtle engineered texture for dark surfaces */
