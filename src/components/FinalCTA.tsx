@@ -15,7 +15,7 @@ export default function FinalCTA() {
     <section ref={sectionRef} id="contact" className="relative bg-apex-black-2 overflow-hidden">
       {/* Top divider */}
       <div className="absolute top-0 left-0 right-0 h-px" style={{
-        background: 'linear-gradient(90deg, transparent, rgba(224,35,31,0.4) 30%, rgba(224,35,31,0.4) 70%, transparent)'
+        background: 'linear-gradient(90deg, transparent, rgba(225,6,0,0.4) 30%, rgba(225,6,0,0.4) 70%, transparent)'
       }} />
 
       <motion.div
@@ -26,7 +26,7 @@ export default function FinalCTA() {
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse 80% 60% at 50% 60%, rgba(224,35,31,0.08) 0%, transparent 70%)'
+            background: 'radial-gradient(ellipse 80% 60% at 50% 60%, rgba(225,6,0,0.08) 0%, transparent 70%)'
           }}
           aria-hidden="true"
         />
@@ -51,29 +51,29 @@ export default function FinalCTA() {
             style={{ opacity: 0.14 }}
           />
           <div className="absolute inset-0" style={{
-            background: 'linear-gradient(180deg, #0f0f12 0%, rgba(15,15,18,0.35) 25%, rgba(15,15,18,0.35) 70%, #0f0f12 100%)'
+            background: 'linear-gradient(180deg, #0A0D10 0%, rgba(10,13,16,0.35) 25%, rgba(10,13,16,0.35) 70%, #0A0D10 100%)'
           }} />
         </div>
 
         {/* Corner tech accents */}
         <div className="absolute top-12 left-12 opacity-20" aria-hidden="true">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <path d="M0 48V0h48" stroke="#e0231f" strokeWidth="1" />
+            <path d="M0 48V0h48" stroke="#E10600" strokeWidth="1" />
           </svg>
         </div>
         <div className="absolute top-12 right-12 opacity-20" aria-hidden="true">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <path d="M48 48V0H0" stroke="#e0231f" strokeWidth="1" />
+            <path d="M48 48V0H0" stroke="#E10600" strokeWidth="1" />
           </svg>
         </div>
         <div className="absolute bottom-12 left-12 opacity-20" aria-hidden="true">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <path d="M0 0v48h48" stroke="#e0231f" strokeWidth="1" />
+            <path d="M0 0v48h48" stroke="#E10600" strokeWidth="1" />
           </svg>
         </div>
         <div className="absolute bottom-12 right-12 opacity-20" aria-hidden="true">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <path d="M48 0v48H0" stroke="#e0231f" strokeWidth="1" />
+            <path d="M48 0v48H0" stroke="#E10600" strokeWidth="1" />
           </svg>
         </div>
 
@@ -94,7 +94,7 @@ export default function FinalCTA() {
           <div className="overflow-hidden mb-10">
             <motion.h2
               className="font-display font-black leading-[0.86]"
-              style={{ fontSize: 'clamp(2.2rem, 5.6vw, 5.6rem)', WebkitTextStroke: '2px #e0231f', WebkitTextFillColor: 'transparent' }}
+              style={{ fontSize: 'clamp(2.2rem, 5.6vw, 5.6rem)', WebkitTextStroke: '2px #E10600', WebkitTextFillColor: 'transparent' }}
               initial={{ y: 120, opacity: 0 }}
               animate={inView ? { y: 0, opacity: 1 } : {}}
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
@@ -121,7 +121,7 @@ export default function FinalCTA() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.65 }}
           >
-            <button className="group inline-flex items-center gap-3 cta-glow text-white font-display font-bold px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(224,35,31,0.7)] hover:-translate-y-0.5 active:translate-y-0"
+            <button className="group inline-flex items-center gap-3 cta-glow text-white font-display font-bold px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(225,6,0,0.7)] hover:-translate-y-0.5 active:translate-y-0"
               style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', borderRadius: 0 }}>
               Book Your Free Demo
               <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">

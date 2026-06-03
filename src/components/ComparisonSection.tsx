@@ -36,14 +36,14 @@ export default function ComparisonSection() {
   const tableInView = useInView(tableRef, { once: true, margin: '-5% 0px' })
 
   const last = ADVANTAGES.length - 1
-  const red = 'linear-gradient(180deg, #ff4b46 0%, #e0231f 55%, #c41410 100%)'
+  const red = 'linear-gradient(180deg, #ff4b46 0%, #E10600 55%, #c41410 100%)'
 
   return (
     <section id="comparison" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(224,35,31,0.25) 30%, rgba(224,35,31,0.25) 70%, transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(225,6,0,0.25) 30%, rgba(225,6,0,0.25) 70%, transparent)' }}
       />
 
       <div className="relative max-w-5xl mx-auto px-6 md:px-10">
@@ -89,7 +89,7 @@ export default function ComparisonSection() {
           <div aria-hidden="true" />
           <motion.div
             className="flex items-center justify-center px-3 pt-7 pb-5 rounded-t-2xl"
-            style={{ background: red, boxShadow: '0 -10px 40px -12px rgba(224,35,31,0.6)' }}
+            style={{ background: red, boxShadow: '0 -10px 40px -12px rgba(225,6,0,0.6)' }}
             initial={{ opacity: 0, y: 14 }}
             animate={tableInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
@@ -116,7 +116,7 @@ export default function ComparisonSection() {
                 {/* T-Apex — always yes */}
                 <div
                   className={`flex items-center justify-center px-3 py-4 ${i === last ? 'rounded-b-2xl pb-7' : ''}`}
-                  style={{ background: red, boxShadow: i === last ? '0 26px 44px -16px rgba(224,35,31,0.55)' : undefined }}
+                  style={{ background: red, boxShadow: i === last ? '0 26px 44px -16px rgba(225,6,0,0.55)' : undefined }}
                 >
                   <span className="flex items-center justify-center w-7 h-7 rounded-full" style={{ background: 'rgba(255,255,255,0.18)' }}>
                     <Check className="w-4 h-4 text-white" />
@@ -142,7 +142,7 @@ export default function ComparisonSection() {
         {/* Verdict + CTA */}
         <motion.div
           className="mt-12 p-8 border border-apex-red/25 flex flex-col md:flex-row md:items-center gap-6 md:gap-10"
-          style={{ borderRadius: 0, background: 'rgba(224,35,31,0.05)', borderTop: '2px solid #e0231f' }}
+          style={{ borderRadius: 0, background: 'rgba(225,6,0,0.05)', borderTop: '2px solid #E10600' }}
           initial={{ opacity: 0, y: 14 }}
           animate={tableInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.5 }}
@@ -151,7 +151,7 @@ export default function ComparisonSection() {
             You&apos;re not choosing between products — you&apos;re choosing whether to measure, or keep guessing.
           </h3>
           <button
-            className="flex-shrink-0 inline-flex items-center gap-2.5 cta-glow text-white font-display font-bold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_12px_40px_-8px_rgba(224,35,31,0.6)] hover:-translate-y-0.5"
+            className="flex-shrink-0 inline-flex items-center gap-2.5 cta-glow text-white font-display font-bold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_12px_40px_-8px_rgba(225,6,0,0.6)] hover:-translate-y-0.5"
             style={{ borderRadius: 0 }}
           >
             Book Your Free Demo

@@ -10,7 +10,7 @@ const RESULTS = [
     prefix: '+',
     label: 'Faster Acceleration',
     description: 'Out of the blocks and through transition zones',
-    color: '#e0231f',
+    color: '#E10600',
   },
   {
     stat: 18,
@@ -18,7 +18,7 @@ const RESULTS = [
     prefix: '+',
     label: 'Greater Power Output',
     description: 'At peak training and competition intensities',
-    color: '#e0231f',
+    color: '#E10600',
   },
   {
     stat: 15,
@@ -26,7 +26,7 @@ const RESULTS = [
     prefix: '+',
     label: 'Improved Force Production',
     description: 'In measured resistance and ground reaction force',
-    color: '#e0231f',
+    color: '#E10600',
   },
   {
     stat: 21,
@@ -34,7 +34,7 @@ const RESULTS = [
     prefix: '+',
     label: 'Enhanced Athletic Performance',
     description: 'Across composite sport-specific testing protocols',
-    color: '#e0231f',
+    color: '#E10600',
   },
 ]
 
@@ -96,15 +96,15 @@ export default function ResultsSection() {
         {/* Large diagonal accent */}
         <div
           className="absolute -left-20 top-1/2 -translate-y-1/2 w-[60vw] h-px opacity-20"
-          style={{ background: 'linear-gradient(90deg, transparent, #e0231f 80%)' }}
+          style={{ background: 'linear-gradient(90deg, transparent, #E10600 80%)' }}
         />
         <div
           className="absolute -right-20 top-1/2 -translate-y-1/2 w-[60vw] h-px opacity-20"
-          style={{ background: 'linear-gradient(270deg, transparent, #e0231f 80%)' }}
+          style={{ background: 'linear-gradient(270deg, transparent, #E10600 80%)' }}
         />
         {/* Subtle radial */}
         <div className="absolute inset-0 opacity-20" style={{
-          background: 'radial-gradient(ellipse 70% 50% at 50% 50%, rgba(224,35,31,0.06), transparent)'
+          background: 'radial-gradient(ellipse 70% 50% at 50% 50%, rgba(225,6,0,0.06), transparent)'
         }} />
       </div>
 
@@ -146,7 +146,7 @@ export default function ResultsSection() {
               {/* Animated top border */}
               <motion.div
                 className="absolute -top-px left-0 h-px"
-                style={{ background: '#e0231f' }}
+                style={{ background: '#E10600' }}
                 initial={{ width: 0 }}
                 animate={statsInView ? { width: '100%' } : {}}
                 transition={{ duration: 1, delay: 0.3 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}

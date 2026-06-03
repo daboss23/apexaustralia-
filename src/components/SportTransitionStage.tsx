@@ -62,7 +62,7 @@ export default function SportTransitionStage({
       {/* ── Layer 0: base engineered gradient (always present) ───────────── */}
       <motion.div
         className="absolute inset-0"
-        animate={{ background: `linear-gradient(118deg, #0a0a0c 0%, #0f0f12 42%, #121216 64%, ${accent}1f 100%)` }}
+        animate={{ background: `linear-gradient(118deg, #050505 0%, #0A0D10 42%, #121216 64%, ${accent}1f 100%)` }}
         transition={{ duration: 0.8, ease: 'easeInOut' }}
       />
 

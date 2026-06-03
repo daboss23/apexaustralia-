@@ -124,7 +124,7 @@ export default function TApexVs1080Section() {
             <div
               className="mt-6 p-6 relative overflow-hidden"
               style={{
-                background: 'linear-gradient(135deg, rgba(20,20,24,1) 0%, rgba(15,15,18,1) 55%, rgba(123,47,190,0.08) 100%)',
+                background: 'linear-gradient(135deg, rgba(20,20,24,1) 0%, rgba(10,13,16,1) 55%, rgba(123,47,190,0.08) 100%)',
                 border: '1px solid rgba(123,47,190,0.3)',
                 borderLeft: '4px solid #7B2FBE',
               }}
@@ -294,7 +294,7 @@ export default function TApexVs1080Section() {
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
               <button
-                className="flex-1 cta-glow text-white font-display font-bold text-[11px] px-6 py-4 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(224,35,31,0.55)] hover:-translate-y-0.5"
+                className="flex-1 cta-glow text-white font-display font-bold text-[11px] px-6 py-4 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(225,6,0,0.55)] hover:-translate-y-0.5"
                 style={{ borderRadius: 0 }}
               >
                 Book a Demo

@@ -19,9 +19,9 @@ const CHART_POINTS = 32
 
 const GAUGES = [
   { id: 'speed', label: 'SPEED', unit: 'm/s', value: 12.4, max: 16, color: '#7B2FBE', pct: 77 },
-  { id: 'power', label: 'POWER', unit: 'kW', value: 4.2, max: 6, color: '#00A3FF', pct: 70 },
+  { id: 'power', label: 'POWER', unit: 'kW', value: 4.2, max: 6, color: '#00AEEF', pct: 70 },
   { id: 'force', label: 'FORCE', unit: 'N', value: 847, max: 1200, color: '#7B2FBE', pct: 71 },
-  { id: 'accel', label: 'ACCEL', unit: 'm/s²', value: 8.3, max: 12, color: '#00A3FF', pct: 69 },
+  { id: 'accel', label: 'ACCEL', unit: 'm/s²', value: 8.3, max: 12, color: '#00AEEF', pct: 69 },
 ]
 
 const LIVE_METRICS = [
@@ -294,7 +294,7 @@ export default function DashboardSection() {
 
               {/* Power chart */}
               <div className="bg-apex-black/60 rounded-xl p-4 border border-apex-line/50">
-                <LiveChart color="#00A3FF" label="Power Output (kW)" inView={inView} />
+                <LiveChart color="#00AEEF" label="Power Output (kW)" inView={inView} />
               </div>
 
               {/* Force chart */}

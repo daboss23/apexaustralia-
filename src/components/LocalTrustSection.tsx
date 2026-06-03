@@ -39,7 +39,7 @@ export default function LocalTrustSection() {
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(0,163,255,0.25) 30%, rgba(0,163,255,0.25) 70%, transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(0,174,239,0.25) 30%, rgba(0,174,239,0.25) 70%, transparent)' }}
       />
 
       {/* Gold ambient — trust signal */}
@@ -145,7 +145,7 @@ export default function LocalTrustSection() {
               />
               {/* bottom fade into the card */}
               <div className="absolute inset-0 pointer-events-none"
-                style={{ background: 'linear-gradient(180deg, transparent 50%, rgba(15,15,18,0.55) 80%, rgba(15,15,18,0.92) 100%)' }} />
+                style={{ background: 'linear-gradient(180deg, transparent 50%, rgba(10,13,16,0.55) 80%, rgba(10,13,16,0.92) 100%)' }} />
               {/* gold top edge + corner reticle */}
               <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'rgba(180,140,60,0.85)' }} />
               <div className="absolute top-2 left-2 pointer-events-none" aria-hidden="true">
@@ -216,14 +216,14 @@ function SupportPoint({
   return (
     <motion.div
       className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-blue/30 transition-colors duration-300 cursor-default"
-      style={{ borderRadius: 0, borderTop: '2px solid rgba(0,163,255,0.5)' }}
+      style={{ borderRadius: 0, borderTop: '2px solid rgba(0,174,239,0.5)' }}
       initial={{ opacity: 0, y: 20 }}
       animate={parentInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.55, delay: 0.5 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
     >
       <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,163,255,0.05), transparent)' }}
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,174,239,0.05), transparent)' }}
       />
       <h4 className="font-display font-black text-apex-white mb-2 leading-tight"
         style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>

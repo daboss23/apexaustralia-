@@ -8,35 +8,35 @@ const BENEFITS = [
     num: '01',
     title: 'Precision Resistance Application',
     body: 'Dial resistance or assistance to the movement — acceleration, deceleration, change of direction, and the sport-specific work that drives transfer.',
-    accent: '#00A3FF',
+    accent: '#00AEEF',
     tag: 'PRECISION',
   },
   {
     num: '02',
     title: 'More Measurable Performance',
     body: 'Move beyond guesswork with a system that shows clear progress, sharper monitoring, and better-informed coaching decisions.',
-    accent: '#00A3FF',
+    accent: '#00AEEF',
     tag: 'MEASURABLE',
   },
   {
     num: '03',
     title: 'More Engaging Athlete Training',
     body: 'Give athletes a session that feels dynamic and responsive — and that mirrors the real demands of their sport.',
-    accent: '#00A3FF',
+    accent: '#00AEEF',
     tag: 'ENGAGEMENT',
   },
   {
     num: '04',
     title: 'Performance And Return-To-Play Utility',
     body: 'Use T-Apex across athlete development, rehab, reconditioning, and return-to-play with more control and flexibility at every stage.',
-    accent: '#00A3FF',
+    accent: '#00AEEF',
     tag: 'VERSATILITY',
   },
   {
     num: '05',
     title: 'Better Coaching Feedback',
     body: 'Give coaches a better way to observe, adjust, and guide movement in real time rather than relying on broad assumptions.',
-    accent: '#00A3FF',
+    accent: '#00AEEF',
     tag: 'FEEDBACK',
   },
   {
@@ -57,14 +57,14 @@ export default function BenefitsSection() {
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(0,163,255,0.25) 30%, rgba(0,163,255,0.25) 70%, transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(0,174,239,0.25) 30%, rgba(0,174,239,0.25) 70%, transparent)' }}
       />
 
       {/* Subtle diagonal pattern */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
-          backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,163,255,1) 0px, rgba(0,163,255,1) 1px, transparent 1px, transparent 60px)',
+          backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,174,239,1) 0px, rgba(0,174,239,1) 1px, transparent 1px, transparent 60px)',
         }}
         aria-hidden="true"
       />
