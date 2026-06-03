@@ -82,8 +82,8 @@ export default function FinalCTA() {
           {/* Main headline */}
           <div className="overflow-hidden mb-3">
             <motion.h2
-              className="font-display font-black text-apex-white leading-[0.86]"
-              style={{ fontSize: 'clamp(2.2rem, 5.6vw, 5.6rem)' }}
+              className="h-luxia t-silver leading-[0.86]"
+              style={{ fontSize: 'clamp(2rem, 4.9vw, 4.3rem)' }}
               initial={{ y: 120, opacity: 0 }}
               animate={inView ? { y: 0, opacity: 1 } : {}}
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
@@ -93,8 +93,8 @@ export default function FinalCTA() {
           </div>
           <div className="overflow-hidden mb-10">
             <motion.h2
-              className="font-display font-black leading-[0.86]"
-              style={{ fontSize: 'clamp(2.2rem, 5.6vw, 5.6rem)', WebkitTextStroke: '2px #E10600', WebkitTextFillColor: 'transparent' }}
+              className="h-luxia t-red leading-[0.86]"
+              style={{ fontSize: 'clamp(2rem, 4.9vw, 4.3rem)' }}
               initial={{ y: 120, opacity: 0 }}
               animate={inView ? { y: 0, opacity: 1 } : {}}
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}

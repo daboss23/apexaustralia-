@@ -53,13 +53,13 @@ export default function LocalTrustSection() {
         {/* Headline */}
         <motion.h2
           ref={titleRef}
-          className="font-display font-black text-apex-white leading-[0.9] mb-12 max-w-4xl"
-          style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}
+          className="h-luxia t-silver leading-[0.9] mb-12 max-w-4xl"
+          style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          WHY T-APEX<br /><span className="text-apex-blue">AUSTRALIA</span>
+          WHY T-APEX<br /><span className="t-blue">AUSTRALIA</span>
         </motion.h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
@@ -161,7 +161,7 @@ export default function LocalTrustSection() {
             <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-2" style={{ color: 'rgba(180,140,60,0.85)' }}>
               Australian Leadership
             </div>
-            <h3 className="font-display font-black text-apex-white leading-none mb-1"
+            <h3 className="font-display font-black t-feature leading-none mb-1"
               style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)' }}>
               Piero Sacchetta
             </h3>
@@ -225,7 +225,7 @@ function SupportPoint({
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,174,239,0.05), transparent)' }}
       />
-      <h4 className="font-display font-black text-apex-white mb-2 leading-tight"
+      <h4 className="font-display font-black t-feature mb-2 leading-tight"
         style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
         {point.title}
       </h4>

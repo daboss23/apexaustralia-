@@ -48,14 +48,14 @@ export default function HowItWorksSection() {
         {/* Headline + intro */}
         <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16 items-end">
           <motion.h2
-            className="font-display font-black text-apex-white leading-[0.9]"
-            style={{ fontSize: 'clamp(2.4rem, 5.2vw, 4.8rem)' }}
+            className="h-luxia t-silver leading-[0.9]"
+            style={{ fontSize: 'clamp(1.95rem, 4.6vw, 3.9rem)' }}
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             SIMPLE TO APPLY.<br />
-            <span className="text-apex-blue">POWERFUL IN EFFECT.</span>
+            <span className="t-blue">POWERFUL IN EFFECT.</span>
           </motion.h2>
 
           <motion.p
@@ -133,7 +133,7 @@ function StepCard({
       </div>
 
       <h3
-        className="font-display font-black text-apex-white mb-3 leading-tight"
+        className="font-display font-black t-feature mb-3 leading-tight"
         style={{ fontSize: 'clamp(1.1rem, 1.8vw, 1.35rem)' }}
       >
         {step.title}

@@ -66,6 +66,79 @@
   .glow-red-sm {
     box-shadow: 0 8px 24px -6px rgba(225,6,0, 0.45);
   }
+
+  /* ── Performance display headline font: Orbitron (motorsport / F1 /
+        aerospace). The metallic finish is applied via .t-silver/.t-blue/
+        .t-red below — the T-Apex typographic signature. ───────────────────── */
+  .h-luxia {
+    font-family: var(--font-orbitron), 'Arial Narrow', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  /* ── Metallic typography system — brushed-titanium, CNC-machined ────────────
+     Physically-manufactured, not digitally projected. Crisp edge highlights,
+     tight bevel depth and a contact shadow — no bloom, blur, fog or outer glow. */
+  .t-silver, .t-blue, .t-red, .t-feature {
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    background-repeat: no-repeat;
+  }
+  .t-silver {
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, rgba(0, 0, 0, 0) 1px 3px),
+      linear-gradient(180deg, #F5F7FA 0%, #E2E6EC 42%, #D9DEE5 60%, #AEB7C2 100%);
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.45),
+      0 -1px 0 rgba(0, 0, 0, 0.22),
+      0 2px 2px rgba(0, 0, 0, 0.45);
+  }
+  .t-blue {
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, rgba(0, 0, 0, 0) 1px 3px),
+      linear-gradient(180deg, #5FD3F6 0%, #00AEEF 50%, #0089C2 100%);
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.28),
+      0 -1px 0 rgba(0, 0, 0, 0.22),
+      0 2px 2px rgba(0, 0, 0, 0.42);
+  }
+  .t-red {
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, rgba(0, 0, 0, 0) 1px 3px),
+      linear-gradient(180deg, #E84A50 0%, #D61F26 50%, #9C141A 100%);
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.22),
+      0 -1px 0 rgba(0, 0, 0, 0.26),
+      0 2px 2px rgba(0, 0, 0, 0.45);
+  }
+  /* Lighter version for feature / card titles */
+  .t-feature {
+    background-image: linear-gradient(180deg, #F5F7FA 0%, #DDE2E8 55%, #B7BFC9 100%);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.42);
+  }
+
+  /* Carbon-fibre twill — subtle engineered texture for dark surfaces */
+  .carbon-weave {
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.014) 0 1px, transparent 1px 5px),
+      repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.014) 0 1px, transparent 1px 5px),
+      repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.18) 0 1px, transparent 1px 6px);
+    background-size: 6px 6px, 6px 6px, 6px 6px;
+  }
+
+  /* Brushed-metal sheen — for premium top edges / accent strips */
+  .brushed-metal {
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.02) 0%,
+      rgba(255, 255, 255, 0.08) 22%,
+      rgba(255, 255, 255, 0.02) 40%,
+      rgba(255, 255, 255, 0.07) 64%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+  }
 }
 
 /* Animated metric number transitions */

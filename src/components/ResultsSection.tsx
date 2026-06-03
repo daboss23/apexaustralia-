@@ -70,13 +70,13 @@ function CounterStat({
 
   return (
     <div className="flex items-start gap-0.5 leading-none">
-      <span className="font-display font-black text-apex-red" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', marginTop: '0.15em' }}>
+      <span className="font-luxia font-black t-red" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', marginTop: '0.15em' }}>
         {prefix}
       </span>
-      <span className="font-display font-black text-apex-white metric-value" style={{ fontSize: 'clamp(4rem, 8vw, 7.5rem)' }}>
+      <span className="font-luxia font-black t-silver metric-value" style={{ fontSize: 'clamp(4rem, 8vw, 7.5rem)' }}>
         {current}
       </span>
-      <span className="font-display font-black text-apex-red" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', marginTop: '0.3em' }}>
+      <span className="font-luxia font-black t-red" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', marginTop: '0.3em' }}>
         {unit}
       </span>
     </div>
@@ -125,11 +125,11 @@ export default function ResultsSection() {
           transition={{ duration: 0.7 }}
         >
           <h2
-            className="font-display font-black text-apex-white leading-[0.88]"
-            style={{ fontSize: 'clamp(2.8rem, 6vw, 5.5rem)' }}
+            className="h-luxia t-silver leading-[0.88]"
+            style={{ fontSize: 'clamp(2.1rem, 5.2vw, 4.3rem)' }}
           >
             ENGINEERED RESULTS.<br />
-            <span className="text-apex-red">ELITE OUTCOMES.</span>
+            <span className="t-red">ELITE OUTCOMES.</span>
           </h2>
         </motion.div>
 
@@ -155,7 +155,7 @@ export default function ResultsSection() {
               <CounterStat stat={stat} unit={unit} prefix={prefix} inView={statsInView} />
 
               <div className="mt-4 flex flex-col gap-1">
-                <h3 className="font-display font-black text-apex-white tracking-wide leading-tight"
+                <h3 className="font-display font-black t-feature tracking-wide leading-tight"
                   style={{ fontSize: 'clamp(1rem, 1.8vw, 1.4rem)' }}>
                   {label}
                 </h3>
@@ -173,7 +173,7 @@ export default function ResultsSection() {
           transition={{ duration: 0.6, delay: 0.5 }}
         >
           <div>
-            <h3 className="font-display font-black text-apex-white mb-6 leading-tight"
+            <h3 className="font-display font-black t-feature mb-6 leading-tight"
               style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)' }}>
               Validated Across<br />Elite Programs.
             </h3>

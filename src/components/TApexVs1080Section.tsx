@@ -69,14 +69,14 @@ export default function TApexVs1080Section() {
         {/* Headline */}
         <motion.h2
           ref={titleRef}
-          className="font-display font-black text-apex-white leading-[0.9] mb-6 max-w-5xl"
-          style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}
+          className="h-luxia t-silver leading-[0.9] mb-6 max-w-5xl"
+          style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           MORE THAN A<br />
-          <span className="text-apex-blue">SPRINT RESISTANCE TOOL.</span>
+          <span className="t-blue">SPRINT RESISTANCE TOOL.</span>
         </motion.h2>
 
         {/* Subheadline */}
@@ -91,7 +91,7 @@ export default function TApexVs1080Section() {
             If you are only looking for resisted sprint or overspeed work, there are already tools in
             the market built for that lane.
           </p>
-          <p className="font-display font-bold text-apex-white leading-snug"
+          <p className="font-display font-bold t-feature leading-snug"
             style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.35rem)' }}>
             T-Apex is built for something broader.
           </p>
@@ -109,7 +109,7 @@ export default function TApexVs1080Section() {
               Most buyers in this category are not simply comparing machines. They are comparing
               training philosophies.
             </p>
-            <p className="font-display font-black text-apex-white leading-tight mb-6"
+            <p className="font-display font-black t-feature leading-tight mb-6"
               style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.7rem)' }}>
               And that is where T-Apex creates separation.
             </p>
@@ -137,7 +137,7 @@ export default function TApexVs1080Section() {
               <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-2" style={{ color: 'rgba(0,174,239,0.85)' }}>
                 The Core Principle
               </div>
-              <div className="font-display font-black text-apex-white leading-none"
+              <div className="font-display font-black t-feature leading-none"
                 style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)' }}>
                 Adaptive Resistance Intelligence
               </div>
@@ -182,7 +182,7 @@ export default function TApexVs1080Section() {
 
         {/* Comparison intro */}
         <motion.p
-          className="font-display font-bold text-apex-white leading-snug mb-8 max-w-3xl"
+          className="font-display font-bold t-feature leading-snug mb-8 max-w-3xl"
           style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.4rem)' }}
           initial={{ opacity: 0, y: 16 }}
           animate={tableInView ? { opacity: 1, y: 0 } : {}}

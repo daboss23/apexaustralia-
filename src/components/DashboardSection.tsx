@@ -203,13 +203,13 @@ export default function DashboardSection() {
         </div>
 
         <motion.h2
-          className="font-display font-black text-apex-white leading-[0.88] mb-4"
-          style={{ fontSize: 'clamp(2.4rem, 5vw, 4.5rem)' }}
+          className="h-luxia t-silver leading-[0.88] mb-4"
+          style={{ fontSize: 'clamp(1.9rem, 4.4vw, 3.6rem)' }}
           initial={{ opacity: 0, y: 28 }}
           animate={titleInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
         >
-          RACE-GRADE<br /><span className="text-apex-blue">TELEMETRY</span>
+          RACE-GRADE<br /><span className="t-blue">TELEMETRY</span>
         </motion.h2>
 
         <motion.p

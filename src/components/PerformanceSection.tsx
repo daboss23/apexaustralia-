@@ -91,7 +91,7 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
 
       {/* Stat */}
       <div className="flex items-baseline gap-1.5 mb-1">
-        <span className="font-display font-black text-4xl text-apex-red leading-none">{card.stat}</span>
+        <span className="font-luxia font-black text-4xl t-red leading-none">{card.stat}</span>
       </div>
       <div className="text-sm font-display font-bold text-apex-white tracking-wide mb-0.5">{card.metric}</div>
       <div className="text-[11px] font-body text-apex-grey mb-4">{card.detail}</div>
@@ -145,14 +145,14 @@ export default function PerformanceSection() {
 
         {/* Title */}
         <motion.h2
-          className="font-display font-black text-apex-white mb-4 leading-[0.9]"
-          style={{ fontSize: 'clamp(2.8rem, 6vw, 5.5rem)' }}
+          className="h-luxia t-silver mb-4 leading-[0.9]"
+          style={{ fontSize: 'clamp(2.1rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.1 }}
         >
           ENGINEERED FOR<br />
-          <span className="text-apex-red">EVERY ATHLETE</span>
+          <span className="t-red">EVERY ATHLETE</span>
         </motion.h2>
 
         <motion.p
@@ -208,13 +208,13 @@ export default function PerformanceSection() {
           >
             <div className="flex items-baseline leading-none">
               <span
-                className="font-display font-bold text-apex-white metric-value"
+                className="font-luxia font-bold t-silver metric-value"
                 style={{ fontSize: 'clamp(5.5rem, 13vw, 10.5rem)', letterSpacing: '-0.01em' }}
               >
                 {HEADLINE_METRICS[0].value}
               </span>
               <span
-                className="text-apex-red font-display font-bold ml-1"
+                className="t-red font-luxia font-bold ml-1"
                 style={{ fontSize: 'clamp(2rem, 4.5vw, 4rem)' }}
               >
                 {HEADLINE_METRICS[0].unit}
@@ -244,13 +244,13 @@ export default function PerformanceSection() {
               >
                 <div className="flex items-baseline gap-0.5 min-w-[80px]">
                   <span
-                    className="font-display font-bold text-apex-white leading-none metric-value"
+                    className="font-luxia font-bold t-silver leading-none metric-value"
                     style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
                   >
                     {value}
                   </span>
                   {unit && (
-                    <span className="text-apex-red font-display font-bold" style={{ fontSize: 'clamp(0.9rem, 1.4vw, 1.3rem)' }}>
+                    <span className="t-red font-luxia font-bold" style={{ fontSize: 'clamp(0.9rem, 1.4vw, 1.3rem)' }}>
                       {unit}
                     </span>
                   )}

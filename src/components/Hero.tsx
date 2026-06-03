@@ -341,22 +341,21 @@ function Headline() {
 
   return (
     <motion.div
-      className="font-display font-bold leading-[0.88] overflow-hidden"
-      style={{ fontSize: 'clamp(3.6rem, 9.5vw, 9rem)', letterSpacing: '0.01em' }}
+      className="h-luxia leading-[0.94] overflow-hidden"
+      style={{ fontSize: 'clamp(2.1rem, 5vw, 4.4rem)', letterSpacing: '-0.03em' }}
       variants={container}
       initial="hidden"
       animate="show"
     >
       <div className="overflow-hidden">
-        <motion.span variants={word} className="inline-block text-apex-white">TRAIN&nbsp;</motion.span>
-        <motion.span variants={word} className="inline-block text-apex-white">BEYOND</motion.span>
+        <motion.span variants={word} className="inline-block t-silver">TRAIN&nbsp;</motion.span>
+        <motion.span variants={word} className="inline-block t-silver">BEYOND</motion.span>
       </div>
       <div className="overflow-hidden">
-        <motion.span variants={word} className="inline-block text-apex-red">HUMAN&nbsp;</motion.span>
+        <motion.span variants={word} className="inline-block t-red">HUMAN&nbsp;</motion.span>
         <motion.span
           variants={word}
-          className="inline-block"
-          style={{ color: 'transparent', WebkitTextStroke: '2px #E10600' }}
+          className="inline-block t-red"
         >
           LIMITS
         </motion.span>

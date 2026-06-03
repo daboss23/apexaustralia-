@@ -57,12 +57,12 @@ export default function FAQSection() {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             <h2
-              className="font-display font-black text-apex-white leading-[0.88] mb-6"
-              style={{ fontSize: 'clamp(2.4rem, 5vw, 4.5rem)' }}
+              className="h-luxia t-silver leading-[0.88] mb-6"
+              style={{ fontSize: 'clamp(1.9rem, 4.4vw, 3.6rem)' }}
             >
               FREQUENTLY<br />
               ASKED<br />
-              <span className="text-apex-blue">QUESTIONS.</span>
+              <span className="t-blue">QUESTIONS.</span>
             </h2>
             <p className="text-apex-grey font-body leading-relaxed mb-8"
               style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>

@@ -156,13 +156,13 @@ export default function SportsSection() {
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         <motion.h2
           ref={titleRef}
-          className="font-display font-black text-apex-white leading-[0.88] mb-6"
-          style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}
+          className="h-luxia t-silver leading-[0.88] mb-6"
+          style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 28 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
         >
-          BUILT FOR<br /><span className="text-apex-red">EVERY CODE</span>
+          BUILT FOR<br /><span className="t-red">EVERY CODE</span>
         </motion.h2>
 
         {/* Intro copy */}
@@ -275,7 +275,7 @@ export default function SportsSection() {
               </div>
 
               <h3
-                className="font-display font-black text-apex-white mt-4 mb-3 leading-tight"
+                className="font-display font-black t-feature mt-4 mb-3 leading-tight"
                 style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)' }}
               >
                 {sport.tagline}
@@ -328,7 +328,7 @@ export default function SportsSection() {
                       <div className="text-[9px] font-mono tracking-[0.2em] uppercase text-apex-grey-dim mb-2">
                         Application
                       </div>
-                      <div className="font-display font-black text-apex-white leading-tight"
+                      <div className="font-display font-black t-feature leading-tight"
                         style={{ fontSize: 'clamp(1.1rem, 1.7vw, 1.4rem)' }}>
                         {app}
                       </div>
@@ -351,7 +351,7 @@ export default function SportsSection() {
                     Coaching Potential
                   </div>
                   <div
-                    className="font-display font-black text-apex-white leading-tight mb-4"
+                    className="font-display font-black t-feature leading-tight mb-4"
                     style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.2rem)' }}
                   >
                     More precise.<br />More adaptable.

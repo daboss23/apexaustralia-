@@ -31,8 +31,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ['var(--font-barlow)', 'system-ui', 'sans-serif'],
-        body: ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],
+        luxia: ['var(--font-orbitron)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        body: ['var(--font-inter)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-jetbrains)', 'monospace'],
       },
       keyframes: {

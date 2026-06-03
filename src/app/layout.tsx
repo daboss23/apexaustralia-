@@ -1,18 +1,19 @@
 import type { Metadata } from 'next'
-import { Oswald, DM_Sans, JetBrains_Mono } from 'next/font/google'
+import { Orbitron, Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
-const oswald = Oswald({
-  weight: ['300', '400', '500', '600', '700'],
+// Headings — Orbitron: motorsport / F1 / aerospace performance-tech display.
+const orbitron = Orbitron({
+  weight: ['600', '700', '800', '900'],
   subsets: ['latin'],
-  variable: '--font-barlow',
+  variable: '--font-orbitron',
   display: 'swap',
 })
 
-const dmSans = DM_Sans({
-  weight: ['400', '500', '600'],
+// Body + UI — Inter: clean, technical, highly legible.
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-dm-sans',
+  variable: '--font-inter',
   display: 'swap',
 })
 
@@ -49,7 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${oswald.variable} ${dmSans.variable} ${jetbrains.variable}`}
+      className={`${orbitron.variable} ${inter.variable} ${jetbrains.variable}`}
     >
       <body className="font-body antialiased overflow-x-hidden grain">{children}</body>
     </html>

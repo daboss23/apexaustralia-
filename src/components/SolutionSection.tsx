@@ -45,14 +45,14 @@ export default function SolutionSection() {
           {/* Left — copy */}
           <div>
             <motion.h2
-              className="font-display font-black text-apex-white leading-[0.88] mb-6"
-              style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}
+              className="h-luxia t-silver leading-[0.88] mb-6"
+              style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             >
               MEET THE SMARTER<br />
-              <span className="text-apex-blue">RESISTANCE SYSTEM.</span>
+              <span className="t-blue">RESISTANCE SYSTEM.</span>
             </motion.h2>
 
             <motion.p
@@ -85,7 +85,7 @@ export default function SolutionSection() {
               transition={{ duration: 0.6, delay: 0.35 }}
             >
               <p
-                className="font-display font-black text-apex-white leading-tight"
+                className="font-display font-black t-feature leading-tight"
                 style={{ fontSize: 'clamp(1.05rem, 1.9vw, 1.4rem)' }}
               >
                 Not just another resistance tool — a smarter training system for
@@ -152,7 +152,7 @@ function SolutionPillar({
       />
 
       <div className="flex items-start justify-between gap-4 mb-3">
-        <h3 className="font-display font-black text-apex-white tracking-wide"
+        <h3 className="font-display font-black t-feature tracking-wide"
           style={{ fontSize: 'clamp(1.05rem, 1.7vw, 1.3rem)' }}>
           {pillar.label}
         </h3>
