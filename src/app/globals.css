@@ -9,20 +9,20 @@
   }
 
   body {
-    background-color: #0a0a0c;
-    color: #f4f4f6;
+    background-color: #050505;
+    color: #F5F7FA;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
 
   ::selection {
-    background: #e0231f;
+    background: #E10600;
     color: #fff;
   }
 
   :focus-visible {
-    outline: 2px solid #e0231f;
+    outline: 2px solid #00AEEF;
     outline-offset: 2px;
   }
 }
