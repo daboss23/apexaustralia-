@@ -88,43 +88,29 @@
   }
   .t-silver {
     background-image:
-      /* top specular reflection */
-      linear-gradient(180deg, rgba(255,255,255,0) 3%, rgba(255,255,255,0.72) 13%, rgba(255,255,255,0) 24%),
-      /* brushed-metal grain */
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.07) 0 1px, rgba(0,0,0,0) 1px 3px),
-      /* polished chrome with a bright reflective horizon at mid-height */
-      linear-gradient(180deg, #FFFFFF 0%, #EAEFF4 26%, #C4CCD6 47%, #FBFCFE 52%, #C8D0DA 57%, #B2BAC5 100%);
+      linear-gradient(180deg, #FFFFFF 0%, #F2F5F8 28%, #AEB8C4 50%, #FFFFFF 55%, #C2CBD6 62%, #97A1AE 100%);
     text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.6),
-      0 -1px 0 rgba(0, 0, 0, 0.28),
+      0 1px 0 rgba(255, 255, 255, 0.65),
       0 2px 3px rgba(0, 0, 0, 0.5);
   }
   .t-blue {
     background-image:
-      linear-gradient(180deg, rgba(255,255,255,0) 3%, rgba(255,255,255,0.6) 13%, rgba(255,255,255,0) 24%),
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.07) 0 1px, rgba(0,0,0,0) 1px 3px),
-      linear-gradient(180deg, #9BE7FF 0%, #2BC4FA 42%, #C9EFFF 52%, #06AEEF 60%, #0090CE 100%);
+      linear-gradient(180deg, #9BEBFF 0%, #25C3FB 34%, #00AEEF 50%, #79DCFF 56%, #019BDC 70%, #0079B8 100%);
     text-shadow:
       0 1px 0 rgba(255, 255, 255, 0.35),
-      0 -1px 0 rgba(0, 0, 0, 0.25),
-      0 2px 3px rgba(0, 0, 0, 0.46);
+      0 2px 3px rgba(0, 0, 0, 0.45);
   }
   .t-red {
+    /* glossy anodised red — saturated and punchy, no desaturating wash */
     background-image:
-      linear-gradient(180deg, rgba(255,255,255,0) 3%, rgba(255,255,255,0.55) 12%, rgba(255,255,255,0) 23%),
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, rgba(0,0,0,0) 1px 3px),
-      /* vivid anodised red, bright throughout, reflective horizon — no maroon */
-      linear-gradient(180deg, #FF6259 0%, #F8302C 38%, #FF655D 52%, #EC2024 62%, #CF161B 100%);
+      linear-gradient(180deg, #FF8A82 0%, #FF3B30 28%, #FF130A 50%, #FF7068 56%, #ED0700 72%, #C40400 100%);
     text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.3),
-      0 -1px 0 rgba(0, 0, 0, 0.24),
-      0 2px 3px rgba(0, 0, 0, 0.44);
+      0 1px 0 rgba(255, 200, 200, 0.4),
+      0 2px 3px rgba(0, 0, 0, 0.42);
   }
   /* Lighter version for feature / card titles */
   .t-feature {
-    background-image:
-      linear-gradient(180deg, rgba(255,255,255,0) 6%, rgba(255,255,255,0.5) 16%, rgba(255,255,255,0) 28%),
-      linear-gradient(180deg, #FFFFFF 0%, #E4EAF0 52%, #BCC4CF 100%);
+    background-image: linear-gradient(180deg, #FFFFFF 0%, #E4EAF0 52%, #BCC4CF 100%);
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45), 0 1px 2px rgba(0, 0, 0, 0.42);
   }
 
