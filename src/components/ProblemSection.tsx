@@ -41,7 +41,7 @@ export default function ProblemSection() {
       {/* Horizontal rule top */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(225,6,0,0.25) 30%, rgba(225,6,0,0.25) 70%, transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(214,31,38,0.25) 30%, rgba(214,31,38,0.25) 70%, transparent)' }}
       />
 
       {/* Subtle grid */}
@@ -57,7 +57,7 @@ export default function ProblemSection() {
       {/* Red ambient wash */}
       <div
         className="absolute bottom-0 left-0 right-0 h-2/3 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 100%, rgba(225,6,0,0.07), transparent 70%)' }}
+        style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 100%, rgba(214,31,38,0.07), transparent 70%)' }}
         aria-hidden="true"
       />
 

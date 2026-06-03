@@ -10,24 +10,27 @@ const config: Config = {
     extend: {
       colors: {
         apex: {
-          // Accent — Red = force/resistance/power
-          red: '#E10600',
+          // Accent — Performance Red (premium accent only)
+          red: '#D61F26',
           'red-bright': '#ff3b30',
           'red-deep': '#9c0f0d',
           // Neutrals — engineering / premium product surfaces
-          black: '#050505',        // Matte Black
-          'black-2': '#0A0D10',    // Carbon Black
-          panel: '#14181D',        // Dark Graphite
+          black: '#050505',        // Matte Black (primary bg)
+          'black-2': '#0A0D10',
+          surface: '#0D1117',      // Secondary surface
+          carbon: '#131820',       // Carbon surface
+          panel: '#131820',        // Dark Graphite / carbon
           'panel-2': '#1a1f26',
-          gunmetal: '#2A3038',     // Gunmetal
+          gunmetal: '#2A3038',
           line: '#2A3038',
           'line-soft': '#1e232a',
           white: '#F5F7FA',
+          titanium: '#E4E8ED',
+          graphite: '#6E7783',
           grey: '#9aa0ab',
           'grey-dim': '#62686f',
-          // Accent — Blue = intelligence/telemetry/data
+          // Accent — Electric Blue = technology signal
           blue: '#00AEEF',
-          purple: '#7B2FBE',
         },
       },
       fontFamily: {

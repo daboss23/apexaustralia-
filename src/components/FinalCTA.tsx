@@ -15,7 +15,7 @@ export default function FinalCTA() {
     <section ref={sectionRef} id="contact" className="relative bg-apex-black-2 overflow-hidden">
       {/* Top divider */}
       <div className="absolute top-0 left-0 right-0 h-px" style={{
-        background: 'linear-gradient(90deg, transparent, rgba(225,6,0,0.4) 30%, rgba(225,6,0,0.4) 70%, transparent)'
+        background: 'linear-gradient(90deg, transparent, rgba(214,31,38,0.4) 30%, rgba(214,31,38,0.4) 70%, transparent)'
       }} />
 
       <motion.div
@@ -26,7 +26,7 @@ export default function FinalCTA() {
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse 80% 60% at 50% 60%, rgba(225,6,0,0.08) 0%, transparent 70%)'
+            background: 'radial-gradient(ellipse 80% 60% at 50% 60%, rgba(214,31,38,0.08) 0%, transparent 70%)'
           }}
           aria-hidden="true"
         />
@@ -58,22 +58,22 @@ export default function FinalCTA() {
         {/* Corner tech accents */}
         <div className="absolute top-12 left-12 opacity-20" aria-hidden="true">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <path d="M0 48V0h48" stroke="#E10600" strokeWidth="1" />
+            <path d="M0 48V0h48" stroke="#D61F26" strokeWidth="1" />
           </svg>
         </div>
         <div className="absolute top-12 right-12 opacity-20" aria-hidden="true">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <path d="M48 48V0H0" stroke="#E10600" strokeWidth="1" />
+            <path d="M48 48V0H0" stroke="#D61F26" strokeWidth="1" />
           </svg>
         </div>
         <div className="absolute bottom-12 left-12 opacity-20" aria-hidden="true">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <path d="M0 0v48h48" stroke="#E10600" strokeWidth="1" />
+            <path d="M0 0v48h48" stroke="#D61F26" strokeWidth="1" />
           </svg>
         </div>
         <div className="absolute bottom-12 right-12 opacity-20" aria-hidden="true">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <path d="M48 0v48H0" stroke="#E10600" strokeWidth="1" />
+            <path d="M48 0v48H0" stroke="#D61F26" strokeWidth="1" />
           </svg>
         </div>
 
@@ -121,7 +121,7 @@ export default function FinalCTA() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.65 }}
           >
-            <button className="group inline-flex items-center gap-3 cta-glow text-white font-display font-bold px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(225,6,0,0.7)] hover:-translate-y-0.5 active:translate-y-0"
+            <button className="group inline-flex items-center gap-3 cta-glow text-white font-display font-bold px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(214,31,38,0.7)] hover:-translate-y-0.5 active:translate-y-0"
               style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', borderRadius: 0 }}>
               Book Your Free Demo
               <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">

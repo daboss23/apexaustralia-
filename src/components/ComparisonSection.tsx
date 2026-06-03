@@ -23,7 +23,7 @@ const C = {
   bg: '#050505',
   border: 'rgba(255,255,255,0.08)',
   blue: '#00AEEF',
-  red: '#FF2A2A',
+  red: '#D61F26',
   text: '#F5F5F5',
   sub: '#8B8B8B',
 }
@@ -60,7 +60,7 @@ export default function ComparisonSection() {
       {/* Ambient telemetry glow — cool blue left, faint warm red right */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute -left-1/4 top-1/4 w-[55%] h-[60%]" style={{ background: 'radial-gradient(ellipse at center, rgba(0,174,239,0.07), transparent 70%)' }} />
-        <div className="absolute -right-1/4 bottom-1/4 w-[45%] h-[55%]" style={{ background: 'radial-gradient(ellipse at center, rgba(255,42,42,0.04), transparent 70%)' }} />
+        <div className="absolute -right-1/4 bottom-1/4 w-[45%] h-[55%]" style={{ background: 'radial-gradient(ellipse at center, rgba(214,31,38,0.04), transparent 70%)' }} />
       </div>
 
       <div className="relative max-w-5xl mx-auto px-6 md:px-10">
@@ -116,12 +116,10 @@ export default function ComparisonSection() {
           <div
             className="relative overflow-hidden rounded-2xl"
             style={{
-              background: 'rgba(12,12,14,0.72)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border: `1px solid ${C.border}`,
-              borderLeft: '1px solid rgba(0,174,239,0.35)',
-              boxShadow: '-20px 0 64px -30px rgba(0,174,239,0.6), 22px 0 64px -34px rgba(255,42,42,0.3), 0 34px 70px -28px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.04)',
+              background: '#11151B',
+              border: '1px solid rgba(228,232,237,0.14)',
+              borderLeft: '1px solid rgba(0,174,239,0.45)',
+              boxShadow: '-1px 0 0 rgba(0,174,239,0.25), 0 30px 60px -30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05)',
             }}
           >
             {/* Carbon-fibre weave */}
@@ -148,7 +146,7 @@ export default function ComparisonSection() {
                     style={{
                       background: 'rgba(255,255,255,0.06)',
                       border: '1px solid rgba(255,255,255,0.12)',
-                      boxShadow: a.others ? undefined : '0 0 14px -2px rgba(255,42,42,0.45)',
+                      boxShadow: a.others ? undefined : '0 0 14px -2px rgba(214,31,38,0.45)',
                     }}
                   >
                     <Check className="w-4 h-4" style={{ color: a.others ? C.text : '#fff' }} />

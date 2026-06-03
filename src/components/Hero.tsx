@@ -23,7 +23,7 @@ const TELEMETRY = [
     unit: 'kN',
     values: [2.81, 2.84, 2.78, 2.91, 2.86, 2.89, 2.81],
     decimals: 2,
-    color: '#E10600',
+    color: '#D61F26',
     delta: '+2.4%',
     tag: 'PEAK',
     sparkline: [52, 60, 46, 70, 64, 74, 60, 80, 72],
@@ -34,7 +34,7 @@ const TELEMETRY = [
     unit: 'kW',
     values: [4.21, 4.35, 4.18, 4.42, 4.31, 4.38, 4.21],
     decimals: 2,
-    color: '#E10600',
+    color: '#D61F26',
     delta: '+12%',
     tag: 'HIGH',
     sparkline: [38, 52, 46, 60, 56, 68, 62, 76, 70],
@@ -139,11 +139,11 @@ function TelemetryCard({
         className="relative"
         style={{
           background: 'rgba(5,5,8,0.94)',
-          backdropFilter: 'blur(24px)',
+          backdropFilter: 'blur(14px)',
           border: '1px solid rgba(255,255,255,0.05)',
           borderLeft: `2px solid ${datum.color}`,
           borderTop: `1px solid ${datum.color}40`,
-          boxShadow: `0 4px 36px -10px ${datum.color}28, inset 0 0 0 0.5px rgba(255,255,255,0.03)`,
+          boxShadow: `0 6px 22px -14px ${datum.color}1f, inset 0 0 0 0.5px rgba(255,255,255,0.03)`,
           minWidth: 150,
         }}
       >
@@ -243,11 +243,11 @@ function SystemCard() {
         className="relative"
         style={{
           background: 'rgba(5,5,8,0.94)',
-          backdropFilter: 'blur(24px)',
+          backdropFilter: 'blur(14px)',
           border: '1px solid rgba(255,255,255,0.05)',
           borderLeft: '2px solid rgba(0,174,239,0.85)',
           borderTop: '1px solid rgba(0,174,239,0.22)',
-          boxShadow: '0 4px 36px -10px rgba(0,174,239,0.2), inset 0 0 0 0.5px rgba(255,255,255,0.03)',
+          boxShadow: '0 6px 22px -14px rgba(0,174,239,0.12), inset 0 0 0 0.5px rgba(255,255,255,0.03)',
           minWidth: 196,
         }}
       >
@@ -308,7 +308,7 @@ function SystemCard() {
             <div className="h-[2px] bg-apex-line rounded-full overflow-hidden">
               <motion.div
                 className="h-full rounded-full"
-                style={{ background: 'linear-gradient(90deg, #00AEEF, #E10600)' }}
+                style={{ background: 'linear-gradient(90deg, #00AEEF, #D61F26)' }}
                 animate={{ width: `${(resistance / 450) * 100}%` }}
                 transition={{ duration: 0.65, ease: 'easeOut' }}
               />
@@ -477,18 +477,18 @@ export default function Hero() {
       {/* Top performance line */}
       <div
         className="absolute top-0 left-0 right-0 h-[1.5px] z-10 pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent 0%, #E10600 18%, #E10600 82%, transparent 100%)' }}
+        style={{ background: 'linear-gradient(90deg, transparent 0%, #D61F26 18%, #D61F26 82%, transparent 100%)' }}
       />
 
       {/* Corner HUD brackets */}
       <div className="absolute top-16 left-0 z-10 pointer-events-none opacity-22">
         <svg viewBox="0 0 72 72" width={72} height={72} fill="none">
-          <path d="M0 72V0h72" stroke="#E10600" strokeWidth="1" />
+          <path d="M0 72V0h72" stroke="#6E7783" strokeWidth="1" />
         </svg>
       </div>
       <div className="absolute top-16 right-0 z-10 pointer-events-none opacity-22">
         <svg viewBox="0 0 72 72" width={72} height={72} fill="none">
-          <path d="M72 72V0H0" stroke="#E10600" strokeWidth="1" />
+          <path d="M72 72V0H0" stroke="#6E7783" strokeWidth="1" />
         </svg>
       </div>
 
@@ -521,8 +521,8 @@ export default function Hero() {
               style={{ filter: 'brightness(1.1)' }}
             />
             <div className="flex items-center gap-3">
-              <div className="w-8 h-px bg-apex-red" />
-              <span className="text-apex-red font-mono text-[9px] font-medium tracking-[0.32em] uppercase">
+              <div className="w-8 h-px bg-apex-blue" />
+              <span className="text-apex-blue font-mono text-[9px] font-medium tracking-[0.32em] uppercase">
                 Elite Sports Performance Technology
               </span>
             </div>
@@ -548,7 +548,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 1.22 }}
           >
-            <button className="group inline-flex items-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(225,6,0,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
+            <button className="group inline-flex items-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(214,31,38,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
               Book Your Free Demo
               <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -585,7 +585,7 @@ export default function Hero() {
         >
           <motion.div
             className="w-px h-10"
-            style={{ background: 'linear-gradient(to bottom, #E10600, transparent)' }}
+            style={{ background: 'linear-gradient(to bottom, #6E7783, transparent)' }}
             animate={{ scaleY: [1, 0.3, 1] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           />
