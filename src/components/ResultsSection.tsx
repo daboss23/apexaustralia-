@@ -126,7 +126,7 @@ export default function ResultsSection() {
         >
           <h2
             className="h-luxia text-apex-white leading-[0.88]"
-            style={{ fontSize: 'clamp(2.8rem, 6vw, 5.5rem)' }}
+            style={{ fontSize: 'clamp(2.1rem, 5.2vw, 4.3rem)' }}
           >
             ENGINEERED RESULTS.<br />
             <span className="text-apex-red">ELITE OUTCOMES.</span>

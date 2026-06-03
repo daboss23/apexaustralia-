@@ -204,7 +204,7 @@ export default function DashboardSection() {
 
         <motion.h2
           className="h-luxia text-apex-white leading-[0.88] mb-4"
-          style={{ fontSize: 'clamp(2.4rem, 5vw, 4.5rem)' }}
+          style={{ fontSize: 'clamp(1.9rem, 4.4vw, 3.6rem)' }}
           initial={{ opacity: 0, y: 28 }}
           animate={titleInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}

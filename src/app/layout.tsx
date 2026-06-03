@@ -1,28 +1,19 @@
 import type { Metadata } from 'next'
-import { Oswald, DM_Sans, JetBrains_Mono, Bodoni_Moda } from 'next/font/google'
+import { Orbitron, Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
-const oswald = Oswald({
-  weight: ['300', '400', '500', '600', '700'],
+// Headings — Orbitron: motorsport / F1 / aerospace performance-tech display.
+const orbitron = Orbitron({
+  weight: ['600', '700', '800', '900'],
   subsets: ['latin'],
-  variable: '--font-barlow',
+  variable: '--font-orbitron',
   display: 'swap',
 })
 
-// LUXIÁ-style display face for major headlines only: a modern high-contrast
-// Didone for luxury/engineering statements. Swap to local Luxiá woff2 later
-// by repointing --font-luxia.
-const luxia = Bodoni_Moda({
-  weight: ['400', '500', '600', '700', '800'],
+// Body + UI — Inter: clean, technical, highly legible.
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-luxia',
-  display: 'swap',
-})
-
-const dmSans = DM_Sans({
-  weight: ['400', '500', '600'],
-  subsets: ['latin'],
-  variable: '--font-dm-sans',
+  variable: '--font-inter',
   display: 'swap',
 })
 
@@ -59,7 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${oswald.variable} ${dmSans.variable} ${jetbrains.variable} ${luxia.variable}`}
+      className={`${orbitron.variable} ${inter.variable} ${jetbrains.variable}`}
     >
       <body className="font-body antialiased overflow-x-hidden grain">{children}</body>
     </html>

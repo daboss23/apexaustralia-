@@ -146,7 +146,7 @@ export default function PerformanceSection() {
         {/* Title */}
         <motion.h2
           className="h-luxia text-apex-white mb-4 leading-[0.9]"
-          style={{ fontSize: 'clamp(2.8rem, 6vw, 5.5rem)' }}
+          style={{ fontSize: 'clamp(2.1rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.1 }}

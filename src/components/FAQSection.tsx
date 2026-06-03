@@ -58,7 +58,7 @@ export default function FAQSection() {
           >
             <h2
               className="h-luxia text-apex-white leading-[0.88] mb-6"
-              style={{ fontSize: 'clamp(2.4rem, 5vw, 4.5rem)' }}
+              style={{ fontSize: 'clamp(1.9rem, 4.4vw, 3.6rem)' }}
             >
               FREQUENTLY<br />
               ASKED<br />

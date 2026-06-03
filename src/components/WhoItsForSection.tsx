@@ -79,7 +79,7 @@ export default function WhoItsForSection() {
         {/* Headline */}
         <motion.h2
           className="h-luxia text-apex-white leading-[0.88] mb-6 max-w-4xl"
-          style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}
+          style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
