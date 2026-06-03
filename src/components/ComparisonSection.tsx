@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, Fragment } from 'react'
+import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 
@@ -18,13 +18,26 @@ const ADVANTAGES: { label: string; others: boolean }[] = [
   { label: 'One system across every code', others: false },
 ]
 
-const Check = ({ className = '' }: { className?: string }) => (
-  <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" aria-hidden="true">
+// Section-scoped palette — premium engineering, technology-first.
+const C = {
+  bg: '#050505',
+  border: 'rgba(255,255,255,0.08)',
+  blue: '#00AEEF',
+  red: '#FF2A2A',
+  text: '#F5F5F5',
+  sub: '#8B8B8B',
+}
+
+const ROW = 'h-[58px] sm:h-[64px]'
+const HEAD = 'h-[92px]'
+
+const Check = ({ className = '', style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className} style={style} fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" aria-hidden="true">
     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
   </svg>
 )
-const Cross = ({ className = '' }: { className?: string }) => (
-  <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" aria-hidden="true">
+const Cross = ({ className = '', style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className} style={style} fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" aria-hidden="true">
     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
   </svg>
 )
@@ -36,39 +49,43 @@ export default function ComparisonSection() {
   const tableInView = useInView(tableRef, { once: true, margin: '-5% 0px' })
 
   const last = ADVANTAGES.length - 1
-  const red = 'linear-gradient(180deg, #ff4b46 0%, #E10600 55%, #c41410 100%)'
 
   return (
-    <section id="comparison" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
-      {/* Top rule */}
+    <section id="comparison" className="relative py-24 md:py-36 overflow-hidden" style={{ background: C.bg }}>
+      {/* Top hairline rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(225,6,0,0.25) 30%, rgba(225,6,0,0.25) 70%, transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1) 30%, rgba(255,255,255,0.1) 70%, transparent)' }}
       />
+      {/* Ambient telemetry glow — cool blue left, faint warm red right */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute -left-1/4 top-1/4 w-[55%] h-[60%]" style={{ background: 'radial-gradient(ellipse at center, rgba(0,174,239,0.07), transparent 70%)' }} />
+        <div className="absolute -right-1/4 bottom-1/4 w-[45%] h-[55%]" style={{ background: 'radial-gradient(ellipse at center, rgba(255,42,42,0.04), transparent 70%)' }} />
+      </div>
 
       <div className="relative max-w-5xl mx-auto px-6 md:px-10">
-        {/* Section label */}
-        <div ref={titleRef} className="flex items-center gap-3 mb-6">
-          <div className="w-8 h-px bg-apex-red" />
-          <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
+        {/* Eyebrow — technology-first, electric blue */}
+        <div ref={titleRef} className="flex items-center gap-3 mb-7">
+          <div className="w-8 h-px" style={{ background: C.blue }} />
+          <span className="font-mono text-[10px] tracking-[0.3em] uppercase font-medium" style={{ color: C.blue }}>
             The Difference
           </span>
         </div>
 
-        {/* Headline */}
+        {/* Machined-titanium headline */}
         <motion.h2
-          className="h-luxia text-apex-white leading-[0.9] mb-4"
+          className="h-luxia leading-[0.95] mb-5"
           style={{ fontSize: 'clamp(1.85rem, 4.4vw, 3.4rem)' }}
           initial={{ opacity: 0, y: 28 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          EVERYTHING THEY DO.<br />
-          <span className="text-apex-red">PLUS EVERYTHING THEY CAN&apos;T.</span>
+          <span className="headline-machined">EVERYTHING THEY DO.</span><br />
+          <span className="headline-machined-red">PLUS EVERYTHING THEY CAN&apos;T.</span>
         </motion.h2>
         <motion.p
-          className="text-apex-grey font-body leading-relaxed max-w-2xl mb-12"
-          style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}
+          className="font-body leading-relaxed max-w-2xl mb-14"
+          style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)', color: C.sub }}
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.18 }}
@@ -77,82 +94,118 @@ export default function ComparisonSection() {
           Here&apos;s how T-Apex compares to the gear most facilities still rely on today.
         </motion.p>
 
-        {/* ── Comparison table ─────────────────────────────────────────────── */}
+        {/* ── Comparison table — 3 aligned columns ─────────────────────────── */}
         <motion.div
           ref={tableRef}
-          className="grid grid-cols-[minmax(0,1.6fr)_1fr_1fr] sm:grid-cols-[minmax(0,1.9fr)_1fr_1fr]"
+          className="grid grid-cols-[minmax(0,1.7fr)_1fr_1fr] items-stretch"
           initial={{ opacity: 0, y: 22 }}
           animate={tableInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          {/* Header: empty | T-Apex (logo) | Conventional */}
-          <div aria-hidden="true" />
-          <motion.div
-            className="flex items-center justify-center px-3 pt-7 pb-5 rounded-t-2xl"
-            style={{ background: red, boxShadow: '0 -10px 40px -12px rgba(225,6,0,0.6)' }}
-            initial={{ opacity: 0, y: 14 }}
-            animate={tableInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="rounded-md px-3 py-2" style={{ background: 'rgba(8,6,7,0.55)' }}>
-              <Image src="/apexaustralialogo.png" alt="T-APEX" width={200} height={64} className="h-7 sm:h-8 w-auto object-contain" />
-            </span>
-          </motion.div>
-          <div className="flex items-end justify-center px-3 pb-5 text-center">
-            <span className="font-display font-bold text-apex-grey leading-tight" style={{ fontSize: 'clamp(0.8rem, 1.4vw, 1rem)' }}>
-              Conventional<br />Tools
-            </span>
+          {/* COLUMN 1 — advantage labels */}
+          <div className="flex flex-col">
+            <div className={HEAD} aria-hidden="true" />
+            {ADVANTAGES.map((a) => (
+              <div key={a.label} className={`flex items-center ${ROW} px-1 sm:px-4 border-b`} style={{ borderColor: C.border }}>
+                <span className="font-body text-[12.5px] sm:text-sm leading-snug" style={{ color: C.text }}>{a.label}</span>
+              </div>
+            ))}
           </div>
 
-          {/* Rows */}
-          {ADVANTAGES.map((a, i) => {
-            const zebra = i % 2 === 1 ? 'rgba(255,255,255,0.025)' : 'transparent'
-            return (
-              <Fragment key={a.label}>
-                {/* Advantage label */}
-                <div className="flex items-center px-2 sm:px-4 py-4 min-h-[3.5rem]" style={{ background: zebra }}>
-                  <span className="text-apex-white font-body text-[12.5px] sm:text-[14px] leading-snug">{a.label}</span>
-                </div>
-                {/* T-Apex — always yes */}
+          {/* COLUMN 2 — T-APEX: premium graphite-glass telemetry panel */}
+          <div
+            className="relative overflow-hidden rounded-2xl"
+            style={{
+              background: 'rgba(12,12,14,0.72)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: `1px solid ${C.border}`,
+              borderLeft: '1px solid rgba(0,174,239,0.35)',
+              boxShadow: '-20px 0 64px -30px rgba(0,174,239,0.6), 22px 0 64px -34px rgba(255,42,42,0.3), 0 34px 70px -28px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.04)',
+            }}
+          >
+            {/* Carbon-fibre weave */}
+            <div className="carbon-weave absolute inset-0 opacity-[0.5] pointer-events-none" aria-hidden="true" />
+            {/* Thin electric-blue top edge glow */}
+            <div className="absolute top-0 left-5 right-5 h-px pointer-events-none" style={{ background: `linear-gradient(90deg, transparent, ${C.blue}, transparent)`, boxShadow: `0 0 12px ${C.blue}` }} />
+            {/* Soft blue inner sheen, top */}
+            <div className="absolute inset-x-0 top-0 h-24 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(0,174,239,0.08), transparent)' }} aria-hidden="true" />
+
+            <div className="relative flex flex-col h-full">
+              {/* Header — logo */}
+              <div className={`${HEAD} flex items-center justify-center px-3`}>
+                <Image src="/apexaustralialogo.png" alt="T-APEX" width={220} height={70} className="h-8 sm:h-9 w-auto object-contain" priority />
+              </div>
+              {/* Rows — white checks */}
+              {ADVANTAGES.map((a, i) => (
                 <div
-                  className={`flex items-center justify-center px-3 py-4 ${i === last ? 'rounded-b-2xl pb-7' : ''}`}
-                  style={{ background: red, boxShadow: i === last ? '0 26px 44px -16px rgba(225,6,0,0.55)' : undefined }}
+                  key={a.label}
+                  className={`flex items-center justify-center ${ROW} ${i === last ? '' : 'border-b'}`}
+                  style={{ borderColor: C.border }}
                 >
-                  <span className="flex items-center justify-center w-7 h-7 rounded-full" style={{ background: 'rgba(255,255,255,0.18)' }}>
-                    <Check className="w-4 h-4 text-white" />
+                  <span
+                    className="flex items-center justify-center w-7 h-7 rounded-full"
+                    style={{
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      boxShadow: a.others ? undefined : '0 0 14px -2px rgba(255,42,42,0.45)',
+                    }}
+                  >
+                    <Check className="w-4 h-4" style={{ color: a.others ? C.text : '#fff' }} />
                   </span>
                 </div>
-                {/* Competitor */}
-                <div className="flex items-center justify-center px-3 py-4" style={{ background: zebra }}>
-                  {a.others ? (
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full border border-apex-line">
-                      <Check className="w-4 h-4 text-apex-grey" />
-                    </span>
-                  ) : (
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                      <Cross className="w-3.5 h-3.5 text-apex-grey-dim" />
-                    </span>
-                  )}
-                </div>
-              </Fragment>
-            )
-          })}
+              ))}
+            </div>
+          </div>
+
+          {/* COLUMN 3 — conventional tools */}
+          <div className="flex flex-col">
+            <div className={`${HEAD} flex items-end justify-center pb-5 text-center`}>
+              <span className="font-display font-semibold leading-tight" style={{ fontSize: 'clamp(0.8rem, 1.4vw, 1rem)', color: C.sub }}>
+                Conventional<br />Tools
+              </span>
+            </div>
+            {ADVANTAGES.map((a) => (
+              <div key={a.label} className={`flex items-center justify-center ${ROW} border-b`} style={{ borderColor: C.border }}>
+                {a.others ? (
+                  <span className="flex items-center justify-center w-7 h-7 rounded-full" style={{ border: `1px solid ${C.border}` }}>
+                    <Check className="w-4 h-4" style={{ color: C.sub }} />
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center w-7 h-7 rounded-full" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                    <Cross className="w-3.5 h-3.5" style={{ color: '#55555c' }} />
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
         </motion.div>
 
-        {/* Verdict + CTA */}
+        {/* Verdict + CTA — graphite glass with blue edge, red accent line */}
         <motion.div
-          className="mt-12 p-8 border border-apex-red/25 flex flex-col md:flex-row md:items-center gap-6 md:gap-10"
-          style={{ borderRadius: 0, background: 'rgba(225,6,0,0.05)', borderTop: '2px solid #E10600' }}
+          className="mt-14 p-8 md:p-9 flex flex-col md:flex-row md:items-center gap-6 md:gap-10 rounded-2xl relative overflow-hidden"
+          style={{
+            background: 'rgba(12,12,14,0.7)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: `1px solid ${C.border}`,
+            boxShadow: '0 30px 60px -30px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04)',
+          }}
           initial={{ opacity: 0, y: 14 }}
           animate={tableInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          <h3 className="font-display font-black text-apex-white leading-tight flex-1" style={{ fontSize: 'clamp(1.15rem, 2.1vw, 1.7rem)' }}>
+          {/* Blue top edge */}
+          <div className="absolute top-0 left-8 right-8 h-px pointer-events-none" style={{ background: `linear-gradient(90deg, transparent, ${C.blue}, transparent)` }} />
+          {/* Red accent rule, left */}
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-12 pointer-events-none" style={{ background: C.red, boxShadow: `0 0 16px ${C.red}` }} />
+
+          <h3 className="h-luxia leading-tight flex-1" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.6rem)', color: C.text }}>
             You&apos;re not choosing between products — you&apos;re choosing whether to measure, or keep guessing.
           </h3>
           <button
-            className="flex-shrink-0 inline-flex items-center gap-2.5 cta-glow text-white font-display font-bold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_12px_40px_-8px_rgba(225,6,0,0.6)] hover:-translate-y-0.5"
-            style={{ borderRadius: 0 }}
+            className="flex-shrink-0 inline-flex items-center gap-2.5 cta-glow text-white font-display font-bold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
+            style={{ borderRadius: 8 }}
           >
             Book Your Free Demo
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">

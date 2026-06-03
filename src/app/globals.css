@@ -85,6 +85,34 @@
     background-size: 6px 6px, 6px 6px, 6px 6px;
   }
 
+  /* ── Machined-titanium headline: metallic grey fill, bevel depth, and
+        directional blue + red rim lighting. For major comparison headlines. ── */
+  .headline-machined {
+    background: linear-gradient(176deg, #FFFFFF 0%, #E4E6EA 26%, #A7ABB2 52%, #C8CBD0 70%, #8E9299 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.18),
+      -10px 0 34px rgba(0, 174, 239, 0.42),
+      10px 6px 34px rgba(255, 42, 42, 0.30),
+      0 22px 46px rgba(0, 0, 0, 0.6);
+  }
+  /* Warmer red-led rim for the emphasis line */
+  .headline-machined-red {
+    background: linear-gradient(176deg, #FFFFFF 0%, #E8E2E2 24%, #B7AEAE 52%, #D2C9C9 70%, #968D8D 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.18),
+      -10px 0 30px rgba(0, 174, 239, 0.26),
+      10px 4px 36px rgba(255, 42, 42, 0.5),
+      0 22px 46px rgba(0, 0, 0, 0.6);
+  }
+
   /* Brushed-metal sheen — for premium top edges / accent strips */
   .brushed-metal {
     background-image: linear-gradient(
