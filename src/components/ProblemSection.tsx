@@ -65,7 +65,7 @@ export default function ProblemSection() {
         {/* Headline */}
         <motion.h2
           ref={titleRef}
-          className="font-display font-black text-apex-white leading-[0.88] mb-10 max-w-4xl"
+          className="h-luxia text-apex-white leading-[0.88] mb-10 max-w-4xl"
           style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}

@@ -45,7 +45,7 @@ export default function SolutionSection() {
           {/* Left — copy */}
           <div>
             <motion.h2
-              className="font-display font-black text-apex-white leading-[0.88] mb-6"
+              className="h-luxia text-apex-white leading-[0.88] mb-6"
               style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}

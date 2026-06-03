@@ -66,6 +66,36 @@
   .glow-red-sm {
     box-shadow: 0 8px 24px -6px rgba(225,6,0, 0.45);
   }
+
+  /* ── LUXIÁ-style display headline: high-contrast Didone + elegant tracking
+        + layered depth for atmosphere. Applied to MAJOR headlines only. ───── */
+  .h-luxia {
+    font-family: var(--font-luxia), Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    letter-spacing: 0.012em;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35), 0 24px 52px rgba(0, 0, 0, 0.42);
+  }
+
+  /* Carbon-fibre twill — subtle engineered texture for dark surfaces */
+  .carbon-weave {
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.014) 0 1px, transparent 1px 5px),
+      repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.014) 0 1px, transparent 1px 5px),
+      repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.18) 0 1px, transparent 1px 6px);
+    background-size: 6px 6px, 6px 6px, 6px 6px;
+  }
+
+  /* Brushed-metal sheen — for premium top edges / accent strips */
+  .brushed-metal {
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.02) 0%,
+      rgba(255, 255, 255, 0.08) 22%,
+      rgba(255, 255, 255, 0.02) 40%,
+      rgba(255, 255, 255, 0.07) 64%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+  }
 }
 
 /* Animated metric number transitions */

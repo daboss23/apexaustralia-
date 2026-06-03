@@ -1,11 +1,21 @@
 import type { Metadata } from 'next'
-import { Oswald, DM_Sans, JetBrains_Mono } from 'next/font/google'
+import { Oswald, DM_Sans, JetBrains_Mono, Bodoni_Moda } from 'next/font/google'
 import './globals.css'
 
 const oswald = Oswald({
   weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
   variable: '--font-barlow',
+  display: 'swap',
+})
+
+// LUXIÁ-style display face for major headlines only: a modern high-contrast
+// Didone for luxury/engineering statements. Swap to local Luxiá woff2 later
+// by repointing --font-luxia.
+const luxia = Bodoni_Moda({
+  weight: ['400', '500', '600', '700', '800'],
+  subsets: ['latin'],
+  variable: '--font-luxia',
   display: 'swap',
 })
 
@@ -49,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${oswald.variable} ${dmSans.variable} ${jetbrains.variable}`}
+      className={`${oswald.variable} ${dmSans.variable} ${jetbrains.variable} ${luxia.variable}`}
     >
       <body className="font-body antialiased overflow-x-hidden grain">{children}</body>
     </html>

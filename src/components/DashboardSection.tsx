@@ -203,7 +203,7 @@ export default function DashboardSection() {
         </div>
 
         <motion.h2
-          className="font-display font-black text-apex-white leading-[0.88] mb-4"
+          className="h-luxia text-apex-white leading-[0.88] mb-4"
           style={{ fontSize: 'clamp(2.4rem, 5vw, 4.5rem)' }}
           initial={{ opacity: 0, y: 28 }}
           animate={titleInView ? { opacity: 1, y: 0 } : {}}

@@ -125,7 +125,7 @@ export default function ResultsSection() {
           transition={{ duration: 0.7 }}
         >
           <h2
-            className="font-display font-black text-apex-white leading-[0.88]"
+            className="h-luxia text-apex-white leading-[0.88]"
             style={{ fontSize: 'clamp(2.8rem, 6vw, 5.5rem)' }}
           >
             ENGINEERED RESULTS.<br />

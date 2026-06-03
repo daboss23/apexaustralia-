@@ -62,6 +62,8 @@ export default function ProductShowcase() {
 
       {/* Atmosphere */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        {/* Carbon-fibre weave — precision-machined surface texture */}
+        <div className="carbon-weave absolute inset-0 opacity-[0.5]" />
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110vw] h-[110vh]" style={{
           background: 'radial-gradient(ellipse 42% 46% at 50% 50%, rgba(0,174,239,0.1) 0%, rgba(0,174,239,0.05) 38%, transparent 66%)'
         }} />
@@ -79,7 +81,7 @@ export default function ProductShowcase() {
         {/* Headline */}
         <div ref={titleRef} className="text-center mb-12">
           <motion.h2
-            className="font-display font-bold text-apex-white leading-[0.9] mx-auto max-w-4xl"
+            className="h-luxia text-apex-white leading-[0.9] mx-auto max-w-4xl"
             style={{ fontSize: 'clamp(2.6rem, 6.5vw, 6rem)', letterSpacing: '0.01em' }}
             initial={{ opacity: 0, y: 30 }}
             animate={titleInView ? { opacity: 1, y: 0 } : {}}

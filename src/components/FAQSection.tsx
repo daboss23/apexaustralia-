@@ -57,7 +57,7 @@ export default function FAQSection() {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             <h2
-              className="font-display font-black text-apex-white leading-[0.88] mb-6"
+              className="h-luxia text-apex-white leading-[0.88] mb-6"
               style={{ fontSize: 'clamp(2.4rem, 5vw, 4.5rem)' }}
             >
               FREQUENTLY<br />

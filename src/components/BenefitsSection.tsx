@@ -73,7 +73,7 @@ export default function BenefitsSection() {
         {/* Headline */}
         <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
           <motion.h2
-            className="font-display font-black text-apex-white leading-[0.88]"
+            className="h-luxia text-apex-white leading-[0.88]"
             style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}

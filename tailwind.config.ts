@@ -31,6 +31,7 @@ const config: Config = {
         },
       },
       fontFamily: {
+        luxia: ['var(--font-luxia)', 'Georgia', 'Times New Roman', 'serif'],
         display: ['var(--font-barlow)', 'system-ui', 'sans-serif'],
         body: ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-jetbrains)', 'monospace'],

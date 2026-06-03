@@ -69,7 +69,7 @@ export default function TApexVs1080Section() {
         {/* Headline */}
         <motion.h2
           ref={titleRef}
-          className="font-display font-black text-apex-white leading-[0.9] mb-6 max-w-5xl"
+          className="h-luxia text-apex-white leading-[0.9] mb-6 max-w-5xl"
           style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}

@@ -57,7 +57,7 @@ export default function ComparisonSection() {
 
         {/* Headline */}
         <motion.h2
-          className="font-display font-black text-apex-white leading-[0.9] mb-4"
+          className="h-luxia text-apex-white leading-[0.9] mb-4"
           style={{ fontSize: 'clamp(2.2rem, 5vw, 4.2rem)' }}
           initial={{ opacity: 0, y: 28 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}

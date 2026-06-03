@@ -341,7 +341,7 @@ function Headline() {
 
   return (
     <motion.div
-      className="font-display font-bold leading-[0.88] overflow-hidden"
+      className="h-luxia leading-[0.88] overflow-hidden"
       style={{ fontSize: 'clamp(3.6rem, 9.5vw, 9rem)', letterSpacing: '0.01em' }}
       variants={container}
       initial="hidden"

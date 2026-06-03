@@ -48,7 +48,7 @@ export default function HowItWorksSection() {
         {/* Headline + intro */}
         <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16 items-end">
           <motion.h2
-            className="font-display font-black text-apex-white leading-[0.9]"
+            className="h-luxia text-apex-white leading-[0.9]"
             style={{ fontSize: 'clamp(2.4rem, 5.2vw, 4.8rem)' }}
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
