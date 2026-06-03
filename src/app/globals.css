@@ -88,44 +88,44 @@
   }
   .t-silver {
     background-image:
-      /* specular reflection band — the letters catch light */
-      linear-gradient(180deg, rgba(255,255,255,0) 6%, rgba(255,255,255,0.62) 15%, rgba(255,255,255,0) 27%),
+      /* top specular reflection */
+      linear-gradient(180deg, rgba(255,255,255,0) 3%, rgba(255,255,255,0.72) 13%, rgba(255,255,255,0) 24%),
       /* brushed-metal grain */
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, rgba(0,0,0,0) 1px 3px),
-      /* polished titanium base — bright top, deep core, lift, lower */
-      linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 13%, #D8DEE5 48%, #B4BCC7 64%, #AEB7C2 100%);
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.07) 0 1px, rgba(0,0,0,0) 1px 3px),
+      /* polished chrome with a bright reflective horizon at mid-height */
+      linear-gradient(180deg, #FFFFFF 0%, #EAEFF4 26%, #C4CCD6 47%, #FBFCFE 52%, #C8D0DA 57%, #B2BAC5 100%);
     text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.55),
-      0 -1px 0 rgba(0, 0, 0, 0.3),
+      0 1px 0 rgba(255, 255, 255, 0.6),
+      0 -1px 0 rgba(0, 0, 0, 0.28),
       0 2px 3px rgba(0, 0, 0, 0.5);
   }
   .t-blue {
     background-image:
-      linear-gradient(180deg, rgba(255,255,255,0) 6%, rgba(255,255,255,0.5) 15%, rgba(255,255,255,0) 27%),
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, rgba(0,0,0,0) 1px 3px),
-      linear-gradient(180deg, #7FDDFF 0%, #19BBF5 42%, #00AEEF 56%, #0086C0 100%);
+      linear-gradient(180deg, rgba(255,255,255,0) 3%, rgba(255,255,255,0.6) 13%, rgba(255,255,255,0) 24%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.07) 0 1px, rgba(0,0,0,0) 1px 3px),
+      linear-gradient(180deg, #9BE7FF 0%, #2BC4FA 42%, #C9EFFF 52%, #06AEEF 60%, #0090CE 100%);
     text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.32),
-      0 -1px 0 rgba(0, 0, 0, 0.28),
-      0 2px 3px rgba(0, 0, 0, 0.48);
+      0 1px 0 rgba(255, 255, 255, 0.35),
+      0 -1px 0 rgba(0, 0, 0, 0.25),
+      0 2px 3px rgba(0, 0, 0, 0.46);
   }
   .t-red {
     background-image:
-      linear-gradient(180deg, rgba(255,255,255,0) 6%, rgba(255,255,255,0.42) 14%, rgba(255,255,255,0) 25%),
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 1px, rgba(0,0,0,0) 1px 3px),
-      /* anodised metal: bright crown, performance-red core, deep base */
-      linear-gradient(180deg, #E53935 0%, #D61F26 46%, #B01419 70%, #991B1B 100%);
+      linear-gradient(180deg, rgba(255,255,255,0) 3%, rgba(255,255,255,0.55) 12%, rgba(255,255,255,0) 23%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, rgba(0,0,0,0) 1px 3px),
+      /* vivid anodised red, bright throughout, reflective horizon — no maroon */
+      linear-gradient(180deg, #FF6259 0%, #F8302C 38%, #FF655D 52%, #EC2024 62%, #CF161B 100%);
     text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.32),
-      0 -1px 0 rgba(0, 0, 0, 0.32),
-      0 2px 3px rgba(0, 0, 0, 0.5);
+      0 1px 0 rgba(255, 255, 255, 0.3),
+      0 -1px 0 rgba(0, 0, 0, 0.24),
+      0 2px 3px rgba(0, 0, 0, 0.44);
   }
   /* Lighter version for feature / card titles */
   .t-feature {
     background-image:
-      linear-gradient(180deg, rgba(255,255,255,0) 8%, rgba(255,255,255,0.4) 16%, rgba(255,255,255,0) 28%),
-      linear-gradient(180deg, #F8FAFC 0%, #DEE4EA 52%, #B7BFC9 100%);
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.45);
+      linear-gradient(180deg, rgba(255,255,255,0) 6%, rgba(255,255,255,0.5) 16%, rgba(255,255,255,0) 28%),
+      linear-gradient(180deg, #FFFFFF 0%, #E4EAF0 52%, #BCC4CF 100%);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45), 0 1px 2px rgba(0, 0, 0, 0.42);
   }
 
   /* Carbon-fibre twill — subtle engineered texture for dark surfaces */
