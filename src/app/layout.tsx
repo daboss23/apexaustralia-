@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
-import { Orbitron, Inter, JetBrains_Mono } from 'next/font/google'
+import { Marcellus, Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
-// Headings — Orbitron: motorsport / F1 / aerospace performance-tech display.
-const orbitron = Orbitron({
-  weight: ['600', '700', '800', '900'],
+// Headings — Marcellus: elegant high-contrast Roman serif (luxury display).
+const marcellus = Marcellus({
+  weight: '400',
   subsets: ['latin'],
-  variable: '--font-orbitron',
+  variable: '--font-marcellus',
   display: 'swap',
 })
 
@@ -50,7 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${orbitron.variable} ${inter.variable} ${jetbrains.variable}`}
+      className={`${marcellus.variable} ${inter.variable} ${jetbrains.variable}`}
     >
       <body className="font-body antialiased overflow-x-hidden grain">{children}</body>
     </html>

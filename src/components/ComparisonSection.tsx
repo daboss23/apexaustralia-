@@ -198,8 +198,9 @@ export default function ComparisonSection() {
           {/* Red accent rule, left */}
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-12 pointer-events-none" style={{ background: C.red, boxShadow: `0 0 16px ${C.red}` }} />
 
-          <h3 className="h-luxia t-silver leading-tight flex-1" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.6rem)' }}>
-            You&apos;re not choosing between products — you&apos;re choosing whether to measure, or keep guessing.
+          <h3 className="font-display font-black text-apex-white leading-tight flex-1" style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.7rem)' }}>
+            You&apos;re not choosing between products — you&apos;re choosing whether to{' '}
+            <span className="text-apex-blue">measure, or keep guessing.</span>
           </h3>
           <button
             className="flex-shrink-0 inline-flex items-center gap-2.5 cta-glow text-white font-display font-bold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"

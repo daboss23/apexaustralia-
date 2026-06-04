@@ -82,7 +82,7 @@ export default function ProductShowcase() {
         <div ref={titleRef} className="text-center mb-12">
           <motion.h2
             className="h-luxia t-silver leading-[0.9] mx-auto max-w-4xl"
-            style={{ fontSize: 'clamp(2rem, 5.5vw, 4.6rem)', letterSpacing: '0.01em' }}
+            style={{ fontSize: 'clamp(2rem, 5.5vw, 4.6rem)', letterSpacing: '0.04em' }}
             initial={{ opacity: 0, y: 30 }}
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}

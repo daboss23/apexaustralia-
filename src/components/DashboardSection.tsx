@@ -25,8 +25,8 @@ const GAUGES = [
 ]
 
 const LIVE_METRICS = [
-  { id: 'distance', label: 'DISTANCE', value: 283, unit: 'm', delta: '+12m', color: '#9a9aa6' },
-  { id: 'output', label: 'OUTPUT', value: 847, unit: 'W', delta: '+8%', color: '#9a9aa6' },
+  { id: 'distance', label: 'DISTANCE', value: 283, unit: 'm', delta: '+12m', color: '#b0b6c1'},
+  { id: 'output', label: 'OUTPUT', value: 847, unit: 'W', delta: '+8%', color: '#b0b6c1'},
 ]
 
 // ─── Circular Gauge ───────────────────────────────────────────────────────────
