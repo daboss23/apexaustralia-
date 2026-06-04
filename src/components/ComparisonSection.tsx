@@ -198,7 +198,7 @@ export default function ComparisonSection() {
           {/* Red accent rule, left */}
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-12 pointer-events-none" style={{ background: C.red, boxShadow: `0 0 16px ${C.red}` }} />
 
-          <h3 className="h-luxia t-silver leading-tight flex-1" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.6rem)' }}>
+          <h3 className="h-luxia t-silver uppercase leading-tight flex-1" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.6rem)' }}>
             You&apos;re not choosing between products — you&apos;re choosing whether to measure, or keep guessing.
           </h3>
           <button
