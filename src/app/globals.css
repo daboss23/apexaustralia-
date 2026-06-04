@@ -111,25 +111,25 @@
       0 2px 1px rgba(0, 0, 0, 0.55),
       0 4px 7px rgba(0, 0, 0, 0.55);
   }
-  /* Electric-blue — tuned to read as bright as the brand #00AEEF accent bars.
-     The letter mass sits on #00AEEF with brighter highlights; the core dips only
-     to a deep azure (not near-black) and the base stays a saturated blue, so the
-     overall brightness matches a solid bar while a thin core + razor glint keep
-     a subtle engineered sheen. */
+  /* Electric-blue — high-key, tuned to read as bright as the brand #00AEEF
+     accent bars. Even the darkest stops (core + base) sit at roughly bar
+     brightness and the mass rides slightly above #00AEEF, so the whole letter
+     averages at-or-above a solid bar. A brighter crown + razor glint supply the
+     sheen instead of dark bands. */
   .t-blue {
     background-image:
       linear-gradient(180deg,
-        #C6F1FF 0%,
-        #44CAFF 9%,
-        #08B4F3 23%,
-        #00AEEF 39%,
-        #0593CB 47.5%,
-        #024C6C 49.7%,
-        #E9FBFF 50.4%,
-        #2ABFF8 53%,
-        #00AEEF 66%,
-        #0497CE 85%,
-        #04638C 100%);
+        #DAF6FF 0%,
+        #5BD3FF 8%,
+        #16B8F5 22%,
+        #00AEEF 37%,
+        #08A8E4 47%,
+        #0E96CC 49.6%,
+        #F2FDFF 50.4%,
+        #2DC3FA 53%,
+        #08B1F2 66%,
+        #03A9E9 84%,
+        #0E96CC 100%);
     text-shadow:
       0 -1px 0 rgba(214, 246, 255, 0.66),
       0 1px 0 rgba(0, 0, 0, 0.72),
