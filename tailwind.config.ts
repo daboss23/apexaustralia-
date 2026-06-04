@@ -27,8 +27,8 @@ const config: Config = {
           white: '#F5F7FA',
           titanium: '#E4E8ED',
           graphite: '#6E7783',
-          grey: '#9aa0ab',
-          'grey-dim': '#62686f',
+          grey: '#b0b6c1',
+          'grey-dim': '#757b85',
           // Accent — Electric Blue = technology signal
           blue: '#00AEEF',
         },
