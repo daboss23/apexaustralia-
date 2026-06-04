@@ -111,21 +111,25 @@
       0 2px 1px rgba(0, 0, 0, 0.55),
       0 4px 7px rgba(0, 0, 0, 0.55);
   }
-  /* Anodised electric-blue — brighter, more luminous candy reflection. Vivid
-     cyan-blue mass (not pale), thin dark core, near-white razor glint. */
+  /* Electric-blue — tuned to read as bright as the brand #00AEEF accent bars.
+     The letter mass sits on #00AEEF with brighter highlights; the core dips only
+     to a deep azure (not near-black) and the base stays a saturated blue, so the
+     overall brightness matches a solid bar while a thin core + razor glint keep
+     a subtle engineered sheen. */
   .t-blue {
     background-image:
       linear-gradient(180deg,
-        #EAFBFF 0%,
-        #93ECFF 12%,
-        #41CFFF 30%,
-        #0E9AD8 45%,
-        #013A52 49.3%,
-        #F4FDFF 50.5%,
-        #66DCFE 53%,
-        #1AAFEA 64%,
-        #06729C 84%,
-        #023A4E 100%);
+        #C6F1FF 0%,
+        #44CAFF 9%,
+        #08B4F3 23%,
+        #00AEEF 39%,
+        #0593CB 47.5%,
+        #024C6C 49.7%,
+        #E9FBFF 50.4%,
+        #2ABFF8 53%,
+        #00AEEF 66%,
+        #0497CE 85%,
+        #04638C 100%);
     text-shadow:
       0 -1px 0 rgba(214, 246, 255, 0.66),
       0 1px 0 rgba(0, 0, 0, 0.72),
