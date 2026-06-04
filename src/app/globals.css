@@ -128,22 +128,22 @@
       0 1px 0 rgba(0, 24, 38, 0.6),
       0 2px 4px rgba(0, 14, 24, 0.4);
   }
-  /* Performance red — rich, saturated and clean (option B). Vivid hot top,
-     gently deeper at the base for contrast, with NO near-black maroon core/base
-     (which muddy it) and NO pink-white wash (which pales it). Bright and clear. */
+  /* Performance red — bright scarlet that stays HOT across the whole letter (no
+     darkening toward the base, which is what made earlier reds read dull), with
+     a slight scarlet lean: the only way red gains real brightness without washing
+     to pink. Bright and clear. */
   .t-red {
     background-image:
       linear-gradient(180deg,
-        #FF5544 0%,
-        #FF291A 22%,
-        #F4170C 46%,
-        #DA1009 64%,
-        #BC0D07 86%,
-        #A30B06 100%);
+        #FF6A4A 0%,
+        #FF4026 28%,
+        #FF2E18 56%,
+        #F92810 80%,
+        #EE2410 100%);
     text-shadow:
-      0 -1px 0 rgba(255, 170, 158, 0.55),
-      0 1px 0 rgba(40, 0, 0, 0.7),
-      0 2px 4px rgba(20, 0, 0, 0.45);
+      0 -1px 0 rgba(255, 195, 178, 0.55),
+      0 1px 0 rgba(50, 4, 0, 0.62),
+      0 2px 4px rgba(30, 2, 0, 0.4);
   }
   /* Polished titanium for feature / card titles — same physical finish, lighter
      base so it stays legible at smaller display sizes. */
