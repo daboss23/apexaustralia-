@@ -111,30 +111,29 @@
       0 2px 1px rgba(0, 0, 0, 0.55),
       0 4px 7px rgba(0, 0, 0, 0.55);
   }
-  /* Electric-blue — high-key and saturated, tuned to clear the brand #00AEEF
-     accent-bar brightness. Darkest stops (core + base) sit at ~bar level and the
-     mass rides above #00AEEF, so the letter averages brighter than a solid bar;
-     a bright crown + razor glint supply the engineered sheen, never dark bands.
-     Kept saturated azure (not pale cyan) so brightness doesn't read as wash-out. */
+  /* Electric-blue — ultra-bright. EVERY stop sits at or above the brand #00AEEF,
+     so there's no dark band to drag the average below a solid bar; the letter
+     reads brighter than a flat #00AEEF fill. A pure-white glint + bright crown
+     carry the sheen, and the cast shadow is lightened (no dark halo) so nothing
+     dims the word. Saturated azure throughout — bright, not pale. */
   .t-blue {
     background-image:
       linear-gradient(180deg,
-        #E2F8FF 0%,
-        #62D6FF 8%,
-        #1FBCF6 21%,
-        #06B3F2 36%,
-        #00AEEF 45%,
-        #0FA1D6 49.5%,
-        #F4FDFF 50.4%,
-        #36C7FB 53%,
-        #0CB4F3 66%,
-        #03ABEE 84%,
-        #0FA1D6 100%);
+        #ECFCFF 0%,
+        #74DCFF 7%,
+        #28C1F9 20%,
+        #13B7F5 35%,
+        #1FBEF8 47%,
+        #0FAEEE 49.5%,
+        #FFFFFF 50.3%,
+        #46CCFB 52.5%,
+        #1ABAF6 65%,
+        #10B4F2 84%,
+        #0DAEEE 100%);
     text-shadow:
-      0 -1px 0 rgba(214, 246, 255, 0.66),
-      0 1px 0 rgba(0, 0, 0, 0.72),
-      0 2px 1px rgba(0, 0, 0, 0.5),
-      0 4px 7px rgba(0, 0, 0, 0.5);
+      0 -1px 0 rgba(224, 249, 255, 0.7),
+      0 1px 0 rgba(0, 18, 28, 0.6),
+      0 2px 4px rgba(0, 12, 22, 0.4);
   }
   /* Anodised performance red — letter mass stays vivid, saturated candy-red so
      it reads hot, not pink. A razor-thin bright hot-spot glint sits on the dark
