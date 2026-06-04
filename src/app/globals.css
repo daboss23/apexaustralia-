@@ -76,9 +76,12 @@
     letter-spacing: -0.03em;
   }
 
-  /* ── Metallic typography system — brushed-titanium, CNC-machined ────────────
-     Physically-manufactured, not digitally projected. Crisp edge highlights,
-     tight bevel depth and a contact shadow — no bloom, blur, fog or outer glow. */
+  /* ── Metallic typography system — machined titanium / anodised performance
+        metal. Each letter is a physical, milled face: bright specular crown, a
+        dark core that drops into a razor-thin reflective horizon, then a second
+        bright crown and a dark contact base. The bevel is built from a crisp
+        bright top edge + a hard dark bottom edge + a tight downward contact
+        shadow. High contrast, no bloom, no fog, no outer glow. ───────────────── */
   .t-silver, .t-blue, .t-red, .t-feature {
     -webkit-background-clip: text;
     background-clip: text;
@@ -86,43 +89,86 @@
     color: transparent;
     background-repeat: no-repeat;
   }
-  /* Machined titanium: bright crown, dark core, sharp reflective horizon,
-     dark base — high contrast so each letter reads as a physical metal face. */
+  /* Machined titanium — near-white crown, dark milled core, a 1%-wide specular
+     flash at the optical centre, dark base. Reads as a polished metal billet. */
   .t-silver {
     background-image:
-      linear-gradient(180deg, #FFFFFF 0%, #DCE3EA 17%, #8B95A2 40%, #565F6B 49%, #FCFDFF 52%, #AEB8C4 58%, #6E7884 80%, #434B56 100%);
+      linear-gradient(180deg,
+        #FFFFFF 0%,
+        #F2F6FA 6%,
+        #C8D2DD 22%,
+        #8A95A3 38%,
+        #4E5762 47%,
+        #353D47 49.4%,
+        #FFFFFF 50.6%,
+        #E2E9F1 54%,
+        #A6B1BE 66%,
+        #5E6773 83%,
+        #262C34 100%);
     text-shadow:
-      0 -1px 0 rgba(255, 255, 255, 0.5),
-      0 1px 0 rgba(0, 0, 0, 0.55),
+      0 -1px 0 rgba(255, 255, 255, 0.72),
+      0 1px 0 rgba(0, 0, 0, 0.78),
       0 2px 1px rgba(0, 0, 0, 0.55),
-      0 4px 6px rgba(0, 0, 0, 0.6);
+      0 4px 7px rgba(0, 0, 0, 0.55);
   }
+  /* Anodised electric-blue — glossy candy reflection, hot specular flash. */
   .t-blue {
     background-image:
-      linear-gradient(180deg, #CBF2FF 0%, #34C7FB 22%, #0084BC 42%, #014A6C 49%, #EAFAFF 52%, #19B2F0 58%, #0179AE 80%, #014463 100%);
+      linear-gradient(180deg,
+        #DBF5FF 0%,
+        #6FDCFF 14%,
+        #18ACEC 33%,
+        #036A98 46%,
+        #013347 49.4%,
+        #EFFCFF 50.7%,
+        #3DC4F7 55%,
+        #058AC4 71%,
+        #03546F 86%,
+        #012734 100%);
     text-shadow:
-      0 -1px 0 rgba(180, 240, 255, 0.45),
-      0 1px 0 rgba(0, 0, 0, 0.5),
+      0 -1px 0 rgba(205, 242, 255, 0.6),
+      0 1px 0 rgba(0, 0, 0, 0.72),
       0 2px 1px rgba(0, 0, 0, 0.5),
-      0 4px 6px rgba(0, 0, 0, 0.55);
+      0 4px 7px rgba(0, 0, 0, 0.5);
   }
-  /* Anodised performance metal: bright crown, deep core, hot flash, dark base. */
+  /* Anodised performance red — hot pink-white crown, oxblood core, candy flash,
+     deep maroon base. Glossy like a Ferrari caliper, not a flat red fill. */
   .t-red {
     background-image:
-      linear-gradient(180deg, #FFB0A6 0%, #FF4133 20%, #C00F0A 44%, #6E0301 49%, #FF8278 52%, #F01007 60%, #B70400 80%, #6F0200 100%);
+      linear-gradient(180deg,
+        #FFE2DC 0%,
+        #FF6E60 13%,
+        #F22418 31%,
+        #A60B06 45%,
+        #560200 49.4%,
+        #FFC4BB 50.7%,
+        #FF3D2F 55%,
+        #D11009 71%,
+        #850402 86%,
+        #420100 100%);
     text-shadow:
-      0 -1px 0 rgba(255, 200, 195, 0.45),
-      0 1px 0 rgba(0, 0, 0, 0.5),
-      0 2px 1px rgba(0, 0, 0, 0.5),
-      0 4px 6px rgba(0, 0, 0, 0.55);
+      0 -1px 0 rgba(255, 206, 200, 0.6),
+      0 1px 0 rgba(0, 0, 0, 0.72),
+      0 2px 1px rgba(40, 0, 0, 0.5),
+      0 4px 7px rgba(0, 0, 0, 0.5);
   }
-  /* Lighter version for feature / card titles */
+  /* Polished titanium for feature / card titles — same physical finish, lighter
+     base so it stays legible at smaller display sizes. */
   .t-feature {
-    background-image: linear-gradient(180deg, #FFFFFF 0%, #C9D1DB 50%, #7E8893 100%);
+    background-image:
+      linear-gradient(180deg,
+        #FFFFFF 0%,
+        #E4EBF2 18%,
+        #B2BDCA 44%,
+        #717C8A 49.4%,
+        #FBFCFE 50.7%,
+        #CCD5E0 57%,
+        #909BA9 80%,
+        #5A6470 100%);
     text-shadow:
-      0 -1px 0 rgba(255, 255, 255, 0.4),
-      0 1px 1px rgba(0, 0, 0, 0.5),
-      0 2px 3px rgba(0, 0, 0, 0.45);
+      0 -1px 0 rgba(255, 255, 255, 0.6),
+      0 1px 0 rgba(0, 0, 0, 0.6),
+      0 2px 4px rgba(0, 0, 0, 0.42);
   }
 
   /* Carbon-fibre twill — subtle engineered texture for dark surfaces */
