@@ -67,13 +67,13 @@
     box-shadow: 0 8px 24px -6px rgba(214,31,38, 0.45);
   }
 
-  /* ── Performance display headline font: Orbitron (motorsport / F1 /
-        aerospace). The metallic finish is applied via .t-silver/.t-blue/
-        .t-red below — the T-Apex typographic signature. ───────────────────── */
+  /* ── Display headline font: Marcellus (elegant high-contrast Roman serif —
+        luxury). Positive tracking so uppercase words breathe and never merge.
+        The metallic finish is applied via .t-silver/.t-blue/.t-red below. ───── */
   .h-luxia {
-    font-family: var(--font-orbitron), 'Arial Narrow', system-ui, sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.03em;
+    font-family: var(--font-marcellus), 'Georgia', 'Times New Roman', serif;
+    font-weight: 400;
+    letter-spacing: 0.04em;
   }
 
   /* ── Metallic typography system — machined titanium / anodised performance
