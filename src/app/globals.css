@@ -111,29 +111,23 @@
       0 2px 1px rgba(0, 0, 0, 0.55),
       0 4px 7px rgba(0, 0, 0, 0.55);
   }
-  /* Electric-blue — vivid & saturated, sitting right on the brand #00AEEF. No
-     dark bands (so it never reads dull) and no near-white bands (so it never
-     reads washed-to-white) — the light tones are limited to a thin top edge and
-     a thin glint for sheen. This is the brightest a blue can be while still
-     reading as a saturated blue rather than white. */
+  /* Electric-blue — rich, saturated brand azure (#00AEEF). Vivid at the top,
+     gently deeper at the base for contrast, with NO near-white stops (which read
+     as washed-out) and NO dark teal bands (which read as dull). This is the
+     saturated middle: as rich-and-bright as blue gets before turning white. */
   .t-blue {
     background-image:
       linear-gradient(180deg,
-        #5FD2FB 0%,
-        #1BBCF7 8%,
-        #06B0F1 20%,
-        #00AEEF 37%,
-        #04AAEA 47%,
-        #0AA1DD 49.6%,
-        #A6E9FF 50.4%,
-        #1FBEF8 53%,
-        #01ADEE 66%,
-        #02A6E2 84%,
-        #059CD3 100%);
+        #33BEF5 0%,
+        #0FB1F0 20%,
+        #00AEEF 46%,
+        #00A4E4 64%,
+        #0096D3 86%,
+        #008AC6 100%);
     text-shadow:
-      0 -1px 0 rgba(190, 235, 255, 0.65),
-      0 1px 0 rgba(0, 22, 34, 0.66),
-      0 2px 4px rgba(0, 16, 28, 0.45);
+      0 -1px 0 rgba(120, 208, 248, 0.5),
+      0 1px 0 rgba(0, 26, 40, 0.7),
+      0 2px 4px rgba(0, 16, 28, 0.42);
   }
   /* Anodised performance red — letter mass stays vivid, saturated candy-red so
      it reads hot, not pink. A razor-thin bright hot-spot glint sits on the dark
