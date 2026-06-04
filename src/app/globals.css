@@ -89,27 +89,25 @@
     color: transparent;
     background-repeat: no-repeat;
   }
-  /* Machined titanium — near-white crown, dark milled core, a 1%-wide specular
-     flash at the optical centre, dark base. Reads as a polished metal billet. */
+  /* Silvery stone — honed pewter / polished-granite finish. Soft silver tones
+     (no pure-white chrome flash) with gentle gradation, for a matte, mineral,
+     premium look on the serif rather than glossy chrome. */
   .t-silver {
     background-image:
       linear-gradient(180deg,
-        #FFFFFF 0%,
-        #F2F6FA 6%,
-        #C8D2DD 22%,
-        #8A95A3 38%,
-        #4E5762 47%,
-        #353D47 49.4%,
-        #FFFFFF 50.6%,
-        #E2E9F1 54%,
-        #A6B1BE 66%,
-        #5E6773 83%,
-        #262C34 100%);
+        #E9ECEF 0%,
+        #D3D8DD 15%,
+        #AEB5BD 34%,
+        #8B929B 47%,
+        #737A83 49.6%,
+        #B6BDC5 55%,
+        #949BA4 72%,
+        #6E757E 88%,
+        #474D55 100%);
     text-shadow:
-      0 -1px 0 rgba(255, 255, 255, 0.72),
-      0 1px 0 rgba(0, 0, 0, 0.78),
-      0 2px 1px rgba(0, 0, 0, 0.55),
-      0 4px 7px rgba(0, 0, 0, 0.55);
+      0 -1px 0 rgba(228, 232, 236, 0.5),
+      0 1px 0 rgba(0, 0, 0, 0.55),
+      0 2px 4px rgba(0, 0, 0, 0.4);
   }
   /* Electric-blue — "brighter electric" (chosen finish). Lighter and more
      electric than the brand bar, but kept saturated with no near-white stops, so
@@ -145,23 +143,22 @@
       0 1px 0 rgba(50, 4, 0, 0.62),
       0 2px 4px rgba(30, 2, 0, 0.4);
   }
-  /* Polished titanium for feature / card titles — same physical finish, lighter
-     base so it stays legible at smaller display sizes. */
+  /* Silvery stone for feature / card titles — lighter base so it stays legible
+     at smaller display sizes. */
   .t-feature {
     background-image:
       linear-gradient(180deg,
-        #FFFFFF 0%,
-        #E4EBF2 18%,
-        #B2BDCA 44%,
-        #717C8A 49.4%,
-        #FBFCFE 50.7%,
-        #CCD5E0 57%,
-        #909BA9 80%,
-        #5A6470 100%);
+        #E7EAEE 0%,
+        #CFD5DB 26%,
+        #AAB1BA 50%,
+        #9097A1 53%,
+        #C0C7CE 60%,
+        #969EA8 82%,
+        #6A717B 100%);
     text-shadow:
-      0 -1px 0 rgba(255, 255, 255, 0.6),
-      0 1px 0 rgba(0, 0, 0, 0.6),
-      0 2px 4px rgba(0, 0, 0, 0.42);
+      0 -1px 0 rgba(228, 232, 236, 0.5),
+      0 1px 0 rgba(0, 0, 0, 0.5),
+      0 2px 3px rgba(0, 0, 0, 0.4);
   }
 
   /* Carbon-fibre twill — subtle engineered texture for dark surfaces */
