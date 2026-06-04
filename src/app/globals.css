@@ -128,28 +128,22 @@
       0 1px 0 rgba(0, 24, 38, 0.6),
       0 2px 4px rgba(0, 14, 24, 0.4);
   }
-  /* Anodised performance red — letter mass stays vivid, saturated candy-red so
-     it reads hot, not pink. A razor-thin bright hot-spot glint sits on the dark
-     oxblood core; deep maroon base anchors the contrast. Ferrari-caliper gloss. */
+  /* Performance red — rich, saturated and clean (option B). Vivid hot top,
+     gently deeper at the base for contrast, with NO near-black maroon core/base
+     (which muddy it) and NO pink-white wash (which pales it). Bright and clear. */
   .t-red {
     background-image:
       linear-gradient(180deg,
-        #FF6A52 0%,
-        #FF2614 11%,
-        #E60D03 30%,
-        #AE0603 45%,
-        #560100 49%,
-        #330100 49.8%,
-        #FFC6B9 50.5%,
-        #FF3A28 52.5%,
-        #F11005 62%,
-        #B90603 82%,
-        #420100 100%);
+        #FF5544 0%,
+        #FF291A 22%,
+        #F4170C 46%,
+        #DA1009 64%,
+        #BC0D07 86%,
+        #A30B06 100%);
     text-shadow:
-      0 -1px 0 rgba(255, 160, 145, 0.6),
-      0 1px 0 rgba(0, 0, 0, 0.72),
-      0 2px 1px rgba(40, 0, 0, 0.5),
-      0 4px 7px rgba(0, 0, 0, 0.5);
+      0 -1px 0 rgba(255, 170, 158, 0.55),
+      0 1px 0 rgba(40, 0, 0, 0.7),
+      0 2px 4px rgba(20, 0, 0, 0.45);
   }
   /* Polished titanium for feature / card titles — same physical finish, lighter
      base so it stays legible at smaller display sizes. */
