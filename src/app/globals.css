@@ -111,43 +111,44 @@
       0 2px 1px rgba(0, 0, 0, 0.55),
       0 4px 7px rgba(0, 0, 0, 0.55);
   }
-  /* Anodised electric-blue — glossy candy reflection, hot specular flash. */
+  /* Anodised electric-blue — brighter, more vivid candy reflection with a
+     near-white specular hot-spot glint at the optical centre. */
   .t-blue {
     background-image:
       linear-gradient(180deg,
-        #DBF5FF 0%,
-        #6FDCFF 14%,
-        #18ACEC 33%,
-        #036A98 46%,
-        #013347 49.4%,
-        #EFFCFF 50.7%,
-        #3DC4F7 55%,
-        #058AC4 71%,
-        #03546F 86%,
+        #E6F9FF 0%,
+        #82E6FF 13%,
+        #29BCF8 32%,
+        #047EB3 46%,
+        #012E40 49.3%,
+        #F4FDFF 50.6%,
+        #54D4FB 53%,
+        #09A0DE 62%,
+        #045E7E 84%,
         #012734 100%);
     text-shadow:
-      0 -1px 0 rgba(205, 242, 255, 0.6),
+      0 -1px 0 rgba(214, 246, 255, 0.66),
       0 1px 0 rgba(0, 0, 0, 0.72),
       0 2px 1px rgba(0, 0, 0, 0.5),
       0 4px 7px rgba(0, 0, 0, 0.5);
   }
-  /* Anodised performance red — hot pink-white crown, oxblood core, candy flash,
-     deep maroon base. Glossy like a Ferrari caliper, not a flat red fill. */
+  /* Anodised performance red — hotter, brighter Ferrari-caliper gloss with a
+     concentrated near-white hot-spot glint, oxblood core, deep maroon base. */
   .t-red {
     background-image:
       linear-gradient(180deg,
-        #FFE2DC 0%,
-        #FF6E60 13%,
-        #F22418 31%,
-        #A60B06 45%,
-        #560200 49.4%,
-        #FFC4BB 50.7%,
-        #FF3D2F 55%,
-        #D11009 71%,
-        #850402 86%,
-        #420100 100%);
+        #FFEFEB 0%,
+        #FF8576 11%,
+        #FF3325 29%,
+        #C90E08 44%,
+        #5C0200 49.3%,
+        #FFE6E0 50.6%,
+        #FF5C4D 53%,
+        #F01910 62%,
+        #A60604 84%,
+        #4E0100 100%);
     text-shadow:
-      0 -1px 0 rgba(255, 206, 200, 0.6),
+      0 -1px 0 rgba(255, 214, 208, 0.66),
       0 1px 0 rgba(0, 0, 0, 0.72),
       0 2px 1px rgba(40, 0, 0, 0.5),
       0 4px 7px rgba(0, 0, 0, 0.5);
