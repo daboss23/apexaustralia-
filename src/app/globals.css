@@ -89,25 +89,30 @@
     color: transparent;
     background-repeat: no-repeat;
   }
-  /* Silvery stone — honed pewter / polished-granite finish. Soft silver tones
-     (no pure-white chrome flash) with gentle gradation, for a matte, mineral,
-     premium look on the serif rather than glossy chrome. */
+  /* Silvery stone — brighter honed pewter / granite with a faint speckle texture.
+     A grayscale fractal-noise layer is soft-light-blended over a brighter silver
+     gradient (all clipped to the text), giving a premium polished-stone grain
+     that still pops. */
   .t-silver {
     background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.4' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.4' intercept='0.3'/%3E%3CfeFuncG type='linear' slope='0.4' intercept='0.3'/%3E%3CfeFuncB type='linear' slope='0.4' intercept='0.3'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E"),
       linear-gradient(180deg,
-        #E9ECEF 0%,
-        #D3D8DD 15%,
-        #AEB5BD 34%,
-        #8B929B 47%,
-        #737A83 49.6%,
-        #B6BDC5 55%,
-        #949BA4 72%,
-        #6E757E 88%,
-        #474D55 100%);
+        #F6F8F9 0%,
+        #E2E6EA 14%,
+        #BFC6CD 33%,
+        #9AA1AA 47%,
+        #868D96 49.6%,
+        #D2D8DE 55%,
+        #A8B0B9 72%,
+        #828A93 88%,
+        #5A616A 100%);
+    background-size: 160px 160px, 100% 100%;
+    background-repeat: repeat, no-repeat;
+    background-blend-mode: soft-light, normal;
     text-shadow:
-      0 -1px 0 rgba(228, 232, 236, 0.5),
-      0 1px 0 rgba(0, 0, 0, 0.55),
-      0 2px 4px rgba(0, 0, 0, 0.4);
+      0 -1px 0 rgba(245, 247, 249, 0.6),
+      0 1px 0 rgba(0, 0, 0, 0.6),
+      0 2px 4px rgba(0, 0, 0, 0.42);
   }
   /* Electric-blue — "brighter electric" (chosen finish). Lighter and more
      electric than the brand bar, but kept saturated with no near-white stops, so
@@ -143,20 +148,20 @@
       0 1px 0 rgba(50, 4, 0, 0.62),
       0 2px 4px rgba(30, 2, 0, 0.4);
   }
-  /* Silvery stone for feature / card titles — lighter base so it stays legible
-     at smaller display sizes. */
+  /* Silvery stone for feature / card titles — brighter, lighter base so it stays
+     legible at smaller sizes (no speckle: keeps small text clean). */
   .t-feature {
     background-image:
       linear-gradient(180deg,
-        #E7EAEE 0%,
-        #CFD5DB 26%,
-        #AAB1BA 50%,
-        #9097A1 53%,
-        #C0C7CE 60%,
-        #969EA8 82%,
-        #6A717B 100%);
+        #F4F6F8 0%,
+        #DDE2E7 26%,
+        #B6BDC5 50%,
+        #9AA1AB 53%,
+        #CED4DA 60%,
+        #A1A9B2 82%,
+        #767D87 100%);
     text-shadow:
-      0 -1px 0 rgba(228, 232, 236, 0.5),
+      0 -1px 0 rgba(245, 247, 249, 0.55),
       0 1px 0 rgba(0, 0, 0, 0.5),
       0 2px 3px rgba(0, 0, 0, 0.4);
   }
