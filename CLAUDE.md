@@ -114,7 +114,7 @@ mostly square (`borderRadius: 0`). All animation respects
 
 Static export → `out/`, hosted on **Vercel**. Merging to `main` publishes the
 production (live) site. Feature work happens on `claude/*` branches via PRs.
-(Production URL: set in the Vercel project — not stored in the repo.)
+Live site: **https://apexaustralia.vercel.app/**
 
 ## Conventions for changes
 

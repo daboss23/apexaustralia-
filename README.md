@@ -5,6 +5,8 @@ resistance training device ("Adaptive Resistance Intelligence") for elite
 sports-performance facilities and coaches. The aesthetic is motorsport /
 Formula-1 / aerospace: dark, engineered, with telemetry-HUD detail.
 
+**Live:** https://apexaustralia.vercel.app/
+
 ## Tech stack
 
 - **Next.js 14** (App Router) · **React 18** · **TypeScript**
@@ -48,7 +50,8 @@ tokens, and the CTA-banner style. Always confirm changes with `npm run build`.
 
 ## Deployment
 
-Static export → `out/`, hosted on **Vercel**. Merging to `main` publishes the
+Static export → `out/`, hosted on **Vercel** at
+**https://apexaustralia.vercel.app/**. Merging to `main` publishes the
 production (live) site; feature work happens on `claude/*` branches via PRs.
 
 ---
