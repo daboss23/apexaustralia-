@@ -1,33 +1,59 @@
 # T-APEX Australia
 
-Premium, high-tech marketing site for **T-APEX** — an intelligent, portable
-resistance training device powered by Quasi Direct Drive (QDD) technology.
+Premium, single-page marketing/landing site for **T-Apex** — an intelligent
+resistance training device ("Adaptive Resistance Intelligence") for elite
+sports-performance facilities and coaches. The aesthetic is motorsport /
+Formula-1 / aerospace: dark, engineered, with telemetry-HUD detail.
 
-Static site — no build step. Open `index.html` or serve the folder:
+**Live:** https://apexaustralia.vercel.app/
+
+## Tech stack
+
+- **Next.js 14** (App Router) · **React 18** · **TypeScript**
+- **Tailwind CSS 3** · **Framer Motion 11**
+- **Static export** (`next.config.mjs` → `output: 'export'`), deployed on **Vercel**
+- Fonts via `next/font/google` (Marcellus · Inter · JetBrains Mono)
+
+## Getting started
 
 ```bash
-python3 -m http.server 8000   # then visit http://localhost:8000
+npm install     # install dependencies
+npm run dev     # local dev server → http://localhost:3000
+npm run build   # production build + static export to out/  (use this to verify changes)
+npm run start   # serve a production build
+npm run lint    # next lint
 ```
 
-## Architecture
+## Project layout
 
-| Page | File | Purpose |
-|------|------|---------|
-| Home | `index.html` | Hero, why-it-matters, what it is, benefits, how it works, who it's for, why T-APEX Australia, comparison teaser, FAQ teaser, final CTA |
-| Product / How It Works | `product.html` | Overview, training mechanics, intelligence/data, features, use cases, full comparison |
-| Who It's For | `who.html` | Audience blocks + elite environments |
-| About | `about.html` | T-APEX Australia positioning, Piero, trust pillars |
-| FAQ | `faq.html` | Objection-handling accordion |
-| Contact / Book Demo | `contact.html` | Enquiry form |
-| Order / Enquire | `order.html` | Premium configure → enquire-to-order → confirmation flow |
+```
+src/
+  app/
+    layout.tsx     # root layout: fonts, metadata/SEO
+    page.tsx       # the whole page — orders the section components
+    globals.css    # global styles + the metallic typography system
+  components/       # one component per page section (Hero, ProblemSection, …)
+public/             # static assets (hero-video.mp4, logos, images)
+tailwind.config.ts  # design tokens (apex.* colors), font families
+```
 
-Shared design system in `styles.css`, interaction layer in `script.js`.
+The site is assembled in `src/app/page.tsx`; each section lives in
+`src/components/`. Most are client components using Framer Motion for
+scroll-reveal animations.
 
-## Design system
-- **Palette:** black / white / red `#e0231f` with gold `#caa24a` accents
-- **Type:** Space Grotesk (display) + Inter (body)
-- **Motion:** scroll-driven reveals, mechanical assembly (parts locking into
-  place), rotating QDD rotor, scanning schematic, count-up stats, marquee,
-  scroll-progress rail. All respect `prefers-reduced-motion`.
+## Working in this repo
 
-Product facts sourced from myt-apex.com.
+See [`CLAUDE.md`](./CLAUDE.md) for the important conventions — especially the
+**centralized metallic typography system** in `src/app/globals.css`
+(`.h-luxia` + `.t-silver`/`.t-red`/`.t-blue`/`.t-feature`), the brand design
+tokens, and the CTA-banner style. Always confirm changes with `npm run build`.
+
+## Deployment
+
+Static export → `out/`, hosted on **Vercel** at
+**https://apexaustralia.vercel.app/**. Merging to `main` publishes the
+production (live) site; feature work happens on `claude/*` branches via PRs.
+
+---
+
+Product reference / facts: myt-apex.com

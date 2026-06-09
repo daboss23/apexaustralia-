@@ -2,9 +2,9 @@
 
 Guidance for Claude Code (and any AI session) working in this repository.
 
-> ⚠️ The root `README.md` is **out of date** — it describes an older multi-page
-> static HTML site (index.html/product.html, Space Grotesk, gold accents). That
-> is NOT the current project. Trust this file and the `src/` source instead.
+> `README.md` is the short human-facing overview; **this file is the working
+> guide** for conventions and architecture. Keep both in sync with the `src/`
+> source, which is the source of truth.
 
 ## What this is
 
@@ -114,7 +114,7 @@ mostly square (`borderRadius: 0`). All animation respects
 
 Static export → `out/`, hosted on **Vercel**. Merging to `main` publishes the
 production (live) site. Feature work happens on `claude/*` branches via PRs.
-(Production URL: set in the Vercel project — not stored in the repo.)
+Live site: **https://apexaustralia.vercel.app/**
 
 ## Conventions for changes
 
