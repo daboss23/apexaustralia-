@@ -1,4 +1,5 @@
 import Navbar from '@/components/Navbar'
+import TelemetryLine from '@/components/TelemetryLine'
 import Hero from '@/components/Hero'
 import PerformanceSection from '@/components/PerformanceSection'
 import ProblemSection from '@/components/ProblemSection'
@@ -19,6 +20,9 @@ export default function Home() {
   return (
     <main className="bg-apex-black text-apex-white">
       <Navbar />
+
+      {/* Scroll telemetry rail — fixed session-progress line with sector gates (xl+) */}
+      <TelemetryLine />
 
       {/* 01 — HERO / BIG PROMISE */}
       <Hero />

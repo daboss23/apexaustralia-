@@ -61,7 +61,70 @@ export default function ProblemSection() {
         aria-hidden="true"
       />
 
+      {/* Faint static — the "no signal" texture for this story beat */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.05]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E")`,
+        }}
+        aria-hidden="true"
+      />
+
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
+        {/* Decorative HUD: dead telemetry feed — the system is "blind" here */}
+        <motion.div
+          className="absolute top-1 right-6 md:right-10 lg:right-16 hidden xl:block"
+          aria-hidden="true"
+          initial={{ opacity: 0, y: 10 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, delay: 0.55 }}
+        >
+          <div
+            className="relative px-3.5 py-2.5"
+            style={{
+              background: 'rgba(5,5,8,0.7)',
+              border: '1px solid rgba(255,255,255,0.05)',
+              borderLeft: '2px solid rgba(214,31,38,0.5)',
+              minWidth: 168,
+            }}
+          >
+            <div className="flex items-center justify-between gap-6 mb-2">
+              <span className="text-[8px] font-mono font-bold tracking-[0.24em] uppercase text-apex-grey-dim">
+                Telemetry
+              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[7px] font-mono tracking-wider text-apex-red/80">NO SIGNAL</span>
+                <div className="w-1 h-1 rounded-full bg-apex-red/70 animate-pulse-slow" />
+              </div>
+            </div>
+            {/* One last heartbeat, then flatline — with a dead-monitor sweep */}
+            <div className="relative h-[20px] overflow-hidden">
+              <svg width="140" height="20" viewBox="0 0 140 20" aria-hidden="true">
+                <polyline
+                  points="0,13 34,13 38,13 41,6 44,17 47,13 140,13"
+                  fill="none"
+                  stroke="rgba(214,31,38,0.55)"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <div
+                className="absolute top-[12px] left-0 w-[10px] h-[2px]"
+                style={{
+                  background: 'linear-gradient(90deg, transparent, rgba(255,59,48,0.9))',
+                  animation: 'flatline-scan 3.4s linear infinite',
+                }}
+              />
+            </div>
+            <div className="flex justify-between mt-1.5">
+              <span className="text-[7px] font-mono tracking-wider text-apex-grey-dim">DATA — —</span>
+              <span className="text-[7px] font-mono tracking-wider" style={{ color: 'rgba(255,255,255,0.18)' }}>
+                BLIND
+              </span>
+            </div>
+          </div>
+        </motion.div>
         {/* Headline */}
         <motion.h2
           ref={titleRef}
@@ -72,7 +135,7 @@ export default function ProblemSection() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           MOST PERFORMANCE ENVIRONMENTS<br />
-          <span className="t-red">ARE STILL TRAINING BLIND.</span>
+          <span className="t-red signal-flicker">ARE STILL TRAINING BLIND.</span>
         </motion.h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">

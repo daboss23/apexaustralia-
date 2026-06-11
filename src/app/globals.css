@@ -258,3 +258,35 @@
     rgba(255, 255, 255, 0.011) 4px
   );
 }
+
+/* ── Story-beat motion: signal-loss (Problem) → system-online (Solution) ──── */
+
+/* Brief signal-dropout flicker — applied to the "TRAINING BLIND" headline.
+   steps() makes the dips snap like a dying feed rather than fade. */
+@keyframes signal-flicker {
+  0%, 86%, 100% { opacity: 1; }
+  87% { opacity: 0.45; }
+  88% { opacity: 1; }
+  91% { opacity: 0.55; }
+  91.6% { opacity: 0.95; }
+  93% { opacity: 0.35; }
+  93.4% { opacity: 1; }
+}
+.signal-flicker {
+  animation: signal-flicker 7s steps(1, end) infinite;
+  animation-delay: 2.4s;
+}
+
+/* Dead-monitor sweep across the flatline in the "NO SIGNAL" telemetry chip */
+@keyframes flatline-scan {
+  0% { transform: translateX(0); opacity: 0; }
+  10% { opacity: 0.9; }
+  90% { opacity: 0.9; }
+  100% { transform: translateX(128px); opacity: 0; }
+}
+
+/* Blinking console caret (Solution boot-up) */
+@keyframes caret-blink {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0; }
+}
