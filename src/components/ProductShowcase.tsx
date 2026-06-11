@@ -1,18 +1,142 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 
 // ─── Capability callouts that flank the video (claim-safe, descriptive) ────────
+// Each callout locks onto a real component in the exploded-view render:
+// reticle snaps on → hairline draws out to the label → label types on.
+// `target` is { x, y } in % of the video frame; `seq` is the lock-on order.
+
+const LOCK_BASE = 0.45 // s after inView before the first lock
+const LOCK_STEP = 0.5 // s between locks
 
 const CALLOUTS = [
-  { id: 'modes', tag: '01', text: 'Intelligent resistance and assistance modes', side: 'left', top: '16%', delay: 0.55 },
-  { id: 'overspeed', tag: '02', text: 'Controlled overspeed capability', side: 'left', top: '64%', delay: 0.7 },
-  { id: 'feedback', tag: '03', text: 'Real-time performance feedback', side: 'right', top: '20%', delay: 0.62 },
-  { id: 'build', tag: '04', text: 'Rugged build quality for high-demand facilities', side: 'right', top: '66%', delay: 0.78 },
+  { id: 'modes', tag: '01', text: 'Intelligent resistance and assistance modes', side: 'left', top: '16%', seq: 0, target: { x: 45, y: 31 } }, // cable drum
+  { id: 'overspeed', tag: '02', text: 'Controlled overspeed capability', side: 'left', top: '64%', seq: 2, target: { x: 31, y: 54 } }, // drive motor
+  { id: 'feedback', tag: '03', text: 'Real-time performance feedback', side: 'right', top: '20%', seq: 1, target: { x: 71, y: 34 } }, // tensioner / sensor line
+  { id: 'build', tag: '04', text: 'Rugged build quality for high-demand facilities', side: 'right', top: '66%', seq: 3, target: { x: 76, y: 71 } }, // chassis & wheels
 ]
 
+const lockAt = (c: typeof CALLOUTS[0]) => LOCK_BASE + c.seq * LOCK_STEP
+const lineAt = (c: typeof CALLOUTS[0]) => lockAt(c) + 0.18
+const textAt = (c: typeof CALLOUTS[0]) => lockAt(c) + 0.45
+
 const CAPABILITIES = CALLOUTS.map(c => ({ tag: c.tag, text: c.text }))
+
+// ─── Type-on label ────────────────────────────────────────────────────────────
+// Reveals the existing label text character by character with a caret, like the
+// system annotating its own hardware. Full text renders invisibly underneath so
+// the layout never shifts. Respects prefers-reduced-motion (instant reveal).
+
+function TypeOn({ text, start, delay }: { text: string; start: boolean; delay: number }) {
+  const [n, setN] = useState(0)
+
+  useEffect(() => {
+    if (!start) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setN(text.length)
+      return
+    }
+    let iv: ReturnType<typeof setInterval> | undefined
+    const t = setTimeout(() => {
+      iv = setInterval(() => {
+        setN(c => {
+          if (c >= text.length) {
+            if (iv) clearInterval(iv)
+            return c
+          }
+          return c + 1
+        })
+      }, 16)
+    }, delay * 1000)
+    return () => {
+      clearTimeout(t)
+      if (iv) clearInterval(iv)
+    }
+  }, [start, text, delay])
+
+  const done = n >= text.length
+  return (
+    <span className="relative font-display font-semibold text-apex-white text-[13px] leading-snug">
+      <span className="invisible">{text}</span>
+      <span className="absolute inset-0">
+        {text.slice(0, n)}
+        {n > 0 && !done && (
+          <span className="inline-block w-[5px] h-[10px] ml-0.5 bg-apex-blue align-baseline" aria-hidden="true" />
+        )}
+      </span>
+    </span>
+  )
+}
+
+// ─── Lock-on reticle — snaps onto a component like a camera autofocus ─────────
+
+function LockReticle({ c, inView }: { c: typeof CALLOUTS[0]; inView: boolean }) {
+  return (
+    <motion.div
+      className="absolute z-20 hidden xl:block pointer-events-none"
+      style={{
+        left: `${c.target.x}%`,
+        top: `${c.target.y}%`,
+        width: 22,
+        height: 22,
+        marginLeft: -11,
+        marginTop: -11,
+        filter: 'drop-shadow(0 0 6px rgba(0,174,239,0.7))',
+      }}
+      initial={{ opacity: 0, scale: 2.6 }}
+      animate={inView ? { opacity: 1, scale: 1 } : {}}
+      transition={{ duration: 0.38, delay: lockAt(c), ease: [0.2, 1.1, 0.3, 1] }}
+      aria-hidden="true"
+    >
+      <svg viewBox="0 0 22 22" fill="none" className="w-full h-full">
+        <path d="M1 6V1h5" stroke="#00AEEF" strokeWidth="1.3" />
+        <path d="M16 1h5v5" stroke="#00AEEF" strokeWidth="1.3" />
+        <path d="M21 16v5h-5" stroke="#00AEEF" strokeWidth="1.3" />
+        <path d="M6 21H1v-5" stroke="#00AEEF" strokeWidth="1.3" />
+        <circle cx="11" cy="11" r="1.3" fill="#00AEEF" />
+      </svg>
+    </motion.div>
+  )
+}
+
+// ─── Connector hairlines — drawn from the frame edge to each locked target ────
+
+function ConnectorLines({ inView }: { inView: boolean }) {
+  return (
+    <svg
+      className="absolute inset-0 w-full h-full hidden xl:block pointer-events-none z-10"
+      viewBox="0 0 100 75"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      {CALLOUTS.map(c => {
+        const isLeft = c.side === 'left'
+        const cy = (parseFloat(c.top) + 4) * 0.75
+        const tx = c.target.x
+        const ty = c.target.y * 0.75
+        const elbowX = tx + (isLeft ? -7 : 7)
+        const d = `M ${isLeft ? 0 : 100} ${cy} L ${elbowX} ${cy} L ${tx} ${ty}`
+        return (
+          <motion.path
+            key={c.id}
+            d={d}
+            fill="none"
+            stroke="rgba(0,174,239,0.55)"
+            strokeWidth="0.22"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={inView ? { pathLength: 1, opacity: 1 } : {}}
+            transition={{
+              pathLength: { duration: 0.45, delay: lineAt(c), ease: 'linear' },
+              opacity: { duration: 0.01, delay: lineAt(c) },
+            }}
+          />
+        )
+      })}
+    </svg>
+  )
+}
 
 // ─── Callout ──────────────────────────────────────────────────────────────────
 
@@ -22,13 +146,13 @@ function Callout({ c, inView }: { c: typeof CALLOUTS[0]; inView: boolean }) {
     <motion.div
       className={`absolute hidden xl:flex items-center gap-3 z-30 w-[210px] ${isLeft ? 'right-full mr-4 flex-row' : 'left-full ml-4 flex-row-reverse'}`}
       style={{ top: c.top }}
-      initial={{ opacity: 0, x: isLeft ? -20 : 20 }}
+      initial={{ opacity: 0, x: isLeft ? -8 : 8 }}
       animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.7, delay: c.delay, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.4, delay: lockAt(c) + 0.3, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className={`flex flex-col ${isLeft ? 'items-end text-right' : 'items-start text-left'}`}>
         <span className="text-[8px] font-mono tracking-[0.24em] text-apex-blue uppercase mb-1">{c.tag}</span>
-        <span className="font-display font-semibold text-apex-white text-[13px] leading-snug">{c.text}</span>
+        <TypeOn text={c.text} start={inView} delay={textAt(c)} />
       </div>
       <div className={`flex items-center gap-1.5 flex-shrink-0 ${isLeft ? '' : 'flex-row-reverse'}`}>
         <div className="w-1.5 h-1.5 rounded-full bg-apex-blue" style={{ boxShadow: '0 0 8px #00AEEF' }} />
@@ -166,6 +290,12 @@ export default function ProductShowcase() {
                     <path d="M28 0v28H0" stroke="#00AEEF" strokeWidth="1.2" />
                   </svg>
                 </div>
+
+                {/* Lock-on annotation layer — reticles + hairlines to the callouts */}
+                <ConnectorLines inView={inView} />
+                {CALLOUTS.map(c => (
+                  <LockReticle key={c.id} c={c} inView={inView} />
+                ))}
 
                 {/* Status HUD — bottom left */}
                 <div className="absolute bottom-5 left-5 pointer-events-none">
