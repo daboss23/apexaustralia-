@@ -40,19 +40,19 @@ export default function SolutionSection() {
         transition={booted ? { duration: 1.4, ease: [0.16, 1, 0.3, 1] } : { duration: 0 }}
       />
 
-      {/* Boot-up scan sweep — a single blue pass down the section */}
+      {/* Boot-up scan sweep — a single blue pass in from the left */}
       {booted && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
           <motion.div
-            className="absolute inset-x-0 top-0"
+            className="absolute inset-y-0 left-0"
             style={{
-              height: '24%',
+              width: '22%',
               background:
-                'linear-gradient(180deg, transparent, rgba(0,174,239,0.05) 42%, rgba(0,174,239,0.14) 49%, rgba(0,174,239,0.55) 50%, rgba(0,174,239,0.14) 51%, rgba(0,174,239,0.04) 58%, transparent)',
+                'linear-gradient(90deg, transparent, rgba(0,174,239,0.05) 42%, rgba(0,174,239,0.14) 49%, rgba(0,174,239,0.55) 50%, rgba(0,174,239,0.14) 51%, rgba(0,174,239,0.04) 58%, transparent)',
             }}
-            initial={{ y: '-110%', opacity: 1 }}
-            animate={{ y: '520%', opacity: [1, 1, 1, 0] }}
-            transition={{ duration: 2.8, ease: [0.35, 0, 0.3, 1] }}
+            initial={{ x: '-110%', opacity: 1 }}
+            animate={{ x: '560%', opacity: [1, 1, 1, 0] }}
+            transition={{ duration: 4.6, ease: [0.4, 0, 0.3, 1] }}
           />
         </div>
       )}

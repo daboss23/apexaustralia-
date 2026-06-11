@@ -41,15 +41,79 @@ export default function FinalCTA() {
           aria-hidden="true"
         />
 
-        {/* Background athlete image */}
-        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-          <Image
-            src="/hero.png"
-            alt=""
-            fill
-            className="object-cover object-right-top"
-            style={{ opacity: 0.14 }}
+        {/* Background athlete image — slow-motion sprint drift, charged with energy */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+          <div
+            className="absolute inset-0"
+            style={{ animation: 'slow-sprint 16s ease-in-out infinite', willChange: 'transform' }}
+          >
+            <Image
+              src="/hero.png"
+              alt=""
+              fill
+              className="object-cover object-right-top"
+              style={{ opacity: 0.14 }}
+            />
+          </div>
+
+          {/* Energy field breathing over the athlete */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'radial-gradient(ellipse 45% 55% at 62% 32%, rgba(214,31,38,0.10), rgba(0,174,239,0.04) 55%, transparent 75%)',
+              animation: 'energy-breathe 7s ease-in-out infinite',
+            }}
           />
+
+          {/* Energy streaks sweeping through the frame */}
+          <div
+            className="absolute left-0 w-[38vw] h-[2px] top-[30%]"
+            style={{
+              background: 'linear-gradient(90deg, transparent, rgba(0,174,239,0.5), transparent)',
+              animation: 'energy-streak 9s linear infinite',
+            }}
+          />
+          <div
+            className="absolute left-0 w-[46vw] h-[3px] top-[52%]"
+            style={{
+              background: 'linear-gradient(90deg, transparent, rgba(214,31,38,0.45), transparent)',
+              animation: 'energy-streak 12s linear infinite',
+              animationDelay: '3.5s',
+            }}
+          />
+          <div
+            className="absolute left-0 w-[30vw] h-px top-[68%]"
+            style={{
+              background: 'linear-gradient(90deg, transparent, rgba(255,59,48,0.35), transparent)',
+              animation: 'energy-streak 10s linear infinite',
+              animationDelay: '6.5s',
+            }}
+          />
+
+          {/* Frequency trace — the heartbeat of the system, marching along */}
+          <svg
+            className="absolute bottom-[10%] inset-x-0 w-full h-[56px] opacity-25"
+            viewBox="0 0 1200 60"
+            preserveAspectRatio="none"
+            fill="none"
+          >
+            <defs>
+              <linearGradient id="freq-grad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#00AEEF" stopOpacity="0" />
+                <stop offset="25%" stopColor="#00AEEF" />
+                <stop offset="75%" stopColor="#D61F26" />
+                <stop offset="100%" stopColor="#D61F26" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M0 30 H90 L100 10 L110 48 L120 30 H250 L260 16 L268 42 L276 30 H410 L420 8 L430 50 L440 30 H570 L580 18 L588 40 L596 30 H730 L740 10 L750 48 L760 30 H890 L900 16 L908 42 L916 30 H1050 L1060 8 L1070 50 L1080 30 H1200"
+              stroke="url(#freq-grad)"
+              strokeWidth="1.4"
+              strokeDasharray="6 10"
+              style={{ animation: 'freq-march 7s linear infinite' }}
+            />
+          </svg>
+
           <div className="absolute inset-0" style={{
             background: 'linear-gradient(180deg, #0A0D10 0%, rgba(10,13,16,0.35) 25%, rgba(10,13,16,0.35) 70%, #0A0D10 100%)'
           }} />

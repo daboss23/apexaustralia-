@@ -324,43 +324,106 @@ function SystemCard() {
   )
 }
 
-// ─── Animated Headline ────────────────────────────────────────────────────────
+// ─── Animated Headline — energy in the air condenses into the words ──────────
+
+type Spark = {
+  left: number
+  top: number
+  ox: number
+  oy: number
+  color: string
+  size: number
+  delay: number
+}
 
 function Headline() {
+  // Sparks are generated client-side only (random values would break SSR
+  // hydration) and skipped entirely under prefers-reduced-motion.
+  const [sparks, setSparks] = useState<Spark[]>([])
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const colors = ['#00AEEF', '#00AEEF', '#7fd8ff', '#ff3b30']
+    setSparks(
+      Array.from({ length: 26 }, (_, i) => ({
+        left: 4 + Math.random() * 88,
+        top: (i % 2 === 0 ? 20 : 70) + (Math.random() * 18 - 9),
+        ox: (Math.random() - 0.5) * 420,
+        oy: (Math.random() - 0.5) * 320,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: 2 + Math.random() * 2.5,
+        delay: Math.random() * 0.5,
+      }))
+    )
+  }, [])
+
   const container = {
     hidden: {},
-    show: { transition: { staggerChildren: 0.07, delayChildren: 0.2 } },
+    show: { transition: { staggerChildren: 0.12, delayChildren: 0.55 } },
   }
   const word = {
-    hidden: { opacity: 0, y: 80, skewY: 4 },
+    hidden: { opacity: 0, y: 80, skewY: 4, filter: 'blur(14px) brightness(2.4)' },
     show: {
-      opacity: 1, y: 0, skewY: 0,
-      transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] },
+      opacity: 1, y: 0, skewY: 0, filter: 'blur(0px) brightness(1)',
+      transition: { duration: 1.1, ease: [0.16, 1, 0.3, 1] },
     },
   }
 
   return (
-    <motion.div
-      className="h-luxia leading-[0.94] overflow-hidden"
-      style={{ fontSize: 'clamp(2.1rem, 5vw, 4.4rem)', letterSpacing: '0.04em' }}
-      variants={container}
-      initial="hidden"
-      animate="show"
-    >
-      <div className="overflow-hidden">
-        <motion.span variants={word} className="inline-block t-silver">TRAIN&nbsp;</motion.span>
-        <motion.span variants={word} className="inline-block t-silver">BEYOND</motion.span>
+    <div className="relative">
+      {/* Ambient charge behind the words */}
+      <div
+        className="absolute -inset-x-10 -inset-y-6 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 70% 60% at 30% 50%, rgba(0,174,239,0.08), rgba(214,31,38,0.04) 55%, transparent 78%)',
+          animation: 'energy-breathe 6s ease-in-out infinite',
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Floating energy condensing into the headline */}
+      <div className="absolute -inset-x-16 -inset-y-10 pointer-events-none" aria-hidden="true">
+        {sparks.map((s, i) => (
+          <motion.span
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              left: `${s.left}%`,
+              top: `${s.top}%`,
+              width: s.size,
+              height: s.size,
+              background: s.color,
+              boxShadow: `0 0 ${s.size * 3}px ${s.color}`,
+            }}
+            initial={{ x: s.ox, y: s.oy, opacity: 0, scale: 0.5 }}
+            animate={{ x: 0, y: 0, opacity: [0, 1, 1, 0], scale: [0.5, 1, 1, 0.4] }}
+            transition={{ duration: 1.25, delay: s.delay, ease: [0.22, 1, 0.36, 1], times: [0, 0.3, 0.82, 1] }}
+          />
+        ))}
       </div>
-      <div className="overflow-hidden">
-        <motion.span variants={word} className="inline-block t-red">HUMAN&nbsp;</motion.span>
-        <motion.span
-          variants={word}
-          className="inline-block t-red"
-        >
-          LIMITS
-        </motion.span>
-      </div>
-    </motion.div>
+
+      <motion.div
+        className="h-luxia leading-[0.94] overflow-hidden"
+        style={{ fontSize: 'clamp(2.1rem, 5vw, 4.4rem)', letterSpacing: '0.04em' }}
+        variants={container}
+        initial="hidden"
+        animate="show"
+      >
+        <div className="overflow-hidden">
+          <motion.span variants={word} className="inline-block t-silver">TRAIN&nbsp;</motion.span>
+          <motion.span variants={word} className="inline-block t-silver">BEYOND</motion.span>
+        </div>
+        <div className="overflow-hidden">
+          <motion.span variants={word} className="inline-block t-red">HUMAN&nbsp;</motion.span>
+          <motion.span
+            variants={word}
+            className="inline-block t-red"
+          >
+            LIMITS
+          </motion.span>
+        </div>
+      </motion.div>
+    </div>
   )
 }
 
@@ -536,7 +599,7 @@ export default function Hero() {
             style={{ fontSize: 'clamp(0.92rem, 1.25vw, 1.08rem)' }}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, delay: 1.05 }}
+            transition={{ duration: 0.65, delay: 1.45 }}
           >
             Real-time, intelligent resistance — engineered to add measurable speed, force, and control to every session. Built for the coaches and programs chasing the next tenth of a second.
           </motion.p>
@@ -546,7 +609,7 @@ export default function Hero() {
             className="flex flex-wrap items-center gap-4 mt-9"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, delay: 1.22 }}
+            transition={{ duration: 0.65, delay: 1.6 }}
           >
             <button className="group inline-flex items-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(214,31,38,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
               Book Your Free Demo
@@ -568,7 +631,7 @@ export default function Hero() {
             className="mt-5 text-apex-grey-dim font-mono text-[10px] tracking-[0.18em] uppercase"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1.5 }}
+            transition={{ duration: 0.6, delay: 1.85 }}
           >
             On-site or virtual · No obligation · Shipping Australia-wide
           </motion.p>

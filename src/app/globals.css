@@ -290,3 +290,30 @@
   0%, 55% { opacity: 1; }
   56%, 100% { opacity: 0; }
 }
+
+/* ── Living energy: hero formation + final-CTA athlete ──────────────────────── */
+
+/* Slow-motion sprint push — breathing zoom/drift for the final-CTA athlete */
+@keyframes slow-sprint {
+  0%, 100% { transform: scale(1) translateX(0); }
+  50% { transform: scale(1.07) translateX(-1.6%); }
+}
+
+/* Energy streak sweeping across the frame */
+@keyframes energy-streak {
+  0% { transform: translateX(-60vw) skewX(-18deg); opacity: 0; }
+  12% { opacity: 1; }
+  60% { opacity: 0.65; }
+  100% { transform: translateX(160vw) skewX(-18deg); opacity: 0; }
+}
+
+/* Frequency trace marching along its dash pattern */
+@keyframes freq-march {
+  to { stroke-dashoffset: -320; }
+}
+
+/* Soft breathing glow for energy fields */
+@keyframes energy-breathe {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
