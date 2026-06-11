@@ -33,7 +33,10 @@ function TypeOn({ text, start, delay }: { text: string; start: boolean; delay: n
   const [n, setN] = useState(0)
 
   useEffect(() => {
-    if (!start) return
+    if (!start) {
+      setN(0) // re-arm for the next scroll-in
+      return
+    }
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setN(text.length)
       return
@@ -86,8 +89,8 @@ function LockReticle({ c, inView }: { c: typeof CALLOUTS[0]; inView: boolean }) 
         filter: 'drop-shadow(0 0 6px rgba(0,174,239,0.7))',
       }}
       initial={{ opacity: 0, scale: 2.6 }}
-      animate={inView ? { opacity: 1, scale: 1 } : {}}
-      transition={{ duration: 0.38, delay: lockAt(c), ease: [0.2, 1.1, 0.3, 1] }}
+      animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 2.6 }}
+      transition={inView ? { duration: 0.38, delay: lockAt(c), ease: [0.2, 1.1, 0.3, 1] } : { duration: 0 }}
       aria-hidden="true"
     >
       <svg viewBox="0 0 22 22" fill="none" className="w-full h-full">
@@ -126,11 +129,15 @@ function ConnectorLines({ inView }: { inView: boolean }) {
             stroke="rgba(0,174,239,0.55)"
             strokeWidth="0.22"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={inView ? { pathLength: 1, opacity: 1 } : {}}
-            transition={{
-              pathLength: { duration: 0.45, delay: lineAt(c), ease: 'linear' },
-              opacity: { duration: 0.01, delay: lineAt(c) },
-            }}
+            animate={inView ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+            transition={
+              inView
+                ? {
+                    pathLength: { duration: 0.45, delay: lineAt(c), ease: 'linear' },
+                    opacity: { duration: 0.01, delay: lineAt(c) },
+                  }
+                : { duration: 0 }
+            }
           />
         )
       })}
@@ -147,8 +154,8 @@ function Callout({ c, inView }: { c: typeof CALLOUTS[0]; inView: boolean }) {
       className={`absolute hidden xl:flex items-center gap-3 z-30 w-[210px] ${isLeft ? 'right-full mr-4 flex-row' : 'left-full ml-4 flex-row-reverse'}`}
       style={{ top: c.top }}
       initial={{ opacity: 0, x: isLeft ? -8 : 8 }}
-      animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.4, delay: lockAt(c) + 0.3, ease: [0.16, 1, 0.3, 1] }}
+      animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: isLeft ? -8 : 8 }}
+      transition={inView ? { duration: 0.4, delay: lockAt(c) + 0.3, ease: [0.16, 1, 0.3, 1] } : { duration: 0 }}
     >
       <div className={`flex flex-col ${isLeft ? 'items-end text-right' : 'items-start text-left'}`}>
         <span className="text-[8px] font-mono tracking-[0.24em] text-apex-blue uppercase mb-1">{c.tag}</span>
@@ -171,10 +178,11 @@ export default function ProductShowcase() {
   const titleInView = useInView(titleRef, { once: true, margin: '-10% 0px' })
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  // Lock-on sequence fires only once the video frame itself is half on
-  // screen — keyed to the section it would play out below the fold.
+  // Lock-on sequence fires once the video frame itself is half on screen —
+  // keyed to the section it would play out below the fold. Re-arms when the
+  // frame leaves view so the sequence replays on every scroll-in.
   const stageRef = useRef<HTMLDivElement>(null)
-  const locked = useInView(stageRef, { once: true, amount: 0.5 })
+  const locked = useInView(stageRef, { amount: 0.5 })
 
   useEffect(() => {
     if (videoRef.current) {

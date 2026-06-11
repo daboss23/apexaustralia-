@@ -25,8 +25,9 @@ export default function SolutionSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
-  // Boot trigger — fires as the section itself enters, slightly before the title
-  const booted = useInView(sectionRef, { once: true, margin: '-15% 0px' })
+  // Boot trigger — fires when the section is well into view, and re-arms
+  // each time it leaves so the boot sequence replays on every scroll-in
+  const booted = useInView(sectionRef, { margin: '-30% 0px' })
 
   return (
     <section ref={sectionRef} id="solution" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -35,8 +36,8 @@ export default function SolutionSection() {
         className="absolute top-0 left-0 right-0 h-px pointer-events-none origin-center"
         style={{ background: 'linear-gradient(90deg, transparent, rgba(0,174,239,0.25) 30%, rgba(0,174,239,0.25) 70%, transparent)' }}
         initial={{ scaleX: 0 }}
-        animate={booted ? { scaleX: 1 } : {}}
-        transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+        animate={booted ? { scaleX: 1 } : { scaleX: 0 }}
+        transition={booted ? { duration: 1.4, ease: [0.16, 1, 0.3, 1] } : { duration: 0 }}
       />
 
       {/* Boot-up scan sweep — a single blue pass down the section */}
@@ -51,7 +52,7 @@ export default function SolutionSection() {
             }}
             initial={{ y: '-110%', opacity: 1 }}
             animate={{ y: '520%', opacity: [1, 1, 1, 0] }}
-            transition={{ duration: 1.5, ease: [0.3, 0, 0.25, 1] }}
+            transition={{ duration: 2.8, ease: [0.35, 0, 0.3, 1] }}
           />
         </div>
       )}

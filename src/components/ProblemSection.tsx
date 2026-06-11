@@ -113,7 +113,7 @@ export default function ProblemSection() {
                 className="absolute top-[12px] left-0 w-[10px] h-[2px]"
                 style={{
                   background: 'linear-gradient(90deg, transparent, rgba(255,59,48,0.9))',
-                  animation: 'flatline-scan 3.4s linear infinite',
+                  animation: 'flatline-scan 6s linear infinite',
                 }}
               />
             </div>
