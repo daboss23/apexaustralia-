@@ -171,6 +171,11 @@ export default function ProductShowcase() {
   const titleInView = useInView(titleRef, { once: true, margin: '-10% 0px' })
   const videoRef = useRef<HTMLVideoElement>(null)
 
+  // Lock-on sequence fires only once the video frame itself is half on
+  // screen — keyed to the section it would play out below the fold.
+  const stageRef = useRef<HTMLDivElement>(null)
+  const locked = useInView(stageRef, { once: true, amount: 0.5 })
+
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.playbackRate = 0.75
@@ -219,8 +224,8 @@ export default function ProductShowcase() {
         {/* ── CINEMATIC PRODUCT VIDEO — native 4:3, flanked by callouts on xl ── */}
         <div className="max-w-3xl mx-auto mb-16">
           {/* Positioning context for the flanking callouts */}
-          <div className="relative">
-            {CALLOUTS.map(c => <Callout key={c.id} c={c} inView={inView} />)}
+          <div ref={stageRef} className="relative">
+            {CALLOUTS.map(c => <Callout key={c.id} c={c} inView={locked} />)}
 
             <motion.div
               className="relative w-full overflow-hidden border border-apex-line/50"
@@ -292,9 +297,9 @@ export default function ProductShowcase() {
                 </div>
 
                 {/* Lock-on annotation layer — reticles + hairlines to the callouts */}
-                <ConnectorLines inView={inView} />
+                <ConnectorLines inView={locked} />
                 {CALLOUTS.map(c => (
-                  <LockReticle key={c.id} c={c} inView={inView} />
+                  <LockReticle key={c.id} c={c} inView={locked} />
                 ))}
 
                 {/* Status HUD — bottom left */}
