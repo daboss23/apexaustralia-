@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import ElectricAura from './ElectricAura'
 
 // ─── Telemetry HUD Data ───────────────────────────────────────────────────────
 
@@ -336,36 +337,58 @@ type Spark = {
   delay: number
 }
 
+type Streak = Spark & { len: number; angle: number }
+
 function Headline() {
   // Sparks are generated client-side only (random values would break SSR
   // hydration) and skipped entirely under prefers-reduced-motion.
   const [sparks, setSparks] = useState<Spark[]>([])
+  const [streaks, setStreaks] = useState<Streak[]>([])
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const colors = ['#00AEEF', '#00AEEF', '#7fd8ff', '#ff3b30']
+    const r = (a: number, b: number) => a + Math.random() * (b - a)
+    const colors = ['#00AEEF', '#00AEEF', '#7fd8ff', '#ff3b30', '#ff6b61']
+    const pick = () => colors[Math.floor(Math.random() * colors.length)]
     setSparks(
-      Array.from({ length: 26 }, (_, i) => ({
-        left: 4 + Math.random() * 88,
-        top: (i % 2 === 0 ? 20 : 70) + (Math.random() * 18 - 9),
-        ox: (Math.random() - 0.5) * 420,
-        oy: (Math.random() - 0.5) * 320,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        size: 2 + Math.random() * 2.5,
-        delay: Math.random() * 0.5,
+      Array.from({ length: 64 }, (_, i) => ({
+        left: r(2, 94),
+        top: (i % 2 === 0 ? 20 : 70) + r(-11, 11),
+        ox: r(-560, 560),
+        oy: r(-420, 420),
+        color: pick(),
+        size: r(1.5, 4.5),
+        delay: r(0, 0.9),
       }))
+    )
+    setStreaks(
+      Array.from({ length: 12 }, (_, i) => {
+        const ox = r(-520, 520)
+        const oy = r(-380, 380)
+        return {
+          left: r(4, 92),
+          top: (i % 2 === 0 ? 20 : 70) + r(-10, 10),
+          ox,
+          oy,
+          color: pick(),
+          size: 1.5,
+          delay: r(0, 0.8),
+          len: r(16, 40),
+          angle: (Math.atan2(oy, ox) * 180) / Math.PI,
+        }
+      })
     )
   }, [])
 
   const container = {
     hidden: {},
-    show: { transition: { staggerChildren: 0.12, delayChildren: 0.55 } },
+    show: { transition: { staggerChildren: 0.16, delayChildren: 0.75 } },
   }
   const word = {
-    hidden: { opacity: 0, y: 80, skewY: 4, filter: 'blur(14px) brightness(2.4)' },
+    hidden: { opacity: 0, y: 80, skewY: 4, filter: 'blur(16px) brightness(2.8)' },
     show: {
       opacity: 1, y: 0, skewY: 0, filter: 'blur(0px) brightness(1)',
-      transition: { duration: 1.1, ease: [0.16, 1, 0.3, 1] },
+      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] },
     },
   }
 
@@ -385,7 +408,7 @@ function Headline() {
       <div className="absolute -inset-x-16 -inset-y-10 pointer-events-none" aria-hidden="true">
         {sparks.map((s, i) => (
           <motion.span
-            key={i}
+            key={`p${i}`}
             className="absolute rounded-full"
             style={{
               left: `${s.left}%`,
@@ -397,9 +420,48 @@ function Headline() {
             }}
             initial={{ x: s.ox, y: s.oy, opacity: 0, scale: 0.5 }}
             animate={{ x: 0, y: 0, opacity: [0, 1, 1, 0], scale: [0.5, 1, 1, 0.4] }}
-            transition={{ duration: 1.25, delay: s.delay, ease: [0.22, 1, 0.36, 1], times: [0, 0.3, 0.82, 1] }}
+            transition={{ duration: 1.7, delay: s.delay, ease: [0.22, 1, 0.36, 1], times: [0, 0.3, 0.85, 1] }}
           />
         ))}
+
+        {/* Energy streaks rushing in along their own trajectory */}
+        {streaks.map((s, i) => (
+          <motion.span
+            key={`t${i}`}
+            className="absolute"
+            style={{
+              left: `${s.left}%`,
+              top: `${s.top}%`,
+              width: s.len,
+              height: 1.5,
+              background: `linear-gradient(90deg, transparent, ${s.color})`,
+              boxShadow: `0 0 6px ${s.color}60`,
+              rotate: s.angle,
+            }}
+            initial={{ x: s.ox, y: s.oy, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: [0, 0.9, 0] }}
+            transition={{ duration: 1.5, delay: s.delay, ease: [0.22, 1, 0.36, 1], times: [0, 0.55, 1] }}
+          />
+        ))}
+
+        {/* Lightning arc snapping across the words as they materialize */}
+        <motion.svg
+          className="absolute left-0 right-0 top-1/2 w-full"
+          height="20"
+          viewBox="0 0 400 20"
+          preserveAspectRatio="none"
+          fill="none"
+          style={{ filter: 'drop-shadow(0 0 6px #00AEEF)' }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 1, 0.25, 0.85, 0] }}
+          transition={{ duration: 0.55, delay: 1.55, times: [0, 0.15, 0.4, 0.6, 1] }}
+        >
+          <polyline
+            points="0,10 40,8 70,14 110,4 150,12 190,6 230,15 270,7 310,12 350,8 400,10"
+            stroke="#7fd8ff"
+            strokeWidth="1.2"
+          />
+        </motion.svg>
       </div>
 
       <motion.div
@@ -423,6 +485,9 @@ function Headline() {
           </motion.span>
         </div>
       </motion.div>
+
+      {/* Once formed, the energy keeps living around the letters */}
+      <ElectricAura appearDelay={2.1} />
     </div>
   )
 }

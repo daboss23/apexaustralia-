@@ -40,20 +40,29 @@ export default function SolutionSection() {
         transition={booted ? { duration: 1.4, ease: [0.16, 1, 0.3, 1] } : { duration: 0 }}
       />
 
-      {/* Boot-up scan sweep — a single blue pass in from the left */}
+      {/* Boot-up scan sweep — bright leading edge dragging a long energy trail */}
       {booted && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
           <motion.div
             className="absolute inset-y-0 left-0"
             style={{
-              width: '22%',
+              width: '34%',
               background:
-                'linear-gradient(90deg, transparent, rgba(0,174,239,0.05) 42%, rgba(0,174,239,0.14) 49%, rgba(0,174,239,0.55) 50%, rgba(0,174,239,0.14) 51%, rgba(0,174,239,0.04) 58%, transparent)',
+                'linear-gradient(90deg, transparent 0%, rgba(0,174,239,0.03) 30%, rgba(0,174,239,0.08) 62%, rgba(0,174,239,0.16) 82%, rgba(0,174,239,0.32) 93%, rgba(0,174,239,0.7) 97.5%, rgba(0,174,239,0.12) 99%, transparent 100%)',
             }}
-            initial={{ x: '-110%', opacity: 1 }}
-            animate={{ x: '560%', opacity: [1, 1, 1, 0] }}
+            initial={{ x: '-105%', opacity: 1 }}
+            animate={{ x: '400%', opacity: [1, 1, 1, 0] }}
             transition={{ duration: 4.6, ease: [0.4, 0, 0.3, 1] }}
-          />
+          >
+            {/* Glowing scan line at the head of the trail */}
+            <div
+              className="absolute inset-y-0 right-[2%] w-px"
+              style={{
+                background: 'rgba(160,225,255,0.9)',
+                boxShadow: '0 0 18px 4px rgba(0,174,239,0.55), 0 0 50px 14px rgba(0,174,239,0.25)',
+              }}
+            />
+          </motion.div>
         </div>
       )}
 

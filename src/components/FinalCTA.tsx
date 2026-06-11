@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
+import ElectricAura from './ElectricAura'
 
 export default function FinalCTA() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -155,16 +156,20 @@ export default function FinalCTA() {
               THE FUTURE OF PERFORMANCE
             </motion.h2>
           </div>
-          <div className="overflow-hidden mb-10">
-            <motion.h2
-              className="h-luxia t-red leading-[0.86]"
-              style={{ fontSize: 'clamp(2rem, 4.9vw, 4.3rem)' }}
-              initial={{ y: 120, opacity: 0 }}
-              animate={inView ? { y: 0, opacity: 1 } : {}}
-              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
-            >
-              IS ALREADY HERE.
-            </motion.h2>
+          <div className="relative mb-10">
+            <div className="overflow-hidden">
+              <motion.h2
+                className="h-luxia t-red leading-[0.86]"
+                style={{ fontSize: 'clamp(2rem, 4.9vw, 4.3rem)' }}
+                initial={{ y: 120, opacity: 0 }}
+                animate={inView ? { y: 0, opacity: 1 } : {}}
+                transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
+              >
+                IS ALREADY HERE.
+              </motion.h2>
+            </div>
+            {/* Constant electric field weaving in and out of the letters */}
+            <ElectricAura colors={['#ff3b30', '#D61F26', '#00AEEF']} appearDelay={1.1} />
           </div>
 
           {/* Subtext */}
