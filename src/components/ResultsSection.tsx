@@ -45,37 +45,79 @@ const PROOF_POINTS = [
   'Deployed in AFL, NRL, Rugby Union programs',
 ]
 
+// Photo-finish counter: digits blur-spin like a finish-line camera, then
+// snap-freeze on the real number with a one-frame strobe flash. Re-arms when
+// the stats grid leaves view so it replays on every scroll-in.
 function CounterStat({
-  stat, unit, prefix, inView,
+  stat, unit, prefix, active, delay,
 }: {
-  stat: number; unit: string; prefix: string; inView: boolean
+  stat: number; unit: string; prefix: string; active: boolean; delay: number
 }) {
-  const [current, setCurrent] = useState(0)
+  const [display, setDisplay] = useState(0)
+  const [phase, setPhase] = useState<'idle' | 'spin' | 'locked'>('idle')
 
   useEffect(() => {
-    if (!inView) return
-    const duration = 1600
-    const steps = 60
-    const increment = stat / steps
-    let step = 0
-
-    const iv = setInterval(() => {
-      step++
-      setCurrent(Math.min(Math.round(increment * step), stat))
-      if (step >= steps) clearInterval(iv)
-    }, duration / steps)
-
-    return () => clearInterval(iv)
-  }, [inView, stat])
+    if (!active) {
+      setPhase('idle')
+      setDisplay(0)
+      return
+    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setDisplay(stat)
+      setPhase('locked')
+      return
+    }
+    let spinIv: ReturnType<typeof setInterval> | undefined
+    const start = setTimeout(() => {
+      setPhase('spin')
+      spinIv = setInterval(() => {
+        setDisplay(Math.floor(Math.random() * 90) + 10)
+      }, 45)
+    }, delay * 1000)
+    const stop = setTimeout(() => {
+      if (spinIv) clearInterval(spinIv)
+      setDisplay(stat)
+      setPhase('locked')
+    }, delay * 1000 + 900)
+    return () => {
+      clearTimeout(start)
+      clearTimeout(stop)
+      if (spinIv) clearInterval(spinIv)
+    }
+  }, [active, stat, delay])
 
   return (
-    <div className="flex items-start gap-0.5 leading-none">
+    <div className="relative flex items-start gap-0.5 leading-none">
+      {/* Camera strobe — fires the moment the number freezes */}
+      {phase === 'locked' && (
+        <motion.div
+          className="absolute -inset-3 pointer-events-none z-10"
+          style={{
+            background:
+              'radial-gradient(ellipse 60% 80% at 35% 50%, rgba(255,255,255,0.9), rgba(255,255,255,0.35) 55%, transparent 75%)',
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.9, 0] }}
+          transition={{ duration: 0.45, times: [0, 0.12, 1], ease: 'easeOut' }}
+          aria-hidden="true"
+        />
+      )}
+
       <span className="font-luxia font-black t-red" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', marginTop: '0.15em' }}>
         {prefix}
       </span>
-      <span className="font-luxia font-black t-silver metric-value" style={{ fontSize: 'clamp(4rem, 8vw, 7.5rem)' }}>
-        {current}
-      </span>
+      <motion.span
+        className="font-luxia font-black t-silver metric-value"
+        style={{
+          fontSize: 'clamp(4rem, 8vw, 7.5rem)',
+          filter: phase === 'spin' ? 'blur(2.5px)' : 'none',
+          opacity: phase === 'spin' ? 0.8 : 1,
+        }}
+        animate={phase === 'locked' ? { scale: [1.1, 1] } : { scale: 1 }}
+        transition={{ duration: 0.28, ease: 'easeOut' }}
+      >
+        {display}
+      </motion.span>
       <span className="font-luxia font-black t-red" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', marginTop: '0.3em' }}>
         {unit}
       </span>
@@ -88,6 +130,8 @@ export default function ResultsSection() {
   const statsRef = useRef<HTMLDivElement>(null)
   const titleInView = useInView(titleRef, { once: true, margin: '-10% 0px' })
   const statsInView = useInView(statsRef, { once: true, margin: '-5% 0px' })
+  // Non-once trigger for the photo-finish counters so they re-run each pass
+  const statsLive = useInView(statsRef, { amount: 0.35 })
 
   return (
     <section id="results" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -152,7 +196,7 @@ export default function ResultsSection() {
                 transition={{ duration: 1, delay: 0.3 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
               />
 
-              <CounterStat stat={stat} unit={unit} prefix={prefix} inView={statsInView} />
+              <CounterStat stat={stat} unit={unit} prefix={prefix} active={statsLive} delay={0.35 + i * 0.18} />
 
               <div className="mt-4 flex flex-col gap-1">
                 <h3 className="font-display font-black t-feature tracking-wide leading-tight"
