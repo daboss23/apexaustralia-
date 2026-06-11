@@ -317,3 +317,17 @@
   0%, 100% { opacity: 0.45; }
   50% { opacity: 1; }
 }
+
+/* Right-to-left speed streaks — background light passing a sprinting athlete */
+@keyframes energy-streak-rtl {
+  0% { transform: translateX(120vw) skewX(-18deg); opacity: 0; }
+  10% { opacity: 1; }
+  60% { opacity: 0.6; }
+  100% { transform: translateX(-130vw) skewX(-18deg); opacity: 0; }
+}
+
+/* Light sheen sweeping across baked-in metallic headline artwork */
+@keyframes sheen-sweep {
+  0% { transform: translateX(-160%) rotate(14deg); }
+  55%, 100% { transform: translateX(260%) rotate(14deg); }
+}
