@@ -1,7 +1,8 @@
 'use client'
 
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
+import ElectricAura from './ElectricAura'
 
 const SOLUTION_PILLARS = [
   {
@@ -21,6 +22,174 @@ const SOLUTION_PILLARS = [
   },
 ]
 
+// Desktop stage positions: each pillar materializes around the floating unit,
+// connected to it by a hairline. anchor/from are % of the stage (x, y).
+const STAGE_CARDS = [
+  { seq: 0, pos: { left: 0, top: '10%' } as const, from: { x: 41, y: 38 }, to: { x: 26, y: 22 } },
+  { seq: 1, pos: { right: 0, top: '6%' } as const, from: { x: 59, y: 34 }, to: { x: 74, y: 18 } },
+  { seq: 2, pos: { right: '1%', bottom: '4%' } as const, from: { x: 58, y: 60 }, to: { x: 73, y: 80 } },
+]
+
+const CARD_LINE_AT = (seq: number) => 0.45 + seq * 0.7
+const CARD_AT = (seq: number) => 0.75 + seq * 0.7
+
+type Riser = { left: number; bottom: number; size: number; dur: number; delay: number; drift: number; color: string }
+
+// ─── Floating T-Apex unit — mystical, high-tech centrepiece ──────────────────
+
+function FloatingUnit({ active }: { active: boolean }) {
+  // Rising energy particles around the unit (client-only for SSR safety,
+  // skipped under prefers-reduced-motion)
+  const [risers, setRisers] = useState<Riser[]>([])
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const r = (a: number, b: number) => a + Math.random() * (b - a)
+    const colors = ['#00AEEF', '#7fd8ff', '#ff3b30']
+    setRisers(
+      Array.from({ length: 14 }, () => ({
+        left: r(28, 72),
+        bottom: r(8, 22),
+        size: r(1.5, 3.5),
+        dur: r(4, 8),
+        delay: r(0, 5),
+        drift: r(-18, 18),
+        color: colors[Math.floor(Math.random() * colors.length)],
+      }))
+    )
+  }, [])
+
+  return (
+    <div className="relative w-full h-full pointer-events-none">
+      {/* Ambient energy field behind the unit */}
+      <div
+        className="absolute inset-x-[10%] inset-y-[6%]"
+        style={{
+          background:
+            'radial-gradient(ellipse 55% 50% at 50% 55%, rgba(0,174,239,0.13), rgba(214,31,38,0.05) 55%, transparent 75%)',
+          animation: 'energy-breathe 6s ease-in-out infinite',
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Orbiting energy rings beneath the unit */}
+      <svg
+        className="absolute left-1/2 -translate-x-1/2 bottom-[2%] w-[74%] h-[24%]"
+        viewBox="0 0 400 90"
+        preserveAspectRatio="none"
+        fill="none"
+        aria-hidden="true"
+      >
+        <ellipse cx="200" cy="45" rx="190" ry="36" stroke="rgba(0,174,239,0.25)" strokeWidth="1" strokeDasharray="3 9" style={{ animation: 'freq-march 9s linear infinite' }} />
+        <ellipse cx="200" cy="45" rx="140" ry="25" stroke="rgba(214,31,38,0.22)" strokeWidth="1" strokeDasharray="2 8" style={{ animation: 'freq-march 7s linear infinite reverse' }} />
+        <ellipse cx="200" cy="45" rx="95" ry="16" stroke="rgba(0,174,239,0.38)" strokeWidth="1.2" strokeDasharray="5 12" style={{ animation: 'freq-march 11s linear infinite' }} />
+      </svg>
+
+      {/* Floor glow the unit hovers above */}
+      <div
+        className="absolute left-1/2 -translate-x-1/2 bottom-[5%] w-[44%] h-[9%]"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(0,174,239,0.28), transparent 70%)',
+          filter: 'blur(14px)',
+          animation: 'energy-breathe 5s ease-in-out infinite',
+        }}
+        aria-hidden="true"
+      />
+
+      {/* The unit — floating, slowly turning in space */}
+      <div className="absolute inset-x-0 top-[2%] bottom-[12%] flex items-center justify-center" style={{ perspective: 1200 }}>
+        <motion.div
+          className="relative h-full max-w-full"
+          style={{ transformStyle: 'preserve-3d', aspectRatio: '1920 / 1230' }}
+          animate={
+            active
+              ? { y: [-10, 10], rotateY: [-9, 9], rotateX: [1.5, -1.5] }
+              : {}
+          }
+          transition={{ duration: 9, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/tapex-unit.png"
+            alt="T-Apex adaptive resistance unit"
+            className="absolute inset-0 w-full h-full object-contain"
+            style={{ mixBlendMode: 'screen' }}
+          />
+
+          {/* Rotation-light sheen travelling across the metalwork */}
+          <div className="absolute inset-[12%] overflow-hidden" aria-hidden="true">
+            <div
+              className="absolute inset-y-0 w-[26%]"
+              style={{
+                background: 'linear-gradient(90deg, transparent, rgba(180,225,255,0.5), transparent)',
+                mixBlendMode: 'overlay',
+                animation: 'sheen-sweep 9s ease-in-out infinite',
+              }}
+            />
+          </div>
+
+          {/* Electricity living around the unit */}
+          <div className="absolute inset-[8%]">
+            <ElectricAura appearDelay={0.6} />
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Rising energy particles */}
+      {risers.map((p, i) => (
+        <motion.span
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            left: `${p.left}%`,
+            bottom: `${p.bottom}%`,
+            width: p.size,
+            height: p.size,
+            background: p.color,
+            boxShadow: `0 0 ${p.size * 3}px ${p.color}`,
+          }}
+          animate={{ y: [0, -130], x: [0, p.drift], opacity: [0, 0.9, 0] }}
+          transition={{ duration: p.dur, delay: p.delay, repeat: Infinity, ease: 'easeOut' }}
+          aria-hidden="true"
+        />
+      ))}
+    </div>
+  )
+}
+
+// ─── Pillar card (presentational) ─────────────────────────────────────────────
+
+function PillarCard({ pillar }: { pillar: typeof SOLUTION_PILLARS[0] }) {
+  return (
+    <div
+      className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-blue/30 transition-colors duration-300 cursor-default"
+      style={{ borderLeft: '2px solid rgba(0,174,239,0.6)', borderRadius: 0 }}
+    >
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 100%, rgba(0,174,239,0.06), transparent)' }}
+      />
+
+      <div className="flex items-start justify-between gap-4 mb-3">
+        <h3 className="font-display font-black t-feature tracking-wide"
+          style={{ fontSize: 'clamp(1.05rem, 1.7vw, 1.3rem)' }}>
+          {pillar.label}
+        </h3>
+        <span
+          className="flex-shrink-0 text-[8px] font-mono font-semibold tracking-[0.18em] uppercase px-2 py-1 border"
+          style={{ color: '#00AEEF', borderColor: 'rgba(0,174,239,0.35)', background: 'rgba(0,174,239,0.08)' }}
+        >
+          {pillar.tag}
+        </span>
+      </div>
+
+      <p className="text-apex-grey font-body text-sm leading-relaxed">{pillar.body}</p>
+    </div>
+  )
+}
+
+// ─── Solution section ─────────────────────────────────────────────────────────
+
 export default function SolutionSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
@@ -28,6 +197,9 @@ export default function SolutionSection() {
   // Boot trigger — fires when the section is well into view, and re-arms
   // each time it leaves so the boot sequence replays on every scroll-in
   const booted = useInView(sectionRef, { margin: '-30% 0px' })
+  // Stage trigger — the floating unit + emerging cards replay on every pass
+  const stageRef = useRef<HTMLDivElement>(null)
+  const stageActive = useInView(stageRef, { amount: 0.35 })
 
   return (
     <section ref={sectionRef} id="solution" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -75,7 +247,7 @@ export default function SolutionSection() {
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-          {/* Left — copy */}
+          {/* Left — headline + intro copy */}
           <div>
             <motion.h2
               className="h-luxia t-silver leading-[0.88] mb-6"
@@ -117,7 +289,10 @@ export default function SolutionSection() {
               develop athletes across every phase of training — from acceleration and speed
               work through to controlled return-to-play and progressive reconditioning.
             </motion.p>
+          </div>
 
+          {/* Right — emphasis callout + core mechanism */}
+          <div className="lg:pt-4">
             <motion.div
               className="border-l-4 border-apex-blue pl-6 py-2 mb-8"
               initial={{ opacity: 0, x: -14 }}
@@ -179,55 +354,70 @@ export default function SolutionSection() {
               </p>
             </motion.div>
           </div>
+        </div>
 
-          {/* Right — three pillars */}
-          <div className="flex flex-col gap-4 lg:pt-4">
-            {SOLUTION_PILLARS.map((pillar, i) => (
-              <SolutionPillar key={pillar.label} pillar={pillar} index={i} parentInView={inView} />
+        {/* ── The unit, floating in space — pillars materialize as it turns ── */}
+        <div ref={stageRef} className="relative mt-10 lg:mt-4 h-[400px] sm:h-[480px] lg:h-[640px]">
+          <FloatingUnit active={stageActive} />
+
+          {/* Connector hairlines: unit → cards (lg+) */}
+          <svg
+            className="absolute inset-0 w-full h-full hidden lg:block pointer-events-none"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            {STAGE_CARDS.map(c => (
+              <motion.path
+                key={c.seq}
+                d={`M ${c.from.x} ${c.from.y} L ${c.to.x} ${c.to.y}`}
+                fill="none"
+                stroke="rgba(0,174,239,0.45)"
+                strokeWidth="0.16"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={stageActive ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+                transition={
+                  stageActive
+                    ? { pathLength: { duration: 0.5, delay: CARD_LINE_AT(c.seq), ease: 'linear' }, opacity: { duration: 0.01, delay: CARD_LINE_AT(c.seq) } }
+                    : { duration: 0 }
+                }
+              />
             ))}
-          </div>
+          </svg>
+
+          {/* Pillars around the unit (lg+) */}
+          {STAGE_CARDS.map(({ seq, pos }) => (
+            <motion.div
+              key={seq}
+              className="absolute hidden lg:block w-[300px] xl:w-[340px] z-10"
+              style={pos}
+              initial={{ opacity: 0, y: 18, scale: 0.96 }}
+              animate={stageActive ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 18, scale: 0.96 }}
+              transition={
+                stageActive
+                  ? { duration: 0.55, delay: CARD_AT(seq), ease: [0.16, 1, 0.3, 1] }
+                  : { duration: 0 }
+              }
+            >
+              <PillarCard pillar={SOLUTION_PILLARS[seq]} />
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Pillars stacked below the unit (mobile / tablet) */}
+        <div className="lg:hidden flex flex-col gap-4 mt-8">
+          {SOLUTION_PILLARS.map((pillar, i) => (
+            <motion.div
+              key={pillar.label}
+              initial={{ opacity: 0, x: 24 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.65, delay: 0.2 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <PillarCard pillar={pillar} />
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
-  )
-}
-
-function SolutionPillar({
-  pillar,
-  index,
-  parentInView,
-}: {
-  pillar: typeof SOLUTION_PILLARS[0]
-  index: number
-  parentInView: boolean
-}) {
-  return (
-    <motion.div
-      className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-blue/30 transition-colors duration-300 cursor-default"
-      style={{ borderLeft: '2px solid rgba(0,174,239,0.6)', borderRadius: 0 }}
-      initial={{ opacity: 0, x: 24 }}
-      animate={parentInView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.65, delay: 0.2 + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
-    >
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 100%, rgba(0,174,239,0.06), transparent)' }}
-      />
-
-      <div className="flex items-start justify-between gap-4 mb-3">
-        <h3 className="font-display font-black t-feature tracking-wide"
-          style={{ fontSize: 'clamp(1.05rem, 1.7vw, 1.3rem)' }}>
-          {pillar.label}
-        </h3>
-        <span
-          className="flex-shrink-0 text-[8px] font-mono font-semibold tracking-[0.18em] uppercase px-2 py-1 border"
-          style={{ color: '#00AEEF', borderColor: 'rgba(0,174,239,0.35)', background: 'rgba(0,174,239,0.08)' }}
-        >
-          {pillar.tag}
-        </span>
-      </div>
-
-      <p className="text-apex-grey font-body text-sm leading-relaxed">{pillar.body}</p>
-    </motion.div>
   )
 }
