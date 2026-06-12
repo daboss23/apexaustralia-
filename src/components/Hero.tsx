@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import ElectricAura from './ElectricAura'
+import HeadlineEnergy from './HeadlineEnergy'
 import HeroScene from './HeroScene'
 
 // ─── Animated Headline — energy in the air condenses into the words ──────────
@@ -145,7 +145,7 @@ function Headline() {
       </div>
 
       <motion.div
-        className="h-luxia leading-[0.94] overflow-hidden"
+        className="relative z-[1] h-luxia leading-[0.94] overflow-hidden"
         style={{ fontSize: 'clamp(2.1rem, 5vw, 4.4rem)', letterSpacing: '0.04em' }}
         variants={container}
         initial="hidden"
@@ -166,8 +166,9 @@ function Headline() {
         </div>
       </motion.div>
 
-      {/* Once formed, the energy keeps living around the letters */}
-      <ElectricAura appearDelay={2.1} />
+      {/* Once formed, engineered telemetry keeps moving through the words —
+          field behind the letters (z-0), interactions above them (z-[2]) */}
+      <HeadlineEnergy appearDelay={2.1} />
     </div>
   )
 }

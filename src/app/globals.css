@@ -331,3 +331,115 @@
   0% { transform: translateX(-160%) rotate(14deg); }
   55%, 100% { transform: translateX(260%) rotate(14deg); }
 }
+
+/* ── Headline telemetry energy system (HeadlineEnergy.tsx) ───────────────────
+   Engineered-telemetry motion primitives. Durations / delays / amplitudes are
+   parameterised per element with CSS custom properties set inline; everything
+   is neutralised by the global prefers-reduced-motion rule above. */
+
+/* The travelling energy mass — one constant crossing per cycle */
+@keyframes tele-comet {
+  from { transform: translateX(var(--from, -260px)); }
+  to { transform: translateX(var(--to, 1300px)); }
+}
+.tele-comet { animation: tele-comet 14s linear infinite; }
+
+/* Fine data bits streaming along a spine (pathLength=1 dashes) */
+@keyframes tele-flow {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+.tele-flow { animation: tele-flow 3s linear infinite; }
+
+/* Frequency waves: seamless march (shift = one pattern period) + slow
+   irregular fade in/out, each on its own clock */
+@keyframes tele-wave-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(var(--wave-shift, -80px)); }
+}
+@keyframes tele-wave-fade {
+  0%, 100% { opacity: 0.15; }
+  30% { opacity: 0.62; }
+  55% { opacity: 0.22; }
+  78% { opacity: 0.5; }
+}
+.tele-wave {
+  animation:
+    tele-wave-x var(--drift-dur, 8s) linear infinite,
+    tele-wave-fade var(--fade-dur, 13s) ease-in-out infinite;
+  animation-delay: 0s, var(--fade-delay, 0s);
+}
+
+/* Channel branches: data flows along them while they fade in occasionally */
+@keyframes tele-branch-fade {
+  0%, 10%, 40%, 100% { opacity: 0; }
+  18% { opacity: 0.85; }
+  30% { opacity: 0.6; }
+}
+.tele-branch {
+  animation:
+    tele-flow var(--flow-dur, 2.4s) linear infinite,
+    tele-branch-fade var(--fade-dur, 9s) ease-in-out infinite;
+  animation-delay: 0s, var(--fade-delay, 0s);
+}
+
+/* Force-output rhythm — a double beat, like an engine firing */
+@keyframes tele-force-pulse {
+  0%, 100% { opacity: 0.55; }
+  12% { opacity: 1; }
+  22% { opacity: 0.62; }
+  32% { opacity: 0.88; }
+  46% { opacity: 0.55; }
+}
+.tele-force-pulse { animation: tele-force-pulse 2.6s ease-in-out infinite; }
+
+/* Lens bloom that peaks as a comet passes (give the element the comet's
+   duration; the comets cross the interaction points at ~55 % of their run) */
+@keyframes tele-bloom-pass {
+  0%, 44% { opacity: 0; }
+  55% { opacity: var(--bloom-max, 0.7); }
+  66%, 100% { opacity: 0; }
+}
+.tele-bloom-pass { animation: tele-bloom-pass 14s linear infinite; }
+
+/* Ambient breathing bloom */
+@keyframes tele-breathe {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+.tele-breathe { animation: tele-breathe 7.3s ease-in-out infinite; }
+
+/* Micro electrical events — dark almost all cycle, brief double blink */
+@keyframes tele-event {
+  0%, 90% { opacity: 0; }
+  91% { opacity: 0.95; }
+  92.5% { opacity: 0.3; }
+  94% { opacity: 0.85; }
+  96%, 100% { opacity: 0; }
+}
+.tele-event { animation: tele-event 5s linear infinite; }
+
+/* Soft flash variant (under-letter wash) */
+@keyframes tele-flash {
+  0%, 92% { opacity: 0; }
+  94.5% { opacity: 0.55; }
+  96.5% { opacity: 0.18; }
+  98.5%, 100% { opacity: 0; }
+}
+.tele-flash { animation: tele-flash 4s linear infinite; }
+
+/* A spark running once along an edge during its brief window */
+@keyframes tele-edge-run {
+  0%, 88% { opacity: 0; stroke-dashoffset: 1; }
+  89.5% { opacity: 0.9; }
+  96% { opacity: 0.8; }
+  98%, 100% { opacity: 0; stroke-dashoffset: 0; }
+}
+.tele-edge-run { animation: tele-edge-run 4.1s linear infinite; }
+
+/* Ultra-slow drift for the ghost telemetry layer */
+@keyframes tele-drift {
+  from { transform: translateX(-8px); }
+  to { transform: translateX(8px); }
+}
+.tele-ghost { animation: tele-drift 34s ease-in-out infinite alternate; }
