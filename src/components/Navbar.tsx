@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { label: 'Every Code', href: '#sports' },
   { label: 'vs 1080', href: '#vs-1080' },
   { label: 'Included', href: '#whats-included' },
+  { label: 'Order', href: '#order' },
   { label: 'FAQ', href: '#faq' },
 ]
 

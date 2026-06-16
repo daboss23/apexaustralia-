@@ -17,6 +17,7 @@ import ResultsSection from '@/components/ResultsSection'
 import LocalTrustSection from '@/components/LocalTrustSection'
 import FAQSection from '@/components/FAQSection'
 import WhatsIncludedSection from '@/components/WhatsIncludedSection'
+import CheckoutSection from '@/components/CheckoutSection'
 import FinalCTA from '@/components/FinalCTA'
 
 export default function Home() {
@@ -77,6 +78,9 @@ export default function Home() {
 
       {/* 13b — WHAT'S INCLUDED / PACKAGE */}
       <WhatsIncludedSection />
+
+      {/* 13c — ORDER / CHECKOUT (inline product + buy experience) */}
+      <CheckoutSection />
 
       {/* 14 — FINAL CTA */}
       <FinalCTA />
