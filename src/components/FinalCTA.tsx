@@ -6,7 +6,7 @@ import Image from 'next/image'
 
 export default function FinalCTA() {
   const sectionRef = useRef<HTMLElement>(null)
-  const inView = useInView(sectionRef, { once: true, margin: '-10% 0px' })
+  const inView = useInView(sectionRef, { once: false, margin: '-10% 0px' })
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end end'] })
   const scale = useTransform(scrollYProgress, [0, 1], [0.95, 1])
   const opacity = useTransform(scrollYProgress, [0, 0.3], [0, 1])
@@ -85,7 +85,7 @@ export default function FinalCTA() {
               className="h-luxia t-silver leading-[0.86]"
               style={{ fontSize: 'clamp(2rem, 4.9vw, 4.3rem)' }}
               initial={{ y: 120, opacity: 0 }}
-              animate={inView ? { y: 0, opacity: 1 } : {}}
+              animate={inView ? { y: 0, opacity: 1 } : { opacity: 0 }}
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             >
               THE FUTURE OF PERFORMANCE
@@ -96,7 +96,7 @@ export default function FinalCTA() {
               className="h-luxia t-red leading-[0.86]"
               style={{ fontSize: 'clamp(2rem, 4.9vw, 4.3rem)' }}
               initial={{ y: 120, opacity: 0 }}
-              animate={inView ? { y: 0, opacity: 1 } : {}}
+              animate={inView ? { y: 0, opacity: 1 } : { opacity: 0 }}
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
             >
               IS ALREADY HERE.
@@ -108,7 +108,7 @@ export default function FinalCTA() {
             className="text-apex-grey font-body max-w-2xl mx-auto mb-12 leading-relaxed"
             style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
           >
             Join the coaches, clubs, and athletes raising the standard. See T-Apex measure speed, force, and control in real time — then decide. We&apos;re placing units with select Australian programs now.
@@ -118,7 +118,7 @@ export default function FinalCTA() {
           <motion.div
             className="flex flex-wrap items-center justify-center gap-4 mb-10"
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
             transition={{ duration: 0.7, delay: 0.65 }}
           >
             <button className="group inline-flex items-center gap-3 cta-glow text-white font-display font-bold px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(214,31,38,0.7)] hover:-translate-y-0.5 active:translate-y-0"
@@ -142,7 +142,7 @@ export default function FinalCTA() {
           <motion.p
             className="text-apex-grey-dim font-mono text-[10px] tracking-[0.18em] uppercase mb-16"
             initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
+            animate={inView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.6, delay: 0.85 }}
           >
             On-site or virtual · No obligation · Direct from the Australian team
@@ -152,7 +152,7 @@ export default function FinalCTA() {
           <motion.div
             className="flex flex-col items-center gap-4"
             initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
+            animate={inView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
           >
             <Image

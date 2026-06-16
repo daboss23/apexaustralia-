@@ -36,7 +36,7 @@ const FAQS = [
 
 export default function FAQSection() {
   const titleRef = useRef<HTMLDivElement>(null)
-  const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
   const [openIdx, setOpenIdx] = useState<number | null>(0)
 
   return (
@@ -53,7 +53,7 @@ export default function FAQSection() {
           <motion.div
             className="lg:sticky lg:top-28 self-start"
             initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             <h2
@@ -124,7 +124,7 @@ function FAQItem({
     <motion.div
       className="border-b border-apex-line/40"
       initial={{ opacity: 0, y: 12 }}
-      animate={parentInView ? { opacity: 1, y: 0 } : {}}
+      animate={parentInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
       transition={{ duration: 0.5, delay: 0.1 + index * 0.06 }}
     >
       <button

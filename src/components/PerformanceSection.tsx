@@ -64,7 +64,7 @@ const SPORT_CARDS = [
 
 function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-5% 0px' })
+  const inView = useInView(ref, { once: false, margin: '-5% 0px' })
 
   return (
     <motion.div
@@ -72,7 +72,7 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
       className="group relative bg-apex-panel border border-apex-line p-5 overflow-hidden cursor-default hover:border-apex-blue/30 transition-colors duration-300"
       style={{ borderRadius: 0 }}
       initial={{ opacity: 0, y: 24 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
       transition={{ duration: 0.6, delay: index * 0.07, ease: [0.16, 1, 0.3, 1] }}
     >
       {/* Background accent */}
@@ -102,7 +102,7 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
           className="absolute left-0 top-0 h-full rounded-full"
           style={{ background: card.color }}
           initial={{ width: 0 }}
-          animate={inView ? { width: `${card.bar}%` } : {}}
+          animate={inView ? { width: `${card.bar}%` } : { width: 0 }}
           transition={{ duration: 1.2, delay: 0.3 + index * 0.07, ease: [0.16, 1, 0.3, 1] }}
         />
       </div>
@@ -112,7 +112,7 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
 
 export default function PerformanceSection() {
   const titleRef = useRef<HTMLDivElement>(null)
-  const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
 
   return (
     <section id="performance" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -136,7 +136,7 @@ export default function PerformanceSection() {
           ref={titleRef}
           className="flex items-center gap-3 mb-6"
           initial={{ opacity: 0, x: -20 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
+          animate={inView ? { opacity: 1, x: 0 } : { opacity: 0 }}
           transition={{ duration: 0.5 }}
         >
           <div className="w-8 h-px bg-apex-blue" />
@@ -148,7 +148,7 @@ export default function PerformanceSection() {
           className="h-luxia t-silver mb-4 leading-[0.9]"
           style={{ fontSize: 'clamp(2.1rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
         >
           ENGINEERED FOR<br />
@@ -159,7 +159,7 @@ export default function PerformanceSection() {
           className="text-apex-grey font-body max-w-xl mb-16 leading-relaxed"
           style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1.05rem)' }}
           initial={{ opacity: 0, y: 18 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           From Olympic sprinters to professional rugby players — T-APEX adapts to every sport, every movement, every athlete.
@@ -170,7 +170,7 @@ export default function PerformanceSection() {
           className="relative mb-20 overflow-hidden aspect-video"
           style={{ border: '1px solid rgba(214,31,38,0.22)', borderTop: '2px solid #D61F26' }}
           initial={{ opacity: 0, y: 26 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
         >
           <video
@@ -203,7 +203,7 @@ export default function PerformanceSection() {
           <motion.div
             className="flex-shrink-0"
             initial={{ opacity: 0, x: -24 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
+            animate={inView ? { opacity: 1, x: 0 } : { opacity: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="flex items-baseline leading-none">
@@ -239,7 +239,7 @@ export default function PerformanceSection() {
                 key={label}
                 className="flex items-center gap-5"
                 initial={{ opacity: 0, x: 18 }}
-                animate={inView ? { opacity: 1, x: 0 } : {}}
+                animate={inView ? { opacity: 1, x: 0 } : { opacity: 0 }}
                 transition={{ duration: 0.6, delay: 0.25 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               >
                 <div className="flex items-baseline gap-0.5 min-w-[80px]">
@@ -275,7 +275,7 @@ export default function PerformanceSection() {
         <motion.div
           className="flex justify-center mt-16"
           initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
           <button className="group inline-flex items-center gap-2.5 border border-apex-line hover:border-apex-blue/60 text-apex-grey hover:text-apex-white font-display font-bold text-[11px] px-8 py-4 rounded-xl tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5">
