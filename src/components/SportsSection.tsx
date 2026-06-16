@@ -81,6 +81,7 @@ const SPORTS = [
     tagline: 'Hundredths Of A Second',
     description: 'Track and field is decided by the smallest of margins. T-Apex supports the marginal gains that matter most at the highest level of competition.',
     color: '#D61F26',
+    video: '/sports/athletics.mp4',
     focuses: [
       'Block clearance and early acceleration',
       'Maximum velocity development',
@@ -120,7 +121,7 @@ const SPORTS = [
 ]
 
 export default function SportsSection() {
-  const [activeSport, setActiveSport] = useState('afl')
+  const [activeSport, setActiveSport] = useState('athletics')
   const [userPicked, setUserPicked] = useState(false)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-15% 0px' })

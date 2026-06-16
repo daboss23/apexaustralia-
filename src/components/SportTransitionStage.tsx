@@ -11,6 +11,8 @@ export type Sport = {
   color: string
   focuses: string[]
   applications: string[]
+  /** Optional looping clip shown in the right of the stage while this code is active */
+  video?: string
 }
 
 /**
@@ -119,6 +121,43 @@ export default function SportTransitionStage({
             'linear-gradient(90deg, rgba(8,8,10,0.92) 0%, rgba(8,8,10,0.6) 34%, rgba(8,8,10,0.12) 60%, transparent 100%), linear-gradient(0deg, rgba(8,8,10,0.85) 0%, transparent 40%)',
         }}
       />
+
+      {/* ── Layer 4.5: per-code sprint clip — right side, even padding, loops
+            while its code is active. Drop a square clip per sport and it slots
+            in here (object-cover keeps a square source pixel-perfect). ────── */}
+      <AnimatePresence mode="wait">
+        {sport.video && (
+          <motion.div
+            key={`vid-${activeId}`}
+            className="absolute inset-0 flex items-center justify-end p-4 sm:p-5 lg:p-6 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="relative h-full aspect-square max-w-[58%]" style={{ borderRadius: 0 }}>
+              <video
+                className="absolute inset-0 w-full h-full object-cover"
+                src={sport.video}
+                autoPlay
+                loop
+                muted
+                playsInline
+                aria-hidden="true"
+              />
+              {/* engineered frame + soft left seam so it seats into the scene */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{ border: `1px solid ${accent}40` }}
+              />
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{ background: 'linear-gradient(90deg, rgba(8,8,10,0.65), transparent 16%)' }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Layer 5: scan-sweep on every code change ─────────────────────── */}
       <AnimatePresence>
