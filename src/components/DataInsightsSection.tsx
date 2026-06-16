@@ -184,7 +184,7 @@ export default function DataInsightsSection() {
               height={112}
               className="h-14 md:h-20 w-auto object-contain"
             />
-            <p className="mt-5 text-apex-grey font-body leading-relaxed max-w-xl"
+            <p className="mt-5 text-apex-white font-body leading-relaxed max-w-xl"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}>
               Real reports, straight from a live session — see the raw data exactly as your
               coaches and sports scientists do.

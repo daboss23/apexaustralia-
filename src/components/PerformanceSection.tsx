@@ -1,7 +1,74 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
+
+// Photo-finish counter — spins through random values, then locks onto the real
+// figure with a camera-strobe flash + scale pop (matches the Results counters).
+function FlashStat({
+  value, active, delay, className, style,
+}: {
+  value: string; active: boolean; delay: number; className?: string; style?: React.CSSProperties
+}) {
+  const digits = value.replace(/\D/g, '').length || 1
+  const [display, setDisplay] = useState(value)
+  const [phase, setPhase] = useState<'idle' | 'spin' | 'locked'>('idle')
+
+  useEffect(() => {
+    if (!active) {
+      setPhase('idle')
+      setDisplay(value)
+      return
+    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setDisplay(value)
+      setPhase('locked')
+      return
+    }
+    let spinIv: ReturnType<typeof setInterval> | undefined
+    const lo = Math.pow(10, digits - 1)
+    const hi = Math.pow(10, digits)
+    const start = setTimeout(() => {
+      setPhase('spin')
+      spinIv = setInterval(() => {
+        setDisplay(String(Math.floor(Math.random() * (hi - lo)) + lo))
+      }, 45)
+    }, delay * 1000)
+    const stop = setTimeout(() => {
+      if (spinIv) clearInterval(spinIv)
+      setDisplay(value)
+      setPhase('locked')
+    }, delay * 1000 + 900)
+    return () => {
+      clearTimeout(start)
+      clearTimeout(stop)
+      if (spinIv) clearInterval(spinIv)
+    }
+  }, [active, value, delay, digits])
+
+  return (
+    <span className="relative inline-flex">
+      {phase === 'locked' && (
+        <motion.span
+          className="absolute -inset-2 pointer-events-none z-10"
+          style={{ background: 'radial-gradient(ellipse 65% 80% at 40% 50%, rgba(255,255,255,0.85), rgba(255,255,255,0.3) 55%, transparent 75%)' }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.85, 0] }}
+          transition={{ duration: 0.45, times: [0, 0.12, 1], ease: 'easeOut' }}
+          aria-hidden="true"
+        />
+      )}
+      <motion.span
+        className={className}
+        style={{ ...style, display: 'inline-block', filter: phase === 'spin' ? 'blur(2.5px)' : 'none', opacity: phase === 'spin' ? 0.8 : 1 }}
+        animate={phase === 'locked' ? { scale: [1.1, 1] } : { scale: 1 }}
+        transition={{ duration: 0.28, ease: 'easeOut' }}
+      >
+        {display}
+      </motion.span>
+    </span>
+  )
+}
 
 const HEADLINE_METRICS = [
   { value: '14', unit: 'm/s', label: 'Assisted Top Speed', sub: 'With the overspeed module' },
@@ -65,6 +132,13 @@ const SPORT_CARDS = [
 function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-5% 0px' })
+  const [flash, setFlash] = useState(false)
+
+  useEffect(() => {
+    if (!inView) return
+    const t = setTimeout(() => setFlash(true), (index * 0.07 + 0.5) * 1000)
+    return () => clearTimeout(t)
+  }, [inView, index])
 
   return (
     <motion.div
@@ -91,7 +165,26 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
 
       {/* Stat */}
       <div className="flex items-baseline gap-1.5 mb-1">
-        <span className="font-luxia font-black text-4xl t-blue leading-none">{card.stat}</span>
+        <span className="relative inline-flex">
+          {flash && (
+            <motion.span
+              className="absolute -inset-2 pointer-events-none z-10"
+              style={{ background: 'radial-gradient(ellipse 65% 80% at 40% 50%, rgba(255,255,255,0.85), rgba(255,255,255,0.3) 55%, transparent 75%)' }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.85, 0] }}
+              transition={{ duration: 0.45, times: [0, 0.12, 1], ease: 'easeOut' }}
+              aria-hidden="true"
+            />
+          )}
+          <motion.span
+            className="font-luxia font-black text-4xl t-blue leading-none"
+            style={{ display: 'inline-block' }}
+            animate={flash ? { scale: [1.12, 1] } : { scale: 1 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          >
+            {card.stat}
+          </motion.span>
+        </span>
       </div>
       <div className="text-sm font-display font-bold text-apex-white tracking-wide mb-0.5">{card.metric}</div>
       <div className="text-[11px] font-body text-apex-grey mb-4">{card.detail}</div>
@@ -113,6 +206,9 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
 export default function PerformanceSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const metricsRef = useRef<HTMLDivElement>(null)
+  // Non-once so the photo-finish counters re-run on each scroll-in pass.
+  const metricsLive = useInView(metricsRef, { amount: 0.4 })
 
   return (
     <section id="performance" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -198,7 +294,7 @@ export default function PerformanceSection() {
         </motion.div>
 
         {/* Headline metrics — editorial asymmetric layout */}
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 mb-20 pb-20 border-b border-apex-line/40 items-start lg:items-center">
+        <div ref={metricsRef} className="flex flex-col lg:flex-row gap-8 lg:gap-14 mb-20 pb-20 border-b border-apex-line/40 items-start lg:items-center">
           {/* Primary stat: oversized editorial anchor */}
           <motion.div
             className="flex-shrink-0"
@@ -207,12 +303,13 @@ export default function PerformanceSection() {
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="flex items-baseline leading-none">
-              <span
+              <FlashStat
+                value={HEADLINE_METRICS[0].value}
+                active={metricsLive}
+                delay={0.15}
                 className="font-luxia font-bold t-silver metric-value"
                 style={{ fontSize: 'clamp(5.5rem, 13vw, 10.5rem)', letterSpacing: '-0.01em' }}
-              >
-                {HEADLINE_METRICS[0].value}
-              </span>
+              />
               <span
                 className="t-blue font-luxia font-bold ml-1"
                 style={{ fontSize: 'clamp(2rem, 4.5vw, 4rem)' }}
@@ -243,12 +340,13 @@ export default function PerformanceSection() {
                 transition={{ duration: 0.6, delay: 0.25 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               >
                 <div className="flex items-baseline gap-0.5 min-w-[80px]">
-                  <span
+                  <FlashStat
+                    value={value}
+                    active={metricsLive}
+                    delay={0.3 + i * 0.12}
                     className="font-luxia font-bold t-silver leading-none metric-value"
                     style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
-                  >
-                    {value}
-                  </span>
+                  />
                   {unit && (
                     <span className="t-blue font-luxia font-bold" style={{ fontSize: 'clamp(0.9rem, 1.4vw, 1.3rem)' }}>
                       {unit}

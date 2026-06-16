@@ -85,7 +85,7 @@ export default function ComparisonSection() {
         </motion.h2>
         <motion.p
           className="font-body leading-relaxed max-w-2xl mb-14"
-          style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)', color: C.sub }}
+          style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)', color: C.text }}
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.18 }}
@@ -132,7 +132,7 @@ export default function ComparisonSection() {
             <div className="relative flex flex-col h-full">
               {/* Header — logo */}
               <div className={`${HEAD} flex items-center justify-center px-3`}>
-                <Image src="/apexaustralialogo.png" alt="T-APEX" width={220} height={70} className="h-8 sm:h-9 w-auto object-contain" priority />
+                <Image src="/apexaustralialogo.png" alt="T-APEX" width={300} height={96} className="h-12 sm:h-16 w-auto object-contain" priority />
               </div>
               {/* Rows — white checks */}
               {ADVANTAGES.map((a, i) => (

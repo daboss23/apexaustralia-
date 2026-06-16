@@ -35,6 +35,8 @@ const GAP_LINES = [
 export default function ProblemSection() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const teleRef = useRef<HTMLDivElement>(null)
+  const teleInView = useInView(teleRef, { once: true, amount: 0.4 })
 
   return (
     <section id="problem" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
@@ -70,31 +72,45 @@ export default function ProblemSection() {
         aria-hidden="true"
       />
 
-      {/* Large telemetry signal sweep — draws across once on scroll-in, gives a
-          subtle flash, then fades. Sits behind all content, decorative only. */}
+      {/* Large telemetry signal — a glowing pulse travels left→right across the
+          screen (~2s), the waveform draws in behind it, then a subtle flash and
+          it fades away. Plays once when the section is scrolled into view.
+          Decorative only, sits behind all content. */}
       <motion.div
+        ref={teleRef}
         className="absolute inset-0 flex items-center pointer-events-none"
         aria-hidden="true"
         initial={{ opacity: 0 }}
-        animate={inView ? { opacity: [0, 0.32, 0.32, 0.55, 0] } : {}}
-        transition={{ duration: 3, times: [0, 0.55, 0.7, 0.78, 1], ease: 'easeInOut' }}
+        animate={teleInView ? { opacity: [0, 0.4, 0.4, 0.62, 0] } : {}}
+        transition={{ duration: 3, times: [0, 0.45, 0.66, 0.74, 1], ease: 'easeInOut' }}
       >
         <svg
           className="w-full h-1/2"
           viewBox="0 0 1440 300"
           fill="none"
-          preserveAspectRatio="xMidYMid meet"
+          preserveAspectRatio="none"
         >
+          {/* Waveform draws across, tracing the sweep */}
           <motion.path
             d="M0,150 L320,150 L348,150 L366,72 L384,228 L402,150 L640,150 L664,150 L682,108 L700,192 L718,150 L940,150 L962,54 L984,246 L1006,150 L1240,150 L1440,150"
             stroke="#D61F26"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            style={{ filter: 'drop-shadow(0 0 6px rgba(214,31,38,0.55))' }}
+            style={{ filter: 'drop-shadow(0 0 6px rgba(214,31,38,0.5))' }}
             initial={{ pathLength: 0 }}
-            animate={inView ? { pathLength: 1 } : {}}
-            transition={{ duration: 2, ease: [0.4, 0, 0.2, 1] }}
+            animate={teleInView ? { pathLength: 1 } : {}}
+            transition={{ duration: 2, ease: 'linear' }}
+          />
+          {/* Bright comet riding the signal as it sweeps across */}
+          <motion.circle
+            r="6"
+            cy="150"
+            fill="#ff6a4a"
+            style={{ filter: 'drop-shadow(0 0 10px rgba(255,59,48,0.95))' }}
+            initial={{ cx: 0, opacity: 0 }}
+            animate={teleInView ? { cx: [0, 1440], opacity: [0, 1, 1, 0] } : {}}
+            transition={{ duration: 2, times: [0, 0.06, 0.94, 1], ease: 'linear' }}
           />
         </svg>
       </motion.div>

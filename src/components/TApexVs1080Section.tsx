@@ -2,6 +2,7 @@
 
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
+import Image from 'next/image'
 
 const COACH_OUTCOMES = [
   'apply load with more intent',
@@ -227,10 +228,7 @@ export default function TApexVs1080Section() {
               className="px-5 py-4 border"
               style={{ background: 'rgba(0,174,239,0.08)', borderColor: 'rgba(0,174,239,0.3)', borderTop: '2px solid #00AEEF', borderRight: 'none' }}
             >
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-apex-blue" style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }} />
-                <span className="text-[9px] font-mono font-bold text-apex-blue tracking-[0.22em] uppercase">T-Apex</span>
-              </div>
+              <Image src="/apexaustralialogo.png" alt="T-APEX" width={200} height={64} className="h-7 sm:h-8 w-auto object-contain" />
             </div>
             <div className="px-5 py-4 bg-apex-panel/40 border border-apex-line/40">
               <span className="text-[9px] font-mono text-apex-grey-dim tracking-[0.22em] uppercase">1080 Sprint 2</span>

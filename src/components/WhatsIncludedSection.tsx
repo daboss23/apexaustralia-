@@ -136,7 +136,7 @@ export default function WhatsIncludedSection() {
           </h3>
           <div className="flex items-baseline gap-2">
             <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-apex-grey-dim">Full system</span>
-            <span className="font-luxia font-black t-red" style={{ fontSize: 'clamp(1.4rem, 2.6vw, 2rem)' }}>A$9,990</span>
+            <span className="font-luxia font-black t-gold" style={{ fontSize: 'clamp(1.4rem, 2.6vw, 2rem)' }}>A$9,990</span>
           </div>
         </motion.div>
 

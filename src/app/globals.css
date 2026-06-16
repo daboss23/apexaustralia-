@@ -82,7 +82,7 @@
         bright crown and a dark contact base. The bevel is built from a crisp
         bright top edge + a hard dark bottom edge + a tight downward contact
         shadow. High contrast, no bloom, no fog, no outer glow. ───────────────── */
-  .t-silver, .t-blue, .t-red, .t-feature {
+  .t-silver, .t-blue, .t-red, .t-feature, .t-gold {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -164,6 +164,27 @@
       0 -1px 0 rgba(245, 247, 249, 0.55),
       0 1px 0 rgba(0, 0, 0, 0.5),
       0 2px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Gold-plated — warm polished gold with a bright highlight band and amber
+     lows. Same clipped-gradient + bevel approach as the others; pairs with the
+     Marcellus serif for a premium "plated" price treatment. */
+  .t-gold {
+    background-image:
+      linear-gradient(180deg,
+        #FFF6D5 0%,
+        #FBE38C 16%,
+        #E8C25A 34%,
+        #C9992F 48%,
+        #B5821F 50%,
+        #F3D472 56%,
+        #D8AE45 74%,
+        #9C7420 90%,
+        #6E4E12 100%);
+    text-shadow:
+      0 -1px 0 rgba(255, 244, 200, 0.6),
+      0 1px 0 rgba(40, 26, 0, 0.62),
+      0 2px 4px rgba(28, 18, 0, 0.45);
   }
 
   /* Carbon-fibre twill — subtle engineered texture for dark surfaces */
