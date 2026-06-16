@@ -453,6 +453,17 @@ export default function DashboardSection() {
               </div>
             </div>
           </div>
+
+          {/* Footer — brand mark, bottom-left of the performance monitor */}
+          <div className="flex items-center px-6 py-4 border-t border-apex-line bg-apex-black/60">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/tapexlogo.png"
+              alt="T-APEX"
+              className="h-14 sm:h-16 w-auto object-contain"
+              style={{ mixBlendMode: 'screen' }}
+            />
+          </div>
         </motion.div>
       </div>
     </section>

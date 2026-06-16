@@ -25,9 +25,9 @@ const SOLUTION_PILLARS = [
 // Desktop stage positions: each pillar materializes around the floating unit,
 // connected to it by a hairline. anchor/from are % of the stage (x, y).
 const STAGE_CARDS = [
-  { seq: 0, pos: { left: 0, top: '10%' } as const, from: { x: 41, y: 38 }, to: { x: 26, y: 22 } },
-  { seq: 1, pos: { right: 0, top: '6%' } as const, from: { x: 59, y: 34 }, to: { x: 74, y: 18 } },
-  { seq: 2, pos: { right: '1%', bottom: '4%' } as const, from: { x: 58, y: 60 }, to: { x: 73, y: 80 } },
+  { seq: 0, side: 'left' as const, pos: { left: 0, top: '8%' } as const, from: { x: 43, y: 34 }, to: { x: 25, y: 14 } },
+  { seq: 1, side: 'right' as const, pos: { right: 0, top: '5%' } as const, from: { x: 57, y: 33 }, to: { x: 75, y: 11 } },
+  { seq: 2, side: 'right' as const, pos: { right: '1%', bottom: '6%' } as const, from: { x: 57, y: 60 }, to: { x: 75, y: 82 } },
 ]
 
 const CARD_LINE_AT = (seq: number) => 0.45 + seq * 0.7
@@ -159,31 +159,33 @@ function FloatingUnit({ active }: { active: boolean }) {
 
 // ─── Pillar card (presentational) ─────────────────────────────────────────────
 
-function PillarCard({ pillar }: { pillar: typeof SOLUTION_PILLARS[0] }) {
+function PillarCard({ pillar, side = 'right' }: { pillar: typeof SOLUTION_PILLARS[0]; side?: 'left' | 'right' }) {
+  const isLeft = side === 'left'
   return (
-    <div
-      className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-blue/30 transition-colors duration-300 cursor-default"
-      style={{ borderLeft: '2px solid rgba(0,174,239,0.6)', borderRadius: 0 }}
-    >
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 100%, rgba(0,174,239,0.06), transparent)' }}
-      />
-
-      <div className="flex items-start justify-between gap-4 mb-3">
-        <h3 className="font-display font-black t-feature tracking-wide"
-          style={{ fontSize: 'clamp(1.05rem, 1.7vw, 1.3rem)' }}>
-          {pillar.label}
-        </h3>
-        <span
-          className="flex-shrink-0 text-[8px] font-mono font-semibold tracking-[0.18em] uppercase px-2 py-1 border"
-          style={{ color: '#00AEEF', borderColor: 'rgba(0,174,239,0.35)', background: 'rgba(0,174,239,0.08)' }}
-        >
-          {pillar.tag}
-        </span>
+    <div className={`flex items-start gap-3 ${isLeft ? 'flex-row-reverse' : 'flex-row'}`}>
+      {/* Merge point — glowing dot + thin fading line, identical to the
+          "Engineered like nothing else" callouts. Points toward the unit. */}
+      <div className={`flex items-center gap-1.5 flex-shrink-0 mt-1 ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}>
+        <div className="w-1.5 h-1.5 rounded-full bg-apex-blue" style={{ boxShadow: '0 0 8px #00AEEF' }} />
+        <div
+          className="w-8 h-px"
+          style={{ background: isLeft ? 'linear-gradient(90deg, #00AEEF, transparent)' : 'linear-gradient(270deg, #00AEEF, transparent)' }}
+        />
       </div>
 
-      <p className="text-apex-grey font-body text-sm leading-relaxed">{pillar.body}</p>
+      {/* Label — slim, box-less */}
+      <div className={`min-w-0 ${isLeft ? 'text-right' : 'text-left'}`}>
+        <span className="block text-[8px] font-mono tracking-[0.24em] text-apex-blue uppercase mb-1.5">
+          {pillar.tag}
+        </span>
+        <h3
+          className="font-display font-bold text-apex-white leading-snug mb-2"
+          style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.15rem)' }}
+        >
+          {pillar.label}
+        </h3>
+        <p className="text-apex-grey font-body text-[13px] leading-relaxed">{pillar.body}</p>
+      </div>
     </div>
   )
 }
@@ -386,10 +388,10 @@ export default function SolutionSection() {
           </svg>
 
           {/* Pillars around the unit (lg+) */}
-          {STAGE_CARDS.map(({ seq, pos }) => (
+          {STAGE_CARDS.map(({ seq, side, pos }) => (
             <motion.div
               key={seq}
-              className="absolute hidden lg:block w-[300px] xl:w-[340px] z-10"
+              className="absolute hidden lg:block w-[280px] xl:w-[320px] z-10"
               style={pos}
               initial={{ opacity: 0, y: 18, scale: 0.96 }}
               animate={stageActive ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 18, scale: 0.96 }}
@@ -399,7 +401,7 @@ export default function SolutionSection() {
                   : { duration: 0 }
               }
             >
-              <PillarCard pillar={SOLUTION_PILLARS[seq]} />
+              <PillarCard pillar={SOLUTION_PILLARS[seq]} side={side} />
             </motion.div>
           ))}
         </div>
@@ -413,7 +415,7 @@ export default function SolutionSection() {
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.2 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
             >
-              <PillarCard pillar={pillar} />
+              <PillarCard pillar={pillar} side="right" />
             </motion.div>
           ))}
         </div>

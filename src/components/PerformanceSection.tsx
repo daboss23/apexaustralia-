@@ -132,13 +132,10 @@ const SPORT_CARDS = [
 function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-5% 0px' })
-  const [flash, setFlash] = useState(false)
-
-  useEffect(() => {
-    if (!inView) return
-    const t = setTimeout(() => setFlash(true), (index * 0.07 + 0.5) * 1000)
-    return () => clearTimeout(t)
-  }, [inView, index])
+  // Non-once trigger so the photo-finish counter re-runs on each scroll-in,
+  // exactly like the headline metrics above.
+  const liveRef = useRef<HTMLDivElement>(null)
+  const live = useInView(liveRef, { amount: 0.6 })
 
   return (
     <motion.div
@@ -163,28 +160,14 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
         <span className="text-[10px] font-mono text-apex-grey-dim">#0{index + 1}</span>
       </div>
 
-      {/* Stat */}
-      <div className="flex items-baseline gap-1.5 mb-1">
-        <span className="relative inline-flex">
-          {flash && (
-            <motion.span
-              className="absolute -inset-2 pointer-events-none z-10"
-              style={{ background: 'radial-gradient(ellipse 65% 80% at 40% 50%, rgba(255,255,255,0.85), rgba(255,255,255,0.3) 55%, transparent 75%)' }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 0.85, 0] }}
-              transition={{ duration: 0.45, times: [0, 0.12, 1], ease: 'easeOut' }}
-              aria-hidden="true"
-            />
-          )}
-          <motion.span
-            className="font-luxia font-black text-4xl t-blue leading-none"
-            style={{ display: 'inline-block' }}
-            animate={flash ? { scale: [1.12, 1] } : { scale: 1 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-          >
-            {card.stat}
-          </motion.span>
-        </span>
+      {/* Stat — same photo-finish move + flash as the headline metrics above */}
+      <div ref={liveRef} className="flex items-baseline gap-1.5 mb-1">
+        <FlashStat
+          value={card.stat}
+          active={live}
+          delay={(index % 3) * 0.08 + 0.2}
+          className="font-luxia font-black text-4xl t-blue leading-none"
+        />
       </div>
       <div className="text-sm font-display font-bold text-apex-white tracking-wide mb-0.5">{card.metric}</div>
       <div className="text-[11px] font-body text-apex-grey mb-4">{card.detail}</div>
