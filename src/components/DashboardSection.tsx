@@ -108,7 +108,7 @@ const fmtTime = (sec: number) => {
 // ─── Gauges ───────────────────────────────────────────────────────────────────
 
 const GAUGES = [
-  { id: 'speed', label: 'SPEED', unit: 'm/s', max: 16, color: '#00AEEF' },
+  { id: 'speed', label: 'SPEED', unit: 'm/s', max: 14, color: '#00AEEF' },
   { id: 'power', label: 'POWER', unit: 'kW', max: 6, color: '#D61F26' },
   { id: 'force', label: 'FORCE', unit: 'N', max: 1200, color: '#D61F26' },
   { id: 'accel', label: 'ACCEL', unit: 'm/s²', max: 12, color: '#00AEEF' },
@@ -306,7 +306,7 @@ export default function DashboardSection() {
           animate={titleInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.15 }}
         >
-          Real-time biomechanical data at 200Hz. Every force, every rep, every sprint — quantified and displayed with Formula 1 precision.
+          Real-time biomechanical data at up to 1000Hz, user-selectable. Every force, every rep, every sprint — quantified and displayed with Formula 1 precision.
         </motion.p>
 
         {/* Main dashboard panel */}

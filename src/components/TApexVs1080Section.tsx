@@ -13,29 +13,49 @@ const COACH_OUTCOMES = [
 
 const ROWS = [
   {
-    dimension: 'Primary performance idea',
-    tapex: 'Adaptive Resistance Intelligence across a wide range of training',
-    sprint: 'Sprint resistance and overspeed emphasis',
+    dimension: 'Price',
+    tapex: 'From A$9,450 — A$9,990 with the Overspeed module',
+    sprint: '≈ A$30,000 + annual software fees',
   },
   {
-    dimension: 'Training application',
-    tapex: 'Speed, force, control, acceleration, deceleration, COD, progress, rehab',
-    sprint: 'Stronger straight-line sprint and overspeed association',
+    dimension: 'Software subscription',
+    tapex: 'Free standard software — no annual fee',
+    sprint: '≈ A$1,200 per year licence',
   },
   {
-    dimension: 'Coaching flexibility',
-    tapex: 'Wide-ranging use across many settings and movement demands',
-    sprint: 'More sprint-specific in perception and primary use case',
+    dimension: 'Resisted sprint load',
+    tapex: '0–20 kgf continuous, up to 90 kgf with accessories',
+    sprint: 'Up to 20 kgf (Gear 1)',
   },
   {
-    dimension: 'Environment fit',
-    tapex: 'Built for coaches, facilities, rehab, and whole-system use',
-    sprint: 'Best known in sprint-focused and speed-development contexts',
+    dimension: 'Overspeed sprints',
+    tapex: 'Up to 14 m/s with the overspeed module',
+    sprint: 'Up to 14 m/s with overspeed module',
   },
   {
-    dimension: 'System philosophy',
-    tapex: 'A complete adaptive resistance performance system',
-    sprint: 'A highly recognised sprint resistance category product',
+    dimension: 'Data capture',
+    tapex: '50–1000 Hz, stored on your team tablet',
+    sprint: '5–1000 Hz, cloud / third-party servers',
+  },
+  {
+    dimension: 'Data ownership',
+    tapex: 'Full control on your tablet — no cloud risk',
+    sprint: 'Cloud / remote third-party servers',
+  },
+  {
+    dimension: 'Setup time',
+    tapex: '≈ 5 minutes',
+    sprint: '≈ 30 minutes',
+  },
+  {
+    dimension: 'Multi-device deployment',
+    tapex: 'One tablet manages multiple units',
+    sprint: 'Limited scalability',
+  },
+  {
+    dimension: 'Best for',
+    tapex: 'Multi-device teams, clubs & academies',
+    sprint: 'Elite research programs',
   },
 ]
 
@@ -115,7 +135,7 @@ export default function TApexVs1080Section() {
             </p>
             <p className="text-apex-grey font-body leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
-              While 1080 Sprint is widely recognised for sprint resistance, overspeed application,
+              While 1080 Sprint 2 is widely recognised for sprint resistance, overspeed application,
               and straight-line speed work, T-Apex is built around a wider high-performance
               principle:
             </p>
@@ -213,7 +233,7 @@ export default function TApexVs1080Section() {
               </div>
             </div>
             <div className="px-5 py-4 bg-apex-panel/40 border border-apex-line/40">
-              <span className="text-[9px] font-mono text-apex-grey-dim tracking-[0.22em] uppercase">1080 Sprint</span>
+              <span className="text-[9px] font-mono text-apex-grey-dim tracking-[0.22em] uppercase">1080 Sprint 2</span>
             </div>
           </motion.div>
 
@@ -248,7 +268,7 @@ export default function TApexVs1080Section() {
                 </p>
               </div>
 
-              {/* 1080 Sprint */}
+              {/* 1080 Sprint 2 */}
               <div className="px-5 py-4 bg-apex-panel/30 border border-t-0 border-apex-line/40 flex items-start">
                 <p className="text-apex-grey font-body text-[12px] leading-relaxed">{row.sprint}</p>
               </div>
