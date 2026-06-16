@@ -5,44 +5,44 @@ import { motion, useInView } from 'framer-motion'
 
 const RESULTS = [
   {
+    stat: 40,
+    unit: '%',
+    prefix: '',
+    label: 'Injury Risk Reduction',
+    description: 'Controlled load progression and objective return-to-sport metrics',
+    color: '#D61F26',
+  },
+  {
     stat: 12,
-    unit: '%',
-    prefix: '+',
-    label: 'Faster Acceleration',
-    description: 'Out of the blocks and through transition zones',
+    unit: '+',
+    prefix: '',
+    label: 'Athletes Per Session',
+    description: 'Full-squad throughput with multi-device deployment',
     color: '#D61F26',
   },
   {
-    stat: 18,
+    stat: 95,
     unit: '%',
-    prefix: '+',
-    label: 'Greater Power Output',
-    description: 'At peak training and competition intensities',
+    prefix: '',
+    label: 'Of Elite Performance',
+    description: 'Comparable resisted & assisted capability at roughly one-third of the cost',
     color: '#D61F26',
   },
   {
-    stat: 15,
-    unit: '%',
-    prefix: '+',
-    label: 'Improved Force Production',
-    description: 'In measured resistance and ground reaction force',
-    color: '#D61F26',
-  },
-  {
-    stat: 21,
-    unit: '%',
-    prefix: '+',
-    label: 'Enhanced Athletic Performance',
-    description: 'Across composite sport-specific testing protocols',
+    stat: 3,
+    unit: '×',
+    prefix: '',
+    label: 'Devices Per Budget',
+    description: 'Two to three T-APEX units for the price of one premium system',
     color: '#D61F26',
   },
 ]
 
 const PROOF_POINTS = [
-  'Validated across 6 professional sports codes',
-  'Tested by Olympic-level athletes',
-  'Peer-reviewed biomechanical methodology',
-  'Deployed in AFL, NRL, Rugby Union programs',
+  'Measurable acceleration gains in 6–8 weeks',
+  'No mandatory annual software subscription',
+  'Athlete data stored on your team tablet — full control, no cloud risk',
+  'One device fleet supports multiple teams and squads',
 ]
 
 function CounterStat({
@@ -175,7 +175,7 @@ export default function ResultsSection() {
           <div>
             <h3 className="font-display font-black t-feature mb-6 leading-tight"
               style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)' }}>
-              Validated Across<br />Elite Programs.
+              Why Programs<br />Choose T-APEX.
             </h3>
             <div className="flex flex-col gap-3">
               {PROOF_POINTS.map((point) => (
@@ -195,10 +195,10 @@ export default function ResultsSection() {
             <blockquote className="border-l-4 border-apex-red pl-6">
               <p className="text-apex-white font-body leading-relaxed mb-4 italic"
                 style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}>
-                &ldquo;The data doesn&apos;t lie. T-APEX has changed how we approach performance training at the elite level.&rdquo;
+                &ldquo;Elite-level resisted and assisted sprint capability, objective data, and squad scalability — at a fraction of traditional system costs.&rdquo;
               </p>
               <footer className="text-apex-grey-dim font-mono text-[11px] tracking-wide">
-                — Head of Athletic Performance, AFL Club
+                — T-APEX Resisted &amp; Assisted Speed Training System
               </footer>
             </blockquote>
           </div>

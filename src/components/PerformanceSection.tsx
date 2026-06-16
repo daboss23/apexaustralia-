@@ -4,59 +4,59 @@ import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 
 const HEADLINE_METRICS = [
-  { value: '23', unit: '%', label: 'Speed Increase', sub: 'Top-end velocity gains' },
-  { value: '31', unit: '%', label: 'Force Output', sub: 'Peak force production' },
-  { value: '28', unit: '%', label: 'Power Gains', sub: 'Explosive power output' },
-  { value: '4×', unit: '', label: 'Training Efficiency', sub: 'vs conventional methods' },
+  { value: '14', unit: 'm/s', label: 'Assisted Top Speed', sub: 'With the overspeed module' },
+  { value: '1000', unit: 'Hz', label: 'Data Capture', sub: 'Force & velocity, user-selectable' },
+  { value: '120', unit: 'm', label: 'Cable Range', sub: 'Full-field training reach' },
+  { value: '100', unit: 'm', label: 'Tablet Range', sub: 'Coach from anywhere on the field' },
 ]
 
 const SPORT_CARDS = [
   {
-    sport: 'SPRINTING',
-    stat: '+23%',
-    metric: 'Acceleration',
-    detail: 'Out of blocks to top speed',
-    bar: 82,
+    sport: 'RESISTANCE',
+    stat: '0–40kg',
+    metric: 'Adaptive Load',
+    detail: 'Continuous resistance, to 90 kgf with accessories',
+    bar: 75,
     color: '#00AEEF',
   },
   {
-    sport: 'RUGBY',
-    stat: '+19%',
-    metric: 'Force Output',
-    detail: 'Tackle & contact strength',
+    sport: 'OVERSPEED',
+    stat: '14m/s',
+    metric: 'Assisted Speed',
+    detail: 'Towed overspeed sprinting',
+    bar: 90,
+    color: '#00AEEF',
+  },
+  {
+    sport: 'TELEMETRY',
+    stat: '1000Hz',
+    metric: 'Data Capture',
+    detail: 'Force & velocity, user-selectable',
+    bar: 85,
+    color: '#00AEEF',
+  },
+  {
+    sport: 'REACH',
+    stat: '120m',
+    metric: 'Cable Range',
+    detail: 'Full-field training distance',
+    bar: 80,
+    color: '#00AEEF',
+  },
+  {
+    sport: 'SETUP',
+    stat: '~5min',
+    metric: 'Squad-Ready',
+    detail: 'From case to first sprint',
     bar: 70,
     color: '#00AEEF',
   },
   {
-    sport: 'AFL',
-    stat: '+21%',
-    metric: 'Sprint Speed',
-    detail: 'Repeat sprint ability',
-    bar: 76,
-    color: '#00AEEF',
-  },
-  {
-    sport: 'FOOTBALL',
-    stat: '+18%',
-    metric: 'Explosiveness',
-    detail: 'First step quickness',
-    bar: 68,
-    color: '#00AEEF',
-  },
-  {
-    sport: 'BASKETBALL',
-    stat: '+25%',
-    metric: 'Vertical Power',
-    detail: 'Jump height & force',
-    bar: 88,
-    color: '#00AEEF',
-  },
-  {
-    sport: 'OLYMPIC',
-    stat: '+17%',
-    metric: 'Peak Output',
-    detail: 'Podium-level performance',
-    bar: 64,
+    sport: 'PORTABLE',
+    stat: '~20kg',
+    metric: 'Airline-Approved',
+    detail: 'Move it between sites with ease',
+    bar: 60,
     color: '#00AEEF',
   },
 ]
@@ -162,7 +162,7 @@ export default function PerformanceSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          From Olympic sprinters to professional rugby players — T-APEX adapts to every sport, every movement, every athlete.
+          From Olympic sprinters to professional rugby squads — T-APEX delivers adaptive resistance, assisted overspeed, and real-time data across every movement, every athlete.
         </motion.p>
 
         {/* Cinematic product film */}

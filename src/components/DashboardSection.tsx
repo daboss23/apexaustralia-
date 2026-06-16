@@ -18,7 +18,7 @@ function genData(base: number, spread: number, points: number): number[] {
 const CHART_POINTS = 32
 
 const GAUGES = [
-  { id: 'speed', label: 'SPEED', unit: 'm/s', value: 12.4, max: 16, color: '#00AEEF', pct: 77 },
+  { id: 'speed', label: 'SPEED', unit: 'm/s', value: 12.4, max: 14, color: '#00AEEF', pct: 88 },
   { id: 'power', label: 'POWER', unit: 'kW', value: 4.2, max: 6, color: '#D61F26', pct: 70 },
   { id: 'force', label: 'FORCE', unit: 'N', value: 847, max: 1200, color: '#D61F26', pct: 71 },
   { id: 'accel', label: 'ACCEL', unit: 'm/s²', value: 8.3, max: 12, color: '#00AEEF', pct: 69 },
@@ -181,7 +181,7 @@ export default function DashboardSection() {
   const titleInView = useInView(titleRef, { once: true, margin: '-10% 0px' })
 
   return (
-    <section ref={sectionRef} id="dashboard" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
+    <section ref={sectionRef} id="dashboard" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
       {/* Background accent */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute inset-0 opacity-30" style={{
@@ -219,7 +219,7 @@ export default function DashboardSection() {
           animate={titleInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.15 }}
         >
-          Real-time biomechanical data at 200Hz. Every force, every rep, every sprint — quantified and displayed with Formula 1 precision.
+          Real-time biomechanical data at up to 1000Hz, user-selectable. Every force, every rep, every sprint — quantified and displayed with Formula 1 precision.
         </motion.p>
 
         {/* Main dashboard panel */}
