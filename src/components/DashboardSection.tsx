@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 
 // ─── Live chart data generator ────────────────────────────────────────────────
 
@@ -317,6 +318,20 @@ export default function DashboardSection() {
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* Footer bar — brand mark */}
+          <div className="flex items-center justify-between px-6 py-3 border-t border-apex-line bg-apex-black/60">
+            <Image
+              src="/apexaustralialogo.png"
+              alt="T-APEX"
+              width={300}
+              height={94}
+              className="h-7 sm:h-8 w-auto object-contain opacity-90"
+            />
+            <span className="text-[9px] font-mono text-apex-grey-dim tracking-[0.22em] uppercase">
+              Adaptive Resistance Intelligence
+            </span>
           </div>
         </motion.div>
       </div>

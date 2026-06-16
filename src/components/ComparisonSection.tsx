@@ -132,7 +132,7 @@ export default function ComparisonSection() {
             <div className="relative flex flex-col h-full">
               {/* Header — logo */}
               <div className={`${HEAD} flex items-center justify-center px-3`}>
-                <Image src="/apexaustralialogo.png" alt="T-APEX" width={220} height={70} className="h-8 sm:h-9 w-auto object-contain" priority />
+                <Image src="/apexaustralialogo.png" alt="T-APEX" width={320} height={100} className="h-14 sm:h-16 w-auto object-contain" priority />
               </div>
               {/* Rows — white checks */}
               {ADVANTAGES.map((a, i) => (
