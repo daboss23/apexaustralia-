@@ -2,6 +2,14 @@
 
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
+import Image from 'next/image'
+
+// Placeholder slots for real raw-data report imagery (supplied later).
+const RAW_DATA = [
+  { src: '', label: 'Single Training Report' },
+  { src: '', label: 'Comparative Report' },
+  { src: '', label: 'Trending Report' },
+]
 
 // Pulled directly from the T-APEX "Data-Driven Insights" guide page.
 const INSIGHTS = [
@@ -155,6 +163,64 @@ export default function DataInsightsSection() {
                 <div>
                   <div className="font-display font-bold text-apex-white text-[14px] mb-1">{r.label}</div>
                   <div className="text-apex-grey font-body text-[12px] leading-relaxed">{r.detail}</div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Raw data showcase — logo header + sample report imagery */}
+        <motion.div
+          className="border-t border-apex-line/40 pt-12 mt-16"
+          initial={{ opacity: 0, y: 16 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        >
+          <div className="flex flex-col items-center text-center mb-10">
+            <Image
+              src="/apexaustralialogo.png"
+              alt="T-APEX"
+              width={360}
+              height={112}
+              className="h-14 md:h-20 w-auto object-contain"
+            />
+            <p className="mt-5 text-apex-grey font-body leading-relaxed max-w-xl"
+              style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}>
+              Real reports, straight from a live session — see the raw data exactly as your
+              coaches and sports scientists do.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            {RAW_DATA.map((item, i) => (
+              <motion.div
+                key={item.label}
+                className="relative bg-apex-panel border border-apex-line overflow-hidden"
+                style={{ borderTop: '2px solid rgba(0,174,239,0.5)' }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.55, delay: 0.55 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="relative aspect-[4/3] flex items-center justify-center">
+                  {item.src ? (
+                    <Image src={item.src} alt={item.label} fill className="object-cover" />
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-apex-grey-dim">
+                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
+                        <rect x="3" y="3" width="18" height="18" rx="1" />
+                        <path d="M3 16l5-5 4 4 3-3 6 6" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                      </svg>
+                      <span className="font-mono text-[9px] tracking-[0.24em] uppercase">
+                        Image {String(i + 1).padStart(2, '0')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="px-4 py-3 border-t border-apex-line">
+                  <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-apex-blue">
+                    {item.label}
+                  </span>
                 </div>
               </motion.div>
             ))}

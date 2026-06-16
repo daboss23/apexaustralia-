@@ -70,6 +70,35 @@ export default function ProblemSection() {
         aria-hidden="true"
       />
 
+      {/* Large telemetry signal sweep — draws across once on scroll-in, gives a
+          subtle flash, then fades. Sits behind all content, decorative only. */}
+      <motion.div
+        className="absolute inset-0 flex items-center pointer-events-none"
+        aria-hidden="true"
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: [0, 0.32, 0.32, 0.55, 0] } : {}}
+        transition={{ duration: 3, times: [0, 0.55, 0.7, 0.78, 1], ease: 'easeInOut' }}
+      >
+        <svg
+          className="w-full h-1/2"
+          viewBox="0 0 1440 300"
+          fill="none"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <motion.path
+            d="M0,150 L320,150 L348,150 L366,72 L384,228 L402,150 L640,150 L664,150 L682,108 L700,192 L718,150 L940,150 L962,54 L984,246 L1006,150 L1240,150 L1440,150"
+            stroke="#D61F26"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ filter: 'drop-shadow(0 0 6px rgba(214,31,38,0.55))' }}
+            initial={{ pathLength: 0 }}
+            animate={inView ? { pathLength: 1 } : {}}
+            transition={{ duration: 2, ease: [0.4, 0, 0.2, 1] }}
+          />
+        </svg>
+      </motion.div>
+
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         {/* Decorative HUD: dead telemetry feed — the system is "blind" here */}
         <motion.div
