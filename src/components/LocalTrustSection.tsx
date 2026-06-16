@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
+import PortraitWaveSweep from './PortraitWaveSweep'
 
 const CREDENTIALS = [
   'Olympic-level sprint coach',
@@ -143,6 +144,8 @@ export default function LocalTrustSection() {
                 className="object-cover object-top"
                 style={{ filter: 'saturate(0.94) contrast(1.04)' }}
               />
+              {/* Cinematic light/refraction wave sweeping across on scroll-in */}
+              <PortraitWaveSweep src="/piero.png" />
               {/* bottom fade into the card */}
               <div className="absolute inset-0 pointer-events-none"
                 style={{ background: 'linear-gradient(180deg, transparent 50%, rgba(10,13,16,0.55) 80%, rgba(10,13,16,0.92) 100%)' }} />
