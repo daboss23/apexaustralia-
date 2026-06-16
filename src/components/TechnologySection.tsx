@@ -23,7 +23,7 @@ const STEPS = [
 
 export default function HowItWorksSection() {
   const titleRef = useRef<HTMLDivElement>(null)
-  const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
 
   return (
     <section id="how" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -51,7 +51,7 @@ export default function HowItWorksSection() {
             className="h-luxia t-silver leading-[0.9]"
             style={{ fontSize: 'clamp(1.95rem, 4.6vw, 3.9rem)' }}
             initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             SIMPLE TO APPLY.<br />
@@ -62,7 +62,7 @@ export default function HowItWorksSection() {
             className="text-apex-grey font-body leading-relaxed"
             style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}
             initial={{ opacity: 0, y: 18 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
             transition={{ duration: 0.65, delay: 0.2 }}
           >
             T-Apex slots into demanding programs without adding unnecessary complexity.
@@ -85,7 +85,7 @@ export default function HowItWorksSection() {
         <motion.div
           className="mt-16 pt-10 border-t border-apex-line/40 max-w-3xl"
           initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
           <p className="font-display font-black text-apex-white leading-tight"
@@ -113,7 +113,7 @@ function StepCard({
       className="group relative bg-apex-panel border border-apex-line p-7 overflow-hidden hover:border-apex-blue/30 transition-colors duration-300 cursor-default"
       style={{ borderRadius: 0, borderTop: '2px solid rgba(0,174,239,0.55)' }}
       initial={{ opacity: 0, y: 26 }}
-      animate={parentInView ? { opacity: 1, y: 0 } : {}}
+      animate={parentInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
       transition={{ duration: 0.65, delay: 0.25 + index * 0.14, ease: [0.16, 1, 0.3, 1] }}
     >
       {/* Hover glow */}

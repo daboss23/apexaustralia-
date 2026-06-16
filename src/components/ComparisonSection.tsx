@@ -45,8 +45,8 @@ const Cross = ({ className = '', style }: { className?: string; style?: React.CS
 export default function ComparisonSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const tableRef = useRef<HTMLDivElement>(null)
-  const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
-  const tableInView = useInView(tableRef, { once: true, margin: '-5% 0px' })
+  const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
+  const tableInView = useInView(tableRef, { once: false, margin: '-5% 0px' })
 
   const last = ADVANTAGES.length - 1
 
@@ -77,7 +77,7 @@ export default function ComparisonSection() {
           className="h-luxia leading-[0.95] mb-5"
           style={{ fontSize: 'clamp(1.85rem, 4.4vw, 3.4rem)' }}
           initial={{ opacity: 0, y: 28 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           <span className="t-silver">EVERYTHING THEY DO.</span><br />
@@ -87,7 +87,7 @@ export default function ComparisonSection() {
           className="font-body leading-relaxed max-w-2xl mb-14"
           style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)', color: C.sub }}
           initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.18 }}
         >
           Conventional resistance tools were built before real-time data was possible.
@@ -99,7 +99,7 @@ export default function ComparisonSection() {
           ref={tableRef}
           className="grid grid-cols-[minmax(0,1.7fr)_1fr_1fr] items-stretch"
           initial={{ opacity: 0, y: 22 }}
-          animate={tableInView ? { opacity: 1, y: 0 } : {}}
+          animate={tableInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           {/* COLUMN 1 — advantage labels */}
@@ -132,7 +132,7 @@ export default function ComparisonSection() {
             <div className="relative flex flex-col h-full">
               {/* Header — logo */}
               <div className={`${HEAD} flex items-center justify-center px-3`}>
-                <Image src="/apexaustralialogo.png" alt="T-APEX" width={220} height={70} className="h-8 sm:h-9 w-auto object-contain" priority />
+                <Image src="/apexaustralialogo.png" alt="T-APEX" width={320} height={100} className="h-14 sm:h-16 w-auto object-contain" priority />
               </div>
               {/* Rows — white checks */}
               {ADVANTAGES.map((a, i) => (
@@ -190,7 +190,7 @@ export default function ComparisonSection() {
             boxShadow: '0 30px 60px -30px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04)',
           }}
           initial={{ opacity: 0, y: 14 }}
-          animate={tableInView ? { opacity: 1, y: 0 } : {}}
+          animate={tableInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
           {/* Blue top edge */}

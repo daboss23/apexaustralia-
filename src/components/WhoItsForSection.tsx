@@ -50,7 +50,7 @@ const SEGMENTS = [
 
 export default function WhoItsForSection() {
   const titleRef = useRef<HTMLDivElement>(null)
-  const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
 
   return (
     <section id="who" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -81,7 +81,7 @@ export default function WhoItsForSection() {
           className="h-luxia t-silver leading-[0.88] mb-6 max-w-4xl"
           style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           BUILT FOR PROGRAMS<br />
@@ -92,7 +92,7 @@ export default function WhoItsForSection() {
           className="text-apex-grey font-body max-w-2xl mb-16 leading-relaxed"
           style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}
           initial={{ opacity: 0, y: 18 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.65, delay: 0.15 }}
         >
           T-Apex is not a consumer product. It is professional-grade technology built for
@@ -112,7 +112,7 @@ export default function WhoItsForSection() {
           className="mt-16 p-8 border border-apex-line/50 bg-apex-panel/40"
           style={{ borderTop: '2px solid rgba(214,31,38,0.6)' }}
           initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.7 }}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
@@ -151,7 +151,7 @@ export default function WhoItsForSection() {
 
 function SegmentCard({ seg, index }: { seg: typeof SEGMENTS[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-5% 0px' })
+  const inView = useInView(ref, { once: false, margin: '-5% 0px' })
 
   return (
     <motion.div
@@ -159,7 +159,7 @@ function SegmentCard({ seg, index }: { seg: typeof SEGMENTS[0]; index: number })
       className="group relative bg-apex-panel border border-apex-line p-7 overflow-hidden hover:border-apex-red/30 transition-colors duration-300 cursor-default flex flex-col"
       style={{ borderRadius: 0 }}
       initial={{ opacity: 0, y: 24 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
       transition={{ duration: 0.6, delay: index * 0.07, ease: [0.16, 1, 0.3, 1] }}
     >
       {/* Left accent bar */}

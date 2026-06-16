@@ -23,7 +23,7 @@ function Callout({ c, inView }: { c: typeof CALLOUTS[0]; inView: boolean }) {
       className={`absolute hidden xl:flex items-center gap-3 z-30 w-[210px] ${isLeft ? 'right-full mr-4 flex-row' : 'left-full ml-4 flex-row-reverse'}`}
       style={{ top: c.top }}
       initial={{ opacity: 0, x: isLeft ? -20 : 20 }}
-      animate={inView ? { opacity: 1, x: 0 } : {}}
+      animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: isLeft ? -20 : 20 }}
       transition={{ duration: 0.7, delay: c.delay, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className={`flex flex-col ${isLeft ? 'items-end text-right' : 'items-start text-left'}`}>
@@ -42,9 +42,9 @@ function Callout({ c, inView }: { c: typeof CALLOUTS[0]; inView: boolean }) {
 
 export default function ProductShowcase() {
   const sectionRef = useRef<HTMLElement>(null)
-  const inView = useInView(sectionRef, { once: true, margin: '-15% 0px' })
+  const inView = useInView(sectionRef, { once: false, margin: '-15% 0px' })
   const titleRef = useRef<HTMLDivElement>(null)
-  const titleInView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const titleInView = useInView(titleRef, { once: false, margin: '-10% 0px' })
   const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export default function ProductShowcase() {
             className="h-luxia t-silver leading-[0.9] mx-auto max-w-4xl"
             style={{ fontSize: 'clamp(2rem, 5.5vw, 4.6rem)', letterSpacing: '0.04em' }}
             initial={{ opacity: 0, y: 30 }}
-            animate={titleInView ? { opacity: 1, y: 0 } : {}}
+            animate={titleInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
             ENGINEERED LIKE NOTHING ELSE{' '}
@@ -101,7 +101,7 @@ export default function ProductShowcase() {
             <motion.div
               className="relative w-full overflow-hidden border border-apex-line/50"
               initial={{ opacity: 0, scale: 0.97 }}
-              animate={inView ? { opacity: 1, scale: 1 } : {}}
+              animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.97 }}
               transition={{ duration: 1.1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             >
               <div
@@ -184,7 +184,7 @@ export default function ProductShowcase() {
           <motion.div
             className="xl:hidden grid grid-cols-1 sm:grid-cols-2 border border-apex-line/50 border-t-0 divide-y sm:divide-y-0 sm:divide-x divide-apex-line/40"
             initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
+            animate={inView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             {CAPABILITIES.map(({ tag, text }, i) => (
@@ -192,7 +192,7 @@ export default function ProductShowcase() {
                 key={tag}
                 className="px-5 py-6 flex flex-col gap-2"
                 initial={{ opacity: 0, y: 14 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
+                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
                 transition={{ duration: 0.5, delay: 0.65 + i * 0.09 }}
               >
                 <span className="text-[10px] font-mono tracking-[0.22em] text-apex-blue">{tag}</span>
@@ -206,7 +206,7 @@ export default function ProductShowcase() {
         <motion.div
           className="max-w-3xl mx-auto text-center mb-16 flex flex-col gap-5"
           initial={{ opacity: 0, y: 18 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
           transition={{ duration: 0.7, delay: 0.85 }}
         >
           <p className="text-apex-grey font-body leading-[1.8]" style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.1rem)' }}>
@@ -227,7 +227,7 @@ export default function ProductShowcase() {
           className="text-center font-display font-black text-apex-white leading-tight max-w-3xl mx-auto"
           style={{ fontSize: 'clamp(1.2rem, 2.4vw, 2rem)' }}
           initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
           transition={{ duration: 0.6, delay: 1 }}
         >
           T-Apex is built for coaches and facilities that want a better training tool,{' '}

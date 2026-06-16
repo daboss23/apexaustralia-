@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 
 // ─── Live chart data generator ────────────────────────────────────────────────
 
@@ -56,7 +57,7 @@ function CircularGauge({
             strokeLinecap="round"
             strokeDasharray={`${circ}`}
             initial={{ strokeDashoffset: circ }}
-            animate={shouldAnim ? { strokeDashoffset: circ - dash } : {}}
+            animate={shouldAnim ? { strokeDashoffset: circ - dash } : { strokeDashoffset: circ }}
             transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
             style={{ filter: `drop-shadow(0 0 4px ${color}80)` }}
           />
@@ -176,9 +177,9 @@ function LiveMetricCard({ metric, active }: { metric: typeof LIVE_METRICS[0]; ac
 
 export default function DashboardSection() {
   const sectionRef = useRef<HTMLElement>(null)
-  const inView = useInView(sectionRef, { once: true, margin: '-15% 0px' })
+  const inView = useInView(sectionRef, { once: false, margin: '-15% 0px' })
   const titleRef = useRef<HTMLDivElement>(null)
-  const titleInView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const titleInView = useInView(titleRef, { once: false, margin: '-10% 0px' })
 
   return (
     <section ref={sectionRef} id="dashboard" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -206,7 +207,7 @@ export default function DashboardSection() {
           className="h-luxia t-silver leading-[0.88] mb-4"
           style={{ fontSize: 'clamp(1.9rem, 4.4vw, 3.6rem)' }}
           initial={{ opacity: 0, y: 28 }}
-          animate={titleInView ? { opacity: 1, y: 0 } : {}}
+          animate={titleInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
           transition={{ duration: 0.7 }}
         >
           RACE-GRADE<br /><span className="t-blue">TELEMETRY</span>
@@ -216,7 +217,7 @@ export default function DashboardSection() {
           className="text-apex-grey font-body mb-12 max-w-xl leading-relaxed"
           style={{ fontSize: 'clamp(0.88rem, 1.2vw, 1rem)' }}
           initial={{ opacity: 0, y: 18 }}
-          animate={titleInView ? { opacity: 1, y: 0 } : {}}
+          animate={titleInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
           transition={{ duration: 0.6, delay: 0.15 }}
         >
           Real-time biomechanical data at 200Hz. Every force, every rep, every sprint — quantified and displayed with Formula 1 precision.
@@ -227,7 +228,7 @@ export default function DashboardSection() {
           className="bg-apex-panel border border-apex-line overflow-hidden"
           style={{ borderRadius: 0, borderTop: '2px solid #00AEEF' }}
           initial={{ opacity: 0, y: 32 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
           transition={{ duration: 0.8, delay: 0.1 }}
         >
           {/* Dashboard header bar */}
@@ -265,7 +266,7 @@ export default function DashboardSection() {
                   <motion.div
                     key={g.id}
                     initial={{ opacity: 0, scale: 0.8 }}
-                    animate={inView ? { opacity: 1, scale: 1 } : {}}
+                    animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
                     transition={{ duration: 0.6, delay: 0.2 + i * 0.1 }}
                   >
                     <CircularGauge {...g} animate={inView} />
@@ -317,6 +318,20 @@ export default function DashboardSection() {
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* Footer bar — brand mark */}
+          <div className="flex items-center justify-between px-6 py-3 border-t border-apex-line bg-apex-black/60">
+            <Image
+              src="/apexaustralialogo.png"
+              alt="T-APEX"
+              width={300}
+              height={94}
+              className="h-7 sm:h-8 w-auto object-contain opacity-90"
+            />
+            <span className="text-[9px] font-mono text-apex-grey-dim tracking-[0.22em] uppercase">
+              Adaptive Resistance Intelligence
+            </span>
           </div>
         </motion.div>
       </div>
