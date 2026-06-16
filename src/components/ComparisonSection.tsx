@@ -11,8 +11,8 @@ const ADVANTAGES: { label: string; others: boolean }[] = [
   { label: 'Portable, gym-floor ready', others: true },
   { label: 'Supports speed & strength work', others: true },
   { label: 'Adapts load in real time, mid-rep', others: false },
-  { label: '200Hz force & velocity telemetry', others: false },
-  { label: 'Load verified to the Newton', others: false },
+  { label: 'Up to 1000Hz force & velocity telemetry', others: false },
+  { label: '150 levels of precision resistance', others: false },
   { label: 'Live, in-session feedback', others: false },
   { label: 'Objective, data-driven programming', others: false },
   { label: 'One system across every code', others: false },
@@ -85,7 +85,7 @@ export default function ComparisonSection() {
         </motion.h2>
         <motion.p
           className="font-body leading-relaxed max-w-2xl mb-14"
-          style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)', color: C.sub }}
+          style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)', color: C.text }}
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.18 }}
@@ -132,7 +132,7 @@ export default function ComparisonSection() {
             <div className="relative flex flex-col h-full">
               {/* Header — logo */}
               <div className={`${HEAD} flex items-center justify-center px-3`}>
-                <Image src="/apexaustralialogo.png" alt="T-APEX" width={320} height={100} className="h-14 sm:h-16 w-auto object-contain" priority />
+                <Image src="/apexaustralialogo.png" alt="T-APEX" width={300} height={96} className="h-12 sm:h-16 w-auto object-contain" priority />
               </div>
               {/* Rows — white checks */}
               {ADVANTAGES.map((a, i) => (

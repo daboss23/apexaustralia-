@@ -2,16 +2,12 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import Image from 'next/image'
 
 /* ────────────────────────────────────────────────────────────────────────────
-   CHECKOUT / ORDER SECTION  — inline, ecom-style product + buy experience.
+   ORDER / CHECKOUT SECTION — inline, ecom-style product + buy experience.
    Two variants (Core T-APEX / Core + Overspeed) toggle the gallery, copy,
-   pricing, "in the box" list and CTA in place.
-
-   NOTE ON IMAGES: only a handful of real product photos ship in /public today.
-   Drop dedicated photography into /public and update the `gallery` arrays below
-   (one entry per slide). Slides accept { type: 'image' } or { type: 'video' }.
+   pricing, "in the box" list and CTA in place. Mirrors the data + imagery used
+   in WhatsIncludedSection so the two stay congruent.
    ──────────────────────────────────────────────────────────────────────────── */
 
 type Slide =
@@ -27,9 +23,11 @@ type Variant = {
   tagline: string
   priceLabel: string
   price: number
+  priceClass: 't-silver' | 't-gold'
   blurb: string
   highlights: { title: string; desc: string }[]
   inBox: string[]
+  modes: string
   gallery: Slide[]
 }
 
@@ -41,19 +39,21 @@ const VARIANTS: Record<VariantId, Variant> = {
     tagline: 'Portable Adaptive Resistance Intelligence',
     priceLabel: 'From',
     price: 9450,
+    priceClass: 't-silver',
     blurb:
       'The complete intelligent resistance training system — a portable motorised device paired with a preloaded tablet that measures speed, force and control on every single rep.',
     highlights: [
       { title: 'Portable motorised resistance', desc: 'Carry it onto any track, court or field — no fixed install.' },
       { title: 'Tablet preloaded & ready', desc: 'Android tablet with T-APEX software. Power on and coach.' },
-      { title: 'Real-time performance feedback', desc: 'Speed, force and control captured live, rep by rep.' },
+      { title: 'Resisted, CoD, isotonic & overload', desc: 'Every core training mode included out of the box.' },
     ],
-    inBox: ['T-APEX Unit', 'Tablet + T-APEX Software', 'Type-C Cable', 'Waist Belt', 'Adaptor for T-APEX', 'User Manual'],
+    inBox: ['T-APEX Unit', 'Waist Belt', 'Tablet', 'Adaptor for T-APEX', 'Type-C Cable', 'User Manual'],
+    modes: 'Resisted · Change-of-direction · Isotonic · Overload',
     gallery: [
-      { type: 'image', src: '/apex single 1.png', alt: 'T-APEX unit — portable motorised resistance device' },
-      { type: 'image', src: '/Apex New Hero.png', alt: 'T-APEX system in training' },
+      { type: 'image', src: '/accessories/tapex-unit.png', alt: 'T-APEX unit — portable motorised resistance device' },
+      { type: 'image', src: '/accessories/tablet-software.png', alt: 'Tablet preloaded with T-APEX software' },
+      { type: 'image', src: '/accessories/tapex-elements.png', alt: 'T-APEX core elements' },
       { type: 'video', src: '/product-video.mp4', alt: 'T-APEX in motion' },
-      { type: 'image', src: '/hero.png', alt: 'T-APEX with athlete' },
     ],
   },
   overspeed: {
@@ -63,12 +63,13 @@ const VARIANTS: Record<VariantId, Variant> = {
     tagline: 'Everything in Core — plus the complete Overspeed Module',
     priceLabel: 'Full system',
     price: 9990,
+    priceClass: 't-gold',
     blurb:
-      'The complete T-APEX system with the full five-piece Overspeed Module added — so you can train controlled supramaximal velocity, safely and measurably, alongside resisted work.',
+      'The complete T-APEX system with the full five-piece Overspeed Module added — unlocking the assisted overspeed training mode and its dedicated accessories, alongside every resisted mode.',
     highlights: [
-      { title: 'Train controlled overspeed', desc: 'Safely overload top-end velocity with measurable assistance.' },
+      { title: 'Unlocks assisted overspeed mode', desc: 'The training mode and software features Core alone cannot access.' },
       { title: 'Five-piece Overspeed Module', desc: 'Tether reel, pulley, weight anchor, fast-release strap & harness.' },
-      { title: 'Just A$540 more', desc: 'The entire system for a fraction of buying the module later.' },
+      { title: 'Just A$540 more', desc: 'The entire system for a fraction of adding the module later.' },
     ],
     inBox: [
       'Everything in Core T-APEX',
@@ -78,14 +79,20 @@ const VARIANTS: Record<VariantId, Variant> = {
       'Fast-Release Strap',
       'Shoulder Harness',
     ],
+    modes: 'Resisted · CoD · Isotonic · Overload · Assisted Overspeed',
     gallery: [
-      { type: 'image', src: '/Apex New Hero.png', alt: 'Core T-APEX + Overspeed system' },
-      { type: 'image', src: '/apex single 1.png', alt: 'T-APEX unit with Overspeed Module' },
+      { type: 'image', src: '/accessories/os-tether-reel.png', alt: 'OS Tether Reel' },
+      { type: 'image', src: '/accessories/os-pulley.png', alt: 'OS Pulley' },
+      { type: 'image', src: '/accessories/os-weight-anchor.png', alt: 'OS Weight Anchor' },
+      { type: 'image', src: '/accessories/shoulder-harness.png', alt: 'Shoulder Harness' },
+      { type: 'image', src: '/accessories/fast-release-strap.png', alt: 'Fast-Release Strap' },
+      { type: 'image', src: '/accessories/tapex-unit.png', alt: 'T-APEX unit' },
       { type: 'video', src: '/product-video.mp4', alt: 'T-APEX Overspeed in motion' },
-      { type: 'image', src: '/hero.png', alt: 'Overspeed training with T-APEX' },
     ],
   },
 }
+
+const GOLD = 'rgba(180,140,60,1)'
 
 const TRUST_BADGES = [
   {
@@ -157,12 +164,11 @@ const fmt = (n: number) => `A$${n.toLocaleString('en-AU')}`
 
 /* ── Gallery ──────────────────────────────────────────────────────────────── */
 
-function Gallery({ variant, inView }: { variant: Variant; inView: boolean }) {
+function Gallery({ variant }: { variant: Variant }) {
   const [slide, setSlide] = useState(0)
   const slides = variant.gallery
   const count = slides.length
 
-  // Reset to first slide whenever the variant changes
   useEffect(() => {
     setSlide(0)
   }, [variant.id])
@@ -177,26 +183,20 @@ function Gallery({ variant, inView }: { variant: Variant; inView: boolean }) {
         className="relative w-full overflow-hidden border border-apex-line/60 bg-apex-black-2 group"
         style={{ aspectRatio: '4 / 3' }}
       >
-        {/* Carbon backdrop */}
         <div className="carbon-weave absolute inset-0 opacity-40" aria-hidden="true" />
 
         <AnimatePresence mode="wait">
           <motion.div
             key={`${variant.id}-${slide}`}
-            className="absolute inset-0"
+            className="absolute inset-0 flex items-center justify-center p-6"
             initial={{ opacity: 0, scale: 1.02 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.99 }}
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
           >
             {active.type === 'image' ? (
-              <Image
-                src={active.src}
-                alt={active.alt}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-contain"
-              />
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={active.src} alt={active.alt} className="max-w-[88%] max-h-[88%] object-contain" />
             ) : (
               <video
                 src={active.src}
@@ -204,19 +204,14 @@ function Gallery({ variant, inView }: { variant: Variant; inView: boolean }) {
                 loop
                 muted
                 playsInline
-                className="absolute inset-0 w-full h-full object-contain"
+                className="w-full h-full object-contain"
               />
             )}
           </motion.div>
         </AnimatePresence>
 
         {/* HUD corner brackets */}
-        {[
-          'top-4 left-4',
-          'top-4 right-4 rotate-90',
-          'bottom-4 right-4 rotate-180',
-          'bottom-4 left-4 -rotate-90',
-        ].map((pos) => (
+        {['top-4 left-4', 'top-4 right-4 rotate-90', 'bottom-4 right-4 rotate-180', 'bottom-4 left-4 -rotate-90'].map((pos) => (
           <div key={pos} className={`absolute ${pos} pointer-events-none opacity-40`} aria-hidden="true">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
               <path d="M0 22V0h22" stroke="#00AEEF" strokeWidth="1.2" />
@@ -262,7 +257,7 @@ function Gallery({ variant, inView }: { variant: Variant; inView: boolean }) {
       </div>
 
       {/* Thumbnails */}
-      <div className="mt-3 grid grid-cols-4 gap-3">
+      <div className="mt-3 grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-5 gap-2.5">
         {slides.map((s, i) => (
           <button
             key={`${variant.id}-thumb-${i}`}
@@ -275,7 +270,8 @@ function Gallery({ variant, inView }: { variant: Variant; inView: boolean }) {
           >
             <div className="carbon-weave absolute inset-0 opacity-30" aria-hidden="true" />
             {s.type === 'image' ? (
-              <Image src={s.src} alt="" fill sizes="120px" className="object-contain p-1.5" />
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={s.src} alt="" className="absolute inset-0 w-full h-full object-contain p-1.5" />
             ) : (
               <>
                 <video src={s.src} muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-80" />
@@ -306,6 +302,7 @@ export default function CheckoutSection() {
 
   const [variantId, setVariantId] = useState<VariantId>('core')
   const variant = VARIANTS[variantId]
+  const isOver = variantId === 'overspeed'
 
   return (
     <section ref={sectionRef} id="order" className="relative bg-apex-black overflow-hidden py-24 md:py-36">
@@ -319,8 +316,12 @@ export default function CheckoutSection() {
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="carbon-weave absolute inset-0 opacity-[0.45]" />
         <div
-          className="absolute left-1/2 top-0 -translate-x-1/2 w-[100vw] h-[60vh]"
-          style={{ background: 'radial-gradient(ellipse 45% 60% at 50% 0%, rgba(214,31,38,0.09) 0%, transparent 70%)' }}
+          className="absolute left-1/2 top-0 -translate-x-1/2 w-[100vw] h-[60vh] transition-opacity duration-700"
+          style={{
+            background: isOver
+              ? 'radial-gradient(ellipse 45% 60% at 50% 0%, rgba(180,140,60,0.10) 0%, transparent 70%)'
+              : 'radial-gradient(ellipse 45% 60% at 50% 0%, rgba(214,31,38,0.09) 0%, transparent 70%)',
+          }}
         />
       </div>
 
@@ -359,7 +360,7 @@ export default function CheckoutSection() {
         {/* Variant toggle */}
         <div className="flex justify-center mb-12">
           <div className="inline-flex p-1 border border-apex-line/70 bg-apex-black-2/80 backdrop-blur-sm">
-            {(Object.values(VARIANTS)).map((v) => {
+            {Object.values(VARIANTS).map((v) => {
               const isActive = v.id === variantId
               return (
                 <button
@@ -387,7 +388,7 @@ export default function CheckoutSection() {
         {/* Product grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
           {/* LEFT — gallery */}
-          <Gallery variant={variant} inView={inView} />
+          <Gallery variant={variant} />
 
           {/* RIGHT — buy box */}
           <AnimatePresence mode="wait">
@@ -400,8 +401,15 @@ export default function CheckoutSection() {
               className="flex flex-col"
             >
               {/* Chip */}
-              <div className="flex items-center gap-3 mb-3">
-                <span className="font-mono text-[9px] tracking-[0.26em] uppercase text-apex-red border border-apex-red/40 bg-apex-red/10 px-2.5 py-1">
+              <div className="flex items-center gap-3 mb-3 flex-wrap">
+                <span
+                  className="font-mono text-[9px] tracking-[0.26em] uppercase px-2.5 py-1 border"
+                  style={
+                    isOver
+                      ? { color: GOLD, borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.1)' }
+                      : { color: '#D61F26', borderColor: 'rgba(214,31,38,0.4)', background: 'rgba(214,31,38,0.1)' }
+                  }
+                >
                   {variant.chip}
                 </span>
                 <div className="flex items-center gap-2">
@@ -423,7 +431,7 @@ export default function CheckoutSection() {
                 <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-apex-grey-dim pb-2">
                   {variant.priceLabel}
                 </span>
-                <span className="font-luxia t-silver leading-none" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)' }}>
+                <span className={`font-luxia ${variant.priceClass} leading-none`} style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)' }}>
                   {fmt(variant.price)}
                 </span>
               </div>
@@ -464,16 +472,17 @@ export default function CheckoutSection() {
               </div>
 
               {/* Upsell / value nudge */}
-              {variantId === 'core' ? (
+              {!isOver ? (
                 <button
                   onClick={() => setVariantId('overspeed')}
-                  className="group flex items-center justify-between gap-3 w-full text-left border border-dashed border-apex-blue/40 hover:border-apex-blue/70 bg-apex-blue/[0.04] hover:bg-apex-blue/[0.08] px-4 py-3 mb-6 transition-all duration-300 cursor-pointer"
+                  className="group flex items-center justify-between gap-3 w-full text-left border border-dashed px-4 py-3 mb-6 transition-all duration-300 cursor-pointer"
+                  style={{ borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.05)' }}
                 >
                   <span className="text-[13px] leading-snug">
                     <span className="text-apex-white font-semibold">Add the full Overspeed Module</span>
                     <span className="text-apex-grey"> for just A$540 more</span>
                   </span>
-                  <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.16em] uppercase text-apex-blue flex-shrink-0">
+                  <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.16em] uppercase flex-shrink-0" style={{ color: GOLD }}>
                     Upgrade
                     <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
@@ -481,13 +490,13 @@ export default function CheckoutSection() {
                   </span>
                 </button>
               ) : (
-                <div className="flex items-center gap-3 border border-apex-blue/30 bg-apex-blue/[0.05] px-4 py-3 mb-6">
-                  <svg className="w-5 h-5 text-apex-blue flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <div className="flex items-center gap-3 px-4 py-3 mb-6 border" style={{ borderColor: 'rgba(180,140,60,0.3)', background: 'rgba(180,140,60,0.05)' }}>
+                  <svg className="w-5 h-5 flex-shrink-0" style={{ color: GOLD }} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                   </svg>
                   <span className="text-[13px] leading-snug text-apex-grey">
-                    <span className="text-apex-white font-semibold">Best value</span> — the complete five-piece module
-                    for only <span className="text-apex-blue font-semibold">A$540</span> over the Core system.
+                    <span className="text-apex-white font-semibold">Best value</span> — the complete five-piece module and
+                    assisted overspeed mode for only <span className="font-semibold" style={{ color: GOLD }}>A$540</span> over Core.
                   </span>
                 </div>
               )}
@@ -598,7 +607,7 @@ export default function CheckoutSection() {
                 ['Form factor', 'Portable motorised unit'],
                 ['Feedback', 'Real-time speed · force · control'],
                 ['Software', 'Preloaded Android tablet'],
-                ['Modes', variantId === 'overspeed' ? 'Resisted · Assisted · Overspeed' : 'Resisted · Assisted'],
+                ['Modes', variant.modes],
                 ['Best for', 'Elite & high-performance programs'],
               ].map(([k, v]) => (
                 <div key={k} className="flex items-start justify-between gap-4 py-3">

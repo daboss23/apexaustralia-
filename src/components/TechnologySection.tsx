@@ -57,16 +57,6 @@ export default function HowItWorksSection() {
             SIMPLE TO APPLY.<br />
             <span className="t-blue">POWERFUL IN EFFECT.</span>
           </motion.h2>
-
-          <motion.p
-            className="text-apex-grey font-body leading-relaxed"
-            style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}
-            initial={{ opacity: 0, y: 18 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
-            transition={{ duration: 0.65, delay: 0.2 }}
-          >
-            T-Apex slots into demanding programs without adding unnecessary complexity.
-          </motion.p>
         </div>
 
         {/* Three steps — connected horizontal track on desktop */}

@@ -5,77 +5,119 @@ import { motion, useInView } from 'framer-motion'
 
 const RESULTS = [
   {
+    stat: 40,
+    unit: '%',
+    prefix: '',
+    label: 'Injury Risk Reduction',
+    description: 'Controlled load progression and objective return-to-sport metrics',
+    color: '#D61F26',
+  },
+  {
     stat: 12,
-    unit: '%',
-    prefix: '+',
-    label: 'Faster Acceleration',
-    description: 'Out of the blocks and through transition zones',
+    unit: '+',
+    prefix: '',
+    label: 'Athletes Per Session',
+    description: 'Full-squad throughput with multi-device deployment',
     color: '#D61F26',
   },
   {
-    stat: 18,
+    stat: 95,
     unit: '%',
-    prefix: '+',
-    label: 'Greater Power Output',
-    description: 'At peak training and competition intensities',
+    prefix: '',
+    label: 'Of Elite Performance',
+    description: 'Comparable resisted & assisted capability at roughly one-third of the cost',
     color: '#D61F26',
   },
   {
-    stat: 15,
-    unit: '%',
-    prefix: '+',
-    label: 'Improved Force Production',
-    description: 'In measured resistance and ground reaction force',
-    color: '#D61F26',
-  },
-  {
-    stat: 21,
-    unit: '%',
-    prefix: '+',
-    label: 'Enhanced Athletic Performance',
-    description: 'Across composite sport-specific testing protocols',
+    stat: 3,
+    unit: '×',
+    prefix: '',
+    label: 'Devices Per Budget',
+    description: 'Two to three T-APEX units for the price of one premium system',
     color: '#D61F26',
   },
 ]
 
 const PROOF_POINTS = [
-  'Validated across 6 professional sports codes',
-  'Tested by Olympic-level athletes',
-  'Peer-reviewed biomechanical methodology',
-  'Deployed in AFL, NRL, Rugby Union programs',
+  'Measurable acceleration gains in 6–8 weeks',
+  'No mandatory annual software subscription',
+  'Athlete data stored on your team tablet — full control, no cloud risk',
+  'One device fleet supports multiple teams and squads',
 ]
 
+// Photo-finish counter: digits blur-spin like a finish-line camera, then
+// snap-freeze on the real number with a one-frame strobe flash. Re-arms when
+// the stats grid leaves view so it replays on every scroll-in.
 function CounterStat({
-  stat, unit, prefix, inView,
+  stat, unit, prefix, active, delay,
 }: {
-  stat: number; unit: string; prefix: string; inView: boolean
+  stat: number; unit: string; prefix: string; active: boolean; delay: number
 }) {
-  const [current, setCurrent] = useState(0)
+  const [display, setDisplay] = useState(0)
+  const [phase, setPhase] = useState<'idle' | 'spin' | 'locked'>('idle')
 
   useEffect(() => {
-    if (!inView) return
-    const duration = 1600
-    const steps = 60
-    const increment = stat / steps
-    let step = 0
-
-    const iv = setInterval(() => {
-      step++
-      setCurrent(Math.min(Math.round(increment * step), stat))
-      if (step >= steps) clearInterval(iv)
-    }, duration / steps)
-
-    return () => clearInterval(iv)
-  }, [inView, stat])
+    if (!active) {
+      setPhase('idle')
+      setDisplay(0)
+      return
+    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setDisplay(stat)
+      setPhase('locked')
+      return
+    }
+    let spinIv: ReturnType<typeof setInterval> | undefined
+    const start = setTimeout(() => {
+      setPhase('spin')
+      spinIv = setInterval(() => {
+        setDisplay(Math.floor(Math.random() * 90) + 10)
+      }, 45)
+    }, delay * 1000)
+    const stop = setTimeout(() => {
+      if (spinIv) clearInterval(spinIv)
+      setDisplay(stat)
+      setPhase('locked')
+    }, delay * 1000 + 900)
+    return () => {
+      clearTimeout(start)
+      clearTimeout(stop)
+      if (spinIv) clearInterval(spinIv)
+    }
+  }, [active, stat, delay])
 
   return (
-    <div className="flex items-start gap-0.5 leading-none">
+    <div className="relative flex items-start gap-0.5 leading-none">
+      {/* Camera strobe — fires the moment the number freezes */}
+      {phase === 'locked' && (
+        <motion.div
+          className="absolute -inset-3 pointer-events-none z-10"
+          style={{
+            background:
+              'radial-gradient(ellipse 60% 80% at 35% 50%, rgba(255,255,255,0.9), rgba(255,255,255,0.35) 55%, transparent 75%)',
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.9, 0] }}
+          transition={{ duration: 0.45, times: [0, 0.12, 1], ease: 'easeOut' }}
+          aria-hidden="true"
+        />
+      )}
+
       <span className="font-luxia font-black t-red" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', marginTop: '0.15em' }}>
         {prefix}
       </span>
-      <span className="font-luxia font-black t-silver metric-value" style={{ fontSize: 'clamp(4rem, 8vw, 7.5rem)' }}>
-        {current}
-      </span>
+      <motion.span
+        className="font-luxia font-black t-silver metric-value"
+        style={{
+          fontSize: 'clamp(4rem, 8vw, 7.5rem)',
+          filter: phase === 'spin' ? 'blur(2.5px)' : 'none',
+          opacity: phase === 'spin' ? 0.8 : 1,
+        }}
+        animate={phase === 'locked' ? { scale: [1.1, 1] } : { scale: 1 }}
+        transition={{ duration: 0.28, ease: 'easeOut' }}
+      >
+        {display}
+      </motion.span>
       <span className="font-luxia font-black t-red" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', marginTop: '0.3em' }}>
         {unit}
       </span>
@@ -88,6 +130,8 @@ export default function ResultsSection() {
   const statsRef = useRef<HTMLDivElement>(null)
   const titleInView = useInView(titleRef, { once: false, margin: '-10% 0px' })
   const statsInView = useInView(statsRef, { once: false, margin: '-5% 0px' })
+  // Non-once trigger for the photo-finish counters so they re-run each pass
+  const statsLive = useInView(statsRef, { amount: 0.35 })
 
   return (
     <section id="results" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -152,7 +196,7 @@ export default function ResultsSection() {
                 transition={{ duration: 1, delay: 0.3 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
               />
 
-              <CounterStat stat={stat} unit={unit} prefix={prefix} inView={statsInView} />
+              <CounterStat stat={stat} unit={unit} prefix={prefix} active={statsLive} delay={0.35 + i * 0.18} />
 
               <div className="mt-4 flex flex-col gap-1">
                 <h3 className="font-display font-black t-feature tracking-wide leading-tight"
@@ -175,7 +219,7 @@ export default function ResultsSection() {
           <div>
             <h3 className="font-display font-black t-feature mb-6 leading-tight"
               style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)' }}>
-              Validated Across<br />Elite Programs.
+              Why Programs<br />Choose T-APEX.
             </h3>
             <div className="flex flex-col gap-3">
               {PROOF_POINTS.map((point) => (
@@ -195,10 +239,10 @@ export default function ResultsSection() {
             <blockquote className="border-l-4 border-apex-red pl-6">
               <p className="text-apex-white font-body leading-relaxed mb-4 italic"
                 style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}>
-                &ldquo;The data doesn&apos;t lie. T-APEX has changed how we approach performance training at the elite level.&rdquo;
+                &ldquo;Elite-level resisted and assisted sprint capability, objective data, and squad scalability — at a fraction of traditional system costs.&rdquo;
               </p>
               <footer className="text-apex-grey-dim font-mono text-[11px] tracking-wide">
-                — Head of Athletic Performance, AFL Club
+                — T-APEX Resisted &amp; Assisted Speed Training System
               </footer>
             </blockquote>
           </div>

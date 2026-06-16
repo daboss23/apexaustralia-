@@ -1,62 +1,129 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 
+// Photo-finish counter — spins through random values, then locks onto the real
+// figure with a camera-strobe flash + scale pop (matches the Results counters).
+function FlashStat({
+  value, active, delay, className, style,
+}: {
+  value: string; active: boolean; delay: number; className?: string; style?: React.CSSProperties
+}) {
+  const digits = value.replace(/\D/g, '').length || 1
+  const [display, setDisplay] = useState(value)
+  const [phase, setPhase] = useState<'idle' | 'spin' | 'locked'>('idle')
+
+  useEffect(() => {
+    if (!active) {
+      setPhase('idle')
+      setDisplay(value)
+      return
+    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setDisplay(value)
+      setPhase('locked')
+      return
+    }
+    let spinIv: ReturnType<typeof setInterval> | undefined
+    const lo = Math.pow(10, digits - 1)
+    const hi = Math.pow(10, digits)
+    const start = setTimeout(() => {
+      setPhase('spin')
+      spinIv = setInterval(() => {
+        setDisplay(String(Math.floor(Math.random() * (hi - lo)) + lo))
+      }, 45)
+    }, delay * 1000)
+    const stop = setTimeout(() => {
+      if (spinIv) clearInterval(spinIv)
+      setDisplay(value)
+      setPhase('locked')
+    }, delay * 1000 + 900)
+    return () => {
+      clearTimeout(start)
+      clearTimeout(stop)
+      if (spinIv) clearInterval(spinIv)
+    }
+  }, [active, value, delay, digits])
+
+  return (
+    <span className="relative inline-flex">
+      {phase === 'locked' && (
+        <motion.span
+          className="absolute -inset-2 pointer-events-none z-10"
+          style={{ background: 'radial-gradient(ellipse 65% 80% at 40% 50%, rgba(255,255,255,0.85), rgba(255,255,255,0.3) 55%, transparent 75%)' }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.85, 0] }}
+          transition={{ duration: 0.45, times: [0, 0.12, 1], ease: 'easeOut' }}
+          aria-hidden="true"
+        />
+      )}
+      <motion.span
+        className={className}
+        style={{ ...style, display: 'inline-block', filter: phase === 'spin' ? 'blur(2.5px)' : 'none', opacity: phase === 'spin' ? 0.8 : 1 }}
+        animate={phase === 'locked' ? { scale: [1.1, 1] } : { scale: 1 }}
+        transition={{ duration: 0.28, ease: 'easeOut' }}
+      >
+        {display}
+      </motion.span>
+    </span>
+  )
+}
+
 const HEADLINE_METRICS = [
-  { value: '23', unit: '%', label: 'Speed Increase', sub: 'Top-end velocity gains' },
-  { value: '31', unit: '%', label: 'Force Output', sub: 'Peak force production' },
-  { value: '28', unit: '%', label: 'Power Gains', sub: 'Explosive power output' },
-  { value: '4×', unit: '', label: 'Training Efficiency', sub: 'vs conventional methods' },
+  { value: '14', unit: 'm/s', label: 'Assisted Top Speed', sub: 'With the overspeed module' },
+  { value: '1000', unit: 'Hz', label: 'Data Capture', sub: 'Force & velocity, user-selectable' },
+  { value: '120', unit: 'm', label: 'Cable Range', sub: 'Full-field training reach' },
+  { value: '100', unit: 'm', label: 'Tablet Range', sub: 'Coach from anywhere on the field' },
 ]
 
 const SPORT_CARDS = [
   {
-    sport: 'SPRINTING',
-    stat: '+23%',
-    metric: 'Acceleration',
-    detail: 'Out of blocks to top speed',
-    bar: 82,
+    sport: 'RESISTANCE',
+    stat: '0–40kg',
+    metric: 'Adaptive Load',
+    detail: 'Continuous resistance, to 90 kgf with accessories',
+    bar: 75,
     color: '#00AEEF',
   },
   {
-    sport: 'RUGBY',
-    stat: '+19%',
-    metric: 'Force Output',
-    detail: 'Tackle & contact strength',
+    sport: 'OVERSPEED',
+    stat: '14m/s',
+    metric: 'Assisted Speed',
+    detail: 'Towed overspeed sprinting',
+    bar: 90,
+    color: '#00AEEF',
+  },
+  {
+    sport: 'TELEMETRY',
+    stat: '1000Hz',
+    metric: 'Data Capture',
+    detail: 'Force & velocity, user-selectable',
+    bar: 85,
+    color: '#00AEEF',
+  },
+  {
+    sport: 'REACH',
+    stat: '120m',
+    metric: 'Cable Range',
+    detail: 'Full-field training distance',
+    bar: 80,
+    color: '#00AEEF',
+  },
+  {
+    sport: 'SETUP',
+    stat: '~5min',
+    metric: 'Squad-Ready',
+    detail: 'From case to first sprint',
     bar: 70,
     color: '#00AEEF',
   },
   {
-    sport: 'AFL',
-    stat: '+21%',
-    metric: 'Sprint Speed',
-    detail: 'Repeat sprint ability',
-    bar: 76,
-    color: '#00AEEF',
-  },
-  {
-    sport: 'FOOTBALL',
-    stat: '+18%',
-    metric: 'Explosiveness',
-    detail: 'First step quickness',
-    bar: 68,
-    color: '#00AEEF',
-  },
-  {
-    sport: 'BASKETBALL',
-    stat: '+25%',
-    metric: 'Vertical Power',
-    detail: 'Jump height & force',
-    bar: 88,
-    color: '#00AEEF',
-  },
-  {
-    sport: 'OLYMPIC',
-    stat: '+17%',
-    metric: 'Peak Output',
-    detail: 'Podium-level performance',
-    bar: 64,
+    sport: 'PORTABLE',
+    stat: '~20kg',
+    metric: 'Airline-Approved',
+    detail: 'Move it between sites with ease',
+    bar: 60,
     color: '#00AEEF',
   },
 ]
@@ -65,6 +132,10 @@ const SPORT_CARDS = [
 function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: false, margin: '-5% 0px' })
+  // Non-once trigger so the photo-finish counter re-runs on each scroll-in,
+  // exactly like the headline metrics above.
+  const liveRef = useRef<HTMLDivElement>(null)
+  const live = useInView(liveRef, { amount: 0.6 })
 
   return (
     <motion.div
@@ -89,9 +160,14 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
         <span className="text-[10px] font-mono text-apex-grey-dim">#0{index + 1}</span>
       </div>
 
-      {/* Stat */}
-      <div className="flex items-baseline gap-1.5 mb-1">
-        <span className="font-luxia font-black text-4xl t-blue leading-none">{card.stat}</span>
+      {/* Stat — same photo-finish move + flash as the headline metrics above */}
+      <div ref={liveRef} className="flex items-baseline gap-1.5 mb-1">
+        <FlashStat
+          value={card.stat}
+          active={live}
+          delay={(index % 3) * 0.08 + 0.2}
+          className="font-luxia font-black text-4xl t-blue leading-none"
+        />
       </div>
       <div className="text-sm font-display font-bold text-apex-white tracking-wide mb-0.5">{card.metric}</div>
       <div className="text-[11px] font-body text-apex-grey mb-4">{card.detail}</div>
@@ -102,7 +178,7 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
           className="absolute left-0 top-0 h-full rounded-full"
           style={{ background: card.color }}
           initial={{ width: 0 }}
-          animate={inView ? { width: `${card.bar}%` } : { width: 0 }}
+          animate={inView ? { width: `${card.bar}%` } : { opacity: 0 }}
           transition={{ duration: 1.2, delay: 0.3 + index * 0.07, ease: [0.16, 1, 0.3, 1] }}
         />
       </div>
@@ -113,6 +189,9 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
 export default function PerformanceSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
+  const metricsRef = useRef<HTMLDivElement>(null)
+  // Non-once so the photo-finish counters re-run on each scroll-in pass.
+  const metricsLive = useInView(metricsRef, { amount: 0.4 })
 
   return (
     <section id="performance" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -162,7 +241,7 @@ export default function PerformanceSection() {
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          From Olympic sprinters to professional rugby players — T-APEX adapts to every sport, every movement, every athlete.
+          From Olympic sprinters to professional rugby squads — T-APEX delivers adaptive resistance, assisted overspeed, and real-time data across every movement, every athlete.
         </motion.p>
 
         {/* Cinematic product film */}
@@ -198,7 +277,7 @@ export default function PerformanceSection() {
         </motion.div>
 
         {/* Headline metrics — editorial asymmetric layout */}
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 mb-20 pb-20 border-b border-apex-line/40 items-start lg:items-center">
+        <div ref={metricsRef} className="flex flex-col lg:flex-row gap-8 lg:gap-14 mb-20 pb-20 border-b border-apex-line/40 items-start lg:items-center">
           {/* Primary stat: oversized editorial anchor */}
           <motion.div
             className="flex-shrink-0"
@@ -207,12 +286,13 @@ export default function PerformanceSection() {
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="flex items-baseline leading-none">
-              <span
+              <FlashStat
+                value={HEADLINE_METRICS[0].value}
+                active={metricsLive}
+                delay={0.15}
                 className="font-luxia font-bold t-silver metric-value"
                 style={{ fontSize: 'clamp(5.5rem, 13vw, 10.5rem)', letterSpacing: '-0.01em' }}
-              >
-                {HEADLINE_METRICS[0].value}
-              </span>
+              />
               <span
                 className="t-blue font-luxia font-bold ml-1"
                 style={{ fontSize: 'clamp(2rem, 4.5vw, 4rem)' }}
@@ -243,12 +323,13 @@ export default function PerformanceSection() {
                 transition={{ duration: 0.6, delay: 0.25 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               >
                 <div className="flex items-baseline gap-0.5 min-w-[80px]">
-                  <span
+                  <FlashStat
+                    value={value}
+                    active={metricsLive}
+                    delay={0.3 + i * 0.12}
                     className="font-luxia font-bold t-silver leading-none metric-value"
                     style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
-                  >
-                    {value}
-                  </span>
+                  />
                   {unit && (
                     <span className="t-blue font-luxia font-bold" style={{ fontSize: 'clamp(0.9rem, 1.4vw, 1.3rem)' }}>
                       {unit}

@@ -2,45 +2,125 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import Image from 'next/image'
 
-// ─── Live chart data generator ────────────────────────────────────────────────
+// ─── Shared rep cycle ─────────────────────────────────────────────────────────
+// Every instrument on the dashboard samples the SAME 8-second rep clock —
+// SET → DRIVE → PEAK → DECEL → RECOVERY — so gauges, charts, distance and
+// the rep counter all move in concert like a real session, not random noise.
 
-function genData(base: number, spread: number, points: number): number[] {
-  const data: number[] = []
-  let v = base
-  for (let i = 0; i < points; i++) {
-    v = base + (Math.sin(i * 0.4) * spread * 0.6) + ((Math.random() - 0.5) * spread * 0.5)
-    data.push(Math.max(0, v))
-  }
-  return data
+const CYCLE_MS = 8000
+const TICK_MS = 250
+const CHART_POINTS = 32 // 32 × 250ms = one full rep visible per chart window
+
+const smooth = (t: number) => t * t * (3 - 2 * t)
+const clampPct = (v: number) => Math.max(2, Math.min(98, v))
+const noise = (n: number) => (Math.random() - 0.5) * n
+
+/** Smooth one-rep pulse: floor → peak (at peakAt) → floor, zero outside. */
+function pulse(phase: number, start: number, peakAt: number, end: number, floor: number, peak: number) {
+  if (phase < start || phase > end) return floor
+  if (phase < peakAt) return floor + (peak - floor) * smooth((phase - start) / (peakAt - start))
+  return floor + (peak - floor) * smooth(1 - (phase - peakAt) / (end - peakAt))
 }
 
-const CHART_POINTS = 32
+// Each metric peaks at a different point in the rep, like real sprint biomechanics:
+// force first (ground contact), then power, then velocity carries longest.
+const velocityAt = (p: number) => pulse(p, 0.08, 0.5, 0.82, 12, 88)
+const forceAt = (p: number) => pulse(p, 0.06, 0.22, 0.7, 15, 92)
+const powerAt = (p: number) => pulse(p, 0.08, 0.36, 0.78, 14, 90)
+const accelAt = (p: number) => pulse(p, 0.06, 0.18, 0.62, 10, 85)
+
+const PHASES: { until: number; name: string; color: string }[] = [
+  { until: 0.08, name: 'SET', color: '#757b85' },
+  { until: 0.42, name: 'DRIVE', color: '#00AEEF' },
+  { until: 0.58, name: 'PEAK', color: '#ff3b30' },
+  { until: 0.8, name: 'DECEL', color: '#b0b6c1' },
+  { until: 1.01, name: 'RECOVERY', color: '#757b85' },
+]
+const phaseOf = (p: number) => PHASES.find((ph) => p < ph.until) ?? PHASES[PHASES.length - 1]
+
+type Sample = { v: number; p: number; f: number }
+
+type RepState = {
+  elapsed: number
+  phase: number
+  rep: number
+  samples: Sample[]
+  distance: number
+  output: number
+  sessionSec: number
+  dataPoints: number
+}
+
+function initialSamples(): Sample[] {
+  return Array.from({ length: CHART_POINTS }, (_, i) => {
+    const ph = ((i * TICK_MS) % CYCLE_MS) / CYCLE_MS
+    return { v: velocityAt(ph), p: powerAt(ph), f: forceAt(ph) }
+  })
+}
+
+function useRepClock(active: boolean): RepState {
+  const [state, setState] = useState<RepState>(() => ({
+    elapsed: 0,
+    phase: 0,
+    rep: 8,
+    samples: initialSamples(),
+    distance: 283,
+    output: 847,
+    sessionSec: 24 * 60 + 18,
+    dataPoints: 291640,
+  }))
+
+  useEffect(() => {
+    if (!active) return
+    const iv = setInterval(() => {
+      setState((s) => {
+        const elapsed = s.elapsed + TICK_MS
+        const phase = (elapsed % CYCLE_MS) / CYCLE_MS
+        const v = clampPct(velocityAt(phase) + noise(5))
+        const p = clampPct(powerAt(phase) + noise(5))
+        const f = clampPct(forceAt(phase) + noise(6))
+        return {
+          elapsed,
+          phase,
+          rep: 8 + Math.floor(elapsed / CYCLE_MS),
+          samples: [...s.samples.slice(1), { v, p, f }],
+          distance: s.distance + (v / 100) * 9.8 * (TICK_MS / 1000),
+          output: 400 + (p / 100) * 800,
+          sessionSec: s.sessionSec + (elapsed % 1000 === 0 ? 1 : 0),
+          dataPoints: s.dataPoints + 50, // 200Hz × 0.25s
+        }
+      })
+    }, TICK_MS)
+    return () => clearInterval(iv)
+  }, [active])
+
+  return state
+}
+
+const fmtTime = (sec: number) => {
+  const h = Math.floor(sec / 3600)
+  const m = Math.floor((sec % 3600) / 60)
+  const s = sec % 60
+  return [h, m, s].map((n) => String(n).padStart(2, '0')).join(':')
+}
+
+// ─── Gauges ───────────────────────────────────────────────────────────────────
 
 const GAUGES = [
-  { id: 'speed', label: 'SPEED', unit: 'm/s', value: 12.4, max: 16, color: '#00AEEF', pct: 77 },
-  { id: 'power', label: 'POWER', unit: 'kW', value: 4.2, max: 6, color: '#D61F26', pct: 70 },
-  { id: 'force', label: 'FORCE', unit: 'N', value: 847, max: 1200, color: '#D61F26', pct: 71 },
-  { id: 'accel', label: 'ACCEL', unit: 'm/s²', value: 8.3, max: 12, color: '#00AEEF', pct: 69 },
-]
-
-const LIVE_METRICS = [
-  { id: 'distance', label: 'DISTANCE', value: 283, unit: 'm', delta: '+12m', color: '#b0b6c1'},
-  { id: 'output', label: 'OUTPUT', value: 847, unit: 'W', delta: '+8%', color: '#b0b6c1'},
-]
-
-// ─── Circular Gauge ───────────────────────────────────────────────────────────
+  { id: 'speed', label: 'SPEED', unit: 'm/s', max: 14, color: '#00AEEF' },
+  { id: 'power', label: 'POWER', unit: 'kW', max: 6, color: '#D61F26' },
+  { id: 'force', label: 'FORCE', unit: 'N', max: 1200, color: '#D61F26' },
+  { id: 'accel', label: 'ACCEL', unit: 'm/s²', max: 12, color: '#00AEEF' },
+] as const
 
 function CircularGauge({
-  label, unit, value, max, color, pct, animate: shouldAnim,
+  label, unit, value, color, pct,
 }: {
-  label: string; unit: string; value: number; max: number; color: string; pct: number; animate: boolean
+  label: string; unit: string; value: number; color: string; pct: number
 }) {
   const r = 42
   const circ = 2 * Math.PI * r
-  const dash = circ * (pct / 100)
-  const gap = circ - dash
 
   return (
     <div className="flex flex-col items-center gap-2">
@@ -48,7 +128,7 @@ function CircularGauge({
         <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
           {/* Track */}
           <circle cx="50" cy="50" r={r} fill="none" stroke="rgba(38,38,46,0.8)" strokeWidth="6" />
-          {/* Progress */}
+          {/* Progress — tracks the live rep value */}
           <motion.circle
             cx="50" cy="50" r={r}
             fill="none"
@@ -57,8 +137,8 @@ function CircularGauge({
             strokeLinecap="round"
             strokeDasharray={`${circ}`}
             initial={{ strokeDashoffset: circ }}
-            animate={shouldAnim ? { strokeDashoffset: circ - dash } : { strokeDashoffset: circ }}
-            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+            animate={{ strokeDashoffset: circ - circ * (pct / 100) }}
+            transition={{ duration: TICK_MS / 1000 + 0.05, ease: 'linear' }}
             style={{ filter: `drop-shadow(0 0 4px ${color}80)` }}
           />
         </svg>
@@ -80,23 +160,11 @@ function CircularGauge({
 
 // ─── Live Line Chart ──────────────────────────────────────────────────────────
 
-function LiveChart({ color, label, inView: active }: { color: string; label: string; inView: boolean }) {
-  const [data, setData] = useState(() => genData(65, 25, CHART_POINTS))
-  const pathRef = useRef<SVGPathElement>(null)
-
-  useEffect(() => {
-    if (!active) return
-    const iv = setInterval(() => {
-      setData(prev => {
-        const next = [...prev.slice(1), Math.max(10, Math.min(95,
-          prev[prev.length - 1] + (Math.random() - 0.48) * 12
-        ))]
-        return next
-      })
-    }, 400)
-    return () => clearInterval(iv)
-  }, [active])
-
+function LiveChart({
+  color, label, data, alert,
+}: {
+  color: string; label: string; data: number[]; alert: string | null
+}) {
   const W = 320, H = 80
   const points = data.map((v, i) => {
     const x = (i / (data.length - 1)) * W
@@ -110,9 +178,26 @@ function LiveChart({ color, label, inView: active }: { color: string; label: str
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between mb-1">
         <span className="text-[9px] font-mono tracking-[0.2em] uppercase" style={{ color }}>{label}</span>
-        <div className="flex items-center gap-1.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-[8px] font-mono text-emerald-400">RECORDING</span>
+        <div className="flex items-center gap-3">
+          {/* Rep-event tag — pops at the matching moment of the shared cycle */}
+          <AnimatePresence>
+            {alert && (
+              <motion.span
+                className="text-[8px] font-mono font-bold tracking-[0.16em] px-1.5 py-0.5"
+                style={{ color: '#ff3b30', border: '1px solid rgba(255,59,48,0.45)', background: 'rgba(214,31,38,0.08)' }}
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.22 }}
+              >
+                {alert}
+              </motion.span>
+            )}
+          </AnimatePresence>
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[8px] font-mono text-emerald-400">RECORDING</span>
+          </div>
         </div>
       </div>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="w-full" preserveAspectRatio="none">
@@ -127,7 +212,7 @@ function LiveChart({ color, label, inView: active }: { color: string; label: str
           style={{ filter: `drop-shadow(0 0 3px ${color}60)` }} />
         {/* Current value dot */}
         <circle
-          cx={(CHART_POINTS - 1) / (CHART_POINTS - 1) * W}
+          cx={W}
           cy={H - (data[data.length - 1] / 100) * H}
           r="3" fill={color}
           style={{ filter: `drop-shadow(0 0 4px ${color})` }}
@@ -139,36 +224,26 @@ function LiveChart({ color, label, inView: active }: { color: string; label: str
 
 // ─── Live Metric Row ──────────────────────────────────────────────────────────
 
-function LiveMetricCard({ metric, active }: { metric: typeof LIVE_METRICS[0]; active: boolean }) {
-  const [val, setVal] = useState(metric.value)
+const LIVE_METRICS = [
+  { id: 'distance', label: 'DISTANCE', unit: 'm', delta: '+12m' },
+  { id: 'output', label: 'OUTPUT', unit: 'W', delta: '+8%' },
+] as const
 
-  useEffect(() => {
-    if (!active) return
-    const iv = setInterval(() => {
-      setVal(v => Math.max(0, v + (Math.random() - 0.46) * (metric.value * 0.04)))
-    }, 1800)
-    return () => clearInterval(iv)
-  }, [active, metric.value])
-
+function LiveMetricCard({
+  label, unit, delta, value,
+}: {
+  label: string; unit: string; delta: string; value: number
+}) {
   return (
     <div className="flex-1 flex flex-col gap-1 bg-apex-panel border border-apex-line rounded-xl p-4">
-      <span className="text-[9px] font-mono tracking-[0.2em] uppercase text-apex-grey-dim">{metric.label}</span>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={Math.round(val)}
-          className="flex items-baseline gap-1"
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -4 }}
-          transition={{ duration: 0.2 }}
-        >
-          <span className="text-3xl font-mono font-semibold text-apex-white metric-value">
-            {metric.unit === 'm' ? Math.round(val) : Math.round(val)}
-          </span>
-          <span className="text-sm font-mono text-apex-grey">{metric.unit}</span>
-        </motion.div>
-      </AnimatePresence>
-      <span className="text-[10px] font-mono text-emerald-400">{metric.delta}</span>
+      <span className="text-[9px] font-mono tracking-[0.2em] uppercase text-apex-grey-dim">{label}</span>
+      <div className="flex items-baseline gap-1">
+        <span className="text-3xl font-mono font-semibold text-apex-white metric-value">
+          {Math.round(value)}
+        </span>
+        <span className="text-sm font-mono text-apex-grey">{unit}</span>
+      </div>
+      <span className="text-[10px] font-mono text-emerald-400">{delta}</span>
     </div>
   )
 }
@@ -180,6 +255,17 @@ export default function DashboardSection() {
   const inView = useInView(sectionRef, { once: false, margin: '-15% 0px' })
   const titleRef = useRef<HTMLDivElement>(null)
   const titleInView = useInView(titleRef, { once: false, margin: '-10% 0px' })
+
+  const clock = useRepClock(inView)
+  const phaseInfo = phaseOf(clock.phase)
+
+  // Gauge needles read the live waveforms directly (lightly damped — no noise)
+  const gaugeValues: Record<(typeof GAUGES)[number]['id'], number> = {
+    speed: velocityAt(clock.phase),
+    power: powerAt(clock.phase),
+    force: forceAt(clock.phase),
+    accel: accelAt(clock.phase),
+  }
 
   return (
     <section ref={sectionRef} id="dashboard" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -207,7 +293,7 @@ export default function DashboardSection() {
           className="h-luxia t-silver leading-[0.88] mb-4"
           style={{ fontSize: 'clamp(1.9rem, 4.4vw, 3.6rem)' }}
           initial={{ opacity: 0, y: 28 }}
-          animate={titleInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+          animate={titleInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7 }}
         >
           RACE-GRADE<br /><span className="t-blue">TELEMETRY</span>
@@ -217,10 +303,10 @@ export default function DashboardSection() {
           className="text-apex-grey font-body mb-12 max-w-xl leading-relaxed"
           style={{ fontSize: 'clamp(0.88rem, 1.2vw, 1rem)' }}
           initial={{ opacity: 0, y: 18 }}
-          animate={titleInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+          animate={titleInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.15 }}
         >
-          Real-time biomechanical data at 200Hz. Every force, every rep, every sprint — quantified and displayed with Formula 1 precision.
+          Real-time biomechanical data at up to 1000Hz, user-selectable. Every force, every rep, every sprint — quantified and displayed with Formula 1 precision.
         </motion.p>
 
         {/* Main dashboard panel */}
@@ -228,7 +314,7 @@ export default function DashboardSection() {
           className="bg-apex-panel border border-apex-line overflow-hidden"
           style={{ borderRadius: 0, borderTop: '2px solid #00AEEF' }}
           initial={{ opacity: 0, y: 32 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
         >
           {/* Dashboard header bar */}
@@ -249,6 +335,9 @@ export default function DashboardSection() {
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-[9px] font-mono text-emerald-400 tracking-wider">LIVE SESSION</span>
               </div>
+              <span className="text-[9px] font-mono text-apex-blue border border-apex-line px-2 py-0.5 tracking-wider metric-value">
+                REP {String(clock.rep).padStart(2, '0')}
+              </span>
               <span className="text-[9px] font-mono text-apex-grey-dim border border-apex-line px-2 py-0.5 tracking-wider">
                 ATHLETE_01
               </span>
@@ -266,50 +355,95 @@ export default function DashboardSection() {
                   <motion.div
                     key={g.id}
                     initial={{ opacity: 0, scale: 0.8 }}
-                    animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+                    animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 + i * 0.1 }}
                   >
-                    <CircularGauge {...g} animate={inView} />
+                    <CircularGauge
+                      label={g.label}
+                      unit={g.unit}
+                      color={g.color}
+                      pct={gaugeValues[g.id]}
+                      value={(gaugeValues[g.id] / 100) * g.max}
+                    />
                   </motion.div>
                 ))}
               </div>
 
               {/* Secondary metrics */}
               <div className="flex gap-3">
-                {LIVE_METRICS.map(m => (
-                  <LiveMetricCard key={m.id} metric={m} active={inView} />
-                ))}
+                <LiveMetricCard {...LIVE_METRICS[0]} value={clock.distance} />
+                <LiveMetricCard {...LIVE_METRICS[1]} value={clock.output} />
               </div>
             </div>
 
             {/* Right column: Charts */}
             <div className="lg:col-span-2 flex flex-col gap-5">
-              <div className="text-[9px] font-mono tracking-[0.2em] text-apex-grey-dim uppercase">
-                Session Telemetry — Last 30s
+              <div className="flex items-center justify-between">
+                <div className="text-[9px] font-mono tracking-[0.2em] text-apex-grey-dim uppercase">
+                  Session Telemetry — Last 30s
+                </div>
+                {/* Current rep phase — driven by the shared cycle */}
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className="w-1.5 h-1.5"
+                    style={{
+                      background: phaseInfo.color,
+                      clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
+                    }}
+                  />
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={phaseInfo.name}
+                      className="text-[9px] font-mono font-bold tracking-[0.2em]"
+                      style={{ color: phaseInfo.color }}
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.18 }}
+                    >
+                      {phaseInfo.name}
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
               </div>
 
               {/* Speed chart */}
               <div className="bg-apex-black/60 rounded-xl p-4 border border-apex-line/50">
-                <LiveChart color="#00AEEF" label="Velocity (m/s)" inView={inView} />
+                <LiveChart
+                  color="#00AEEF"
+                  label="Velocity (m/s)"
+                  data={clock.samples.map((s) => s.v)}
+                  alert={phaseInfo.name === 'PEAK' ? 'MAX VELOCITY' : null}
+                />
               </div>
 
               {/* Power chart */}
               <div className="bg-apex-black/60 rounded-xl p-4 border border-apex-line/50">
-                <LiveChart color="#D61F26" label="Power Output (kW)" inView={inView} />
+                <LiveChart
+                  color="#D61F26"
+                  label="Power Output (kW)"
+                  data={clock.samples.map((s) => s.p)}
+                  alert={null}
+                />
               </div>
 
               {/* Force chart */}
               <div className="bg-apex-black/60 rounded-xl p-4 border border-apex-line/50">
-                <LiveChart color="#D61F26" label="Force Production (N)" inView={inView} />
+                <LiveChart
+                  color="#D61F26"
+                  label="Force Production (N)"
+                  data={clock.samples.map((s) => s.f)}
+                  alert={clock.phase > 0.16 && clock.phase < 0.34 ? 'PEAK FORCE' : null}
+                />
               </div>
 
               {/* Bottom status row */}
               <div className="grid grid-cols-4 gap-3">
                 {[
-                  { label: 'Session Time', value: '00:24:18' },
+                  { label: 'Session Time', value: fmtTime(clock.sessionSec) },
                   { label: 'Resistance Mode', value: 'ADAPTIVE' },
                   { label: 'AI Profile', value: 'SPRINT-A' },
-                  { label: 'Data Points', value: '291,640' },
+                  { label: 'Data Points', value: clock.dataPoints.toLocaleString('en-US') },
                 ].map(({ label, value }) => (
                   <div key={label} className="bg-apex-black/60 rounded-lg p-3 border border-apex-line/40">
                     <div className="text-[8px] font-mono text-apex-grey-dim uppercase tracking-wider mb-1">{label}</div>
@@ -320,18 +454,15 @@ export default function DashboardSection() {
             </div>
           </div>
 
-          {/* Footer bar — brand mark */}
-          <div className="flex items-center justify-between px-6 py-3 border-t border-apex-line bg-apex-black/60">
-            <Image
-              src="/apexaustralialogo.png"
+          {/* Footer — brand mark, bottom-left of the performance monitor */}
+          <div className="flex items-center px-6 py-4 border-t border-apex-line bg-apex-black/60">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/tapexlogo.png"
               alt="T-APEX"
-              width={300}
-              height={94}
-              className="h-7 sm:h-8 w-auto object-contain opacity-90"
+              className="h-14 sm:h-16 w-auto object-contain"
+              style={{ mixBlendMode: 'screen' }}
             />
-            <span className="text-[9px] font-mono text-apex-grey-dim tracking-[0.22em] uppercase">
-              Adaptive Resistance Intelligence
-            </span>
           </div>
         </motion.div>
       </div>
