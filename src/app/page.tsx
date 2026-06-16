@@ -13,6 +13,7 @@ import TApexVs1080Section from '@/components/TApexVs1080Section'
 import ResultsSection from '@/components/ResultsSection'
 import LocalTrustSection from '@/components/LocalTrustSection'
 import FAQSection from '@/components/FAQSection'
+import CheckoutSection from '@/components/CheckoutSection'
 import FinalCTA from '@/components/FinalCTA'
 
 export default function Home() {
@@ -62,7 +63,10 @@ export default function Home() {
       {/* 13 — FAQ */}
       <FAQSection />
 
-      {/* 14 — FINAL CTA */}
+      {/* 14 — ORDER / CHECKOUT (inline product + buy experience) */}
+      <CheckoutSection />
+
+      {/* 15 — FINAL CTA */}
       <FinalCTA />
     </main>
   )
