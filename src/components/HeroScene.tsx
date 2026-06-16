@@ -155,12 +155,13 @@ export default function HeroScene({ children }: { children: ReactNode }) {
       {/* Left atmosphere ramp — blends the cleaned text zone, keeps copy readable */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, rgba(5,5,8,0.55), rgba(5,5,8,0.22) 32%, transparent 52%)' }}
+        style={{ background: 'linear-gradient(90deg, rgba(5,5,8,0.72) 0%, rgba(5,5,8,0.5) 35%, rgba(5,5,8,0.2) 55%, transparent 72%)' }}
         aria-hidden="true"
       />
 
-      {/* Live content column — where the baked text used to be */}
-      <div className="absolute z-20" style={{ left: '3.5%', top: '10%', width: '44%' }}>
+      {/* Live content column — nudged toward centre so it reads as one block
+          with the scene rather than pinned in the corner */}
+      <div className="absolute z-20" style={{ left: '14%', top: '8%', width: '44%' }}>
         {children}
       </div>
 

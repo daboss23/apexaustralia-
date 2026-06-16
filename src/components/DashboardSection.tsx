@@ -252,9 +252,9 @@ function LiveMetricCard({
 
 export default function DashboardSection() {
   const sectionRef = useRef<HTMLElement>(null)
-  const inView = useInView(sectionRef, { once: false, margin: '-15% 0px' })
+  const inView = useInView(sectionRef, { once: true, margin: '-15% 0px' })
   const titleRef = useRef<HTMLDivElement>(null)
-  const titleInView = useInView(titleRef, { once: false, margin: '-10% 0px' })
+  const titleInView = useInView(titleRef, { once: true, margin: '-10% 0px' })
 
   const clock = useRepClock(inView)
   const phaseInfo = phaseOf(clock.phase)
@@ -293,7 +293,7 @@ export default function DashboardSection() {
           className="h-luxia t-silver leading-[0.88] mb-4"
           style={{ fontSize: 'clamp(1.9rem, 4.4vw, 3.6rem)' }}
           initial={{ opacity: 0, y: 28 }}
-          animate={titleInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+          animate={titleInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
         >
           RACE-GRADE<br /><span className="t-blue">TELEMETRY</span>
@@ -303,7 +303,7 @@ export default function DashboardSection() {
           className="text-apex-grey font-body mb-12 max-w-xl leading-relaxed"
           style={{ fontSize: 'clamp(0.88rem, 1.2vw, 1rem)' }}
           initial={{ opacity: 0, y: 18 }}
-          animate={titleInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+          animate={titleInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.15 }}
         >
           Real-time biomechanical data at up to 1000Hz, user-selectable. Every force, every rep, every sprint — quantified and displayed with Formula 1 precision.
@@ -314,7 +314,7 @@ export default function DashboardSection() {
           className="bg-apex-panel border border-apex-line overflow-hidden"
           style={{ borderRadius: 0, borderTop: '2px solid #00AEEF' }}
           initial={{ opacity: 0, y: 32 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.1 }}
         >
           {/* Dashboard header bar */}
@@ -355,7 +355,7 @@ export default function DashboardSection() {
                   <motion.div
                     key={g.id}
                     initial={{ opacity: 0, scale: 0.8 }}
-                    animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0 }}
+                    animate={inView ? { opacity: 1, scale: 1 } : {}}
                     transition={{ duration: 0.6, delay: 0.2 + i * 0.1 }}
                   >
                     <CircularGauge
