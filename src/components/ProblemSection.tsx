@@ -34,9 +34,9 @@ const GAP_LINES = [
 
 export default function ProblemSection() {
   const titleRef = useRef<HTMLHeadingElement>(null)
-  const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
   const teleRef = useRef<HTMLDivElement>(null)
-  const teleInView = useInView(teleRef, { once: true, amount: 0.4 })
+  const teleInView = useInView(teleRef, { once: false, amount: 0.4 })
 
   return (
     <section id="problem" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
@@ -81,7 +81,7 @@ export default function ProblemSection() {
         className="absolute inset-0 flex items-center pointer-events-none"
         aria-hidden="true"
         initial={{ opacity: 0 }}
-        animate={teleInView ? { opacity: [0, 0.4, 0.4, 0.62, 0] } : {}}
+        animate={teleInView ? { opacity: [0, 0.4, 0.4, 0.62, 0] } : { opacity: 0 }}
         transition={{ duration: 3, times: [0, 0.45, 0.66, 0.74, 1], ease: 'easeInOut' }}
       >
         <svg
@@ -99,7 +99,7 @@ export default function ProblemSection() {
             strokeLinejoin="round"
             style={{ filter: 'drop-shadow(0 0 6px rgba(214,31,38,0.5))' }}
             initial={{ pathLength: 0 }}
-            animate={teleInView ? { pathLength: 1 } : {}}
+            animate={teleInView ? { pathLength: 1 } : { opacity: 0 }}
             transition={{ duration: 2, ease: 'linear' }}
           />
           {/* Bright comet riding the signal as it sweeps across */}
@@ -109,7 +109,7 @@ export default function ProblemSection() {
             fill="#ff6a4a"
             style={{ filter: 'drop-shadow(0 0 10px rgba(255,59,48,0.95))' }}
             initial={{ cx: 0, opacity: 0 }}
-            animate={teleInView ? { cx: [0, 1440], opacity: [0, 1, 1, 0] } : {}}
+            animate={teleInView ? { cx: [0, 1440], opacity: [0, 1, 1, 0] } : { opacity: 0 }}
             transition={{ duration: 2, times: [0, 0.06, 0.94, 1], ease: 'linear' }}
           />
         </svg>
@@ -121,7 +121,7 @@ export default function ProblemSection() {
           className="absolute top-1 right-6 md:right-10 lg:right-16 hidden xl:block"
           aria-hidden="true"
           initial={{ opacity: 0, y: 10 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7, delay: 0.55 }}
         >
           <div
@@ -176,7 +176,7 @@ export default function ProblemSection() {
           className="h-luxia t-silver leading-[0.88] mb-10 max-w-4xl"
           style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           MOST PERFORMANCE ENVIRONMENTS<br />
@@ -190,7 +190,7 @@ export default function ProblemSection() {
               className="text-apex-grey font-body mb-6 leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
               initial={{ opacity: 0, y: 18 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
               transition={{ duration: 0.65, delay: 0.15 }}
             >
               Traditional resistance methods can build strength, but they often leave too much to feel,
@@ -201,7 +201,7 @@ export default function ProblemSection() {
               className="text-apex-grey font-body mb-8 leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
               initial={{ opacity: 0, y: 16 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
               transition={{ duration: 0.65, delay: 0.25 }}
             >
               For elite coaches, that creates a major gap.
@@ -214,7 +214,7 @@ export default function ProblemSection() {
                   key={i}
                   className="flex items-start gap-3"
                   initial={{ opacity: 0, x: -16 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
+                  animate={inView ? { opacity: 1, x: 0 } : { opacity: 0 }}
                   transition={{ duration: 0.55, delay: 0.4 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <div className="w-6 h-px bg-apex-red/60 mt-2.5 flex-shrink-0" />
@@ -230,7 +230,7 @@ export default function ProblemSection() {
               className="font-display font-black text-apex-red leading-tight"
               style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.8rem)' }}
               initial={{ opacity: 0, y: 14 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
             >
               When control matters, generic tools are not enough.
@@ -262,7 +262,7 @@ function ProblemPoint({
     <motion.div
       className="group flex items-start gap-5 py-5 border-b border-apex-line/40 last:border-b-0 hover:border-apex-red/30 transition-colors duration-400 cursor-default"
       initial={{ opacity: 0, x: 18 }}
-      animate={parentInView ? { opacity: 1, x: 0 } : {}}
+      animate={parentInView ? { opacity: 1, x: 0 } : { opacity: 0 }}
       transition={{ duration: 0.6, delay: 0.3 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
     >
       <span className="font-mono font-bold text-apex-red text-[11px] tracking-[0.1em] mt-1 flex-shrink-0">

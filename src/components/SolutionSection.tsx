@@ -228,7 +228,7 @@ function LockReticle({ target, active, delay }: { target: { x: number; y: number
 export default function SolutionSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
-  const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
   // Boot trigger — fires when the section is well into view, and re-arms
   // each time it leaves so the boot sequence replays on every scroll-in
   const booted = useInView(sectionRef, { margin: '-30% 0px' })
@@ -288,14 +288,14 @@ export default function SolutionSection() {
               className="h-luxia t-silver leading-[0.88] mb-6"
               style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
               initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             >
               MEET THE SMARTER<br />
               <motion.span
                 className="t-blue inline-block"
                 initial={{ opacity: 0 }}
-                animate={inView ? { opacity: [0, 1, 0.4, 1] } : {}}
+                animate={inView ? { opacity: [0, 1, 0.4, 1] } : { opacity: 0 }}
                 transition={{ duration: 0.7, delay: 0.5, times: [0, 0.45, 0.65, 1] }}
               >
                 RESISTANCE SYSTEM.
@@ -306,7 +306,7 @@ export default function SolutionSection() {
               className="text-apex-grey font-body mb-6 leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
               initial={{ opacity: 0, y: 18 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
               transition={{ duration: 0.65, delay: 0.15 }}
             >
               T-Apex is an intelligent resistance training device built to challenge movement with
@@ -317,7 +317,7 @@ export default function SolutionSection() {
               className="text-apex-grey font-body mb-6 leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
               initial={{ opacity: 0, y: 16 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
               transition={{ duration: 0.65, delay: 0.25 }}
             >
               It gives coaches a smarter way to load, guide, and
@@ -331,7 +331,7 @@ export default function SolutionSection() {
             <motion.div
               className="border-l-4 border-apex-blue pl-6 py-2 mb-8"
               initial={{ opacity: 0, x: -14 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
+              animate={inView ? { opacity: 1, x: 0 } : { opacity: 0 }}
               transition={{ duration: 0.6, delay: 0.35 }}
             >
               <p
@@ -351,14 +351,14 @@ export default function SolutionSection() {
                 border: '1px solid rgba(0,174,239,0.22)',
               }}
               initial={{ opacity: 0, y: 14 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
               transition={{ duration: 0.6, delay: 0.45 }}
             >
               {/* Left accent draws on like a powering-up indicator */}
               <motion.div
                 className="absolute left-0 top-0 bottom-0 w-[3px] bg-apex-blue origin-top"
                 initial={{ scaleY: 0 }}
-                animate={inView ? { scaleY: 1 } : {}}
+                animate={inView ? { scaleY: 1 } : { opacity: 0 }}
                 transition={{ duration: 0.7, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
               />
               <div className="flex items-center justify-between gap-4 mb-3">
@@ -369,7 +369,7 @@ export default function SolutionSection() {
                   className="flex items-center gap-1.5"
                   aria-hidden="true"
                   initial={{ opacity: 0 }}
-                  animate={inView ? { opacity: 1 } : {}}
+                  animate={inView ? { opacity: 1 } : { opacity: 0 }}
                   transition={{ duration: 0.4, delay: 1.15 }}
                 >
                   <span className="text-[7px] font-mono text-emerald-400 tracking-wider">SYSTEM ONLINE</span>
@@ -455,7 +455,7 @@ export default function SolutionSection() {
             <motion.div
               key={pillar.label}
               initial={{ opacity: 0, x: 24 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
+              animate={inView ? { opacity: 1, x: 0 } : { opacity: 0 }}
               transition={{ duration: 0.65, delay: 0.2 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
             >
               <PillarCard pillar={pillar} side="right" />

@@ -22,7 +22,7 @@ const OVERSPEED_PARTS = [
 
 export default function WhatsIncludedSection() {
   const titleRef = useRef<HTMLDivElement>(null)
-  const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
 
   return (
     <section id="whats-included" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
@@ -46,7 +46,7 @@ export default function WhatsIncludedSection() {
           className="h-luxia t-silver leading-[0.9] mb-6 max-w-4xl"
           style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           EVERYTHING IN<br /><span className="t-red">THE BOX.</span>
@@ -56,7 +56,7 @@ export default function WhatsIncludedSection() {
           className="text-apex-grey font-body leading-relaxed max-w-2xl mb-16"
           style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
           initial={{ opacity: 0, y: 18 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.65, delay: 0.15 }}
         >
           Every T-APEX ships as a complete, ready-to-train system. Add the Overspeed Module to
@@ -67,7 +67,7 @@ export default function WhatsIncludedSection() {
         <motion.div
           className="mb-6 flex items-baseline justify-between gap-4 flex-wrap"
           initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.55, delay: 0.2 }}
         >
           <h3 className="font-display font-black t-feature leading-tight" style={{ fontSize: 'clamp(1.3rem, 2.4vw, 1.9rem)' }}>
@@ -88,7 +88,7 @@ export default function WhatsIncludedSection() {
                 className="group relative bg-apex-panel border border-apex-line p-5 flex flex-col"
                 style={{ borderTop: '2px solid rgba(0,174,239,0.5)' }}
                 initial={{ opacity: 0, y: 22 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
+                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
                 transition={{ duration: 0.5, delay: 0.25 + i * 0.08 }}
               >
                 <div className="aspect-square flex items-center justify-center mb-4 bg-apex-black/40 border border-apex-line/40">
@@ -105,7 +105,7 @@ export default function WhatsIncludedSection() {
           <motion.div
             className="bg-apex-panel/50 border border-apex-line p-7 flex flex-col justify-center"
             initial={{ opacity: 0, y: 22 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
             transition={{ duration: 0.5, delay: 0.35 }}
           >
             <div className="text-[9px] font-mono tracking-[0.26em] uppercase text-apex-grey-dim mb-5">
@@ -128,7 +128,7 @@ export default function WhatsIncludedSection() {
         <motion.div
           className="mb-6 flex items-baseline justify-between gap-4 flex-wrap"
           initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.55, delay: 0.25 }}
         >
           <h3 className="font-display font-black t-feature leading-tight" style={{ fontSize: 'clamp(1.3rem, 2.4vw, 1.9rem)' }}>
@@ -147,7 +147,7 @@ export default function WhatsIncludedSection() {
               className="group relative bg-apex-panel border border-apex-line p-4 flex flex-col"
               style={{ borderTop: '2px solid rgba(214,31,38,0.5)' }}
               initial={{ opacity: 0, y: 22 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
               transition={{ duration: 0.5, delay: 0.3 + i * 0.07 }}
             >
               <div className="aspect-square flex items-center justify-center mb-3 bg-apex-black/40 border border-apex-line/40">
@@ -168,7 +168,7 @@ export default function WhatsIncludedSection() {
             borderLeft: '4px solid #D61F26',
           }}
           initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.45 }}
         >
           <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-3" style={{ color: 'rgba(214,31,38,0.9)' }}>

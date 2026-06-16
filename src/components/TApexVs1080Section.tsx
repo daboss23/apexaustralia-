@@ -62,9 +62,9 @@ const ROWS = [
 
 export default function TApexVs1080Section() {
   const titleRef = useRef<HTMLHeadingElement>(null)
-  const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
   const tableRef = useRef<HTMLDivElement>(null)
-  const tableInView = useInView(tableRef, { once: true, margin: '-5% 0px' })
+  const tableInView = useInView(tableRef, { once: false, margin: '-5% 0px' })
 
   return (
     <section id="vs-1080" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -93,7 +93,7 @@ export default function TApexVs1080Section() {
           className="h-luxia t-silver leading-[0.9] mb-6 max-w-5xl"
           style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           MORE THAN A<br />
@@ -104,7 +104,7 @@ export default function TApexVs1080Section() {
         <motion.div
           className="max-w-3xl mb-14"
           initial={{ opacity: 0, y: 18 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.65, delay: 0.15 }}
         >
           <p className="text-apex-grey font-body leading-relaxed mb-3"
@@ -122,7 +122,7 @@ export default function TApexVs1080Section() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 mb-16">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
             transition={{ duration: 0.65, delay: 0.25 }}
           >
             <p className="text-apex-grey font-body leading-relaxed mb-4"
@@ -168,7 +168,7 @@ export default function TApexVs1080Section() {
           {/* Coach outcomes */}
           <motion.div
             initial={{ opacity: 0, y: 18 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
             transition={{ duration: 0.65, delay: 0.35 }}
           >
             <p className="text-apex-grey font-body leading-relaxed mb-2"
@@ -185,7 +185,7 @@ export default function TApexVs1080Section() {
                   key={outcome}
                   className="flex items-center gap-4 py-3.5 border-b border-apex-line/40 last:border-b-0"
                   initial={{ opacity: 0, x: 16 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
+                  animate={inView ? { opacity: 1, x: 0 } : { opacity: 0 }}
                   transition={{ duration: 0.5, delay: 0.45 + i * 0.08 }}
                 >
                   <span className="font-mono text-[10px] text-apex-blue tracking-[0.1em] flex-shrink-0">
@@ -206,7 +206,7 @@ export default function TApexVs1080Section() {
           className="font-display font-bold t-feature leading-snug mb-8 max-w-3xl"
           style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.4rem)' }}
           initial={{ opacity: 0, y: 16 }}
-          animate={tableInView ? { opacity: 1, y: 0 } : {}}
+          animate={tableInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.6 }}
         >
           For programs that need more than a narrow sprint tool, the difference becomes clear.
@@ -218,7 +218,7 @@ export default function TApexVs1080Section() {
           <motion.div
             className="grid grid-cols-[1.1fr,1.4fr,1.4fr] gap-0"
             initial={{ opacity: 0 }}
-            animate={tableInView ? { opacity: 1 } : {}}
+            animate={tableInView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.5 }}
           >
             <div className="px-5 py-4 bg-apex-panel/60 border border-apex-line/50 border-r-0">
@@ -241,7 +241,7 @@ export default function TApexVs1080Section() {
               key={row.dimension}
               className="grid grid-cols-[1.1fr,1.4fr,1.4fr] gap-0"
               initial={{ opacity: 0 }}
-              animate={tableInView ? { opacity: 1 } : {}}
+              animate={tableInView ? { opacity: 1 } : { opacity: 0 }}
               transition={{ duration: 0.4, delay: 0.1 + i * 0.06 }}
             >
               {/* Dimension */}
@@ -278,7 +278,7 @@ export default function TApexVs1080Section() {
         <motion.div
           className="mt-12 max-w-3xl"
           initial={{ opacity: 0, y: 16 }}
-          animate={tableInView ? { opacity: 1, y: 0 } : {}}
+          animate={tableInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
           <p className="text-apex-grey font-body leading-relaxed mb-4"
@@ -298,7 +298,7 @@ export default function TApexVs1080Section() {
           className="mt-10 p-8 md:p-10 border border-apex-blue/25"
           style={{ borderRadius: 0, background: 'rgba(0,174,239,0.05)', borderTop: '2px solid #00AEEF' }}
           initial={{ opacity: 0, y: 14 }}
-          animate={tableInView ? { opacity: 1, y: 0 } : {}}
+          animate={tableInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
