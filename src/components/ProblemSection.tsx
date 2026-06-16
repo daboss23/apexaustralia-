@@ -36,7 +36,7 @@ export default function ProblemSection() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
   const teleRef = useRef<HTMLDivElement>(null)
-  const teleInView = useInView(teleRef, { once: true, amount: 0.4 })
+  const teleInView = useInView(teleRef, { once: false, amount: 0.35 })
 
   return (
     <section id="problem" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
@@ -74,14 +74,14 @@ export default function ProblemSection() {
 
       {/* Large telemetry signal — a glowing pulse travels left→right across the
           screen (~2s), the waveform draws in behind it, then a subtle flash and
-          it fades away. Plays once when the section is scrolled into view.
+          it fades away. Replays every time the section scrolls into view.
           Decorative only, sits behind all content. */}
       <motion.div
         ref={teleRef}
         className="absolute inset-0 flex items-center pointer-events-none"
         aria-hidden="true"
         initial={{ opacity: 0 }}
-        animate={teleInView ? { opacity: [0, 0.4, 0.4, 0.62, 0] } : {}}
+        animate={teleInView ? { opacity: [0, 0.4, 0.4, 0.62, 0] } : { opacity: 0 }}
         transition={{ duration: 3, times: [0, 0.45, 0.66, 0.74, 1], ease: 'easeInOut' }}
       >
         <svg
@@ -99,7 +99,7 @@ export default function ProblemSection() {
             strokeLinejoin="round"
             style={{ filter: 'drop-shadow(0 0 6px rgba(214,31,38,0.5))' }}
             initial={{ pathLength: 0 }}
-            animate={teleInView ? { pathLength: 1 } : {}}
+            animate={teleInView ? { pathLength: 1 } : { pathLength: 0 }}
             transition={{ duration: 2, ease: 'linear' }}
           />
           {/* Bright comet riding the signal as it sweeps across */}
@@ -109,7 +109,7 @@ export default function ProblemSection() {
             fill="#ff6a4a"
             style={{ filter: 'drop-shadow(0 0 10px rgba(255,59,48,0.95))' }}
             initial={{ cx: 0, opacity: 0 }}
-            animate={teleInView ? { cx: [0, 1440], opacity: [0, 1, 1, 0] } : {}}
+            animate={teleInView ? { cx: [0, 1440], opacity: [0, 1, 1, 0] } : { cx: 0, opacity: 0 }}
             transition={{ duration: 2, times: [0, 0.06, 0.94, 1], ease: 'linear' }}
           />
         </svg>
