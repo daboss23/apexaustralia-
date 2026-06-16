@@ -228,7 +228,7 @@ export default function TApexVs1080Section() {
               className="px-5 py-4 border"
               style={{ background: 'rgba(0,174,239,0.08)', borderColor: 'rgba(0,174,239,0.3)', borderTop: '2px solid #00AEEF', borderRight: 'none' }}
             >
-              <Image src="/apexaustralialogo.png" alt="T-APEX" width={200} height={64} className="h-7 sm:h-8 w-auto object-contain" />
+              <Image src="/tapexlogo.png" alt="T-APEX" width={211} height={100} className="h-10 sm:h-12 w-auto object-contain" style={{ mixBlendMode: 'screen' }} />
             </div>
             <div className="px-5 py-4 bg-apex-panel/40 border border-apex-line/40">
               <span className="text-[9px] font-mono text-apex-grey-dim tracking-[0.22em] uppercase">1080 Sprint 2</span>

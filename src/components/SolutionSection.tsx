@@ -24,10 +24,12 @@ const SOLUTION_PILLARS = [
 
 // Desktop stage positions: each pillar materializes around the floating unit,
 // connected to it by a hairline. anchor/from are % of the stage (x, y).
+// anchor = where the connector meets the callout (its dot); target = the
+// lock-on reticle on the unit. The hairline runs anchor → elbow → target.
 const STAGE_CARDS = [
-  { seq: 0, side: 'left' as const, pos: { left: 0, top: '8%' } as const, from: { x: 43, y: 34 }, to: { x: 25, y: 14 } },
-  { seq: 1, side: 'right' as const, pos: { right: 0, top: '5%' } as const, from: { x: 57, y: 33 }, to: { x: 75, y: 11 } },
-  { seq: 2, side: 'right' as const, pos: { right: '1%', bottom: '6%' } as const, from: { x: 57, y: 60 }, to: { x: 75, y: 82 } },
+  { seq: 0, side: 'left' as const, pos: { left: 0, top: '14%' } as const, anchor: { x: 18, y: 16 }, target: { x: 30, y: 36 } },
+  { seq: 1, side: 'right' as const, pos: { right: 0, top: '10%' } as const, anchor: { x: 82, y: 12 }, target: { x: 60, y: 30 } },
+  { seq: 2, side: 'right' as const, pos: { right: '1%', bottom: '8%' } as const, anchor: { x: 82, y: 80 }, target: { x: 66, y: 62 } },
 ]
 
 const CARD_LINE_AT = (seq: number) => 0.45 + seq * 0.7
@@ -99,7 +101,7 @@ function FloatingUnit({ active }: { active: boolean }) {
       {/* The unit — floating, slowly turning in space */}
       <div className="absolute inset-x-0 top-[2%] bottom-[12%] flex items-center justify-center" style={{ perspective: 1200 }}>
         <motion.div
-          className="relative h-full max-w-full"
+          className="relative h-[82%] max-w-full"
           style={{ transformStyle: 'preserve-3d', aspectRatio: '1920 / 1230' }}
           animate={
             active
@@ -187,6 +189,37 @@ function PillarCard({ pillar, side = 'right' }: { pillar: typeof SOLUTION_PILLAR
         <p className="text-apex-grey font-body text-[13px] leading-relaxed">{pillar.body}</p>
       </div>
     </div>
+  )
+}
+
+// ─── Lock-on reticle — same brackets as the product-showcase callouts ─────────
+
+function LockReticle({ target, active, delay }: { target: { x: number; y: number }; active: boolean; delay: number }) {
+  return (
+    <motion.div
+      className="absolute hidden xl:block pointer-events-none z-20"
+      style={{
+        left: `${target.x}%`,
+        top: `${target.y}%`,
+        width: 22,
+        height: 22,
+        marginLeft: -11,
+        marginTop: -11,
+        filter: 'drop-shadow(0 0 6px rgba(0,174,239,0.7))',
+      }}
+      initial={{ opacity: 0, scale: 2.6 }}
+      animate={active ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 2.6 }}
+      transition={active ? { duration: 0.4, delay, ease: [0.2, 1.1, 0.3, 1] } : { duration: 0 }}
+      aria-hidden="true"
+    >
+      <svg viewBox="0 0 22 22" fill="none" className="w-full h-full">
+        <path d="M1 6V1h5" stroke="#00AEEF" strokeWidth="1.3" />
+        <path d="M16 1h5v5" stroke="#00AEEF" strokeWidth="1.3" />
+        <path d="M21 16v5h-5" stroke="#00AEEF" strokeWidth="1.3" />
+        <path d="M6 21H1v-5" stroke="#00AEEF" strokeWidth="1.3" />
+        <circle cx="11" cy="11" r="1.3" fill="#00AEEF" />
+      </svg>
+    </motion.div>
   )
 }
 
@@ -362,36 +395,46 @@ export default function SolutionSection() {
         <div ref={stageRef} className="relative mt-10 lg:mt-4 h-[400px] sm:h-[480px] lg:h-[640px]">
           <FloatingUnit active={stageActive} />
 
-          {/* Connector hairlines: unit → cards (lg+) */}
+          {/* Connector hairlines (lg+) — same structure as the "Engineered like
+              nothing else" callouts: dot → hairline (with an elbow) → reticle. */}
           <svg
-            className="absolute inset-0 w-full h-full hidden lg:block pointer-events-none"
+            className="absolute inset-0 w-full h-full hidden xl:block pointer-events-none z-10"
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
             aria-hidden="true"
           >
-            {STAGE_CARDS.map(c => (
-              <motion.path
-                key={c.seq}
-                d={`M ${c.from.x} ${c.from.y} L ${c.to.x} ${c.to.y}`}
-                fill="none"
-                stroke="rgba(0,174,239,0.45)"
-                strokeWidth="0.16"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={stageActive ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
-                transition={
-                  stageActive
-                    ? { pathLength: { duration: 0.5, delay: CARD_LINE_AT(c.seq), ease: 'linear' }, opacity: { duration: 0.01, delay: CARD_LINE_AT(c.seq) } }
-                    : { duration: 0 }
-                }
-              />
-            ))}
+            {STAGE_CARDS.map(c => {
+              const elbowX = c.target.x + (c.side === 'left' ? -6 : 6)
+              const d = `M ${c.anchor.x} ${c.anchor.y} L ${elbowX} ${c.anchor.y} L ${c.target.x} ${c.target.y}`
+              return (
+                <motion.path
+                  key={c.seq}
+                  d={d}
+                  fill="none"
+                  stroke="rgba(0,174,239,0.55)"
+                  strokeWidth="0.18"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={stageActive ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+                  transition={
+                    stageActive
+                      ? { pathLength: { duration: 0.5, delay: CARD_LINE_AT(c.seq) + 0.15, ease: 'linear' }, opacity: { duration: 0.01, delay: CARD_LINE_AT(c.seq) + 0.15 } }
+                      : { duration: 0 }
+                  }
+                />
+              )
+            })}
           </svg>
+
+          {/* Lock-on reticles on the unit */}
+          {STAGE_CARDS.map(c => (
+            <LockReticle key={c.seq} target={c.target} active={stageActive} delay={CARD_LINE_AT(c.seq)} />
+          ))}
 
           {/* Pillars around the unit (lg+) */}
           {STAGE_CARDS.map(({ seq, side, pos }) => (
             <motion.div
               key={seq}
-              className="absolute hidden lg:block w-[280px] xl:w-[320px] z-10"
+              className="absolute hidden xl:block w-[210px] z-10"
               style={pos}
               initial={{ opacity: 0, y: 18, scale: 0.96 }}
               animate={stageActive ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 18, scale: 0.96 }}
@@ -406,8 +449,8 @@ export default function SolutionSection() {
           ))}
         </div>
 
-        {/* Pillars stacked below the unit (mobile / tablet) */}
-        <div className="lg:hidden flex flex-col gap-4 mt-8">
+        {/* Pillars stacked below the unit (mobile / tablet / lg) */}
+        <div className="xl:hidden flex flex-col gap-4 mt-8">
           {SOLUTION_PILLARS.map((pillar, i) => (
             <motion.div
               key={pillar.label}
