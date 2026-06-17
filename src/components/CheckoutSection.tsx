@@ -50,6 +50,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     inBox: ['T-APEX Unit', 'Waist Belt', 'Tablet', 'Adaptor for T-APEX', 'Type-C Cable', 'User Manual'],
     modes: 'Resisted · Change-of-direction · Isotonic · Overload',
     gallery: [
+      { type: 'image', src: '/checkout/core-hero.webp', alt: 'T-APEX unit on the training floor with the Overspeed pulley' },
       { type: 'image', src: '/accessories/tapex-unit.png', alt: 'T-APEX unit — portable motorised resistance device' },
       { type: 'image', src: '/accessories/tablet-software.png', alt: 'Tablet preloaded with T-APEX software' },
       { type: 'image', src: '/accessories/tapex-elements.png', alt: 'T-APEX core elements' },
