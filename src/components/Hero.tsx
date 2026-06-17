@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import HeroScene from './HeroScene'
+import SeamlessVideo from './SeamlessVideo'
 
 // ─── Headline — clean staggered reveal (no telemetry lines / electricity) ─────
 
@@ -146,14 +147,8 @@ export default function Hero() {
           unreadably small at these widths) */}
       <div className="lg:hidden relative min-h-[100svh] flex flex-col justify-start overflow-hidden">
         <div className="absolute inset-0 z-[1] pointer-events-none">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/hero-scene.png"
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ objectPosition: '72% center' }}
-            aria-hidden="true"
-          />
+          {/* Seamless crossfade-looping film — the mobile hero banner */}
+          <SeamlessVideo src="/cinematic-banner.mp4" objectPosition="64% 45%" fade={0.9} />
 
           {/* Left column: heavy dark ramp — text lives here, fully readable */}
           <div className="absolute inset-0" style={{
