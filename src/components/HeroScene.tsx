@@ -53,19 +53,20 @@ export default function HeroScene({ children }: { children: ReactNode }) {
       {/* Left atmosphere ramp — keeps the copy column readable over any footage */}
       <div
         className="absolute inset-0 pointer-events-none z-[3]"
-        style={{ background: 'linear-gradient(90deg, rgba(5,5,8,0.9) 0%, rgba(5,5,8,0.6) 24%, rgba(5,5,8,0.2) 44%, transparent 60%)' }}
+        style={{ background: 'linear-gradient(90deg, rgba(5,5,8,0.92) 0%, rgba(5,5,8,0.72) 30%, rgba(5,5,8,0.46) 50%, rgba(5,5,8,0.2) 66%, transparent 80%)' }}
         aria-hidden="true"
       />
 
-      {/* Live content column — headline / copy / CTAs */}
-      <div className="absolute z-20" style={{ left: '3.5%', top: '10%', width: '44%' }}>
+      {/* Live content column — nudged toward centre so it reads as one block
+          with the scene rather than pinned in the corner */}
+      <div className="absolute z-20" style={{ left: '14%', top: '8%', width: '44%' }}>
         {children}
       </div>
 
       {/* Seating: vignette under the navbar, fade into the next section */}
       <div
         className="absolute top-0 inset-x-0 h-[14%] pointer-events-none z-[3]"
-        style={{ background: 'linear-gradient(180deg, rgba(5,5,5,0.85), transparent)' }}
+        style={{ background: 'linear-gradient(180deg, rgba(5,5,5,0.82), transparent)' }}
         aria-hidden="true"
       />
       <div

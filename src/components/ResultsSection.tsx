@@ -128,8 +128,8 @@ function CounterStat({
 export default function ResultsSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const statsRef = useRef<HTMLDivElement>(null)
-  const titleInView = useInView(titleRef, { once: false, margin: '-10% 0px' })
-  const statsInView = useInView(statsRef, { once: false, margin: '-5% 0px' })
+  const titleInView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+  const statsInView = useInView(statsRef, { once: true, margin: '-5% 0px' })
   // Non-once trigger for the photo-finish counters so they re-run each pass
   const statsLive = useInView(statsRef, { amount: 0.35 })
 
@@ -165,7 +165,7 @@ export default function ResultsSection() {
         <motion.div
           className="mb-16"
           initial={{ opacity: 0, y: 28 }}
-          animate={titleInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+          animate={titleInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
         >
           <h2
@@ -184,7 +184,7 @@ export default function ResultsSection() {
               key={label}
               className="group relative border-t border-apex-line/50 pt-8 pb-6 hover:border-apex-red/40 transition-colors duration-500"
               initial={{ opacity: 0, y: 24 }}
-              animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+              animate={statsInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
               {/* Animated top border */}
@@ -192,7 +192,7 @@ export default function ResultsSection() {
                 className="absolute -top-px left-0 h-px"
                 style={{ background: '#D61F26' }}
                 initial={{ width: 0 }}
-                animate={statsInView ? { width: '100%' } : { opacity: 0 }}
+                animate={statsInView ? { width: '100%' } : {}}
                 transition={{ duration: 1, delay: 0.3 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
               />
 
@@ -213,7 +213,7 @@ export default function ResultsSection() {
         <motion.div
           className="border-t border-apex-line/40 pt-12 grid grid-cols-1 md:grid-cols-2 gap-8"
           initial={{ opacity: 0, y: 24 }}
-          animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+          animate={statsInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
           <div>

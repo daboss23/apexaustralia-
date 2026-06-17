@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
+import PortraitWaveSweep from './PortraitWaveSweep'
 
 const CREDENTIALS = [
   'Olympic-level sprint coach',
@@ -32,7 +33,7 @@ const SUPPORTING_POINTS = [
 
 export default function LocalTrustSection() {
   const titleRef = useRef<HTMLHeadingElement>(null)
-  const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
+  const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
 
   return (
     <section id="about" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
@@ -56,7 +57,7 @@ export default function LocalTrustSection() {
           className="h-luxia t-silver leading-[0.9] mb-12 max-w-4xl"
           style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           WHY T-APEX<br /><span className="t-blue">AUSTRALIA</span>
@@ -69,7 +70,7 @@ export default function LocalTrustSection() {
               className="text-apex-grey font-body leading-relaxed mb-6"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}
               initial={{ opacity: 0, y: 18 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.15 }}
             >
               T-Apex Australia exists to bring intelligent resistance training technology to the
@@ -80,7 +81,7 @@ export default function LocalTrustSection() {
               className="text-apex-grey font-body leading-relaxed mb-6"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}
               initial={{ opacity: 0, y: 16 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.25 }}
             >
               Led by <span className="text-apex-white font-semibold">Piero Sacchetta</span>, the
@@ -92,7 +93,7 @@ export default function LocalTrustSection() {
               className="text-apex-white font-display font-bold leading-snug mb-8"
               style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.3rem)' }}
               initial={{ opacity: 0, y: 14 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.35 }}
             >
               That matters.
@@ -102,7 +103,7 @@ export default function LocalTrustSection() {
               className="text-apex-grey font-body leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}
               initial={{ opacity: 0, y: 14 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.42 }}
             >
               Because T-Apex Australia is not being brought to market by people chasing hype or
@@ -122,7 +123,7 @@ export default function LocalTrustSection() {
               background: 'rgba(180,140,60,0.04)',
             }}
             initial={{ opacity: 0, x: 20 }}
-            animate={inView ? { opacity: 1, x: 0 } : { opacity: 0 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* Corner accent */}
@@ -143,6 +144,8 @@ export default function LocalTrustSection() {
                 className="object-cover object-top"
                 style={{ filter: 'saturate(0.94) contrast(1.04)' }}
               />
+              {/* Cinematic light/refraction wave sweeping across on scroll-in */}
+              <PortraitWaveSweep src="/piero.png" />
               {/* bottom fade into the card */}
               <div className="absolute inset-0 pointer-events-none"
                 style={{ background: 'linear-gradient(180deg, transparent 50%, rgba(10,13,16,0.55) 80%, rgba(10,13,16,0.92) 100%)' }} />
@@ -175,7 +178,7 @@ export default function LocalTrustSection() {
                   key={cred}
                   className="flex items-start gap-3"
                   initial={{ opacity: 0, x: 14 }}
-                  animate={inView ? { opacity: 1, x: 0 } : { opacity: 0 }}
+                  animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
                 >
                   <div
@@ -218,7 +221,7 @@ function SupportPoint({
       className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-blue/30 transition-colors duration-300 cursor-default"
       style={{ borderRadius: 0, borderTop: '2px solid rgba(0,174,239,0.5)' }}
       initial={{ opacity: 0, y: 20 }}
-      animate={parentInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+      animate={parentInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.55, delay: 0.5 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
     >
       <div

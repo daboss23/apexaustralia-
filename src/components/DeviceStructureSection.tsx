@@ -22,7 +22,7 @@ const PARTS = [
 
 export default function DeviceStructureSection() {
   const titleRef = useRef<HTMLDivElement>(null)
-  const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
+  const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
 
   return (
     <section id="device" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -62,7 +62,7 @@ export default function DeviceStructureSection() {
           className="h-luxia t-silver leading-[0.9] mb-6 max-w-4xl"
           style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           ENGINEERED<br /><span className="t-blue">DOWN TO THE PART.</span>
@@ -72,7 +72,7 @@ export default function DeviceStructureSection() {
           className="text-apex-grey font-body leading-relaxed max-w-2xl mb-16"
           style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
           initial={{ opacity: 0, y: 18 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.65, delay: 0.15 }}
         >
           A portable motorised unit built for hard use on demanding training floors —
@@ -86,7 +86,7 @@ export default function DeviceStructureSection() {
             className="relative border border-apex-line/60 bg-apex-panel/30 p-6 md:p-10"
             style={{ borderTop: '2px solid rgba(0,174,239,0.55)' }}
             initial={{ opacity: 0, y: 24 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             {/* Corner reticles */}
@@ -125,7 +125,7 @@ export default function DeviceStructureSection() {
           {/* Numbered legend */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
-            animate={inView ? { opacity: 1, x: 0 } : { opacity: 0 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.3 }}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-x-8 gap-y-0">

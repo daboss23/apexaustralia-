@@ -47,8 +47,14 @@ export default function Navbar() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
       >
-        {/* Logo */}
-        <Link href="/" className="flex-shrink-0">
+        {/* Logo — hidden at the top (the hero carries the big brand mark),
+            fades into the corner once you scroll past the hero */}
+        <Link
+          href="/"
+          className="flex-shrink-0 transition-opacity duration-500"
+          style={{ opacity: scrolled ? 1 : 0, pointerEvents: scrolled ? 'auto' : 'none' }}
+          aria-hidden={!scrolled}
+        >
           <Image
             src="/apexaustralialogo.png"
             alt="T-APEX Australia"

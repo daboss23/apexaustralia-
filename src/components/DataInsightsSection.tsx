@@ -39,7 +39,7 @@ const REPORTS = [
 
 export default function DataInsightsSection() {
   const titleRef = useRef<HTMLDivElement>(null)
-  const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
+  const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
 
   return (
     <section id="data" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -71,7 +71,7 @@ export default function DataInsightsSection() {
               className="h-luxia t-silver leading-[0.9] mb-6"
               style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
               initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             >
               EVERY REP,<br /><span className="t-blue">QUANTIFIED.</span>
@@ -80,7 +80,7 @@ export default function DataInsightsSection() {
               className="text-apex-grey font-body leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
               initial={{ opacity: 0, y: 18 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.15 }}
             >
               Every T-APEX session generates comprehensive performance data — enabling coaches,
@@ -97,7 +97,7 @@ export default function DataInsightsSection() {
                 borderLeft: '3px solid #00AEEF',
               }}
               initial={{ opacity: 0, y: 14 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-3" style={{ color: 'rgba(0,174,239,0.85)' }}>
@@ -121,7 +121,7 @@ export default function DataInsightsSection() {
                 className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-blue/30 transition-colors duration-300"
                 style={{ borderTop: '2px solid rgba(0,174,239,0.5)' }}
                 initial={{ opacity: 0, y: 22 }}
-                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.55, delay: 0.2 + i * 0.09, ease: [0.16, 1, 0.3, 1] }}
               >
                 <div
@@ -142,7 +142,7 @@ export default function DataInsightsSection() {
         <motion.div
           className="border-t border-apex-line/40 pt-10"
           initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <p className="font-display font-bold t-feature mb-6" style={{ fontSize: 'clamp(1rem, 1.6vw, 1.25rem)' }}>
@@ -154,7 +154,7 @@ export default function DataInsightsSection() {
                 key={r.label}
                 className="flex items-start gap-4 bg-apex-panel/60 border border-apex-line p-5"
                 initial={{ opacity: 0, y: 16 }}
-                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.45 + i * 0.08 }}
               >
                 <span className="font-mono text-[10px] text-apex-blue tracking-[0.1em] mt-1">
@@ -173,7 +173,7 @@ export default function DataInsightsSection() {
         <motion.div
           className="border-t border-apex-line/40 pt-12 mt-16"
           initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
           <div className="flex flex-col items-center text-center mb-10">
@@ -198,7 +198,7 @@ export default function DataInsightsSection() {
                 className="relative bg-apex-panel border border-apex-line overflow-hidden"
                 style={{ borderTop: '2px solid rgba(0,174,239,0.5)' }}
                 initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.55, delay: 0.55 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               >
                 <div className="relative aspect-[4/3] flex items-center justify-center">

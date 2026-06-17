@@ -6,6 +6,21 @@ import SportTransitionStage from './SportTransitionStage'
 
 const SPORTS = [
   {
+    id: 'athletics',
+    name: 'Athletics',
+    tagline: 'Hundredths Of A Second',
+    description: 'Track and field is decided by the smallest of margins. T-Apex supports the marginal gains that matter most at the highest level of competition.',
+    color: '#D61F26',
+    video: '/sports/athletics.mp4',
+    focuses: [
+      'Block clearance and early acceleration',
+      'Maximum velocity development',
+      'Stride power and force application',
+      'Sprint efficiency and mechanics',
+    ],
+    applications: ['Acceleration', 'Max Velocity', 'Force', 'Mechanics'],
+  },
+  {
     id: 'afl',
     name: 'AFL',
     tagline: 'Explosive, Game-Breaking Athleticism',
@@ -76,20 +91,6 @@ const SPORTS = [
     applications: ['Power', 'Lateral Speed', 'First Step', 'Control'],
   },
   {
-    id: 'athletics',
-    name: 'Athletics',
-    tagline: 'Hundredths Of A Second',
-    description: 'Track and field is decided by the smallest of margins. T-Apex supports the marginal gains that matter most at the highest level of competition.',
-    color: '#D61F26',
-    focuses: [
-      'Block clearance and early acceleration',
-      'Maximum velocity development',
-      'Stride power and force application',
-      'Sprint efficiency and mechanics',
-    ],
-    applications: ['Acceleration', 'Max Velocity', 'Force', 'Mechanics'],
-  },
-  {
     id: 'olympic',
     name: 'Olympic Programs',
     tagline: 'The Margin Between Gold And Silver',
@@ -120,10 +121,11 @@ const SPORTS = [
 ]
 
 export default function SportsSection() {
-  const [activeSport, setActiveSport] = useState('afl')
+  const [activeSport, setActiveSport] = useState('athletics')
   const [userPicked, setUserPicked] = useState(false)
+  const resumeRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
-  const inView = useInView(titleRef, { once: false, margin: '-15% 0px' })
+  const inView = useInView(titleRef, { once: true, margin: '-15% 0px' })
 
   const sport = SPORTS.find(s => s.id === activeSport) ?? SPORTS[0]
 
@@ -137,7 +139,14 @@ export default function SportsSection() {
     return () => clearInterval(iv)
   }, [userPicked])
 
-  const pickSport = (id: string) => { setUserPicked(true); setActiveSport(id) }
+  // Manual pick pauses the auto-cycle, which resumes after a spell of no
+  // interaction so the stage is always "moving across the codes" on its own.
+  const pickSport = (id: string) => {
+    setUserPicked(true)
+    setActiveSport(id)
+    if (resumeRef.current) clearTimeout(resumeRef.current)
+    resumeRef.current = setTimeout(() => setUserPicked(false), 8000)
+  }
 
   return (
     <section id="sports" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
@@ -159,7 +168,7 @@ export default function SportsSection() {
           className="h-luxia t-silver leading-[0.88] mb-6"
           style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 28 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
         >
           BUILT FOR<br /><span className="t-red">EVERY CODE</span>
@@ -169,7 +178,7 @@ export default function SportsSection() {
         <div className="grid grid-cols-1 lg:grid-cols-[1.4fr,1fr] gap-8 lg:gap-16 mb-12">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.15 }}
           >
             <p className="text-apex-grey font-body mb-5 leading-relaxed"
@@ -189,7 +198,7 @@ export default function SportsSection() {
           <motion.div
             className="flex items-center"
             initial={{ opacity: 0, y: 18 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <div className="border-l-2 border-apex-red pl-6">
@@ -206,7 +215,7 @@ export default function SportsSection() {
         <motion.div
           className="mb-10"
           initial={{ opacity: 0, y: 24 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.75, delay: 0.32 }}
         >
           <SportTransitionStage sports={SPORTS} sport={sport} activeId={activeSport} />
@@ -215,7 +224,7 @@ export default function SportsSection() {
         <motion.p
           className="text-apex-grey-dim font-body mb-8 text-sm"
           initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : { opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           Select a code to lock the view — or watch how T-Apex translates across every one.
@@ -225,7 +234,7 @@ export default function SportsSection() {
         <motion.div
           className="flex flex-wrap gap-2 mb-10"
           initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.45 }}
         >
           {SPORTS.map((s) => (

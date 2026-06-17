@@ -50,7 +50,7 @@ const BENEFITS = [
 
 export default function BenefitsSection() {
   const titleRef = useRef<HTMLDivElement>(null)
-  const inView = useInView(titleRef, { once: false, margin: '-10% 0px' })
+  const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
 
   return (
     <section id="benefits" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
@@ -76,7 +76,7 @@ export default function BenefitsSection() {
             className="h-luxia t-silver leading-[0.88]"
             style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
             initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             SIX REASONS<br />
@@ -86,7 +86,7 @@ export default function BenefitsSection() {
           <motion.div
             className="flex flex-col justify-center"
             initial={{ opacity: 0, y: 18 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.65, delay: 0.2 }}
           >
             <p className="text-apex-grey font-body leading-relaxed mb-6"
@@ -115,7 +115,7 @@ export default function BenefitsSection() {
 
 function BenefitCard({ benefit, index }: { benefit: typeof BENEFITS[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: false, margin: '-5% 0px' })
+  const inView = useInView(ref, { once: true, margin: '-5% 0px' })
 
   return (
     <motion.div
@@ -123,7 +123,7 @@ function BenefitCard({ benefit, index }: { benefit: typeof BENEFITS[0]; index: n
       className="group relative bg-apex-panel border border-apex-line p-6 overflow-hidden hover:border-apex-blue/30 transition-colors duration-300 cursor-default flex flex-col"
       style={{ borderRadius: 0 }}
       initial={{ opacity: 0, y: 24 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.07, ease: [0.16, 1, 0.3, 1] }}
     >
       {/* Top accent bar */}
@@ -131,7 +131,7 @@ function BenefitCard({ benefit, index }: { benefit: typeof BENEFITS[0]; index: n
         className="absolute top-0 left-0 h-[2px]"
         style={{ background: benefit.accent }}
         initial={{ width: 0 }}
-        animate={inView ? { width: '100%' } : { opacity: 0 }}
+        animate={inView ? { width: '100%' } : {}}
         transition={{ duration: 1, delay: 0.3 + index * 0.07 }}
       />
 
