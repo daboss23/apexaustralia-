@@ -189,7 +189,7 @@ function Gallery({ variant }: { variant: Variant }) {
         <AnimatePresence mode="wait">
           <motion.div
             key={`${variant.id}-${slide}`}
-            className="absolute inset-0 flex items-center justify-center p-6"
+            className="absolute inset-0 flex items-center justify-center p-2"
             initial={{ opacity: 0, scale: 1.02 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.99 }}
@@ -197,7 +197,7 @@ function Gallery({ variant }: { variant: Variant }) {
           >
             {active.type === 'image' ? (
               /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={active.src} alt={active.alt} className="max-w-[88%] max-h-[88%] object-contain" />
+              <img src={active.src} alt={active.alt} className="w-full h-full object-contain" />
             ) : (
               <video
                 src={active.src}
@@ -387,7 +387,7 @@ export default function CheckoutSection() {
         </div>
 
         {/* Product grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-14 items-start">
           {/* LEFT — gallery */}
           <Gallery variant={variant} />
 
