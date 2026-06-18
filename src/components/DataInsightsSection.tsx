@@ -134,7 +134,7 @@ export default function DataInsightsSection() {
 
         {/* Data report video — full-bleed, edge to edge */}
         <motion.div
-          className="relative w-screen ml-[calc(50%-50vw)] mt-12"
+          className="relative w-screen ml-[calc(50%-50vw)] mt-12 overflow-hidden"
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -145,7 +145,7 @@ export default function DataInsightsSection() {
             loop
             muted
             playsInline
-            className="block w-full h-auto"
+            className="block w-full h-auto origin-center scale-[1.02]"
           />
 
           {/* Overall darkening scrim — same tint depth as the top hero banner */}
