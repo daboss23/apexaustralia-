@@ -19,7 +19,7 @@ export default function HeroScene({ children }: { children: ReactNode }) {
     <div className="relative w-full overflow-hidden bg-apex-black" style={{ aspectRatio: '1537 / 1023' }}>
       {/* The film, with a slow cinematic parallax on scroll */}
       <motion.div className="absolute inset-0" style={{ y: sceneY, willChange: 'transform' }}>
-        <SeamlessVideo src="/cinematic-banner.mp4" objectPosition="56% 42%" fade={0.9} />
+        <SeamlessVideo src="/hero-banner.mp4" objectPosition="50% 45%" fade={0.9} />
 
         {/* Speed streaks — ambient light passing the athlete */}
         <div
@@ -50,10 +50,24 @@ export default function HeroScene({ children }: { children: ReactNode }) {
         />
       </motion.div>
 
+      {/* Overall darkening scrim — a uniform tint that drops the whole clip a
+          couple of stops so the metallic headline reads with strong contrast */}
+      <div
+        className="absolute inset-0 pointer-events-none z-[2]"
+        style={{ background: 'rgba(5,5,8,0.42)' }}
+        aria-hidden="true"
+      />
+      {/* Cool tonal wash — settles the footage into the brand palette */}
+      <div
+        className="absolute inset-0 pointer-events-none z-[2]"
+        style={{ background: 'radial-gradient(ellipse 120% 90% at 70% 40%, transparent 35%, rgba(5,8,14,0.55) 100%)' }}
+        aria-hidden="true"
+      />
+
       {/* Left atmosphere ramp — keeps the copy column readable over any footage */}
       <div
         className="absolute inset-0 pointer-events-none z-[3]"
-        style={{ background: 'linear-gradient(90deg, rgba(5,5,8,0.92) 0%, rgba(5,5,8,0.72) 30%, rgba(5,5,8,0.46) 50%, rgba(5,5,8,0.2) 66%, transparent 80%)' }}
+        style={{ background: 'linear-gradient(90deg, rgba(5,5,8,0.96) 0%, rgba(5,5,8,0.82) 30%, rgba(5,5,8,0.58) 50%, rgba(5,5,8,0.3) 66%, rgba(5,5,8,0.08) 80%, transparent 90%)' }}
         aria-hidden="true"
       />
 

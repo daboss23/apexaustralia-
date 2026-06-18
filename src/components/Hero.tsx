@@ -148,7 +148,10 @@ export default function Hero() {
       <div className="lg:hidden relative min-h-[100svh] flex flex-col justify-start overflow-hidden">
         <div className="absolute inset-0 z-[1] pointer-events-none">
           {/* Seamless crossfade-looping film — the mobile hero banner */}
-          <SeamlessVideo src="/cinematic-banner.mp4" objectPosition="64% 45%" fade={0.9} />
+          <SeamlessVideo src="/hero-banner.mp4" objectPosition="50% 45%" fade={0.9} />
+
+          {/* Overall darkening scrim — drops the whole clip for headline contrast */}
+          <div className="absolute inset-0" style={{ background: 'rgba(5,5,8,0.45)' }} />
 
           {/* Left column: heavy dark ramp — text lives here, fully readable */}
           <div className="absolute inset-0" style={{

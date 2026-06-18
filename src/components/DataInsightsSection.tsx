@@ -31,12 +31,6 @@ const INSIGHTS = [
   },
 ]
 
-const REPORTS = [
-  { label: 'Single Training Report', detail: 'A full report for an individual training session.' },
-  { label: 'Comparative Report', detail: 'Compare efforts and athletes across two training sessions.' },
-  { label: 'Trending Report', detail: 'Track the trend of this athlete’s profile over time.' },
-]
-
 export default function DataInsightsSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
@@ -138,35 +132,30 @@ export default function DataInsightsSection() {
           </div>
         </div>
 
-        {/* Report types */}
+        {/* Data report video — full-bleed, edge to edge */}
         <motion.div
-          className="border-t border-apex-line/40 pt-10"
+          className="relative w-screen ml-[calc(50%-50vw)] mt-12 overflow-hidden"
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <p className="font-display font-bold t-feature mb-6" style={{ fontSize: 'clamp(1rem, 1.6vw, 1.25rem)' }}>
-            Three report types for every athlete and every repetition
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {REPORTS.map((r, i) => (
-              <motion.div
-                key={r.label}
-                className="flex items-start gap-4 bg-apex-panel/60 border border-apex-line p-5"
-                initial={{ opacity: 0, y: 16 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.45 + i * 0.08 }}
-              >
-                <span className="font-mono text-[10px] text-apex-blue tracking-[0.1em] mt-1">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <div>
-                  <div className="font-display font-bold text-apex-white text-[14px] mb-1">{r.label}</div>
-                  <div className="text-apex-grey font-body text-[12px] leading-relaxed">{r.detail}</div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          <video
+            src="/data-report.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="block w-full h-auto origin-center scale-[1.02]"
+          />
+
+          {/* Overall darkening scrim — same tint depth as the top hero banner */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(5,5,8,0.45)' }} />
+
+          {/* Top & bottom vignette — melts the clip into the black, like the hero */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: 'linear-gradient(180deg, #050505 0%, rgba(5,5,5,0.85) 7%, transparent 22%, transparent 64%, rgba(5,5,5,0.85) 88%, #050505 99%)' }}
+          />
         </motion.div>
 
         {/* Raw data showcase — logo header + sample report imagery */}
@@ -177,18 +166,13 @@ export default function DataInsightsSection() {
           transition={{ duration: 0.6, delay: 0.5 }}
         >
           <div className="flex flex-col items-center text-center mb-10">
-            <Image
-              src="/apexaustralialogo.png"
-              alt="T-APEX"
-              width={360}
-              height={112}
-              className="h-14 md:h-20 w-auto object-contain"
-            />
-            <p className="mt-5 text-apex-white font-body leading-relaxed max-w-xl"
-              style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}>
-              Real reports, straight from a live session — see the raw data exactly as your
-              coaches and sports scientists do.
-            </p>
+            <h2
+              className="h-luxia t-silver leading-[1.08] max-w-4xl"
+              style={{ fontSize: 'clamp(1.5rem, 3.6vw, 2.9rem)' }}
+            >
+              REAL REPORTS, STRAIGHT FROM A LIVE SESSION —{' '}
+              <span className="t-blue">SEE THE RAW DATA EXACTLY AS YOUR COACHES</span> AND SPORTS SCIENTISTS DO.
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">

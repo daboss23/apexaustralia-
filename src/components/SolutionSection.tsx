@@ -43,6 +43,19 @@ function FloatingUnit({ active }: { active: boolean }) {
   // Rising energy particles around the unit (client-only for SSR safety,
   // skipped under prefers-reduced-motion)
   const [risers, setRisers] = useState<Riser[]>([])
+  // The product film — a slow turntable of the unit with its background removed
+  // and composited onto pure black, so `mix-blend-mode: screen` drops the black
+  // and leaves the unit floating in the section's energy field (the same
+  // treatment the static art used). Held on its first frame under reduced motion.
+  const unitRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const v = unitRef.current
+    if (v && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      v.removeAttribute('autoplay')
+      v.pause()
+    }
+  }, [])
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -101,8 +114,8 @@ function FloatingUnit({ active }: { active: boolean }) {
       {/* The unit — floating, slowly turning in space */}
       <div className="absolute inset-x-0 top-[2%] bottom-[12%] flex items-center justify-center" style={{ perspective: 1200 }}>
         <motion.div
-          className="relative h-[82%] max-w-full"
-          style={{ transformStyle: 'preserve-3d', aspectRatio: '1920 / 1230' }}
+          className="relative h-[92%] max-w-full"
+          style={{ transformStyle: 'preserve-3d', aspectRatio: '1 / 1' }}
           animate={
             active
               ? { y: [-10, 10], rotateY: [-9, 9], rotateX: [1.5, -1.5] }
@@ -110,10 +123,15 @@ function FloatingUnit({ active }: { active: boolean }) {
           }
           transition={{ duration: 9, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/tapex-unit.png"
-            alt="T-Apex adaptive resistance unit"
+          <video
+            ref={unitRef}
+            src="/product-rotation.mp4"
+            poster="/product-rotation-poster.jpg"
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-label="T-Apex adaptive resistance unit turning in space"
             className="absolute inset-0 w-full h-full object-contain"
             style={{ mixBlendMode: 'screen' }}
           />
