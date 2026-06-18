@@ -147,6 +147,15 @@ export default function DataInsightsSection() {
             playsInline
             className="block w-full h-auto"
           />
+
+          {/* Overall darkening scrim — same tint depth as the top hero banner */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(5,5,8,0.45)' }} />
+
+          {/* Top & bottom vignette — melts the clip into the black, like the hero */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: 'linear-gradient(180deg, rgba(5,5,5,0.72) 0%, transparent 18%, transparent 68%, rgba(5,5,5,0.9) 90%, #050505 100%)' }}
+          />
         </motion.div>
 
         {/* Raw data showcase — logo header + sample report imagery */}
@@ -161,8 +170,8 @@ export default function DataInsightsSection() {
               className="h-luxia t-silver leading-[1.08] max-w-4xl"
               style={{ fontSize: 'clamp(1.5rem, 3.6vw, 2.9rem)' }}
             >
-              REAL REPORTS, STRAIGHT FROM A LIVE SESSION — SEE THE{' '}
-              <span className="t-blue">RAW DATA</span> EXACTLY AS YOUR COACHES AND SPORTS SCIENTISTS DO.
+              REAL REPORTS, STRAIGHT FROM A LIVE SESSION —{' '}
+              <span className="t-blue">SEE THE RAW DATA EXACTLY AS YOUR COACHES</span> AND SPORTS SCIENTISTS DO.
             </h2>
           </div>
 
