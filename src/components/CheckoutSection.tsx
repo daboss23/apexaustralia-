@@ -50,6 +50,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     inBox: ['T-APEX Unit', 'Waist Belt', 'Tablet', 'Adaptor for T-APEX', 'Type-C Cable', 'User Manual'],
     modes: 'Resisted · Change-of-direction · Isotonic · Overload',
     gallery: [
+      { type: 'image', src: '/t-apex product 3.jpg', alt: 'T-APEX system — Core configuration' },
       { type: 'image', src: '/accessories/tapex-unit.png', alt: 'T-APEX unit — portable motorised resistance device' },
       { type: 'image', src: '/accessories/tablet-software.png', alt: 'Tablet preloaded with T-APEX software' },
       { type: 'image', src: '/accessories/tapex-elements.png', alt: 'T-APEX core elements' },
@@ -81,6 +82,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     ],
     modes: 'Resisted · CoD · Isotonic · Overload · Assisted Overspeed',
     gallery: [
+      { type: 'image', src: '/t-apex product 3.jpg', alt: 'T-APEX Overspeed system — full configuration' },
       { type: 'image', src: '/accessories/os-tether-reel.png', alt: 'OS Tether Reel' },
       { type: 'image', src: '/accessories/os-pulley.png', alt: 'OS Pulley' },
       { type: 'image', src: '/accessories/os-weight-anchor.png', alt: 'OS Weight Anchor' },
