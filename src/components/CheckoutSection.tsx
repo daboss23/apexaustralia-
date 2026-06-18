@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, type MouseEvent } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -170,6 +170,9 @@ const fmt = (n: number) => `A$${n.toLocaleString('en-AU')}`
 
 function Gallery({ variant }: { variant: Variant }) {
   const [slide, setSlide] = useState(0)
+  const [zoom, setZoom] = useState(false)
+  const [origin, setOrigin] = useState({ x: 50, y: 50 })
+  const [lightbox, setLightbox] = useState(false)
   const slides = variant.gallery
   const count = slides.length
 
@@ -180,85 +183,138 @@ function Gallery({ variant }: { variant: Variant }) {
   const go = (dir: number) => setSlide((s) => (s + dir + count) % count)
   const active = slides[slide]
 
+  // Cursor-follow zoom: map pointer position to a transform-origin so the
+  // hovered point of the image is what magnifies (e-commerce style close-up).
+  const onMove = (e: MouseEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect()
+    setOrigin({
+      x: ((e.clientX - r.left) / r.width) * 100,
+      y: ((e.clientY - r.top) / r.height) * 100,
+    })
+  }
+
+  // Lightbox: keyboard nav (←/→/Esc) + body scroll lock while open.
+  useEffect(() => {
+    if (!lightbox) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightbox(false)
+      else if (e.key === 'ArrowLeft') go(-1)
+      else if (e.key === 'ArrowRight') go(1)
+    }
+    document.addEventListener('keydown', onKey)
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lightbox, count])
+
   return (
-    <div className="lg:sticky lg:top-24">
-      {/* Main viewer */}
-      <div
-        className="relative w-full overflow-hidden border border-apex-line/60 bg-apex-black-2 group"
-        style={{ aspectRatio: '4 / 3' }}
-      >
-        <div className="carbon-weave absolute inset-0 opacity-40" aria-hidden="true" />
+    <>
+      <div className="lg:sticky lg:top-24">
+        {/* Main viewer — square frame so square product renders fill it edge-to-edge */}
+        <div
+          className="relative w-full overflow-hidden border border-apex-line/60 bg-apex-black-2 group"
+          style={{ aspectRatio: '1 / 1' }}
+        >
+          <div className="carbon-weave absolute inset-0 opacity-40" aria-hidden="true" />
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`${variant.id}-${slide}`}
-            className="absolute inset-0 flex items-center justify-center p-2"
-            initial={{ opacity: 0, scale: 1.02 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.99 }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {active.type === 'image' ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={active.src} alt={active.alt} className="w-full h-full object-contain" />
-            ) : (
-              <video
-                src={active.src}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-contain"
-              />
-            )}
-          </motion.div>
-        </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${variant.id}-${slide}`}
+              className={`absolute inset-0 flex items-center justify-center p-2 ${active.type === 'image' ? 'cursor-zoom-in' : ''}`}
+              initial={{ opacity: 0, scale: 1.02 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.99 }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              onMouseEnter={() => active.type === 'image' && setZoom(true)}
+              onMouseLeave={() => setZoom(false)}
+              onMouseMove={active.type === 'image' ? onMove : undefined}
+              onClick={() => setLightbox(true)}
+            >
+              {active.type === 'image' ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={active.src}
+                  alt={active.alt}
+                  className="w-full h-full object-contain"
+                  style={{
+                    transform: zoom ? 'scale(2.1)' : 'scale(1)',
+                    transformOrigin: `${origin.x}% ${origin.y}%`,
+                    transition: 'transform 0.3s ease-out',
+                  }}
+                />
+              ) : (
+                <video
+                  src={active.src}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-contain"
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
 
-        {/* HUD corner brackets */}
-        {['top-4 left-4', 'top-4 right-4 rotate-90', 'bottom-4 right-4 rotate-180', 'bottom-4 left-4 -rotate-90'].map((pos) => (
-          <div key={pos} className={`absolute ${pos} pointer-events-none opacity-40`} aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <path d="M0 22V0h22" stroke="#00AEEF" strokeWidth="1.2" />
-            </svg>
+          {/* HUD corner brackets */}
+          {['top-4 left-4', 'top-4 right-4 rotate-90', 'bottom-4 right-4 rotate-180', 'bottom-4 left-4 -rotate-90'].map((pos) => (
+            <div key={pos} className={`absolute ${pos} pointer-events-none opacity-40`} aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M0 22V0h22" stroke="#00AEEF" strokeWidth="1.2" />
+              </svg>
+            </div>
+          ))}
+
+          {/* Variant chip overlay */}
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+            <span className="font-mono text-[9px] tracking-[0.26em] uppercase text-apex-white/90 bg-black/55 backdrop-blur-sm px-3 py-1.5 border border-apex-line/60">
+              {variant.chip}
+            </span>
           </div>
-        ))}
 
-        {/* Variant chip overlay */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
-          <span className="font-mono text-[9px] tracking-[0.26em] uppercase text-apex-white/90 bg-black/55 backdrop-blur-sm px-3 py-1.5 border border-apex-line/60">
-            {variant.chip}
-          </span>
+          {/* Arrows */}
+          {count > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); go(-1) }}
+                aria-label="Previous image"
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-black/55 backdrop-blur-sm border border-apex-line/60 text-apex-white opacity-0 group-hover:opacity-100 hover:border-apex-red/60 transition-all duration-300 cursor-pointer"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); go(1) }}
+                aria-label="Next image"
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-black/55 backdrop-blur-sm border border-apex-line/60 text-apex-white opacity-0 group-hover:opacity-100 hover:border-apex-red/60 transition-all duration-300 cursor-pointer"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                </svg>
+              </button>
+            </>
+          )}
+
+          {/* Enlarge button */}
+          <button
+            onClick={(e) => { e.stopPropagation(); setLightbox(true) }}
+            aria-label="Enlarge image"
+            className="absolute bottom-4 left-4 z-10 w-9 h-9 flex items-center justify-center bg-black/55 backdrop-blur-sm border border-apex-line/60 text-apex-white opacity-0 group-hover:opacity-100 hover:border-apex-red/60 transition-all duration-300 cursor-pointer"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 8.25V3.75h4.5M15.75 3.75h4.5v4.5M20.25 15.75v4.5h-4.5M8.25 20.25h-4.5v-4.5" />
+            </svg>
+          </button>
+
+          {/* Counter */}
+          <div className="absolute bottom-4 right-4 z-10 font-mono text-[10px] tracking-[0.2em] text-apex-grey-dim bg-black/55 backdrop-blur-sm px-2.5 py-1 border border-apex-line/50 pointer-events-none">
+            {String(slide + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}
+          </div>
         </div>
-
-        {/* Arrows */}
-        {count > 1 && (
-          <>
-            <button
-              onClick={() => go(-1)}
-              aria-label="Previous image"
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-black/55 backdrop-blur-sm border border-apex-line/60 text-apex-white opacity-0 group-hover:opacity-100 hover:border-apex-red/60 transition-all duration-300 cursor-pointer"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-              </svg>
-            </button>
-            <button
-              onClick={() => go(1)}
-              aria-label="Next image"
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-black/55 backdrop-blur-sm border border-apex-line/60 text-apex-white opacity-0 group-hover:opacity-100 hover:border-apex-red/60 transition-all duration-300 cursor-pointer"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </button>
-          </>
-        )}
-
-        {/* Counter */}
-        <div className="absolute bottom-4 right-4 z-10 font-mono text-[10px] tracking-[0.2em] text-apex-grey-dim bg-black/55 backdrop-blur-sm px-2.5 py-1 border border-apex-line/50">
-          {String(slide + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}
-        </div>
-      </div>
 
       {/* Thumbnails */}
       <div className="mt-3 grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-5 gap-2.5">
@@ -292,7 +348,72 @@ function Gallery({ variant }: { variant: Variant }) {
           </button>
         ))}
       </div>
-    </div>
+      </div>
+
+      {/* Lightbox — full-screen enlarged view */}
+      <AnimatePresence>
+        {lightbox && (
+          <motion.div
+            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 sm:p-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={() => setLightbox(false)}
+          >
+            {/* Close */}
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightbox(false) }}
+              aria-label="Close"
+              className="absolute top-5 right-5 z-10 w-11 h-11 flex items-center justify-center bg-black/60 border border-apex-line/60 text-apex-white hover:border-apex-red/60 transition-colors duration-300 cursor-pointer"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Media */}
+            <div className="relative" onClick={(e) => e.stopPropagation()}>
+              {active.type === 'image' ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={active.src} alt={active.alt} className="max-w-[94vw] max-h-[86vh] object-contain" />
+              ) : (
+                <video src={active.src} autoPlay loop muted playsInline controls className="max-w-[94vw] max-h-[86vh] object-contain" />
+              )}
+            </div>
+
+            {/* Arrows */}
+            {count > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); go(-1) }}
+                  aria-label="Previous image"
+                  className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-black/55 border border-apex-line/60 text-apex-white hover:border-apex-red/60 transition-colors duration-300 cursor-pointer"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                  </svg>
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); go(1) }}
+                  aria-label="Next image"
+                  className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-black/55 border border-apex-line/60 text-apex-white hover:border-apex-red/60 transition-colors duration-300 cursor-pointer"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                  </svg>
+                </button>
+              </>
+            )}
+
+            {/* Counter */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 font-mono text-[11px] tracking-[0.2em] text-apex-grey bg-black/55 px-3 py-1.5 border border-apex-line/50">
+              {String(slide + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
 
