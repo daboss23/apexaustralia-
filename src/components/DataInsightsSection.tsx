@@ -132,26 +132,21 @@ export default function DataInsightsSection() {
           </div>
         </div>
 
-        {/* Data report video — the live report walkthrough */}
+        {/* Data report video — full-bleed, edge to edge */}
         <motion.div
-          className="border-t border-apex-line/40 pt-10"
+          className="relative w-screen ml-[calc(50%-50vw)] mt-12"
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <div
-            className="relative overflow-hidden bg-apex-panel border border-apex-line"
-            style={{ borderTop: '2px solid rgba(0,174,239,0.5)' }}
-          >
-            <video
-              src="/data-report.mp4"
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-auto object-contain"
-            />
-          </div>
+          <video
+            src="/data-report.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="block w-full h-auto"
+          />
         </motion.div>
 
         {/* Raw data showcase — logo header + sample report imagery */}
@@ -162,18 +157,13 @@ export default function DataInsightsSection() {
           transition={{ duration: 0.6, delay: 0.5 }}
         >
           <div className="flex flex-col items-center text-center mb-10">
-            <Image
-              src="/apexaustralialogo.png"
-              alt="T-APEX"
-              width={360}
-              height={112}
-              className="h-14 md:h-20 w-auto object-contain"
-            />
-            <p className="mt-5 text-apex-white font-body leading-relaxed max-w-xl"
-              style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}>
-              Real reports, straight from a live session — see the raw data exactly as your
-              coaches and sports scientists do.
-            </p>
+            <h2
+              className="h-luxia t-silver leading-[1.08] max-w-4xl"
+              style={{ fontSize: 'clamp(1.5rem, 3.6vw, 2.9rem)' }}
+            >
+              REAL REPORTS, STRAIGHT FROM A LIVE SESSION — SEE THE{' '}
+              <span className="t-blue">RAW DATA</span> EXACTLY AS YOUR COACHES AND SPORTS SCIENTISTS DO.
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
