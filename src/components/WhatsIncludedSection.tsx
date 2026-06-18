@@ -11,15 +11,6 @@ const CORE_ELEMENTS = [
 
 const CORE_BOX = ['T-APEX Unit', 'Waist Belt', 'Tablet', 'Adaptor for T-APEX', 'Type-C Cable', 'User Manual']
 
-// Overspeed Module — only included with the Overspeed build.
-const OVERSPEED_PARTS = [
-  { name: 'OS Tether Reel', img: '/accessories/os-tether-reel.png' },
-  { name: 'OS Pulley', img: '/accessories/os-pulley.png' },
-  { name: 'OS Weight Anchor', img: '/accessories/os-weight-anchor.png' },
-  { name: 'Fast-Release Strap', img: '/accessories/fast-release-strap.png' },
-  { name: 'Shoulder Harness', img: '/accessories/shoulder-harness.png' },
-]
-
 export default function WhatsIncludedSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
@@ -126,7 +117,7 @@ export default function WhatsIncludedSection() {
 
         {/* ── Overspeed module ────────────────────────────────────────── */}
         <motion.div
-          className="mb-6 flex items-baseline justify-between gap-4 flex-wrap"
+          className="mb-6 flex items-baseline gap-4 flex-wrap"
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.55, delay: 0.25 }}
@@ -134,30 +125,34 @@ export default function WhatsIncludedSection() {
           <h3 className="font-display font-black t-feature leading-tight" style={{ fontSize: 'clamp(1.3rem, 2.4vw, 1.9rem)' }}>
             Overspeed Module
           </h3>
-          <div className="flex items-baseline gap-2">
-            <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-apex-grey-dim">Full system</span>
-            <span className="font-luxia font-black t-gold" style={{ fontSize: 'clamp(1.4rem, 2.6vw, 2rem)' }}>A$9,990</span>
-          </div>
         </motion.div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-          {OVERSPEED_PARTS.map((item, i) => (
-            <motion.div
-              key={item.name}
-              className="group relative bg-apex-panel border border-apex-line p-4 flex flex-col"
-              style={{ borderTop: '2px solid rgba(214,31,38,0.5)' }}
-              initial={{ opacity: 0, y: 22 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.3 + i * 0.07 }}
-            >
-              <div className="aspect-square flex items-center justify-center mb-3 bg-apex-black/40 border border-apex-line/40">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={item.img} alt={item.name} className="w-[78%] h-[78%] object-contain" />
-              </div>
-              <h4 className="font-display font-bold text-apex-white text-[12.5px] leading-tight text-center">{item.name}</h4>
-            </motion.div>
-          ))}
-        </div>
+        {/* Overspeed kit hero — edges feathered into the section bg so it reads as part of the page */}
+        <motion.div
+          className="relative mb-8 overflow-hidden"
+          initial={{ opacity: 0, y: 22 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/Overspeed trainng kit.jpg"
+            alt="Overspeed Training Kit — OS Tether Reel, OS Pulley, OS Weight Anchor and Fast-Release Strap"
+            className="w-full h-auto block select-none"
+          />
+          {/* Feather left/right edges into the #0A0D10 surface */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+            style={{ background: 'linear-gradient(90deg, #0A0D10 0%, rgba(10,13,16,0) 14%, rgba(10,13,16,0) 86%, #0A0D10 100%)' }}
+          />
+          {/* Feather top/bottom edges into the #0A0D10 surface */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+            style={{ background: 'linear-gradient(180deg, #0A0D10 0%, rgba(10,13,16,0) 16%, rgba(10,13,16,0) 82%, #0A0D10 100%)' }}
+          />
+        </motion.div>
 
         {/* Overspeed gating note */}
         <motion.div
