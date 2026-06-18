@@ -154,7 +154,7 @@ export default function DataInsightsSection() {
           {/* Top & bottom vignette — melts the clip into the black, like the hero */}
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{ background: 'linear-gradient(180deg, rgba(5,5,5,0.72) 0%, transparent 18%, transparent 68%, rgba(5,5,5,0.9) 90%, #050505 100%)' }}
+            style={{ background: 'linear-gradient(180deg, #050505 0%, rgba(5,5,5,0.85) 7%, transparent 22%, transparent 64%, rgba(5,5,5,0.85) 88%, #050505 99%)' }}
           />
         </motion.div>
 
