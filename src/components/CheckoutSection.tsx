@@ -50,6 +50,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     inBox: ['T-APEX Unit', 'Waist Belt', 'Tablet', 'Adaptor for T-APEX', 'Type-C Cable', 'User Manual'],
     modes: 'Resisted · Change-of-direction · Isotonic · Overload',
     gallery: [
+      { type: 'image', src: '/t-apex product 4.jpg', alt: 'T-APEX unit wheeled trackside by an athlete — portable Adaptive Resistance Intelligence' },
       { type: 'image', src: '/t-apex product 0.jpg', alt: 'T-APEX system — Core configuration on the training floor' },
       { type: 'image', src: '/t-apex product 3.jpg', alt: 'T-APEX unit with sprint shoe' },
       { type: 'image', src: '/t-apex product 1.jpg', alt: 'T-APEX unit with weight plate anchor' },
@@ -83,6 +84,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     ],
     modes: 'Resisted · CoD · Isotonic · Overload · Assisted Overspeed',
     gallery: [
+      { type: 'image', src: '/t-apex product 4.jpg', alt: 'T-APEX Overspeed unit wheeled trackside by an athlete — portable, stadium-ready' },
       { type: 'image', src: '/t-apex product 0.jpg', alt: 'T-APEX Overspeed system — full configuration' },
       { type: 'image', src: '/t-apex product 2.jpg', alt: 'T-APEX with the full Overspeed Module on the field — tether reel, pulley, weight anchor & fast-release strap' },
       { type: 'image', src: '/t-apex product 3.jpg', alt: 'T-APEX Overspeed system — full configuration' },
