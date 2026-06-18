@@ -31,12 +31,6 @@ const INSIGHTS = [
   },
 ]
 
-const REPORTS = [
-  { label: 'Single Training Report', detail: 'A full report for an individual training session.' },
-  { label: 'Comparative Report', detail: 'Compare efforts and athletes across two training sessions.' },
-  { label: 'Trending Report', detail: 'Track the trend of this athlete’s profile over time.' },
-]
-
 export default function DataInsightsSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
@@ -138,34 +132,25 @@ export default function DataInsightsSection() {
           </div>
         </div>
 
-        {/* Report types */}
+        {/* Data report video — the live report walkthrough */}
         <motion.div
           className="border-t border-apex-line/40 pt-10"
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <p className="font-display font-bold t-feature mb-6" style={{ fontSize: 'clamp(1rem, 1.6vw, 1.25rem)' }}>
-            Three report types for every athlete and every repetition
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {REPORTS.map((r, i) => (
-              <motion.div
-                key={r.label}
-                className="flex items-start gap-4 bg-apex-panel/60 border border-apex-line p-5"
-                initial={{ opacity: 0, y: 16 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.45 + i * 0.08 }}
-              >
-                <span className="font-mono text-[10px] text-apex-blue tracking-[0.1em] mt-1">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <div>
-                  <div className="font-display font-bold text-apex-white text-[14px] mb-1">{r.label}</div>
-                  <div className="text-apex-grey font-body text-[12px] leading-relaxed">{r.detail}</div>
-                </div>
-              </motion.div>
-            ))}
+          <div
+            className="relative overflow-hidden bg-apex-panel border border-apex-line"
+            style={{ borderTop: '2px solid rgba(0,174,239,0.5)' }}
+          >
+            <video
+              src="/data-report.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-auto object-contain"
+            />
           </div>
         </motion.div>
 
