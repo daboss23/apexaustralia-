@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useEffect, type MouseEvent } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -54,9 +54,6 @@ const VARIANTS: Record<VariantId, Variant> = {
       { type: 'image', src: '/t-apex product 0.jpg', alt: 'T-APEX system — Core configuration on the training floor' },
       { type: 'image', src: '/t-apex product 3.jpg', alt: 'T-APEX unit with sprint shoe' },
       { type: 'image', src: '/t-apex product 1.jpg', alt: 'T-APEX unit with weight plate anchor' },
-      { type: 'image', src: '/accessories/tablet-software.png', alt: 'Tablet preloaded with T-APEX software' },
-      { type: 'image', src: '/accessories/tapex-elements.png', alt: 'T-APEX core elements' },
-      { type: 'video', src: '/product-video.mp4', alt: 'T-APEX in motion' },
     ],
   },
   overspeed: {
@@ -89,12 +86,6 @@ const VARIANTS: Record<VariantId, Variant> = {
       { type: 'image', src: '/t-apex product 2.jpg', alt: 'T-APEX with the full Overspeed Module on the field — tether reel, pulley, weight anchor & fast-release strap' },
       { type: 'image', src: '/t-apex product 3.jpg', alt: 'T-APEX Overspeed system — full configuration' },
       { type: 'image', src: '/t-apex product 1.jpg', alt: 'T-APEX Overspeed unit with weight plate anchor' },
-      { type: 'image', src: '/accessories/os-tether-reel.png', alt: 'OS Tether Reel' },
-      { type: 'image', src: '/accessories/os-pulley.png', alt: 'OS Pulley' },
-      { type: 'image', src: '/accessories/os-weight-anchor.png', alt: 'OS Weight Anchor' },
-      { type: 'image', src: '/accessories/shoulder-harness.png', alt: 'Shoulder Harness' },
-      { type: 'image', src: '/accessories/fast-release-strap.png', alt: 'Fast-Release Strap' },
-      { type: 'video', src: '/product-video.mp4', alt: 'T-APEX Overspeed in motion' },
     ],
   },
 }
@@ -173,8 +164,6 @@ const fmt = (n: number) => `A$${n.toLocaleString('en-AU')}`
 
 function Gallery({ variant }: { variant: Variant }) {
   const [slide, setSlide] = useState(0)
-  const [zoom, setZoom] = useState(false)
-  const [origin, setOrigin] = useState({ x: 50, y: 50 })
   const [lightbox, setLightbox] = useState(false)
   const slides = variant.gallery
   const count = slides.length
@@ -185,16 +174,6 @@ function Gallery({ variant }: { variant: Variant }) {
 
   const go = (dir: number) => setSlide((s) => (s + dir + count) % count)
   const active = slides[slide]
-
-  // Cursor-follow zoom: map pointer position to a transform-origin so the
-  // hovered point of the image is what magnifies (e-commerce style close-up).
-  const onMove = (e: MouseEvent<HTMLDivElement>) => {
-    const r = e.currentTarget.getBoundingClientRect()
-    setOrigin({
-      x: ((e.clientX - r.left) / r.width) * 100,
-      y: ((e.clientY - r.top) / r.height) * 100,
-    })
-  }
 
   // Lightbox: keyboard nav (←/→/Esc) + body scroll lock while open.
   useEffect(() => {
@@ -227,14 +206,11 @@ function Gallery({ variant }: { variant: Variant }) {
           <AnimatePresence mode="wait">
             <motion.div
               key={`${variant.id}-${slide}`}
-              className={`absolute inset-0 flex items-center justify-center p-2 ${active.type === 'image' ? 'cursor-zoom-in' : ''}`}
+              className={`absolute inset-0 flex items-center justify-center p-2 ${active.type === 'image' ? 'cursor-pointer' : ''}`}
               initial={{ opacity: 0, scale: 1.02 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.99 }}
               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-              onMouseEnter={() => active.type === 'image' && setZoom(true)}
-              onMouseLeave={() => setZoom(false)}
-              onMouseMove={active.type === 'image' ? onMove : undefined}
               onClick={() => setLightbox(true)}
             >
               {active.type === 'image' ? (
@@ -243,11 +219,6 @@ function Gallery({ variant }: { variant: Variant }) {
                   src={active.src}
                   alt={active.alt}
                   className="w-full h-full object-contain"
-                  style={{
-                    transform: zoom ? 'scale(2.1)' : 'scale(1)',
-                    transformOrigin: `${origin.x}% ${origin.y}%`,
-                    transition: 'transform 0.3s ease-out',
-                  }}
                 />
               ) : (
                 <video
@@ -284,7 +255,7 @@ function Gallery({ variant }: { variant: Variant }) {
               <button
                 onClick={(e) => { e.stopPropagation(); go(-1) }}
                 aria-label="Previous image"
-                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-black/55 backdrop-blur-sm border border-apex-line/60 text-apex-white opacity-0 group-hover:opacity-100 hover:border-apex-red/60 transition-all duration-300 cursor-pointer"
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-black/55 backdrop-blur-sm border border-apex-line/60 text-apex-white hover:border-apex-red/60 transition-all duration-300 cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
@@ -293,7 +264,7 @@ function Gallery({ variant }: { variant: Variant }) {
               <button
                 onClick={(e) => { e.stopPropagation(); go(1) }}
                 aria-label="Next image"
-                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-black/55 backdrop-blur-sm border border-apex-line/60 text-apex-white opacity-0 group-hover:opacity-100 hover:border-apex-red/60 transition-all duration-300 cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-black/55 backdrop-blur-sm border border-apex-line/60 text-apex-white hover:border-apex-red/60 transition-all duration-300 cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
