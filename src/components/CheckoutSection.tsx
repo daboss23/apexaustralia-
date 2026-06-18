@@ -82,6 +82,8 @@ const VARIANTS: Record<VariantId, Variant> = {
     ],
     modes: 'Resisted · CoD · Isotonic · Overload · Assisted Overspeed',
     gallery: [
+      { type: 'image', src: '/t-apex product 2.jpg', alt: 'T-APEX with the full Overspeed Module on the field — tether reel, pulley, weight anchor & fast-release strap' },
+      { type: 'image', src: '/t-apex product 1.jpg', alt: 'T-APEX Overspeed unit with weight plate anchor' },
       { type: 'image', src: '/accessories/os-tether-reel.png', alt: 'OS Tether Reel' },
       { type: 'image', src: '/accessories/os-pulley.png', alt: 'OS Pulley' },
       { type: 'image', src: '/accessories/os-weight-anchor.png', alt: 'OS Weight Anchor' },
