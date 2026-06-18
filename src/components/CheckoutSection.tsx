@@ -51,6 +51,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     modes: 'Resisted · Change-of-direction · Isotonic · Overload',
     gallery: [
       { type: 'image', src: '/checkout/core-hero.webp', alt: 'T-APEX unit on the training floor with the Overspeed pulley' },
+      { type: 'image', src: '/t-apex product 1.jpg', alt: 'T-APEX unit with weight plate anchor' },
       { type: 'image', src: '/accessories/tapex-unit.png', alt: 'T-APEX unit — portable motorised resistance device' },
       { type: 'image', src: '/accessories/tablet-software.png', alt: 'Tablet preloaded with T-APEX software' },
       { type: 'image', src: '/accessories/tapex-elements.png', alt: 'T-APEX core elements' },
