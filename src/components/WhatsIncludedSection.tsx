@@ -11,15 +11,6 @@ const CORE_ELEMENTS = [
 
 const CORE_BOX = ['T-APEX Unit', 'Waist Belt', 'Tablet', 'Adaptor for T-APEX', 'Type-C Cable', 'User Manual']
 
-// Overspeed Module — only included with the Overspeed build.
-const OVERSPEED_PARTS = [
-  { name: 'OS Tether Reel', img: '/accessories/os-tether-reel.png' },
-  { name: 'OS Pulley', img: '/accessories/os-pulley.png' },
-  { name: 'OS Weight Anchor', img: '/accessories/os-weight-anchor.png' },
-  { name: 'Fast-Release Strap', img: '/accessories/fast-release-strap.png' },
-  { name: 'Shoulder Harness', img: '/accessories/shoulder-harness.png' },
-]
-
 export default function WhatsIncludedSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
@@ -162,25 +153,6 @@ export default function WhatsIncludedSection() {
             style={{ background: 'linear-gradient(180deg, #0A0D10 0%, rgba(10,13,16,0) 16%, rgba(10,13,16,0) 82%, #0A0D10 100%)' }}
           />
         </motion.div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-          {OVERSPEED_PARTS.map((item, i) => (
-            <motion.div
-              key={item.name}
-              className="group relative bg-apex-panel border border-apex-line p-4 flex flex-col"
-              style={{ borderTop: '2px solid rgba(214,31,38,0.5)' }}
-              initial={{ opacity: 0, y: 22 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.3 + i * 0.07 }}
-            >
-              <div className="aspect-square flex items-center justify-center mb-3 bg-apex-black/40 border border-apex-line/40">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={item.img} alt={item.name} className="w-[78%] h-[78%] object-contain" />
-              </div>
-              <h4 className="font-display font-bold text-apex-white text-[12.5px] leading-tight text-center">{item.name}</h4>
-            </motion.div>
-          ))}
-        </div>
 
         {/* Overspeed gating note */}
         <motion.div
