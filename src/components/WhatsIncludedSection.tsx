@@ -126,7 +126,7 @@ export default function WhatsIncludedSection() {
 
         {/* ── Overspeed module ────────────────────────────────────────── */}
         <motion.div
-          className="mb-6 flex items-baseline justify-between gap-4 flex-wrap"
+          className="mb-6 flex items-baseline gap-4 flex-wrap"
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.55, delay: 0.25 }}
@@ -134,10 +134,33 @@ export default function WhatsIncludedSection() {
           <h3 className="font-display font-black t-feature leading-tight" style={{ fontSize: 'clamp(1.3rem, 2.4vw, 1.9rem)' }}>
             Overspeed Module
           </h3>
-          <div className="flex items-baseline gap-2">
-            <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-apex-grey-dim">Full system</span>
-            <span className="font-luxia font-black t-gold" style={{ fontSize: 'clamp(1.4rem, 2.6vw, 2rem)' }}>A$9,990</span>
-          </div>
+        </motion.div>
+
+        {/* Overspeed kit hero — edges feathered into the section bg so it reads as part of the page */}
+        <motion.div
+          className="relative mb-8 overflow-hidden"
+          initial={{ opacity: 0, y: 22 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/Overspeed trainng kit.jpg"
+            alt="Overspeed Training Kit — OS Tether Reel, OS Pulley, OS Weight Anchor and Fast-Release Strap"
+            className="w-full h-auto block select-none"
+          />
+          {/* Feather left/right edges into the #0A0D10 surface */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+            style={{ background: 'linear-gradient(90deg, #0A0D10 0%, rgba(10,13,16,0) 14%, rgba(10,13,16,0) 86%, #0A0D10 100%)' }}
+          />
+          {/* Feather top/bottom edges into the #0A0D10 surface */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+            style={{ background: 'linear-gradient(180deg, #0A0D10 0%, rgba(10,13,16,0) 16%, rgba(10,13,16,0) 82%, #0A0D10 100%)' }}
+          />
         </motion.div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
