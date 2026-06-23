@@ -42,9 +42,8 @@ export default function WhatsIncludedSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.65, delay: 0.15 }}
         >
-          Open the case and you&apos;re ready to train on day one — every component
-          calibrated to work as one system, no extra purchases to get started. Add the
-          Overspeed Module when you&apos;re ready to push athletes past their top speed.
+          Open the box and you&apos;re ready to train on day one, every component
+          calibrated to work as one system, no extra purchases to get started.
         </motion.p>
 
         {/* Everything-in-the-box graphic — kit laid out; edges feathered into the section bg */}
