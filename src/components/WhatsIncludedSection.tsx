@@ -16,10 +16,39 @@ export default function WhatsIncludedSection() {
       />
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        {/* Everything-in-the-box graphic — headline, subtitle and the full core
-            kit are baked into the image; edges feathered into the section bg */}
+        {/* Section label */}
+        <div ref={titleRef} className="flex items-center gap-3 mb-6">
+          <div className="w-8 h-px bg-apex-blue" />
+          <span className="text-apex-blue font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
+            What&apos;s Included
+          </span>
+        </div>
+
+        {/* Headline */}
+        <motion.h2
+          className="h-luxia t-silver leading-[0.9] mb-6 max-w-4xl"
+          style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        >
+          HERE&apos;S WHAT<br /><span className="t-red">YOU&apos;LL RECEIVE.</span>
+        </motion.h2>
+
+        <motion.p
+          className="text-apex-grey font-body leading-relaxed max-w-2xl mb-16"
+          style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
+          initial={{ opacity: 0, y: 18 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.65, delay: 0.15 }}
+        >
+          Open the case and you&apos;re ready to train on day one — every component
+          calibrated to work as one system, no extra purchases to get started. Add the
+          Overspeed Module when you&apos;re ready to push athletes past their top speed.
+        </motion.p>
+
+        {/* Everything-in-the-box graphic — kit laid out; edges feathered into the section bg */}
         <motion.div
-          ref={titleRef}
           className="relative mb-20 overflow-hidden"
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
