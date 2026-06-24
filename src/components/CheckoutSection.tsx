@@ -54,6 +54,7 @@ const VARIANTS: Record<VariantId, Variant> = {
       { type: 'image', src: '/t-apex product 0.jpg', alt: 'T-APEX system — Core configuration on the training floor' },
       { type: 'image', src: '/t-apex product 3.jpg', alt: 'T-APEX unit with sprint shoe' },
       { type: 'image', src: '/t-apex product 1.jpg', alt: 'T-APEX unit with weight plate anchor' },
+      { type: 'image', src: '/accessories/engineering-blueprint.png', alt: 'T-APEX engineering blueprint — front, rear and base views with 13 numbered components' },
     ],
   },
   overspeed: {
