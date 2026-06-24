@@ -6,9 +6,9 @@ import Image from 'next/image'
 
 // Placeholder slots for real raw-data report imagery (supplied later).
 const RAW_DATA = [
-  { src: '', label: 'Single Training Report' },
-  { src: '', label: 'Comparative Report' },
-  { src: '', label: 'Trending Report' },
+  { src: '/apex report 2.jpg', label: 'Single Training Report' },
+  { src: '/apex report 1.jpg', label: 'Comparative Report' },
+  { src: '/apex report 3.jpg', label: 'Trending Report' },
 ]
 
 // Pulled directly from the T-APEX "Data-Driven Insights" guide page.
@@ -185,7 +185,7 @@ export default function DataInsightsSection() {
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.55, delay: 0.55 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               >
-                <div className="relative aspect-[4/3] flex items-center justify-center">
+                <div className="relative aspect-[2/1] flex items-center justify-center bg-apex-black">
                   {item.src ? (
                     <Image src={item.src} alt={item.label} fill className="object-cover" />
                   ) : (

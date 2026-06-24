@@ -2,6 +2,7 @@
 
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
+import AnimatedBlueprint from './AnimatedBlueprint'
 
 // Part list lifted directly from the T-APEX device guide.
 const PARTS = [
@@ -79,6 +80,26 @@ export default function DeviceStructureSection() {
           a retractable pull rod, on-board control panel, swappable battery module, and a
           rugged, airline-approved chassis that sets up in minutes.
         </motion.p>
+
+        {/* Animated engineering blueprint — locked static image with cinematic
+            cyan/red overlay effects (see AnimatedBlueprint). */}
+        <motion.div
+          className="relative border border-apex-line/60 bg-apex-panel/30 p-3 md:p-5 mb-12 md:mb-16 overflow-hidden"
+          style={{ borderTop: '2px solid rgba(0,174,239,0.55)' }}
+          initial={{ opacity: 0, y: 24 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <AnimatedBlueprint />
+          <div className="mt-4 pt-3 border-t border-apex-line/40 flex items-center justify-between px-1">
+            <span className="font-mono text-[9px] tracking-[0.24em] uppercase text-apex-grey-dim">
+              T-APEX // Engineering Blueprint
+            </span>
+            <span className="font-mono text-[9px] tracking-[0.24em] uppercase text-apex-blue">
+              Live Diagnostics
+            </span>
+          </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.5fr,1fr] gap-10 lg:gap-16 items-center">
           {/* Blueprint diagram */}
