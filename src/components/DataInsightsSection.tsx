@@ -6,8 +6,8 @@ import Image from 'next/image'
 
 // Placeholder slots for real raw-data report imagery (supplied later).
 const RAW_DATA = [
-  { src: '/apex report 2.jpg', label: 'Single Training Report' },
-  { src: '/apex report 1.jpg', label: 'Comparative Report' },
+  { src: '/apex report 1.jpg', label: 'Session Report' },
+  { src: '/apex report 2.jpg', label: 'Comparison Report' },
   { src: '/apex report 3.jpg', label: 'Trending Report' },
 ]
 
@@ -170,22 +170,28 @@ export default function DataInsightsSection() {
               className="h-luxia t-silver leading-[1.08] max-w-4xl"
               style={{ fontSize: 'clamp(1.5rem, 3.6vw, 2.9rem)' }}
             >
-              REAL REPORTS, STRAIGHT FROM A LIVE SESSION —{' '}
               <span className="t-blue">SEE THE RAW DATA EXACTLY AS YOUR COACHES</span> AND SPORTS SCIENTISTS DO.
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          <div className="flex flex-col gap-8 md:gap-12 max-w-5xl mx-auto">
             {RAW_DATA.map((item, i) => (
               <motion.div
                 key={item.label}
-                className="relative bg-apex-panel border border-apex-line overflow-hidden"
-                style={{ borderTop: '2px solid rgba(0,174,239,0.5)' }}
+                className="relative"
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.55, delay: 0.55 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               >
-                <div className="relative aspect-[2/1] flex items-center justify-center bg-apex-black">
+                <div
+                  className="relative aspect-[2/1] flex items-center justify-center"
+                  style={{
+                    WebkitMaskImage:
+                      'radial-gradient(120% 120% at 50% 50%, #000 62%, transparent 100%)',
+                    maskImage:
+                      'radial-gradient(120% 120% at 50% 50%, #000 62%, transparent 100%)',
+                  }}
+                >
                   {item.src ? (
                     <Image src={item.src} alt={item.label} fill className="object-cover" />
                   ) : (
@@ -201,7 +207,7 @@ export default function DataInsightsSection() {
                     </div>
                   )}
                 </div>
-                <div className="px-4 py-3 border-t border-apex-line">
+                <div className="text-center -mt-2">
                   <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-apex-blue">
                     {item.label}
                   </span>
