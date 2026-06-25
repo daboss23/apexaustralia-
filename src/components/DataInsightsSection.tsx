@@ -1,13 +1,39 @@
 'use client'
 
-import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { useRef, useState } from 'react'
+import { motion, AnimatePresence, useInView } from 'framer-motion'
 import Image from 'next/image'
 
-// Real raw-data report imagery, framed as engineered telemetry panels.
+// Small inline glyphs for the report tabs.
+const ICONS: Record<string, React.ReactNode> = {
+  session: (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 12h3l2.5 6 4-13 2.5 7H21" />
+    </svg>
+  ),
+  comparison: (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="4" width="7" height="16" rx="1" />
+      <rect x="14" y="4" width="7" height="16" rx="1" />
+    </svg>
+  ),
+  trend: (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 17l6-6 4 4 8-8" />
+      <path d="M21 7v5h-5" />
+    </svg>
+  ),
+}
+
+// Deterministic frequency-bar heights for the click energy burst (no hydration mismatch).
+const FREQ_BARS = [0.35, 0.62, 0.48, 0.85, 0.55, 0.95, 0.42, 0.7, 0.6, 0.9, 0.5, 0.78, 0.4, 0.66, 0.58, 0.88, 0.46, 0.72, 0.52, 0.8, 0.44, 0.68]
+
+// Real raw-data report imagery, presented as a tabbed engineered telemetry viewer.
 const RAW_DATA = [
   {
     src: '/apex report 1.jpg',
+    short: 'Session',
+    icon: 'session',
     label: 'Session Report',
     code: 'RPT-01',
     tag: 'Single Session',
@@ -15,6 +41,8 @@ const RAW_DATA = [
   },
   {
     src: '/apex report 2.jpg',
+    short: 'Comparison',
+    icon: 'comparison',
     label: 'Comparison Report',
     code: 'RPT-02',
     tag: 'Side By Side',
@@ -22,6 +50,8 @@ const RAW_DATA = [
   },
   {
     src: '/apex report 3.jpg',
+    short: 'Trend',
+    icon: 'trend',
     label: 'Trending Report',
     code: 'RPT-03',
     tag: 'Longitudinal',
@@ -52,6 +82,17 @@ const INSIGHTS = [
 export default function DataInsightsSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
+
+  // Tabbed report viewer: active report + a pulse counter that retriggers the
+  // red/blue energy burst on every click (even re-clicking the same tab).
+  const [active, setActive] = useState(0)
+  const [pulse, setPulse] = useState(0)
+  const report = RAW_DATA[active]
+  const [first, ...rest] = report.label.split(' ')
+  const selectReport = (i: number) => {
+    setActive(i)
+    setPulse((p) => p + 1)
+  }
 
   return (
     <section id="data" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
@@ -192,93 +233,172 @@ export default function DataInsightsSection() {
             </h2>
           </div>
 
-          <div className="flex flex-col gap-10 md:gap-14 max-w-5xl mx-auto">
-            {RAW_DATA.map((item, i) => {
-              const [first, ...rest] = item.label.split(' ')
-              return (
-              <motion.div
-                key={item.label}
-                className="group relative"
-                initial={{ opacity: 0, y: 24 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.55, delay: 0.55 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              >
-                {/* Ambient blue glow that lifts on hover */}
-                <div
-                  className="absolute -inset-px pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{ background: 'radial-gradient(ellipse 70% 90% at 50% 0%, rgba(0,174,239,0.10), transparent 70%)' }}
-                  aria-hidden="true"
-                />
+          <div className="max-w-5xl mx-auto">
+            {/* ── Report tabs ──────────────────────────────────────────── */}
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-7">
+              {RAW_DATA.map((item, i) => {
+                const isActive = active === i
+                return (
+                  <button
+                    key={item.short}
+                    onClick={() => selectReport(i)}
+                    className={`relative flex items-center gap-2 px-4 sm:px-5 py-2.5 border font-display font-bold text-[12px] sm:text-[13px] tracking-[0.06em] transition-colors duration-300 cursor-pointer ${
+                      isActive
+                        ? 'text-white border-transparent'
+                        : 'text-apex-grey border-apex-line hover:text-apex-white hover:border-apex-grey/40'
+                    }`}
+                    style={{ borderRadius: 0, ...(isActive ? { background: '#D61F26', borderColor: '#D61F26' } : {}) }}
+                    aria-pressed={isActive}
+                  >
+                    <span className="relative z-10 flex items-center gap-2">
+                      {ICONS[item.icon]}
+                      {item.short}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
 
-                {/* Engineered telemetry panel */}
-                <div
-                  className="relative bg-apex-panel border border-apex-line transition-colors duration-300 group-hover:border-apex-blue/40"
-                  style={{ borderRadius: 0, borderTop: '2px solid #00AEEF' }}
-                >
-                  {/* ── Header: big readable report title + status ──────────── */}
-                  <div className="flex items-end justify-between gap-4 px-5 sm:px-7 pt-5 pb-4 border-b border-apex-line/60">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2.5 mb-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-apex-red animate-pulse" />
-                        <span className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-grey-dim">
-                          {item.code} <span className="text-apex-blue">// Live</span>
-                        </span>
-                      </div>
-                      <h3
-                        className="font-display font-black text-apex-white uppercase leading-none"
-                        style={{ fontSize: 'clamp(1.3rem, 3.4vw, 2.1rem)', letterSpacing: '0.005em' }}
-                      >
-                        {first} <span className="text-apex-blue">{rest.join(' ')}</span>
-                      </h3>
-                      <p className="hidden sm:block text-apex-grey font-body text-[12.5px] leading-snug mt-2.5 max-w-md">
-                        {item.desc}
-                      </p>
-                    </div>
-                    <span
-                      className="shrink-0 font-mono text-[8.5px] sm:text-[9px] tracking-[0.2em] uppercase px-2.5 py-1 border border-apex-blue/40 text-apex-blue"
-                      style={{ background: 'rgba(0,174,239,0.08)' }}
+            {/* ── Engineered telemetry viewer ──────────────────────────── */}
+            <div
+              className="relative bg-apex-panel border border-apex-line"
+              style={{ borderRadius: 0, borderTop: '2px solid #00AEEF' }}
+            >
+              {/* Header: big readable report title + status */}
+              <div className="flex items-end justify-between gap-4 px-5 sm:px-7 pt-5 pb-4 border-b border-apex-line/60">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2.5 mb-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-apex-red animate-pulse" />
+                    <span className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-grey-dim">
+                      {report.code} <span className="text-apex-blue">// Live</span>
+                    </span>
+                  </div>
+                  <AnimatePresence mode="wait">
+                    <motion.h3
+                      key={report.label}
+                      className="font-display font-black text-apex-white uppercase leading-none"
+                      style={{ fontSize: 'clamp(1.3rem, 3.4vw, 2.1rem)', letterSpacing: '0.005em' }}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.3 }}
                     >
-                      {item.tag}
-                    </span>
-                  </div>
-
-                  {/* ── Viewport: framed report image, no edge feathering ──── */}
-                  <div className="relative m-3 sm:m-4">
-                    <div className="hud-scanlines relative aspect-[2/1] overflow-hidden border border-apex-line/70 bg-apex-black">
-                      <Image src={item.src} alt={item.label} fill className="object-cover" />
-                      {/* faint top sheen so the panel reads as a lit screen */}
-                      <div
-                        className="absolute inset-0 pointer-events-none"
-                        style={{ background: 'linear-gradient(180deg, rgba(0,174,239,0.07), transparent 26%)' }}
-                        aria-hidden="true"
-                      />
-                      {/* corner reticles */}
-                      {([
-                        ['top-2 left-2', 'M0 8 L0 0 L8 0'],
-                        ['top-2 right-2', 'M0 0 L8 0 L8 8'],
-                        ['bottom-2 left-2', 'M0 0 L0 8 L8 8'],
-                        ['bottom-2 right-2', 'M8 0 L8 8 L0 8'],
-                      ] as const).map(([pos, d]) => (
-                        <svg key={pos} className={`absolute ${pos} pointer-events-none`} width="9" height="9" viewBox="0 0 8 8" aria-hidden="true">
-                          <path d={d} fill="none" stroke="#00AEEF" strokeWidth="1.2" opacity="0.7" />
-                        </svg>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* ── Bottom telemetry strip ─────────────────────────────── */}
-                  <div className="flex items-center justify-between px-5 sm:px-7 py-3 border-t border-apex-line/60">
-                    <span className="font-mono text-[8.5px] tracking-[0.22em] uppercase text-apex-grey-dim">
-                      T-APEX <span className="text-apex-grey">// Performance Telemetry</span>
-                    </span>
-                    <span className="font-mono text-[8.5px] tracking-[0.2em] uppercase text-apex-grey tabular-nums">
-                      {String(i + 1).padStart(2, '0')} / {String(RAW_DATA.length).padStart(2, '0')}
-                    </span>
-                  </div>
+                      {first} <span className="text-apex-blue">{rest.join(' ')}</span>
+                    </motion.h3>
+                  </AnimatePresence>
+                  <p className="hidden sm:block text-apex-grey font-body text-[12.5px] leading-snug mt-2.5 max-w-md min-h-[2.4em]">
+                    {report.desc}
+                  </p>
                 </div>
-              </motion.div>
-              )
-            })}
+                <span
+                  className="shrink-0 font-mono text-[8.5px] sm:text-[9px] tracking-[0.2em] uppercase px-2.5 py-1 border border-apex-blue/40 text-apex-blue"
+                  style={{ background: 'rgba(0,174,239,0.08)' }}
+                >
+                  {report.tag}
+                </span>
+              </div>
+
+              {/* Viewport: the active report image crossfades; the energy burst
+                  fires on every tab click. */}
+              <div className="relative m-3 sm:m-4">
+                <div className="hud-scanlines relative aspect-[2/1] overflow-hidden border border-apex-line/70 bg-apex-black">
+                  <AnimatePresence mode="sync">
+                    <motion.div
+                      key={report.src}
+                      className="absolute inset-0"
+                      initial={{ opacity: 0, scale: 1.03 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <Image src={report.src} alt={report.label} fill className="object-cover" />
+                    </motion.div>
+                  </AnimatePresence>
+
+                  {/* faint top sheen so the panel reads as a lit screen */}
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{ background: 'linear-gradient(180deg, rgba(0,174,239,0.07), transparent 26%)' }}
+                    aria-hidden="true"
+                  />
+
+                  {/* ── Click energy burst: red + blue frequency / energy ──── */}
+                  <AnimatePresence>
+                    {pulse > 0 && (
+                      <motion.div
+                        key={pulse}
+                        className="absolute inset-0 pointer-events-none overflow-hidden"
+                        initial={{ opacity: 1 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        aria-hidden="true"
+                      >
+                        {/* red sweep from the left */}
+                        <motion.div
+                          className="absolute inset-y-0 w-1/3"
+                          style={{ background: 'linear-gradient(90deg, transparent, rgba(214,31,38,0.35), transparent)', mixBlendMode: 'screen' }}
+                          initial={{ x: '-130%' }}
+                          animate={{ x: '330%' }}
+                          transition={{ duration: 0.7, ease: 'easeOut' }}
+                        />
+                        {/* blue sweep from the right */}
+                        <motion.div
+                          className="absolute inset-y-0 w-1/3"
+                          style={{ background: 'linear-gradient(90deg, transparent, rgba(0,174,239,0.4), transparent)', mixBlendMode: 'screen' }}
+                          initial={{ x: '330%' }}
+                          animate={{ x: '-130%' }}
+                          transition={{ duration: 0.7, ease: 'easeOut' }}
+                        />
+                        {/* expanding center pulse ring */}
+                        <motion.div
+                          className="absolute left-1/2 top-1/2 rounded-full border"
+                          style={{ borderColor: 'rgba(0,174,239,0.5)', x: '-50%', y: '-50%' }}
+                          initial={{ width: 0, height: 0, opacity: 0.55 }}
+                          animate={{ width: '95%', height: '170%', opacity: 0 }}
+                          transition={{ duration: 0.75, ease: 'easeOut' }}
+                        />
+                        {/* frequency bars sweeping across the bottom */}
+                        <div className="absolute bottom-0 left-0 right-0 h-[34%] flex items-end gap-[2px] px-2" style={{ mixBlendMode: 'screen' }}>
+                          {FREQ_BARS.map((h, bi) => (
+                            <motion.div
+                              key={bi}
+                              className="flex-1 origin-bottom rounded-t-[1px]"
+                              style={{ background: bi % 2 ? '#00AEEF' : '#D61F26' }}
+                              initial={{ scaleY: 0.04, opacity: 0 }}
+                              animate={{ scaleY: [0.04, h, 0.08], opacity: [0, 0.85, 0] }}
+                              transition={{ duration: 0.72, delay: bi * 0.012, ease: 'easeOut' }}
+                            />
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* corner reticles */}
+                  {([
+                    ['top-2 left-2', 'M0 8 L0 0 L8 0'],
+                    ['top-2 right-2', 'M0 0 L8 0 L8 8'],
+                    ['bottom-2 left-2', 'M0 0 L0 8 L8 8'],
+                    ['bottom-2 right-2', 'M8 0 L8 8 L0 8'],
+                  ] as const).map(([pos, d]) => (
+                    <svg key={pos} className={`absolute ${pos} pointer-events-none z-10`} width="9" height="9" viewBox="0 0 8 8" aria-hidden="true">
+                      <path d={d} fill="none" stroke="#00AEEF" strokeWidth="1.2" opacity="0.7" />
+                    </svg>
+                  ))}
+                </div>
+              </div>
+
+              {/* Bottom telemetry strip */}
+              <div className="flex items-center justify-between px-5 sm:px-7 py-3 border-t border-apex-line/60">
+                <span className="font-mono text-[8.5px] tracking-[0.22em] uppercase text-apex-grey-dim">
+                  T-APEX <span className="text-apex-grey">// Performance Telemetry</span>
+                </span>
+                <span className="font-mono text-[8.5px] tracking-[0.2em] uppercase text-apex-grey tabular-nums">
+                  {String(active + 1).padStart(2, '0')} / {String(RAW_DATA.length).padStart(2, '0')}
+                </span>
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
