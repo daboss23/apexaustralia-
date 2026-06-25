@@ -90,6 +90,8 @@ const SPORTS = [
     description: 'Elite footballers are defined by their ability to create and close space. T-Apex helps train the movement qualities that make the difference.',
     color: '#00AEEF',
     video: '/sports/soccer.mp4',
+    // Neon athlete on a stadium background, crushed + screen-blended into the scene.
+    videoBlend: true,
     focuses: [
       'First-step quickness and separation',
       'Multi-directional acceleration',
