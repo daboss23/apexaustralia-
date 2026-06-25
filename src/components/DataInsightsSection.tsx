@@ -4,11 +4,29 @@ import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 
-// Placeholder slots for real raw-data report imagery (supplied later).
+// Real raw-data report imagery, framed as engineered telemetry panels.
 const RAW_DATA = [
-  { src: '/apex report 1.jpg', label: 'Session Report' },
-  { src: '/apex report 2.jpg', label: 'Comparison Report' },
-  { src: '/apex report 3.jpg', label: 'Trending Report' },
+  {
+    src: '/apex report 1.jpg',
+    label: 'Session Report',
+    code: 'RPT-01',
+    tag: 'Single Session',
+    desc: 'Force–velocity, power and time-to-peak captured live across one training session.',
+  },
+  {
+    src: '/apex report 2.jpg',
+    label: 'Comparison Report',
+    code: 'RPT-02',
+    tag: 'Side By Side',
+    desc: 'Athlete against athlete, or session against session — measured side by side.',
+  },
+  {
+    src: '/apex report 3.jpg',
+    label: 'Trending Report',
+    code: 'RPT-03',
+    tag: 'Longitudinal',
+    desc: 'Longitudinal output tracked week-on-week to evidence real, measurable progress.',
+  },
 ]
 
 // Pulled directly from the T-APEX "Data-Driven Insights" guide page.
@@ -174,46 +192,93 @@ export default function DataInsightsSection() {
             </h2>
           </div>
 
-          <div className="flex flex-col gap-8 md:gap-12 max-w-5xl mx-auto">
-            {RAW_DATA.map((item, i) => (
+          <div className="flex flex-col gap-10 md:gap-14 max-w-5xl mx-auto">
+            {RAW_DATA.map((item, i) => {
+              const [first, ...rest] = item.label.split(' ')
+              return (
               <motion.div
                 key={item.label}
-                className="relative"
-                initial={{ opacity: 0, y: 20 }}
+                className="group relative"
+                initial={{ opacity: 0, y: 24 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.55, delay: 0.55 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               >
+                {/* Ambient blue glow that lifts on hover */}
                 <div
-                  className="relative aspect-[2/1] flex items-center justify-center"
-                  style={{
-                    WebkitMaskImage:
-                      'radial-gradient(120% 120% at 50% 50%, #000 62%, transparent 100%)',
-                    maskImage:
-                      'radial-gradient(120% 120% at 50% 50%, #000 62%, transparent 100%)',
-                  }}
+                  className="absolute -inset-px pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{ background: 'radial-gradient(ellipse 70% 90% at 50% 0%, rgba(0,174,239,0.10), transparent 70%)' }}
+                  aria-hidden="true"
+                />
+
+                {/* Engineered telemetry panel */}
+                <div
+                  className="relative bg-apex-panel border border-apex-line transition-colors duration-300 group-hover:border-apex-blue/40"
+                  style={{ borderRadius: 0, borderTop: '2px solid #00AEEF' }}
                 >
-                  {item.src ? (
-                    <Image src={item.src} alt={item.label} fill className="object-cover" />
-                  ) : (
-                    <div className="flex flex-col items-center gap-2 text-apex-grey-dim">
-                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
-                        <rect x="3" y="3" width="18" height="18" rx="1" />
-                        <path d="M3 16l5-5 4 4 3-3 6 6" />
-                        <circle cx="8.5" cy="8.5" r="1.5" />
-                      </svg>
-                      <span className="font-mono text-[9px] tracking-[0.24em] uppercase">
-                        Image {String(i + 1).padStart(2, '0')}
-                      </span>
+                  {/* ── Header: big readable report title + status ──────────── */}
+                  <div className="flex items-end justify-between gap-4 px-5 sm:px-7 pt-5 pb-4 border-b border-apex-line/60">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2.5 mb-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-apex-red animate-pulse" />
+                        <span className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-grey-dim">
+                          {item.code} <span className="text-apex-blue">// Live</span>
+                        </span>
+                      </div>
+                      <h3
+                        className="font-display font-black text-apex-white uppercase leading-none"
+                        style={{ fontSize: 'clamp(1.3rem, 3.4vw, 2.1rem)', letterSpacing: '0.005em' }}
+                      >
+                        {first} <span className="text-apex-blue">{rest.join(' ')}</span>
+                      </h3>
+                      <p className="hidden sm:block text-apex-grey font-body text-[12.5px] leading-snug mt-2.5 max-w-md">
+                        {item.desc}
+                      </p>
                     </div>
-                  )}
-                </div>
-                <div className="text-center -mt-2">
-                  <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-apex-blue">
-                    {item.label}
-                  </span>
+                    <span
+                      className="shrink-0 font-mono text-[8.5px] sm:text-[9px] tracking-[0.2em] uppercase px-2.5 py-1 border border-apex-blue/40 text-apex-blue"
+                      style={{ background: 'rgba(0,174,239,0.08)' }}
+                    >
+                      {item.tag}
+                    </span>
+                  </div>
+
+                  {/* ── Viewport: framed report image, no edge feathering ──── */}
+                  <div className="relative m-3 sm:m-4">
+                    <div className="hud-scanlines relative aspect-[2/1] overflow-hidden border border-apex-line/70 bg-apex-black">
+                      <Image src={item.src} alt={item.label} fill className="object-cover" />
+                      {/* faint top sheen so the panel reads as a lit screen */}
+                      <div
+                        className="absolute inset-0 pointer-events-none"
+                        style={{ background: 'linear-gradient(180deg, rgba(0,174,239,0.07), transparent 26%)' }}
+                        aria-hidden="true"
+                      />
+                      {/* corner reticles */}
+                      {([
+                        ['top-2 left-2', 'M0 8 L0 0 L8 0'],
+                        ['top-2 right-2', 'M0 0 L8 0 L8 8'],
+                        ['bottom-2 left-2', 'M0 0 L0 8 L8 8'],
+                        ['bottom-2 right-2', 'M8 0 L8 8 L0 8'],
+                      ] as const).map(([pos, d]) => (
+                        <svg key={pos} className={`absolute ${pos} pointer-events-none`} width="9" height="9" viewBox="0 0 8 8" aria-hidden="true">
+                          <path d={d} fill="none" stroke="#00AEEF" strokeWidth="1.2" opacity="0.7" />
+                        </svg>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* ── Bottom telemetry strip ─────────────────────────────── */}
+                  <div className="flex items-center justify-between px-5 sm:px-7 py-3 border-t border-apex-line/60">
+                    <span className="font-mono text-[8.5px] tracking-[0.22em] uppercase text-apex-grey-dim">
+                      T-APEX <span className="text-apex-grey">// Performance Telemetry</span>
+                    </span>
+                    <span className="font-mono text-[8.5px] tracking-[0.2em] uppercase text-apex-grey tabular-nums">
+                      {String(i + 1).padStart(2, '0')} / {String(RAW_DATA.length).padStart(2, '0')}
+                    </span>
+                  </div>
                 </div>
               </motion.div>
-            ))}
+              )
+            })}
           </div>
         </motion.div>
       </div>
