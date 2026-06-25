@@ -13,6 +13,9 @@ export type Sport = {
   applications: string[]
   /** Optional looping clip shown in the right of the stage while this code is active */
   video?: string
+  /** When true the clip's (near-black) background is dropped via screen-blend so
+   *  the athlete blends straight into the scene instead of a framed box. */
+  videoBlend?: boolean
 }
 
 /**
@@ -135,26 +138,44 @@ export default function SportTransitionStage({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="relative h-full aspect-square max-w-[58%]" style={{ borderRadius: 0 }}>
-              <video
-                className="absolute inset-0 w-full h-full object-cover"
-                src={sport.video}
-                autoPlay
-                loop
-                muted
-                playsInline
-                aria-hidden="true"
-              />
-              {/* engineered frame + soft left seam so it seats into the scene */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{ border: `1px solid ${accent}40` }}
-              />
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{ background: 'linear-gradient(90deg, rgba(8,8,10,0.65), transparent 16%)' }}
-              />
-            </div>
+            {sport.videoBlend ? (
+              /* Background-removed: screen-blend drops the clip's near-black
+                 background so only the athlete + neon energy show, blended
+                 straight into the scene (no frame). */
+              <div className="relative h-full aspect-square max-w-[64%]" style={{ borderRadius: 0 }}>
+                <video
+                  className="absolute inset-0 w-full h-full object-contain"
+                  style={{ mixBlendMode: 'screen' }}
+                  src={sport.video}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  aria-hidden="true"
+                />
+              </div>
+            ) : (
+              <div className="relative h-full aspect-square max-w-[58%]" style={{ borderRadius: 0 }}>
+                <video
+                  className="absolute inset-0 w-full h-full object-cover"
+                  src={sport.video}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  aria-hidden="true"
+                />
+                {/* engineered frame + soft left seam so it seats into the scene */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{ border: `1px solid ${accent}40` }}
+                />
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{ background: 'linear-gradient(90deg, rgba(8,8,10,0.65), transparent 16%)' }}
+                />
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

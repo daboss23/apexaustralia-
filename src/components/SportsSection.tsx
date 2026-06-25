@@ -12,6 +12,9 @@ const SPORTS = [
     description: 'Track and field is decided by the smallest of margins. T-Apex supports the marginal gains that matter most at the highest level of competition.',
     color: '#D61F26',
     video: '/sports/sprinting.mp4',
+    // Clip is a neon athlete on a near-black background — blend it into the
+    // scene (drop the dark background) rather than boxing it in.
+    videoBlend: true,
     focuses: [
       'Block clearance and early acceleration',
       'Maximum velocity development',

@@ -40,7 +40,7 @@ export default function WhatsIncludedSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          EVERYTHING IN<br /><span className="t-red">THE BOX.</span>
+          HERE&apos;S WHAT<br /><span className="t-red">YOU&apos;LL RECEIVE.</span>
         </motion.h2>
 
         <motion.p
@@ -50,9 +50,36 @@ export default function WhatsIncludedSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.65, delay: 0.15 }}
         >
-          Every T-APEX ships as a complete, ready-to-train system. Add the Overspeed Module to
-          unlock assisted overspeed training and its dedicated accessories.
+          Open the box and you&apos;re ready to train on day one, every component calibrated to
+          work as one system, no extra purchases to get started.
         </motion.p>
+
+        {/* Everything-in-the-box hero — full annotated kit, edges feathered into the section bg */}
+        <motion.div
+          className="relative mb-20 overflow-hidden"
+          initial={{ opacity: 0, y: 24 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.75, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/T-apex box.png"
+            alt="Everything in the T-APEX box — T-APEX unit, pull rod, belt, tablet, user guide, power cord, Type-C charger and Allen wrench"
+            className="w-full h-auto block select-none"
+          />
+          {/* Feather left/right edges into the #0A0D10 surface */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+            style={{ background: 'linear-gradient(90deg, #0A0D10 0%, rgba(10,13,16,0) 11%, rgba(10,13,16,0) 89%, #0A0D10 100%)' }}
+          />
+          {/* Feather top/bottom edges into the #0A0D10 surface */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+            style={{ background: 'linear-gradient(180deg, #0A0D10 0%, rgba(10,13,16,0) 6%, rgba(10,13,16,0) 84%, #0A0D10 100%)' }}
+          />
+        </motion.div>
 
         {/* ── Core system ─────────────────────────────────────────────── */}
         <motion.div
