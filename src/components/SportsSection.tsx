@@ -6,12 +6,12 @@ import SportTransitionStage from './SportTransitionStage'
 
 const SPORTS = [
   {
-    id: 'athletics',
-    name: 'Athletics',
+    id: 'sprinting',
+    name: 'Sprinting',
     tagline: 'Hundredths Of A Second',
     description: 'Track and field is decided by the smallest of margins. T-Apex supports the marginal gains that matter most at the highest level of competition.',
     color: '#D61F26',
-    video: '/sports/athletics.mp4',
+    video: '/sports/sprinting.mp4',
     focuses: [
       'Block clearance and early acceleration',
       'Maximum velocity development',
@@ -21,11 +21,27 @@ const SPORTS = [
     applications: ['Acceleration', 'Max Velocity', 'Force', 'Mechanics'],
   },
   {
+    id: 'swimming',
+    name: 'Swimming',
+    tagline: 'Power Off Every Wall',
+    description: 'Swimming rewards explosive starts, fast turns and sustained propulsive force. T-Apex supports the dry-land power and force application that translate straight into the water.',
+    color: '#00AEEF',
+    video: '/sports/swimming.mp4',
+    focuses: [
+      'Start and push-off power',
+      'Propulsive force development',
+      'Turn and wall-drive explosiveness',
+      'Stroke-specific strength',
+    ],
+    applications: ['Power', 'Force', 'Wall Drive', 'Strength'],
+  },
+  {
     id: 'afl',
     name: 'AFL',
     tagline: 'Explosive, Game-Breaking Athleticism',
     description: 'T-Apex supports the explosive qualities that win contested possessions, break lines, and cover ground — trained with more control and clearer feedback.',
     color: '#D61F26',
+    video: '/sports/afl.mp4',
     focuses: [
       'Acceleration and repeat-sprint capacity',
       'Contest and aerial power development',
@@ -35,11 +51,27 @@ const SPORTS = [
     applications: ['Speed', 'Repeat Effort', 'Change of Direction', 'Power'],
   },
   {
-    id: 'nrl',
-    name: 'NRL',
+    id: 'skiing',
+    name: 'Skiing',
+    tagline: 'Control At Race Speed',
+    description: 'Snow sports demand explosive power, control and resilience under high load. T-Apex helps build the strength and movement qualities that hold up edge-to-edge at race speed.',
+    color: '#00AEEF',
+    video: '/sports/skiing.mp4',
+    focuses: [
+      'Explosive leg drive out of the gate',
+      'Eccentric load tolerance',
+      'Edge-to-edge control and stability',
+      'Sustained lower-body power',
+    ],
+    applications: ['Power', 'Control', 'Load Tolerance', 'Stability'],
+  },
+  {
+    id: 'rugby-league',
+    name: 'Rugby League',
     tagline: 'Power From Every Position',
     description: 'Rugby league demands explosive power in every collision. T-Apex helps develop the force, speed, and conditioning to compete for the full 80 minutes.',
     color: '#D61F26',
+    video: '/sports/rugby-league.mp4',
     focuses: [
       'Collision and contact force development',
       'Defensive line-speed and acceleration',
@@ -49,25 +81,12 @@ const SPORTS = [
     applications: ['Force', 'Acceleration', 'Strength', 'Conditioning'],
   },
   {
-    id: 'rugby',
-    name: 'Rugby Union',
-    tagline: 'Set Piece To Open Field',
-    description: 'From scrum power to backline speed, T-Apex supports the resistance training that develops technically demanding, Test-level athletic qualities.',
-    color: '#D61F26',
-    focuses: [
-      'Set-piece and scrum force',
-      'Explosive elevation for the lineout',
-      'Backline acceleration and speed',
-      'Sustained work-rate development',
-    ],
-    applications: ['Force', 'Power', 'Speed', 'Work Rate'],
-  },
-  {
-    id: 'football',
-    name: 'Football',
+    id: 'soccer',
+    name: 'Soccer',
     tagline: 'Speed, Agility, Explosive Separation',
     description: 'Elite footballers are defined by their ability to create and close space. T-Apex helps train the movement qualities that make the difference.',
     color: '#00AEEF',
+    video: '/sports/soccer.mp4',
     focuses: [
       'First-step quickness and separation',
       'Multi-directional acceleration',
@@ -82,6 +101,7 @@ const SPORTS = [
     tagline: 'Vertical Power. Court Speed.',
     description: 'Basketball performance is won in explosive moments. T-Apex helps train the precise movement qualities that separate elite from ordinary.',
     color: '#00AEEF',
+    video: '/sports/basketball.mp4',
     focuses: [
       'Vertical and take-off power',
       'Lateral quickness and defensive movement',
@@ -90,38 +110,10 @@ const SPORTS = [
     ],
     applications: ['Power', 'Lateral Speed', 'First Step', 'Control'],
   },
-  {
-    id: 'olympic',
-    name: 'Olympic Programs',
-    tagline: 'The Margin Between Gold And Silver',
-    description: 'Olympic results live at the edge of human capability. T-Apex is built for national-level programs that leave nothing to chance in preparation.',
-    color: '#D61F26',
-    focuses: [
-      'Peak power expression',
-      'Force–velocity profiling support',
-      'Inter-session recovery management',
-      'Technical movement precision',
-    ],
-    applications: ['Peak Power', 'Profiling', 'Recovery', 'Precision'],
-  },
-  {
-    id: 'sc',
-    name: 'Strength & Conditioning',
-    tagline: 'Scientific Programming',
-    description: 'T-Apex gives S&C professionals a more measurable, adaptable tool to program with control across the full athletic development continuum.',
-    color: '#00AEEF',
-    focuses: [
-      'Progressive overload with control',
-      'Load tolerance development',
-      'Power-to-weight application',
-      'Programme-wide consistency',
-    ],
-    applications: ['Overload', 'Load Tolerance', 'Power : Weight', 'Consistency'],
-  },
 ]
 
 export default function SportsSection() {
-  const [activeSport, setActiveSport] = useState('athletics')
+  const [activeSport, setActiveSport] = useState('sprinting')
   const [userPicked, setUserPicked] = useState(false)
   const resumeRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
