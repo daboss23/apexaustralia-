@@ -23,6 +23,8 @@ export type Sport = {
   /** Optional hold then loop. Trigger either at `fraction` of the clip's
    *  duration, or after `afterMs` of real viewing time; hold for `ms`. */
   freeze?: { fraction?: number; afterMs?: number; ms: number }
+  /** How long the auto-cycle lingers on this code before advancing (ms). */
+  dwellMs?: number
 }
 
 /**

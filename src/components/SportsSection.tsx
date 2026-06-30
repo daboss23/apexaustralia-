@@ -12,9 +12,11 @@ const SPORTS = [
     description: 'Track and field is decided by the smallest of margins. T-Apex supports the marginal gains that matter most at the highest level of competition.',
     color: '#D61F26',
     video: '/sports/sprinting.mp4',
-    // Deep slo-mo: sprint for ~3s of real time, freeze 3s, then loop to start.
-    playbackRate: 0.3,
-    freeze: { afterMs: 3000, ms: 3000 },
+    // Slo-mo sprint that plays through to the electrical climax, freezes there
+    // for 3s, then loops. Dwell is long enough to see the full hold.
+    playbackRate: 0.55,
+    freeze: { fraction: 0.9, ms: 3000 },
+    dwellMs: 18000,
     focuses: [
       'Block clearance and early acceleration',
       'Maximum velocity development',
@@ -62,7 +64,7 @@ const SPORTS = [
     video: '/sports/skiing.mp4',
     // Slightly sped up, then hold near the peak (most aggressive electricity)
     // for 2s before looping. Tune `fraction` if the freeze lands off the peak.
-    playbackRate: 0.85,
+    playbackRate: 1.0,
     freeze: { fraction: 0.85, ms: 2000 },
     focuses: [
       'Explosive leg drive out of the gate',
@@ -130,15 +132,18 @@ export default function SportsSection() {
 
   const sport = SPORTS.find(s => s.id === activeSport) ?? SPORTS[0]
 
-  // Auto-cycle through codes to showcase breadth — until the visitor takes over.
+  // Auto-cycle through codes to showcase breadth — but only once the section is
+  // in view, so the stage always *starts* on Sprinting when the visitor reaches
+  // it (rather than mid-rotation). Each code lingers for its own dwell time.
   useEffect(() => {
-    if (userPicked) return
+    if (userPicked || !inView) return
     const ids = SPORTS.map(s => s.id)
-    const iv = setInterval(() => {
-      setActiveSport(prev => ids[(ids.indexOf(prev) + 1) % ids.length])
-    }, 9000)
-    return () => clearInterval(iv)
-  }, [userPicked])
+    const current = SPORTS.find(s => s.id === activeSport) ?? SPORTS[0]
+    const t = setTimeout(() => {
+      setActiveSport(ids[(ids.indexOf(activeSport) + 1) % ids.length])
+    }, current.dwellMs ?? 9000)
+    return () => clearTimeout(t)
+  }, [userPicked, inView, activeSport])
 
   // Manual pick pauses the auto-cycle, which resumes after a spell of no
   // interaction so the stage is always "moving across the codes" on its own.
