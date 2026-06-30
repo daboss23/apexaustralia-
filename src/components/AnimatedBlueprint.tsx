@@ -331,17 +331,16 @@ export default function AnimatedBlueprint({
 
         /* 6 — callout highlight illusion (soft cyan dots over the numbers) */
         .ab-callout {
-          width: 4%;
-          padding-bottom: 4%;
+          width: 2.8%;
+          padding-bottom: 2.8%;
           border-radius: 50%;
           transform: translate(-50%, -50%);
-          filter: blur(1.5px) drop-shadow(0 0 7px rgba(0, 234, 255, 0.95));
+          filter: blur(2.5px) drop-shadow(0 0 3px rgba(0, 234, 255, 0.5));
           background: radial-gradient(
             circle,
-            rgba(210, 250, 255, 1) 0%,
-            rgba(0, 234, 255, 0.95) 38%,
-            rgba(0, 234, 255, 0.4) 60%,
-            transparent 72%
+            rgba(160, 240, 255, 0.7) 0%,
+            rgba(0, 234, 255, 0.5) 45%,
+            transparent 68%
           );
           opacity: 0;
           animation: ab-callout 11s ease-in-out infinite;
@@ -349,19 +348,19 @@ export default function AnimatedBlueprint({
         @keyframes ab-callout {
           0% {
             opacity: 0;
-            transform: translate(-50%, -50%) scale(0.6);
+            transform: translate(-50%, -50%) scale(0.8);
           }
           3% {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1.35);
+            opacity: 0.6;
+            transform: translate(-50%, -50%) scale(1.08);
           }
           7% {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1.15);
+            opacity: 0.5;
+            transform: translate(-50%, -50%) scale(1);
           }
-          12% {
+          11% {
             opacity: 0;
-            transform: translate(-50%, -50%) scale(0.7);
+            transform: translate(-50%, -50%) scale(0.8);
           }
           100% {
             opacity: 0;
