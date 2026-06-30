@@ -78,7 +78,8 @@ const SPORTS = [
     tagline: 'Power From Every Position',
     description: 'Rugby league demands explosive power in every collision. T-Apex helps develop the force, speed, and conditioning to compete for the full 80 minutes.',
     color: '#D61F26',
-    video: '/sports/rugby-league.mp4',
+    // Still image animated to life on the stage (no clip filmed yet).
+    image: '/sports/rugby-league.jpg',
     focuses: [
       'Collision and contact force development',
       'Defensive line-speed and acceleration',
@@ -108,7 +109,8 @@ const SPORTS = [
     tagline: 'Vertical Power. Court Speed.',
     description: 'Basketball performance is won in explosive moments. T-Apex helps train the precise movement qualities that separate elite from ordinary.',
     color: '#00AEEF',
-    video: '/sports/basketball.mp4',
+    // Still image animated to life on the stage (no clip filmed yet).
+    image: '/sports/basketball.jpg',
     focuses: [
       'Vertical and take-off power',
       'Lateral quickness and defensive movement',

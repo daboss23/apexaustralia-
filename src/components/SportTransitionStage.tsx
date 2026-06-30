@@ -13,6 +13,8 @@ export type Sport = {
   applications: string[]
   /** Optional looping clip shown in the right of the stage while this code is active */
   video?: string
+  /** Optional still image (used in place of a clip) — animated to life on the stage. */
+  image?: string
   /** When true the clip's (near-black) background is dropped via screen-blend so
    *  the athlete blends straight into the scene instead of a framed box. */
   videoBlend?: boolean
@@ -95,6 +97,44 @@ function SportClip({
       playsInline
       aria-hidden="true"
     />
+  )
+}
+
+/**
+ * A still athlete image animated to life — slow Ken-Burns push/drift plus a
+ * recurring speed-streak light sweep, so an un-filmed code still feels kinetic
+ * and matches the motion energy of the video clips.
+ */
+function SportStill({ src, accent }: { src: string; accent: string }) {
+  return (
+    <>
+      {/* Ken-Burns: slow zoom + lateral drift, looping seamlessly */}
+      <motion.div
+        className="absolute inset-0 bg-cover bg-center will-change-transform"
+        style={{ backgroundImage: `url(${src})` }}
+        initial={{ scale: 1.05, x: '1.5%' }}
+        animate={{ scale: [1.05, 1.13, 1.05], x: ['1.5%', '-1.5%', '1.5%'] }}
+        transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
+        aria-hidden="true"
+      />
+      {/* Forward speed-streak sweep — reinforces the existing motion blur */}
+      <motion.div
+        className="absolute inset-y-0 w-1/3 pointer-events-none mix-blend-screen"
+        style={{ background: `linear-gradient(90deg, transparent, ${accent}33 50%, transparent)` }}
+        initial={{ left: '-40%' }}
+        animate={{ left: '120%' }}
+        transition={{ duration: 2.6, repeat: Infinity, repeatDelay: 1.8, ease: 'easeInOut' }}
+        aria-hidden="true"
+      />
+      {/* Breathing accent glow so the frame feels alive */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        style={{ boxShadow: `inset 0 0 90px ${accent}22` }}
+        animate={{ opacity: [0.35, 0.85, 0.35] }}
+        transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+        aria-hidden="true"
+      />
+    </>
   )
 }
 
@@ -209,7 +249,7 @@ export default function SportTransitionStage({
             while its code is active. Drop a square clip per sport and it slots
             in here (object-cover keeps a square source pixel-perfect). ────── */}
       <AnimatePresence mode="wait">
-        {sport.video && (
+        {(sport.video || sport.image) && (
           <motion.div
             key={`vid-${activeId}`}
             className="absolute inset-0 flex items-center justify-end p-4 sm:p-5 lg:p-6 pointer-events-none"
@@ -218,15 +258,19 @@ export default function SportTransitionStage({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            {/* Every code's clip renders in the same engineered frame, same
-                square size and same object-cover crop — so mixed source
-                dimensions all read as one consistent style. */}
-            <div className="relative h-full aspect-square max-w-[58%]" style={{ borderRadius: 0 }}>
-              <SportClip
-                src={sport.video}
-                playbackRate={sport.playbackRate ?? 0.7}
-                freeze={sport.freeze}
-              />
+            {/* Every code renders in the same engineered frame, same square
+                size and same object-cover crop — a looping clip when filmed,
+                otherwise a still athlete image animated to life. */}
+            <div className="relative h-full aspect-square max-w-[58%] overflow-hidden" style={{ borderRadius: 0 }}>
+              {sport.video ? (
+                <SportClip
+                  src={sport.video}
+                  playbackRate={sport.playbackRate ?? 0.7}
+                  freeze={sport.freeze}
+                />
+              ) : (
+                <SportStill src={sport.image!} accent={accent} />
+              )}
               {/* engineered frame + soft left seam so it seats into the scene */}
               <div
                 className="absolute inset-0 pointer-events-none"
