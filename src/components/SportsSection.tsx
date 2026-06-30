@@ -12,8 +12,9 @@ const SPORTS = [
     description: 'Track and field is decided by the smallest of margins. T-Apex supports the marginal gains that matter most at the highest level of competition.',
     color: '#D61F26',
     video: '/sports/sprinting.mp4',
-    // Borderline slo-mo for the hero sprint.
-    playbackRate: 0.4,
+    // Deep slo-mo: sprint for ~3s of real time, freeze 3s, then loop to start.
+    playbackRate: 0.3,
+    freeze: { afterMs: 3000, ms: 3000 },
     focuses: [
       'Block clearance and early acceleration',
       'Maximum velocity development',

@@ -18,8 +18,9 @@ export type Sport = {
   videoBlend?: boolean
   /** Playback speed for this clip (default 0.7 — slightly cinematic). */
   playbackRate?: number
-  /** Optional hold: pause at `fraction` of the clip's duration for `ms`, then loop. */
-  freeze?: { fraction: number; ms: number }
+  /** Optional hold then loop. Trigger either at `fraction` of the clip's
+   *  duration, or after `afterMs` of real viewing time; hold for `ms`. */
+  freeze?: { fraction?: number; afterMs?: number; ms: number }
 }
 
 /**
@@ -34,7 +35,7 @@ function SportClip({
 }: {
   src: string
   playbackRate?: number
-  freeze?: { fraction: number; ms: number }
+  freeze?: { fraction?: number; afterMs?: number; ms: number }
 }) {
   const ref = useRef<HTMLVideoElement>(null)
   useEffect(() => {
@@ -46,24 +47,39 @@ function SportClip({
 
     let timer: ReturnType<typeof setTimeout> | undefined
     let frozen = false
-    const onTime = () => {
-      if (!freeze || frozen || !v.duration) return
-      if (v.currentTime >= v.duration * freeze.fraction) {
-        frozen = true
-        v.pause()
-        timer = setTimeout(() => {
-          v.currentTime = 0
-          v.playbackRate = playbackRate
-          frozen = false
-          v.play().catch(() => {})
-        }, freeze.ms)
-      }
+
+    // Hold for `ms`, then rewind to the start and resume.
+    const holdThenLoop = () => {
+      frozen = true
+      v.pause()
+      timer = setTimeout(() => {
+        v.currentTime = 0
+        v.playbackRate = playbackRate
+        frozen = false
+        v.play().catch(() => {})
+      }, freeze!.ms)
     }
-    if (freeze) v.addEventListener('timeupdate', onTime)
+
+    // Wall-clock trigger: freeze after `afterMs` of real viewing time.
+    const armWallFreeze = () => {
+      if (!freeze?.afterMs || frozen) return
+      if (timer) clearTimeout(timer)
+      timer = setTimeout(holdThenLoop, freeze.afterMs)
+    }
+    const onPlay = () => armWallFreeze()
+    if (freeze?.afterMs) v.addEventListener('play', onPlay)
+
+    // Fraction-of-duration trigger.
+    const onTime = () => {
+      if (!freeze?.fraction || frozen || !v.duration) return
+      if (v.currentTime >= v.duration * freeze.fraction) holdThenLoop()
+    }
+    if (freeze?.fraction) v.addEventListener('timeupdate', onTime)
 
     return () => {
       v.removeEventListener('loadedmetadata', applyRate)
       v.removeEventListener('timeupdate', onTime)
+      v.removeEventListener('play', onPlay)
       if (timer) clearTimeout(timer)
     }
   }, [src, playbackRate, freeze])
