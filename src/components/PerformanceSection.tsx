@@ -351,21 +351,6 @@ export default function PerformanceSection() {
             <SportCard key={card.sport} card={card} index={i} />
           ))}
         </div>
-
-        {/* Bottom CTA */}
-        <motion.div
-          className="flex justify-center mt-16"
-          initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.6 }}
-        >
-          <button className="group inline-flex items-center gap-2.5 border border-apex-line hover:border-apex-blue/60 text-apex-grey hover:text-apex-white font-display font-bold text-[11px] px-8 py-4 rounded-xl tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5">
-            View All Sports Applications
-            <svg className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-300" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-            </svg>
-          </button>
-        </motion.div>
       </div>
     </section>
   )
