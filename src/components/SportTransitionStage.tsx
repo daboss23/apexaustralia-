@@ -152,6 +152,7 @@ export default function SportTransitionStage({
                   muted
                   playsInline
                   aria-hidden="true"
+                  onLoadedMetadata={(e) => { e.currentTarget.playbackRate = 0.4 }}
                 />
               </div>
             ) : (
@@ -164,6 +165,7 @@ export default function SportTransitionStage({
                   muted
                   playsInline
                   aria-hidden="true"
+                  onLoadedMetadata={(e) => { e.currentTarget.playbackRate = 0.4 }}
                 />
                 {/* engineered frame + soft left seam so it seats into the scene */}
                 <div
