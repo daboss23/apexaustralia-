@@ -42,8 +42,8 @@ export default function WhatsIncludedSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.65, delay: 0.15 }}
         >
-          Open the box and you&apos;re ready to train on day one, every component calibrated to
-          work as one system, no extra purchases to get started.
+          Extract and assemble the T-Apex and you&apos;ll be ready to train on day one, every
+          component calibrated to work as one system, no extra purchases to get started.
         </motion.p>
 
         {/* Everything-in-the-box hero — full annotated kit, edges feathered into the section bg */}
@@ -65,11 +65,18 @@ export default function WhatsIncludedSection() {
             aria-hidden="true"
             style={{ background: 'linear-gradient(90deg, #0A0D10 0%, rgba(10,13,16,0) 11%, rgba(10,13,16,0) 89%, #0A0D10 100%)' }}
           />
-          {/* Feather top/bottom edges into the #0A0D10 surface */}
+          {/* Feather top/bottom edges into the #0A0D10 surface — bottom feather pushed
+              lower so it no longer dims the element labels */}
           <div
             className="absolute inset-0 pointer-events-none"
             aria-hidden="true"
-            style={{ background: 'linear-gradient(180deg, #0A0D10 0%, rgba(10,13,16,0) 6%, rgba(10,13,16,0) 84%, #0A0D10 100%)' }}
+            style={{ background: 'linear-gradient(180deg, #0A0D10 0%, rgba(10,13,16,0) 6%, rgba(10,13,16,0) 93%, #0A0D10 100%)' }}
+          />
+          {/* Gentle lift over the lower third so the numbered labels read clearly */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
+            aria-hidden="true"
+            style={{ background: 'linear-gradient(180deg, transparent, rgba(255,255,255,0.07) 70%, rgba(255,255,255,0.06) 100%)' }}
           />
         </motion.div>
 
