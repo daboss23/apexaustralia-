@@ -12,9 +12,8 @@ const SPORTS = [
     description: 'Track and field is decided by the smallest of margins. T-Apex supports the marginal gains that matter most at the highest level of competition.',
     color: '#D61F26',
     video: '/sports/sprinting.mp4',
-    // Clip is a neon athlete on a near-black background — blend it into the
-    // scene (drop the dark background) rather than boxing it in.
-    videoBlend: true,
+    // Borderline slo-mo for the hero sprint.
+    playbackRate: 0.4,
     focuses: [
       'Block clearance and early acceleration',
       'Maximum velocity development',
@@ -60,6 +59,10 @@ const SPORTS = [
     description: 'Snow sports demand explosive power, control and resilience under high load. T-Apex helps build the strength and movement qualities that hold up edge-to-edge at race speed.',
     color: '#00AEEF',
     video: '/sports/skiing.mp4',
+    // Slightly sped up, then hold near the peak (most aggressive electricity)
+    // for 2s before looping. Tune `fraction` if the freeze lands off the peak.
+    playbackRate: 0.7,
+    freeze: { fraction: 0.85, ms: 2000 },
     focuses: [
       'Explosive leg drive out of the gate',
       'Eccentric load tolerance',

@@ -16,6 +16,70 @@ export type Sport = {
   /** When true the clip's (near-black) background is dropped via screen-blend so
    *  the athlete blends straight into the scene instead of a framed box. */
   videoBlend?: boolean
+  /** Playback speed for this clip (default 0.7 — slightly cinematic). */
+  playbackRate?: number
+  /** Optional hold: pause at `fraction` of the clip's duration for `ms`, then loop. */
+  freeze?: { fraction: number; ms: number }
+}
+
+/**
+ * One sport clip — uniform framed style/size for every code. Handles per-clip
+ * playback speed and an optional "freeze then loop" hold (pauses at a fraction
+ * of the clip's duration, waits, then restarts).
+ */
+function SportClip({
+  src,
+  playbackRate = 0.7,
+  freeze,
+}: {
+  src: string
+  playbackRate?: number
+  freeze?: { fraction: number; ms: number }
+}) {
+  const ref = useRef<HTMLVideoElement>(null)
+  useEffect(() => {
+    const v = ref.current
+    if (!v) return
+    const applyRate = () => { v.playbackRate = playbackRate }
+    if (v.readyState >= 1) applyRate()
+    v.addEventListener('loadedmetadata', applyRate)
+
+    let timer: ReturnType<typeof setTimeout> | undefined
+    let frozen = false
+    const onTime = () => {
+      if (!freeze || frozen || !v.duration) return
+      if (v.currentTime >= v.duration * freeze.fraction) {
+        frozen = true
+        v.pause()
+        timer = setTimeout(() => {
+          v.currentTime = 0
+          v.playbackRate = playbackRate
+          frozen = false
+          v.play().catch(() => {})
+        }, freeze.ms)
+      }
+    }
+    if (freeze) v.addEventListener('timeupdate', onTime)
+
+    return () => {
+      v.removeEventListener('loadedmetadata', applyRate)
+      v.removeEventListener('timeupdate', onTime)
+      if (timer) clearTimeout(timer)
+    }
+  }, [src, playbackRate, freeze])
+
+  return (
+    <video
+      ref={ref}
+      className="absolute inset-0 w-full h-full object-cover"
+      src={src}
+      autoPlay
+      loop={!freeze}
+      muted
+      playsInline
+      aria-hidden="true"
+    />
+  )
 }
 
 /**
@@ -138,46 +202,25 @@ export default function SportTransitionStage({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            {sport.videoBlend ? (
-              /* Background-removed: screen-blend drops the clip's near-black
-                 background so only the athlete + neon energy show, blended
-                 straight into the scene (no frame). */
-              <div className="relative h-full aspect-square max-w-[64%]" style={{ borderRadius: 0 }}>
-                <video
-                  className="absolute inset-0 w-full h-full object-contain"
-                  style={{ mixBlendMode: 'screen' }}
-                  src={sport.video}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  aria-hidden="true"
-                  onLoadedMetadata={(e) => { e.currentTarget.playbackRate = 0.4 }}
-                />
-              </div>
-            ) : (
-              <div className="relative h-full aspect-square max-w-[58%]" style={{ borderRadius: 0 }}>
-                <video
-                  className="absolute inset-0 w-full h-full object-cover"
-                  src={sport.video}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  aria-hidden="true"
-                  onLoadedMetadata={(e) => { e.currentTarget.playbackRate = 0.4 }}
-                />
-                {/* engineered frame + soft left seam so it seats into the scene */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{ border: `1px solid ${accent}40` }}
-                />
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{ background: 'linear-gradient(90deg, rgba(8,8,10,0.65), transparent 16%)' }}
-                />
-              </div>
-            )}
+            {/* Every code's clip renders in the same engineered frame, same
+                square size and same object-cover crop — so mixed source
+                dimensions all read as one consistent style. */}
+            <div className="relative h-full aspect-square max-w-[58%]" style={{ borderRadius: 0 }}>
+              <SportClip
+                src={sport.video}
+                playbackRate={sport.playbackRate ?? 0.7}
+                freeze={sport.freeze}
+              />
+              {/* engineered frame + soft left seam so it seats into the scene */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{ border: `1px solid ${accent}40` }}
+              />
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{ background: 'linear-gradient(90deg, rgba(8,8,10,0.65), transparent 16%)' }}
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
