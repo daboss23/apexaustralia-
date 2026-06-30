@@ -51,7 +51,7 @@ export default function ComparisonSection() {
   const last = ADVANTAGES.length - 1
 
   return (
-    <section id="comparison" className="relative py-24 md:py-36 overflow-hidden" style={{ background: C.bg }}>
+    <section id="comparison" className="relative py-16 md:py-36 overflow-hidden" style={{ background: C.bg }}>
       {/* Top hairline rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"

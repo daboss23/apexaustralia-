@@ -8,7 +8,7 @@ export default function WhatsIncludedSection() {
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
 
   return (
-    <section id="whats-included" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
+    <section id="whats-included" className="relative bg-apex-black-2 py-16 md:py-36 overflow-hidden">
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
@@ -42,8 +42,8 @@ export default function WhatsIncludedSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.65, delay: 0.15 }}
         >
-          Open the box and you&apos;re ready to train on day one, every component calibrated to
-          work as one system, no extra purchases to get started.
+          Extract and assemble the T-Apex and you&apos;ll be ready to train on day one, every
+          component calibrated to work as one system, no extra purchases to get started.
         </motion.p>
 
         {/* Everything-in-the-box hero — full annotated kit, edges feathered into the section bg */}
@@ -65,13 +65,34 @@ export default function WhatsIncludedSection() {
             aria-hidden="true"
             style={{ background: 'linear-gradient(90deg, #0A0D10 0%, rgba(10,13,16,0) 11%, rgba(10,13,16,0) 89%, #0A0D10 100%)' }}
           />
-          {/* Feather top/bottom edges into the #0A0D10 surface */}
+          {/* Feather top/bottom edges into the #0A0D10 surface — smooth, edge-free blend */}
           <div
             className="absolute inset-0 pointer-events-none"
             aria-hidden="true"
             style={{ background: 'linear-gradient(180deg, #0A0D10 0%, rgba(10,13,16,0) 6%, rgba(10,13,16,0) 84%, #0A0D10 100%)' }}
           />
         </motion.div>
+
+        {/* Mobile-only legible parts list — the labels baked into the image are
+            too small to read on a phone, so restate them as a clean numbered grid. */}
+        <motion.ul
+          className="md:hidden grid grid-cols-2 gap-2.5 -mt-12 mb-4"
+          initial={{ opacity: 0, y: 16 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          {['T-APEX Unit', 'Pull Rod', 'Belt', 'Tablet', 'User Guide', 'Power Cord', 'Type-C Charger', 'Allen Wrench'].map((part, i) => (
+            <li
+              key={part}
+              className="flex items-center gap-2.5 bg-apex-panel/70 border border-apex-line px-3 py-2.5"
+            >
+              <span className="flex-shrink-0 flex items-center justify-center w-5 h-5 border border-apex-red/50 text-apex-red font-mono text-[10px] font-semibold">
+                {i + 1}
+              </span>
+              <span className="text-apex-white font-display text-[12.5px] font-semibold leading-tight">{part}</span>
+            </li>
+          ))}
+        </motion.ul>
 
         {/* ── Overspeed module ────────────────────────────────────────── */}
         <motion.div

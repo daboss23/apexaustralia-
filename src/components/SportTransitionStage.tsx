@@ -13,9 +13,131 @@ export type Sport = {
   applications: string[]
   /** Optional looping clip shown in the right of the stage while this code is active */
   video?: string
+  /** Optional still image (used in place of a clip) — animated to life on the stage. */
+  image?: string
   /** When true the clip's (near-black) background is dropped via screen-blend so
    *  the athlete blends straight into the scene instead of a framed box. */
   videoBlend?: boolean
+  /** Playback speed for this clip (default 0.7 — slightly cinematic). */
+  playbackRate?: number
+  /** Optional hold then loop. Trigger either at `fraction` of the clip's
+   *  duration, or after `afterMs` of real viewing time; hold for `ms`. */
+  freeze?: { fraction?: number; afterMs?: number; ms: number }
+  /** How long the auto-cycle lingers on this code before advancing (ms). */
+  dwellMs?: number
+}
+
+/**
+ * One sport clip — uniform framed style/size for every code. Handles per-clip
+ * playback speed and an optional "freeze then loop" hold (pauses at a fraction
+ * of the clip's duration, waits, then restarts).
+ */
+function SportClip({
+  src,
+  playbackRate = 0.7,
+  freeze,
+}: {
+  src: string
+  playbackRate?: number
+  freeze?: { fraction?: number; afterMs?: number; ms: number }
+}) {
+  const ref = useRef<HTMLVideoElement>(null)
+  useEffect(() => {
+    const v = ref.current
+    if (!v) return
+    const applyRate = () => { v.playbackRate = playbackRate }
+    if (v.readyState >= 1) applyRate()
+    v.addEventListener('loadedmetadata', applyRate)
+
+    let timer: ReturnType<typeof setTimeout> | undefined
+    let frozen = false
+
+    // Hold for `ms`, then rewind to the start and resume.
+    const holdThenLoop = () => {
+      frozen = true
+      v.pause()
+      timer = setTimeout(() => {
+        v.currentTime = 0
+        v.playbackRate = playbackRate
+        frozen = false
+        v.play().catch(() => {})
+      }, freeze!.ms)
+    }
+
+    // Wall-clock trigger: freeze after `afterMs` of real viewing time.
+    const armWallFreeze = () => {
+      if (!freeze?.afterMs || frozen) return
+      if (timer) clearTimeout(timer)
+      timer = setTimeout(holdThenLoop, freeze.afterMs)
+    }
+    const onPlay = () => armWallFreeze()
+    if (freeze?.afterMs) v.addEventListener('play', onPlay)
+
+    // Fraction-of-duration trigger.
+    const onTime = () => {
+      if (!freeze?.fraction || frozen || !v.duration) return
+      if (v.currentTime >= v.duration * freeze.fraction) holdThenLoop()
+    }
+    if (freeze?.fraction) v.addEventListener('timeupdate', onTime)
+
+    return () => {
+      v.removeEventListener('loadedmetadata', applyRate)
+      v.removeEventListener('timeupdate', onTime)
+      v.removeEventListener('play', onPlay)
+      if (timer) clearTimeout(timer)
+    }
+  }, [src, playbackRate, freeze])
+
+  return (
+    <video
+      ref={ref}
+      className="absolute inset-0 w-full h-full object-cover"
+      src={src}
+      autoPlay
+      loop={!freeze}
+      muted
+      playsInline
+      aria-hidden="true"
+    />
+  )
+}
+
+/**
+ * A still athlete image animated to life — slow Ken-Burns push/drift plus a
+ * recurring speed-streak light sweep, so an un-filmed code still feels kinetic
+ * and matches the motion energy of the video clips.
+ */
+function SportStill({ src, accent }: { src: string; accent: string }) {
+  return (
+    <>
+      {/* Ken-Burns: slow zoom + lateral drift, looping seamlessly */}
+      <motion.div
+        className="absolute inset-0 bg-cover bg-center will-change-transform"
+        style={{ backgroundImage: `url(${src})` }}
+        initial={{ scale: 1.05, x: '1.5%' }}
+        animate={{ scale: [1.05, 1.13, 1.05], x: ['1.5%', '-1.5%', '1.5%'] }}
+        transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
+        aria-hidden="true"
+      />
+      {/* Forward speed-streak sweep — reinforces the existing motion blur */}
+      <motion.div
+        className="absolute inset-y-0 w-1/3 pointer-events-none mix-blend-screen"
+        style={{ background: `linear-gradient(90deg, transparent, ${accent}33 50%, transparent)` }}
+        initial={{ left: '-40%' }}
+        animate={{ left: '120%' }}
+        transition={{ duration: 2.6, repeat: Infinity, repeatDelay: 1.8, ease: 'easeInOut' }}
+        aria-hidden="true"
+      />
+      {/* Breathing accent glow so the frame feels alive */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        style={{ boxShadow: `inset 0 0 90px ${accent}22` }}
+        animate={{ opacity: [0.35, 0.85, 0.35] }}
+        transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+        aria-hidden="true"
+      />
+    </>
+  )
 }
 
 /**
@@ -129,7 +251,7 @@ export default function SportTransitionStage({
             while its code is active. Drop a square clip per sport and it slots
             in here (object-cover keeps a square source pixel-perfect). ────── */}
       <AnimatePresence mode="wait">
-        {sport.video && (
+        {(sport.video || sport.image) && (
           <motion.div
             key={`vid-${activeId}`}
             className="absolute inset-0 flex items-center justify-end p-4 sm:p-5 lg:p-6 pointer-events-none"
@@ -138,44 +260,29 @@ export default function SportTransitionStage({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            {sport.videoBlend ? (
-              /* Background-removed: screen-blend drops the clip's near-black
-                 background so only the athlete + neon energy show, blended
-                 straight into the scene (no frame). */
-              <div className="relative h-full aspect-square max-w-[64%]" style={{ borderRadius: 0 }}>
-                <video
-                  className="absolute inset-0 w-full h-full object-contain"
-                  style={{ mixBlendMode: 'screen' }}
+            {/* Every code renders in the same engineered frame, same square
+                size and same object-cover crop — a looping clip when filmed,
+                otherwise a still athlete image animated to life. */}
+            <div className="relative h-full aspect-square max-w-[58%] overflow-hidden" style={{ borderRadius: 0 }}>
+              {sport.video ? (
+                <SportClip
                   src={sport.video}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  aria-hidden="true"
+                  playbackRate={sport.playbackRate ?? 0.7}
+                  freeze={sport.freeze}
                 />
-              </div>
-            ) : (
-              <div className="relative h-full aspect-square max-w-[58%]" style={{ borderRadius: 0 }}>
-                <video
-                  className="absolute inset-0 w-full h-full object-cover"
-                  src={sport.video}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  aria-hidden="true"
-                />
-                {/* engineered frame + soft left seam so it seats into the scene */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{ border: `1px solid ${accent}40` }}
-                />
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{ background: 'linear-gradient(90deg, rgba(8,8,10,0.65), transparent 16%)' }}
-                />
-              </div>
-            )}
+              ) : (
+                <SportStill src={sport.image!} accent={accent} />
+              )}
+              {/* engineered frame + soft left seam so it seats into the scene */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{ border: `1px solid ${accent}40` }}
+              />
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{ background: 'linear-gradient(90deg, rgba(8,8,10,0.65), transparent 16%)' }}
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

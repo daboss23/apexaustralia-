@@ -405,7 +405,7 @@ export default function CheckoutSection() {
   const isOver = variantId === 'overspeed'
 
   return (
-    <section ref={sectionRef} id="order" className="relative bg-apex-black overflow-hidden py-24 md:py-36">
+    <section ref={sectionRef} id="order" className="relative bg-apex-black overflow-hidden py-16 md:py-36">
       {/* Top divider */}
       <div
         className="absolute top-0 left-0 right-0 h-px"

@@ -12,9 +12,11 @@ const SPORTS = [
     description: 'Track and field is decided by the smallest of margins. T-Apex supports the marginal gains that matter most at the highest level of competition.',
     color: '#D61F26',
     video: '/sports/sprinting.mp4',
-    // Clip is a neon athlete on a near-black background — blend it into the
-    // scene (drop the dark background) rather than boxing it in.
-    videoBlend: true,
+    // Slo-mo sprint that plays through to the electrical climax, freezes there
+    // for 3s, then loops. Dwell is long enough to see the full hold.
+    playbackRate: 0.55,
+    freeze: { fraction: 0.9, ms: 3000 },
+    dwellMs: 18000,
     focuses: [
       'Block clearance and early acceleration',
       'Maximum velocity development',
@@ -60,6 +62,10 @@ const SPORTS = [
     description: 'Snow sports demand explosive power, control and resilience under high load. T-Apex helps build the strength and movement qualities that hold up edge-to-edge at race speed.',
     color: '#00AEEF',
     video: '/sports/skiing.mp4',
+    // Slightly sped up, then hold near the peak (most aggressive electricity)
+    // for 2s before looping. Tune `fraction` if the freeze lands off the peak.
+    playbackRate: 1.0,
+    freeze: { fraction: 0.85, ms: 2000 },
     focuses: [
       'Explosive leg drive out of the gate',
       'Eccentric load tolerance',
@@ -74,7 +80,8 @@ const SPORTS = [
     tagline: 'Power From Every Position',
     description: 'Rugby league demands explosive power in every collision. T-Apex helps develop the force, speed, and conditioning to compete for the full 80 minutes.',
     color: '#D61F26',
-    video: '/sports/rugby-league.mp4',
+    // Still image animated to life on the stage (no clip filmed yet).
+    image: '/sports/rugby-league.png',
     focuses: [
       'Collision and contact force development',
       'Defensive line-speed and acceleration',
@@ -90,8 +97,6 @@ const SPORTS = [
     description: 'Elite footballers are defined by their ability to create and close space. T-Apex helps train the movement qualities that make the difference.',
     color: '#00AEEF',
     video: '/sports/soccer.mp4',
-    // Neon athlete on a stadium background, crushed + screen-blended into the scene.
-    videoBlend: true,
     focuses: [
       'First-step quickness and separation',
       'Multi-directional acceleration',
@@ -106,7 +111,8 @@ const SPORTS = [
     tagline: 'Vertical Power. Court Speed.',
     description: 'Basketball performance is won in explosive moments. T-Apex helps train the precise movement qualities that separate elite from ordinary.',
     color: '#00AEEF',
-    video: '/sports/basketball.mp4',
+    // Still image animated to life on the stage (no clip filmed yet).
+    image: '/sports/basketball.png',
     focuses: [
       'Vertical and take-off power',
       'Lateral quickness and defensive movement',
@@ -126,15 +132,18 @@ export default function SportsSection() {
 
   const sport = SPORTS.find(s => s.id === activeSport) ?? SPORTS[0]
 
-  // Auto-cycle through codes to showcase breadth — until the visitor takes over.
+  // Auto-cycle through codes to showcase breadth — but only once the section is
+  // in view, so the stage always *starts* on Sprinting when the visitor reaches
+  // it (rather than mid-rotation). Each code lingers for its own dwell time.
   useEffect(() => {
-    if (userPicked) return
+    if (userPicked || !inView) return
     const ids = SPORTS.map(s => s.id)
-    const iv = setInterval(() => {
-      setActiveSport(prev => ids[(ids.indexOf(prev) + 1) % ids.length])
-    }, 3400)
-    return () => clearInterval(iv)
-  }, [userPicked])
+    const current = SPORTS.find(s => s.id === activeSport) ?? SPORTS[0]
+    const t = setTimeout(() => {
+      setActiveSport(ids[(ids.indexOf(activeSport) + 1) % ids.length])
+    }, current.dwellMs ?? 9000)
+    return () => clearTimeout(t)
+  }, [userPicked, inView, activeSport])
 
   // Manual pick pauses the auto-cycle, which resumes after a spell of no
   // interaction so the stage is always "moving across the codes" on its own.
@@ -146,7 +155,7 @@ export default function SportsSection() {
   }
 
   return (
-    <section id="sports" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
+    <section id="sports" className="relative bg-apex-black-2 py-16 md:py-36 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute inset-0 opacity-15" style={{
           backgroundImage: `radial-gradient(circle at 50% 80%, rgba(214,31,38,0.06) 0%, transparent 55%)`

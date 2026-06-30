@@ -95,7 +95,7 @@ export default function DataInsightsSection() {
   }
 
   return (
-    <section id="data" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
+    <section id="data" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"
@@ -239,22 +239,63 @@ export default function DataInsightsSection() {
               {RAW_DATA.map((item, i) => {
                 const isActive = active === i
                 return (
-                  <button
+                  <motion.button
                     key={item.short}
                     onClick={() => selectReport(i)}
-                    className={`relative flex items-center gap-2 px-4 sm:px-5 py-2.5 border font-display font-bold text-[12px] sm:text-[13px] tracking-[0.06em] transition-colors duration-300 cursor-pointer ${
+                    className={`group relative flex items-center gap-2 px-4 sm:px-5 py-2.5 border font-display font-bold text-[12px] sm:text-[13px] tracking-[0.06em] cursor-pointer overflow-hidden ${
                       isActive
                         ? 'text-white border-transparent'
-                        : 'text-apex-grey border-apex-line hover:text-apex-white hover:border-apex-grey/40'
+                        : 'text-apex-grey border-apex-line hover:text-apex-white hover:border-apex-blue/50'
                     }`}
-                    style={{ borderRadius: 0, ...(isActive ? { background: '#D61F26', borderColor: '#D61F26' } : {}) }}
+                    style={{ borderRadius: 0 }}
                     aria-pressed={isActive}
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.96, y: 0 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   >
+                    {/* Active fill — slides between tabs and carries a red glow */}
+                    {isActive && (
+                      <motion.span
+                        layoutId="report-tab-active"
+                        className="absolute inset-0 z-0"
+                        style={{
+                          background: 'linear-gradient(135deg, #ff3b30 0%, #D61F26 45%, #9c0f0d 100%)',
+                          boxShadow: '0 0 0 1px #D61F26, 0 6px 20px -4px rgba(214,31,38,0.6), inset 0 1px 0 rgba(255,255,255,0.25)',
+                        }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+                        aria-hidden="true"
+                      >
+                        {/* sweeping shine across the active pill */}
+                        <motion.span
+                          className="absolute inset-y-0 w-1/2 -skew-x-12"
+                          style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent)' }}
+                          initial={{ x: '-150%' }}
+                          animate={{ x: '250%' }}
+                          transition={{ duration: 1.1, ease: 'easeInOut', repeat: Infinity, repeatDelay: 2.4 }}
+                        />
+                      </motion.span>
+                    )}
+
+                    {/* Idle hover wash — faint blue energy on inactive tabs */}
+                    {!isActive && (
+                      <span
+                        className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        style={{ background: 'linear-gradient(135deg, rgba(0,174,239,0.14), transparent 70%)' }}
+                        aria-hidden="true"
+                      />
+                    )}
+
                     <span className="relative z-10 flex items-center gap-2">
-                      {ICONS[item.icon]}
+                      <motion.span
+                        className="flex"
+                        animate={isActive ? { rotate: [0, -12, 8, 0], scale: [1, 1.18, 1] } : {}}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
+                      >
+                        {ICONS[item.icon]}
+                      </motion.span>
                       {item.short}
                     </span>
-                  </button>
+                  </motion.button>
                 )
               })}
             </div>

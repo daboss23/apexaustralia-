@@ -53,7 +53,7 @@ export default function WhoItsForSection() {
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
 
   return (
-    <section id="who" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
+    <section id="who" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
       {/* Top rule */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"

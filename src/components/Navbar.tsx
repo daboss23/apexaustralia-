@@ -37,9 +37,9 @@ export default function Navbar() {
       </div>
 
       <motion.nav
-        className={`fixed top-4 left-4 right-4 z-[150] flex items-center justify-between px-5 py-3 border transition-colors duration-500 ${
+        className={`fixed top-0 left-0 right-0 md:top-4 md:left-4 md:right-4 z-[150] flex items-center justify-between px-5 py-3 md:py-3 border transition-colors duration-500 ${
           scrolled
-            ? 'bg-[rgba(8,8,10,0.95)] border-apex-line/70 backdrop-blur-xl'
+            ? 'bg-[rgba(8,8,10,0.98)] border-apex-line/70 backdrop-blur-xl'
             : 'bg-transparent border-transparent'
         }`}
         style={{ borderRadius: 0, borderLeft: scrolled ? '2px solid rgba(214,31,38,0.5)' : 'none' }}
@@ -131,7 +131,8 @@ export default function Navbar() {
           </motion.div>
         ))}
         <motion.button
-          className="mt-8 bg-apex-red text-white font-display font-bold text-sm px-8 py-4 rounded-xl tracking-widest uppercase cursor-pointer"
+          className="mt-8 cta-glow text-white font-display font-bold text-sm px-8 py-4 tracking-widest uppercase cursor-pointer"
+          style={{ borderRadius: 0 }}
           initial={false}
           animate={{ y: mobileOpen ? 0 : 20, opacity: mobileOpen ? 1 : 0 }}
           transition={{ delay: 0.2, duration: 0.4 }}
