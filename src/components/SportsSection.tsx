@@ -61,7 +61,7 @@ const SPORTS = [
     video: '/sports/skiing.mp4',
     // Slightly sped up, then hold near the peak (most aggressive electricity)
     // for 2s before looping. Tune `fraction` if the freeze lands off the peak.
-    playbackRate: 0.7,
+    playbackRate: 0.85,
     freeze: { fraction: 0.85, ms: 2000 },
     focuses: [
       'Explosive leg drive out of the gate',
