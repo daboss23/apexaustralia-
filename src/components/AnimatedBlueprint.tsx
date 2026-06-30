@@ -42,7 +42,7 @@ const RED_POINTS: { x: number; y: number; s: number }[] = [
 ]
 
 export default function AnimatedBlueprint({
-  src = '/accessories/engineering-blueprint.png',
+  src = '/accessories/engineering-blueprint.webp',
   alt = 'T-APEX engineering blueprint — front, rear and base views with 13 numbered components',
   className = '',
 }: {

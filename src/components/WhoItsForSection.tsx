@@ -89,7 +89,7 @@ export default function WhoItsForSection() {
         </motion.h2>
 
         <motion.p
-          className="text-apex-grey font-body max-w-2xl mb-16 leading-relaxed"
+          className="text-apex-grey font-body max-w-2xl mb-10 md:mb-16 leading-relaxed"
           style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}
           initial={{ opacity: 0, y: 18 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -109,7 +109,7 @@ export default function WhoItsForSection() {
 
         {/* Bridge to sports */}
         <motion.div
-          className="mt-16 p-8 border border-apex-line/50 bg-apex-panel/40"
+          className="mt-10 md:mt-16 p-8 border border-apex-line/50 bg-apex-panel/40"
           style={{ borderTop: '2px solid rgba(214,31,38,0.6)' }}
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}

@@ -216,7 +216,7 @@ export default function ProductShowcase() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         {/* Headline */}
-        <div ref={titleRef} className="text-center mb-12">
+        <div ref={titleRef} className="text-center mb-7 md:mb-12">
           <motion.h2
             className="h-luxia t-silver leading-[0.9] mx-auto max-w-4xl"
             style={{ fontSize: 'clamp(2rem, 5.5vw, 4.6rem)', letterSpacing: '0.04em' }}
@@ -230,7 +230,7 @@ export default function ProductShowcase() {
         </div>
 
         {/* ── CINEMATIC PRODUCT VIDEO — native 4:3, flanked by callouts on xl ── */}
-        <div className="max-w-3xl mx-auto mb-16">
+        <div className="max-w-3xl mx-auto mb-10 md:mb-16">
           {/* Positioning context for the flanking callouts */}
           <div ref={stageRef} className="relative">
             {CALLOUTS.map(c => <Callout key={c.id} c={c} inView={locked} />)}
@@ -347,7 +347,7 @@ export default function ProductShowcase() {
 
         {/* Body copy */}
         <motion.div
-          className="max-w-3xl mx-auto text-center mb-16 flex flex-col gap-5"
+          className="max-w-3xl mx-auto text-center mb-10 md:mb-16 flex flex-col gap-5"
           initial={{ opacity: 0, y: 18 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.85 }}

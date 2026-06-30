@@ -102,7 +102,7 @@ export default function TApexVs1080Section() {
 
         {/* Subheadline */}
         <motion.div
-          className="max-w-3xl mb-14"
+          className="max-w-3xl mb-8 md:mb-14"
           initial={{ opacity: 0, y: 18 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.65, delay: 0.15 }}
@@ -119,7 +119,7 @@ export default function TApexVs1080Section() {
         </motion.div>
 
         {/* Philosophy framing */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-7 md:gap-12 lg:gap-16 mb-10 md:mb-16">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -213,8 +213,44 @@ export default function TApexVs1080Section() {
         </motion.p>
 
         {/* Comparison table */}
-        {/* Column headers */}
         <div ref={tableRef}>
+          {/* ── MOBILE: stacked cards (three text columns are unreadable at
+              phone width) ──────────────────────────────────────────────── */}
+          <div className="md:hidden space-y-3">
+            {ROWS.map((row, i) => (
+              <motion.div
+                key={row.dimension}
+                className="border border-apex-line/40 bg-apex-panel/40 overflow-hidden"
+                initial={{ opacity: 0, y: 12 }}
+                animate={tableInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.4, delay: 0.06 + i * 0.04 }}
+              >
+                {/* Dimension heading */}
+                <div className="px-4 py-2.5 bg-apex-panel/70 border-b border-apex-line/40">
+                  <span className="text-[10px] font-mono text-apex-grey-dim tracking-[0.18em] uppercase">{row.dimension}</span>
+                </div>
+                {/* T-APEX — highlighted */}
+                <div className="px-4 py-3 flex items-start gap-2.5" style={{ background: 'rgba(0,174,239,0.06)', borderLeft: '2px solid #00AEEF' }}>
+                  <svg className="w-3.5 h-3.5 text-apex-blue flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                  <div>
+                    <span className="block text-[9px] font-mono text-apex-blue tracking-[0.16em] uppercase mb-0.5">T-APEX</span>
+                    <p className="font-body text-[12.5px] leading-relaxed" style={{ color: 'rgba(244,244,246,0.92)' }}>{row.tapex}</p>
+                  </div>
+                </div>
+                {/* 1080 Sprint 2 */}
+                <div className="px-4 py-3 border-t border-apex-line/30">
+                  <span className="block text-[9px] font-mono text-apex-grey-dim tracking-[0.16em] uppercase mb-0.5">1080 Sprint 2</span>
+                  <p className="text-apex-grey font-body text-[12.5px] leading-relaxed">{row.sprint}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* ── DESKTOP: 3 aligned columns ─────────────────────────────────── */}
+          <div className="hidden md:block">
+          {/* Column headers */}
           <motion.div
             className="grid grid-cols-[1.1fr,1.4fr,1.4fr] gap-0"
             initial={{ opacity: 0 }}
@@ -228,7 +264,7 @@ export default function TApexVs1080Section() {
               className="px-5 py-4 border"
               style={{ background: 'rgba(0,174,239,0.08)', borderColor: 'rgba(0,174,239,0.3)', borderTop: '2px solid #00AEEF', borderRight: 'none' }}
             >
-              <Image src="/tapexlogo.png" alt="T-APEX" width={211} height={100} className="h-10 sm:h-12 w-auto object-contain" style={{ mixBlendMode: 'screen' }} />
+              <Image src="/tapexlogo.webp" alt="T-APEX" width={211} height={100} className="h-10 sm:h-12 w-auto object-contain" style={{ mixBlendMode: 'screen' }} />
             </div>
             <div className="px-5 py-4 bg-apex-panel/40 border border-apex-line/40">
               <span className="text-[9px] font-mono text-apex-grey-dim tracking-[0.22em] uppercase">1080 Sprint 2</span>
@@ -272,11 +308,12 @@ export default function TApexVs1080Section() {
               </div>
             </motion.div>
           ))}
+          </div>
         </div>
 
         {/* Closing paragraph */}
         <motion.div
-          className="mt-12 max-w-3xl"
+          className="mt-7 md:mt-12 max-w-3xl"
           initial={{ opacity: 0, y: 16 }}
           animate={tableInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.3 }}

@@ -13,7 +13,7 @@ import { motion, useInView } from 'framer-motion'
  * vanishes (the parent frame is overflow-hidden), then repeats periodically.
  *
  * Drop it inside a `relative overflow-hidden` frame, after the base <Image>:
- *   <PortraitWaveSweep src="/piero.png" />
+ *   <PortraitWaveSweep src="/piero.webp" />
  *
  * Honours prefers-reduced-motion (renders nothing when set).
  */

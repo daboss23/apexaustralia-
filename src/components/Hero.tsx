@@ -68,7 +68,7 @@ function HeroCopy({ showLogo = false }: { showLogo?: boolean }) {
         {showLogo && (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
-            src="/apexaustralialogo.png"
+            src="/apexaustralialogo.webp"
             alt="T-APEX Australia"
             className="h-28 md:h-32 xl:h-36 w-auto object-contain"
             style={{ filter: 'brightness(1.1)' }}
@@ -170,7 +170,7 @@ export default function Hero() {
           style={{ background: 'linear-gradient(90deg, transparent 0%, #D61F26 18%, #D61F26 82%, transparent 100%)' }}
         />
 
-        <div className="relative z-10 w-full px-6 md:px-10 pt-[4rem] pb-24">
+        <div className="relative z-10 w-full px-6 md:px-10 pt-[4rem] pb-14 md:pb-24">
           <HeroCopy showLogo />
 
           {/* Scroll cue */}

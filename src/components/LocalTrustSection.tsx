@@ -54,7 +54,7 @@ export default function LocalTrustSection() {
         {/* Headline */}
         <motion.h2
           ref={titleRef}
-          className="h-luxia t-silver leading-[0.9] mb-12 max-w-4xl"
+          className="h-luxia t-silver leading-[0.9] mb-7 md:mb-12 max-w-4xl"
           style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -63,7 +63,7 @@ export default function LocalTrustSection() {
           WHY T-APEX<br /><span className="t-blue">AUSTRALIA</span>
         </motion.h2>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-7 md:gap-12 lg:gap-20 mb-10 md:mb-16">
           {/* Left: narrative */}
           <div>
             <motion.p
@@ -137,7 +137,7 @@ export default function LocalTrustSection() {
             <div className="relative mb-6 overflow-hidden aspect-[4/5] sm:aspect-square"
               style={{ border: '1px solid rgba(180,140,60,0.28)' }}>
               <Image
-                src="/piero.png"
+                src="/piero.webp"
                 alt="Piero Sacchetta — Founder, T-Apex Australia"
                 fill
                 sizes="(max-width: 1024px) 100vw, 40vw"
@@ -145,7 +145,7 @@ export default function LocalTrustSection() {
                 style={{ filter: 'saturate(0.94) contrast(1.04)' }}
               />
               {/* Cinematic light/refraction wave sweeping across on scroll-in */}
-              <PortraitWaveSweep src="/piero.png" />
+              <PortraitWaveSweep src="/piero.webp" />
               {/* bottom fade into the card */}
               <div className="absolute inset-0 pointer-events-none"
                 style={{ background: 'linear-gradient(180deg, transparent 50%, rgba(10,13,16,0.55) 80%, rgba(10,13,16,0.92) 100%)' }} />

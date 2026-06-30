@@ -71,7 +71,7 @@ export default function BenefitsSection() {
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         {/* Headline */}
-        <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
+        <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-10 md:mb-16">
           <motion.h2
             className="h-luxia t-silver leading-[0.88]"
             style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}

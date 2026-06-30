@@ -81,7 +81,7 @@ const SPORTS = [
     description: 'Rugby league demands explosive power in every collision. T-Apex helps develop the force, speed, and conditioning to compete for the full 80 minutes.',
     color: '#D61F26',
     // Still image animated to life on the stage (no clip filmed yet).
-    image: '/sports/rugby-league.png',
+    image: '/sports/rugby-league.webp',
     focuses: [
       'Collision and contact force development',
       'Defensive line-speed and acceleration',
@@ -112,7 +112,7 @@ const SPORTS = [
     description: 'Basketball performance is won in explosive moments. T-Apex helps train the precise movement qualities that separate elite from ordinary.',
     color: '#00AEEF',
     // Still image animated to life on the stage (no clip filmed yet).
-    image: '/sports/basketball.png',
+    image: '/sports/basketball.webp',
     focuses: [
       'Vertical and take-off power',
       'Lateral quickness and defensive movement',
@@ -181,7 +181,7 @@ export default function SportsSection() {
         </motion.h2>
 
         {/* Intro copy */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr,1fr] gap-8 lg:gap-16 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr,1fr] gap-8 lg:gap-16 mb-7 md:mb-12">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}

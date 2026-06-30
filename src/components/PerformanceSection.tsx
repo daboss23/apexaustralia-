@@ -235,7 +235,7 @@ export default function PerformanceSection() {
         </motion.h2>
 
         <motion.p
-          className="text-apex-grey font-body max-w-xl mb-16 leading-relaxed"
+          className="text-apex-grey font-body max-w-xl mb-10 md:mb-16 leading-relaxed"
           style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1.05rem)' }}
           initial={{ opacity: 0, y: 18 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -246,7 +246,7 @@ export default function PerformanceSection() {
 
         {/* Cinematic product film */}
         <motion.div
-          className="relative mb-20 overflow-hidden aspect-video"
+          className="relative mb-12 md:mb-20 overflow-hidden aspect-video"
           style={{ border: '1px solid rgba(214,31,38,0.22)', borderTop: '2px solid #D61F26' }}
           initial={{ opacity: 0, y: 26 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -277,7 +277,7 @@ export default function PerformanceSection() {
         </motion.div>
 
         {/* Headline metrics — editorial asymmetric layout */}
-        <div ref={metricsRef} className="flex flex-col lg:flex-row gap-8 lg:gap-14 mb-20 pb-20 border-b border-apex-line/40 items-start lg:items-center">
+        <div ref={metricsRef} className="flex flex-col lg:flex-row gap-8 lg:gap-14 mb-12 md:mb-20 pb-12 md:pb-20 border-b border-apex-line/40 items-start lg:items-center">
           {/* Primary stat: oversized editorial anchor */}
           <motion.div
             className="flex-shrink-0"

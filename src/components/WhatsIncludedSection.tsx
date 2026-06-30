@@ -36,7 +36,7 @@ export default function WhatsIncludedSection() {
         </motion.h2>
 
         <motion.p
-          className="text-apex-grey font-body leading-relaxed max-w-2xl mb-16"
+          className="text-apex-grey font-body leading-relaxed max-w-2xl mb-10 md:mb-16"
           style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
           initial={{ opacity: 0, y: 18 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -48,14 +48,14 @@ export default function WhatsIncludedSection() {
 
         {/* Everything-in-the-box hero — full annotated kit, edges feathered into the section bg */}
         <motion.div
-          className="relative mb-20 overflow-hidden"
+          className="relative mb-12 md:mb-20 overflow-hidden"
           initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.75, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/T-apex box.png"
+            src="/T-apex box.webp"
             alt="Everything in the T-APEX box — T-APEX unit, pull rod, belt, tablet, user guide, power cord, Type-C charger and Allen wrench"
             className="w-full h-auto block select-none"
           />
@@ -115,7 +115,7 @@ export default function WhatsIncludedSection() {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/Overspeed trainng kit.jpg"
+            src="/Overspeed trainng kit.webp"
             alt="Overspeed Training Kit — OS Tether Reel, OS Pulley, OS Weight Anchor and Fast-Release Strap"
             className="w-full h-auto block select-none"
           />

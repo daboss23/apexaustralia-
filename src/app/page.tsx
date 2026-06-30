@@ -19,6 +19,7 @@ import FAQSection from '@/components/FAQSection'
 import WhatsIncludedSection from '@/components/WhatsIncludedSection'
 import CheckoutSection from '@/components/CheckoutSection'
 import FinalCTA from '@/components/FinalCTA'
+import MobileCTABar from '@/components/MobileCTABar'
 
 export default function Home() {
   return (
@@ -84,6 +85,9 @@ export default function Home() {
 
       {/* 14 — FINAL CTA */}
       <FinalCTA />
+
+      {/* Mobile-only persistent CTA (hides over the order/checkout section) */}
+      <MobileCTABar />
     </main>
   )
 }

@@ -183,7 +183,7 @@ export default function ProblemSection() {
           <span className="t-red signal-flicker">ARE STILL TRAINING BLIND.</span>
         </motion.h2>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-7 md:gap-12 lg:gap-20">
           {/* Left: narrative */}
           <div>
             <motion.p

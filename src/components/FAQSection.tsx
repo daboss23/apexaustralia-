@@ -48,7 +48,7 @@ export default function FAQSection() {
       />
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-[1fr,2fr] gap-12 lg:gap-20">
+        <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-[1fr,2fr] gap-7 md:gap-12 lg:gap-20">
           {/* Left: Headline + CTA */}
           <motion.div
             className="lg:sticky lg:top-28 self-start"

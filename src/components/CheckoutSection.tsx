@@ -50,11 +50,11 @@ const VARIANTS: Record<VariantId, Variant> = {
     inBox: ['T-APEX Unit', 'Waist Belt', 'Tablet', 'Adaptor for T-APEX', 'Type-C Cable', 'User Manual'],
     modes: 'Resisted · Change-of-direction · Isotonic · Overload',
     gallery: [
-      { type: 'image', src: '/t-apex product 4.jpg', alt: 'T-APEX unit wheeled trackside by an athlete — portable Adaptive Resistance Intelligence' },
-      { type: 'image', src: '/t-apex product 0.jpg', alt: 'T-APEX system — Core configuration on the training floor' },
-      { type: 'image', src: '/t-apex product 3.jpg', alt: 'T-APEX unit with sprint shoe' },
-      { type: 'image', src: '/t-apex product 1.jpg', alt: 'T-APEX unit with weight plate anchor' },
-      { type: 'image', src: '/accessories/engineering-blueprint.png', alt: 'T-APEX engineering blueprint — front, rear and base views with 13 numbered components' },
+      { type: 'image', src: '/t-apex product 4.webp', alt: 'T-APEX unit wheeled trackside by an athlete — portable Adaptive Resistance Intelligence' },
+      { type: 'image', src: '/t-apex product 0.webp', alt: 'T-APEX system — Core configuration on the training floor' },
+      { type: 'image', src: '/t-apex product 3.webp', alt: 'T-APEX unit with sprint shoe' },
+      { type: 'image', src: '/t-apex product 1.webp', alt: 'T-APEX unit with weight plate anchor' },
+      { type: 'image', src: '/accessories/engineering-blueprint.webp', alt: 'T-APEX engineering blueprint — front, rear and base views with 13 numbered components' },
     ],
   },
   overspeed: {
@@ -82,11 +82,11 @@ const VARIANTS: Record<VariantId, Variant> = {
     ],
     modes: 'Resisted · CoD · Isotonic · Overload · Assisted Overspeed',
     gallery: [
-      { type: 'image', src: '/t-apex product 4.jpg', alt: 'T-APEX Overspeed unit wheeled trackside by an athlete — portable, stadium-ready' },
-      { type: 'image', src: '/t-apex product 0.jpg', alt: 'T-APEX Overspeed system — full configuration' },
-      { type: 'image', src: '/t-apex product 2.jpg', alt: 'T-APEX with the full Overspeed Module on the field — tether reel, pulley, weight anchor & fast-release strap' },
-      { type: 'image', src: '/t-apex product 3.jpg', alt: 'T-APEX Overspeed system — full configuration' },
-      { type: 'image', src: '/t-apex product 1.jpg', alt: 'T-APEX Overspeed unit with weight plate anchor' },
+      { type: 'image', src: '/t-apex product 4.webp', alt: 'T-APEX Overspeed unit wheeled trackside by an athlete — portable, stadium-ready' },
+      { type: 'image', src: '/t-apex product 0.webp', alt: 'T-APEX Overspeed system — full configuration' },
+      { type: 'image', src: '/t-apex product 2.webp', alt: 'T-APEX with the full Overspeed Module on the field — tether reel, pulley, weight anchor & fast-release strap' },
+      { type: 'image', src: '/t-apex product 3.webp', alt: 'T-APEX Overspeed system — full configuration' },
+      { type: 'image', src: '/t-apex product 1.webp', alt: 'T-APEX Overspeed unit with weight plate anchor' },
     ],
   },
 }
@@ -458,7 +458,7 @@ export default function CheckoutSection() {
         </motion.p>
 
         {/* Variant toggle */}
-        <div className="flex justify-center mb-12">
+        <div className="flex justify-center mb-7 md:mb-12">
           <div className="inline-flex p-1 border border-apex-line/70 bg-apex-black-2/80 backdrop-blur-sm">
             {Object.values(VARIANTS).map((v) => {
               const isActive = v.id === variantId
@@ -655,7 +655,7 @@ export default function CheckoutSection() {
 
         {/* ── Trust badge strip ── */}
         <motion.div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-apex-line/40 border border-apex-line/40 mt-16"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-apex-line/40 border border-apex-line/40 mt-10 md:mt-16"
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
@@ -752,7 +752,7 @@ export default function CheckoutSection() {
 
         {/* ── Guarantee / closing banner ── */}
         <motion.div
-          className="relative mt-20 border border-apex-line/60 bg-apex-black-2/60 px-6 sm:px-10 py-10 text-center overflow-hidden"
+          className="relative mt-12 md:mt-20 border border-apex-line/60 bg-apex-black-2/60 px-6 sm:px-10 py-10 text-center overflow-hidden"
           style={{ borderTop: '2px solid rgba(214,31,38,0.6)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}

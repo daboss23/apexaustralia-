@@ -84,7 +84,7 @@ export default function ComparisonSection() {
           <span className="t-red">PLUS EVERYTHING THEY CAN&apos;T.</span>
         </motion.h2>
         <motion.p
-          className="font-body leading-relaxed max-w-2xl mb-14"
+          className="font-body leading-relaxed max-w-2xl mb-8 md:mb-14"
           style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)', color: C.text }}
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -94,14 +94,75 @@ export default function ComparisonSection() {
           Here&apos;s how T-Apex compares to the gear most facilities still rely on today.
         </motion.p>
 
-        {/* ── Comparison table — 3 aligned columns ─────────────────────────── */}
+        {/* ── Comparison table ──────────────────────────────────────────────
+            Ref lives on the always-rendered wrapper (not the hidden desktop
+            grid) so useInView fires on mobile too. */}
         <motion.div
           ref={tableRef}
-          className="grid grid-cols-[minmax(0,1.7fr)_1fr_1fr] items-stretch"
           initial={{ opacity: 0, y: 22 }}
           animate={tableInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
+          {/* ── MOBILE: legible stacked rows (labels full-width, aligned
+              check/cross columns with headers) ───────────────────────────── */}
+          <div className="md:hidden">
+            {/* Column headers */}
+            <div className="flex items-stretch px-1 pb-2.5">
+              <div className="flex-1" />
+              <div className="w-[52px] text-center">
+                <span className="font-mono text-[9px] tracking-[0.12em] uppercase font-semibold" style={{ color: C.blue }}>T-APEX</span>
+              </div>
+              <div className="w-[52px] text-center">
+                <span className="font-mono text-[9px] tracking-[0.12em] uppercase" style={{ color: C.sub }}>Others</span>
+              </div>
+            </div>
+
+            {ADVANTAGES.map((a) => {
+              const apexOnly = !a.others
+              return (
+                <div
+                  key={a.label}
+                  className="flex items-center border-b"
+                  style={{
+                    borderColor: C.border,
+                    background: apexOnly ? 'linear-gradient(90deg, rgba(0,174,239,0.05), transparent 60%)' : undefined,
+                  }}
+                >
+                  <div className="flex-1 py-3.5 pr-2 pl-1">
+                    <span className="font-body text-[13px] leading-snug" style={{ color: C.text }}>{a.label}</span>
+                  </div>
+                  {/* T-APEX — always a check; red-glow halo on the apex-only rows */}
+                  <div className="w-[52px] flex justify-center py-3.5">
+                    <span
+                      className="flex items-center justify-center w-7 h-7 rounded-full"
+                      style={{
+                        background: 'rgba(255,255,255,0.06)',
+                        border: '1px solid rgba(255,255,255,0.12)',
+                        boxShadow: apexOnly ? '0 0 14px -2px rgba(214,31,38,0.5)' : undefined,
+                      }}
+                    >
+                      <Check className="w-4 h-4" style={{ color: '#fff' }} />
+                    </span>
+                  </div>
+                  {/* Conventional tools */}
+                  <div className="w-[52px] flex justify-center py-3.5">
+                    {a.others ? (
+                      <span className="flex items-center justify-center w-7 h-7 rounded-full" style={{ border: `1px solid ${C.border}` }}>
+                        <Check className="w-4 h-4" style={{ color: C.sub }} />
+                      </span>
+                    ) : (
+                      <span className="flex items-center justify-center w-7 h-7 rounded-full" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                        <Cross className="w-3.5 h-3.5" style={{ color: '#55555c' }} />
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* ── DESKTOP: 3 aligned columns ─────────────────────────────────── */}
+          <div className="hidden md:grid grid-cols-[minmax(0,1.7fr)_1fr_1fr] items-stretch">
           {/* COLUMN 1 — advantage labels */}
           <div className="flex flex-col">
             <div className={HEAD} aria-hidden="true" />
@@ -132,7 +193,7 @@ export default function ComparisonSection() {
             <div className="relative flex flex-col h-full">
               {/* Header — logo */}
               <div className={`${HEAD} flex items-center justify-center px-3`}>
-                <Image src="/apexaustralialogo.png" alt="T-APEX" width={300} height={96} className="h-12 sm:h-16 w-auto object-contain" priority />
+                <Image src="/apexaustralialogo.webp" alt="T-APEX" width={300} height={96} className="h-12 sm:h-16 w-auto object-contain" priority />
               </div>
               {/* Rows — white checks */}
               {ADVANTAGES.map((a, i) => (
@@ -177,11 +238,12 @@ export default function ComparisonSection() {
               </div>
             ))}
           </div>
+          </div>
         </motion.div>
 
         {/* Verdict + CTA — graphite glass with blue edge, red accent line */}
         <motion.div
-          className="mt-14 p-8 md:p-9 flex flex-col md:flex-row md:items-center gap-6 md:gap-10 rounded-2xl relative overflow-hidden"
+          className="mt-8 md:mt-14 p-8 md:p-9 flex flex-col md:flex-row md:items-center gap-6 md:gap-10 rounded-2xl relative overflow-hidden"
           style={{
             background: 'rgba(12,12,14,0.7)',
             backdropFilter: 'blur(20px)',

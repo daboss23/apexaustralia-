@@ -56,7 +56,7 @@ export default function Navbar() {
           aria-hidden={!scrolled}
         >
           <Image
-            src="/apexaustralialogo.png"
+            src="/apexaustralialogo.webp"
             alt="T-APEX Australia"
             width={140}
             height={46}

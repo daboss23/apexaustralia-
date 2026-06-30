@@ -48,7 +48,7 @@ export default function FinalCTA() {
             style={{ animation: 'slow-sprint 16s ease-in-out infinite', willChange: 'transform' }}
           >
             <Image
-              src="/hero.png"
+              src="/hero.webp"
               alt=""
               fill
               className="object-cover object-right-top"
@@ -171,7 +171,7 @@ export default function FinalCTA() {
 
           {/* Subtext */}
           <motion.p
-            className="text-apex-grey font-body max-w-2xl mx-auto mb-12 leading-relaxed"
+            className="text-apex-grey font-body max-w-2xl mx-auto mb-7 md:mb-12 leading-relaxed"
             style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -206,7 +206,7 @@ export default function FinalCTA() {
 
           {/* Risk reversal — removes the last reason not to act */}
           <motion.p
-            className="text-apex-grey-dim font-mono text-[10px] tracking-[0.18em] uppercase mb-16"
+            className="text-apex-grey-dim font-mono text-[10px] tracking-[0.18em] uppercase mb-10 md:mb-16"
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.85 }}
@@ -222,7 +222,7 @@ export default function FinalCTA() {
             transition={{ duration: 0.8, delay: 0.9 }}
           >
             <Image
-              src="/apexaustralialogo.png"
+              src="/apexaustralialogo.webp"
               alt="T-APEX Australia"
               width={280}
               height={90}

@@ -46,7 +46,7 @@ export default function HowItWorksSection() {
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         {/* Headline + intro */}
-        <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16 items-end">
+        <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-10 md:mb-16 items-end">
           <motion.h2
             className="h-luxia t-silver leading-[0.9]"
             style={{ fontSize: 'clamp(1.95rem, 4.6vw, 3.9rem)' }}
@@ -73,7 +73,7 @@ export default function HowItWorksSection() {
 
         {/* Supporting line */}
         <motion.div
-          className="mt-16 pt-10 border-t border-apex-line/40 max-w-3xl"
+          className="mt-10 md:mt-16 pt-10 border-t border-apex-line/40 max-w-3xl"
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.6 }}

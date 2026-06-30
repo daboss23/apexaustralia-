@@ -299,7 +299,7 @@ export default function SolutionSection() {
       />
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+        <div ref={titleRef} className="grid grid-cols-1 lg:grid-cols-2 gap-7 md:gap-12 lg:gap-20 items-start">
           {/* Left — headline + intro copy */}
           <div>
             <motion.h2

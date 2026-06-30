@@ -53,7 +53,7 @@ export default function DeviceStructureSection() {
         </motion.h2>
 
         <motion.p
-          className="text-apex-grey font-body leading-relaxed max-w-2xl mb-16"
+          className="text-apex-grey font-body leading-relaxed max-w-2xl mb-10 md:mb-16"
           style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
           initial={{ opacity: 0, y: 18 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}

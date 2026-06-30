@@ -300,7 +300,7 @@ export default function DashboardSection() {
         </motion.h2>
 
         <motion.p
-          className="text-apex-grey font-body mb-12 max-w-xl leading-relaxed"
+          className="text-apex-grey font-body mb-7 md:mb-12 max-w-xl leading-relaxed"
           style={{ fontSize: 'clamp(0.88rem, 1.2vw, 1rem)' }}
           initial={{ opacity: 0, y: 18 }}
           animate={titleInView ? { opacity: 1, y: 0 } : {}}
@@ -458,7 +458,7 @@ export default function DashboardSection() {
           <div className="flex items-center px-6 py-4 border-t border-apex-line bg-apex-black/60">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/tapexlogo.png"
+              src="/tapexlogo.webp"
               alt="T-APEX"
               className="h-14 sm:h-16 w-auto object-contain"
               style={{ mixBlendMode: 'screen' }}

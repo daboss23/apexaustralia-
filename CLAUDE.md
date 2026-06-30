@@ -129,7 +129,7 @@ Every new product photo the user supplies goes into the **main Core checkout
 gallery** (`CheckoutSection.tsx` → `VARIANTS.core.gallery`), in addition to any
 other section the user names. The galleries are arrays of
 `{ type, src, alt }` slides; `core-hero.webp` leads the Core gallery, the field
-hero (`t-apex product 2.jpg`) leads the Overspeed gallery. The viewer frame
+hero (`t-apex product 2.webp`) leads the Overspeed gallery. The viewer frame
 uses `object-contain`, so source aspect ratio doesn't need to match.
 
 Images live in `public/` (often `public/checkout/`). Because each web session is

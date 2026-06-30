@@ -118,7 +118,7 @@ export default function DataInsightsSection() {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-7 md:gap-12 lg:gap-20 mb-10 md:mb-16">
           <div>
             <motion.h2
               className="h-luxia t-silver leading-[0.9] mb-6"
@@ -193,7 +193,7 @@ export default function DataInsightsSection() {
 
         {/* Data report video — full-bleed, edge to edge */}
         <motion.div
-          className="relative w-screen ml-[calc(50%-50vw)] mt-12 overflow-hidden"
+          className="relative w-screen ml-[calc(50%-50vw)] mt-7 md:mt-12 overflow-hidden"
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -219,7 +219,7 @@ export default function DataInsightsSection() {
 
         {/* Raw data showcase — logo header + sample report imagery */}
         <motion.div
-          className="border-t border-apex-line/40 pt-12 mt-16"
+          className="border-t border-apex-line/40 pt-12 mt-10 md:mt-16"
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.5 }}

@@ -163,7 +163,7 @@ export default function ResultsSection() {
 
         {/* Section title */}
         <motion.div
-          className="mb-16"
+          className="mb-10 md:mb-16"
           initial={{ opacity: 0, y: 28 }}
           animate={titleInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
@@ -178,7 +178,7 @@ export default function ResultsSection() {
         </motion.div>
 
         {/* Results grid */}
-        <div ref={statsRef} className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-20">
+        <div ref={statsRef} className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-12 md:mb-20">
           {RESULTS.map(({ stat, unit, prefix, label, description }, i) => (
             <motion.div
               key={label}
