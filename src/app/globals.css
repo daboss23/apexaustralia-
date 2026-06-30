@@ -225,6 +225,17 @@
   }
 }
 
+/* Mobile: de-loop perpetual decorative CSS animations (cta-glow shine,
+   status-dot pings, blueprint pulses, signal flicker, frequency traces…).
+   These run forever and, en masse, cook the phone / drain the battery for no
+   real benefit at this size. One-shot entrance animations still play once;
+   infinite ones simply run a single cycle and settle. Desktop is untouched. */
+@media (max-width: 767px) {
+  *, *::before, *::after {
+    animation-iteration-count: 1 !important;
+  }
+}
+
 /* ── Primary CTA: premium all-red gradient, sweeping shine, pulsing glow ───── */
 .cta-glow {
   position: relative;

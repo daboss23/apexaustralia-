@@ -46,9 +46,10 @@ export default function WhatsIncludedSection() {
           component calibrated to work as one system, no extra purchases to get started.
         </motion.p>
 
-        {/* Everything-in-the-box hero — full annotated kit, edges feathered into the section bg */}
+        {/* Everything-in-the-box hero — full annotated kit, edges feathered into the section bg.
+            Full-bleed to the screen edges on mobile so the kit reads large; contained on desktop. */}
         <motion.div
-          className="relative mb-12 md:mb-20 overflow-hidden"
+          className="relative mb-12 md:mb-20 overflow-hidden -mx-6 md:mx-0"
           initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.75, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
@@ -73,27 +74,6 @@ export default function WhatsIncludedSection() {
           />
         </motion.div>
 
-        {/* Mobile-only legible parts list — the labels baked into the image are
-            too small to read on a phone, so restate them as a clean numbered grid. */}
-        <motion.ul
-          className="md:hidden grid grid-cols-2 gap-2.5 -mt-12 mb-4"
-          initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          {['T-APEX Unit', 'Pull Rod', 'Belt', 'Tablet', 'User Guide', 'Power Cord', 'Type-C Charger', 'Allen Wrench'].map((part, i) => (
-            <li
-              key={part}
-              className="flex items-center gap-2.5 bg-apex-panel/70 border border-apex-line px-3 py-2.5"
-            >
-              <span className="flex-shrink-0 flex items-center justify-center w-5 h-5 border border-apex-red/50 text-apex-red font-mono text-[10px] font-semibold">
-                {i + 1}
-              </span>
-              <span className="text-apex-white font-display text-[12.5px] font-semibold leading-tight">{part}</span>
-            </li>
-          ))}
-        </motion.ul>
-
         {/* ── Overspeed module ────────────────────────────────────────── */}
         <motion.div
           className="mb-6 flex items-baseline gap-4 flex-wrap"
@@ -106,9 +86,10 @@ export default function WhatsIncludedSection() {
           </h3>
         </motion.div>
 
-        {/* Overspeed kit hero — edges feathered into the section bg so it reads as part of the page */}
+        {/* Overspeed kit hero — edges feathered into the section bg so it reads as part of the page.
+            Full-bleed on mobile to match the box hero. */}
         <motion.div
-          className="relative mb-8 overflow-hidden"
+          className="relative mb-8 overflow-hidden -mx-6 md:mx-0"
           initial={{ opacity: 0, y: 22 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}

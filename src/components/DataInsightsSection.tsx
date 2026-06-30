@@ -226,8 +226,8 @@ export default function DataInsightsSection() {
         >
           <div className="flex flex-col items-center text-center mb-10">
             <h2
-              className="h-luxia t-silver leading-[1.08] max-w-4xl"
-              style={{ fontSize: 'clamp(1.5rem, 3.6vw, 2.9rem)' }}
+              className="h-luxia t-silver leading-[0.9] max-w-4xl"
+              style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
             >
               <span className="t-blue">SEE THE RAW DATA EXACTLY AS YOUR COACHES</span> AND SPORTS SCIENTISTS DO.
             </h2>

@@ -58,7 +58,8 @@ function FloatingUnit({ active }: { active: boolean }) {
   }, [])
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    // Off under reduced-motion and on phones (perpetual particles = mobile heat).
+    if (window.matchMedia('(prefers-reduced-motion: reduce), (max-width: 767px)').matches) return
     const r = (a: number, b: number) => a + Math.random() * (b - a)
     const colors = ['#00AEEF', '#7fd8ff', '#ff3b30']
     setRisers(

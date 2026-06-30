@@ -31,7 +31,9 @@ export default function ElectricAura({
   const [items, setItems] = useState<{ sparks: AuraSpark[]; bolts: AuraBolt[] } | null>(null)
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    // Skip under reduced-motion AND on phones — a perpetual particle field is
+    // a battery/heat sink on mobile and adds nothing at that size.
+    if (window.matchMedia('(prefers-reduced-motion: reduce), (max-width: 767px)').matches) return
     const r = (a: number, b: number) => a + Math.random() * (b - a)
     const pick = () => colors[Math.floor(Math.random() * colors.length)]
     setItems({

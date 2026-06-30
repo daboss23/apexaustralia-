@@ -24,7 +24,9 @@ export default function PortraitWaveSweep({ src }: { src: string }) {
   const [reduced, setReduced] = useState(false)
 
   useEffect(() => {
-    const m = window.matchMedia('(prefers-reduced-motion: reduce)')
+    // Treat phones like reduced-motion: the per-frame SVG displacement filter
+    // is a heavy GPU cost on mobile.
+    const m = window.matchMedia('(prefers-reduced-motion: reduce), (max-width: 767px)')
     const on = () => setReduced(m.matches)
     on()
     m.addEventListener('change', on)

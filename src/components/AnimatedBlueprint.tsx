@@ -367,7 +367,7 @@ export default function AnimatedBlueprint({
           }
         }
 
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce), (max-width: 767px) {
           .ab-frame,
           .ab-scan,
           .ab-pulse,
