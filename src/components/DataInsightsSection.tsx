@@ -229,7 +229,7 @@ export default function DataInsightsSection() {
               className="h-luxia t-silver leading-[0.9] max-w-4xl"
               style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
             >
-              <span className="t-blue">SEE THE RAW DATA EXACTLY AS YOUR COACHES</span> AND SPORTS SCIENTISTS DO.
+              <span className="t-blue">REAL PERFORMANCE DATA</span><br />WITHOUT THE GUESSWORK
             </h2>
           </div>
 
