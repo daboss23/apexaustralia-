@@ -65,18 +65,11 @@ export default function WhatsIncludedSection() {
             aria-hidden="true"
             style={{ background: 'linear-gradient(90deg, #0A0D10 0%, rgba(10,13,16,0) 11%, rgba(10,13,16,0) 89%, #0A0D10 100%)' }}
           />
-          {/* Feather top/bottom edges into the #0A0D10 surface — bottom feather pushed
-              lower so it no longer dims the element labels */}
+          {/* Feather top/bottom edges into the #0A0D10 surface — smooth, edge-free blend */}
           <div
             className="absolute inset-0 pointer-events-none"
             aria-hidden="true"
-            style={{ background: 'linear-gradient(180deg, #0A0D10 0%, rgba(10,13,16,0) 6%, rgba(10,13,16,0) 93%, #0A0D10 100%)' }}
-          />
-          {/* Gentle lift over the lower third so the numbered labels read clearly */}
-          <div
-            className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
-            aria-hidden="true"
-            style={{ background: 'linear-gradient(180deg, transparent, rgba(255,255,255,0.07) 70%, rgba(255,255,255,0.06) 100%)' }}
+            style={{ background: 'linear-gradient(180deg, #0A0D10 0%, rgba(10,13,16,0) 6%, rgba(10,13,16,0) 84%, #0A0D10 100%)' }}
           />
         </motion.div>
 
