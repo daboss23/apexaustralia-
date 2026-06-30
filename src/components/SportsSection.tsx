@@ -136,7 +136,7 @@ export default function SportsSection() {
     const ids = SPORTS.map(s => s.id)
     const iv = setInterval(() => {
       setActiveSport(prev => ids[(ids.indexOf(prev) + 1) % ids.length])
-    }, 3400)
+    }, 9000)
     return () => clearInterval(iv)
   }, [userPicked])
 
