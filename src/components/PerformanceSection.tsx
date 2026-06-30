@@ -194,7 +194,7 @@ export default function PerformanceSection() {
   const metricsLive = useInView(metricsRef, { amount: 0.4 })
 
   return (
-    <section id="performance" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
+    <section id="performance" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
       {/* Background diagonal accent lines */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         {[15, 35, 55, 75].map((pct) => (

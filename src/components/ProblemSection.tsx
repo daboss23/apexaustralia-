@@ -39,7 +39,7 @@ export default function ProblemSection() {
   const teleInView = useInView(teleRef, { once: false, amount: 0.35 })
 
   return (
-    <section id="problem" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
+    <section id="problem" className="relative bg-apex-black-2 py-16 md:py-36 overflow-hidden">
       {/* Horizontal rule top */}
       <div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none"

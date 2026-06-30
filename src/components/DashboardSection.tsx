@@ -268,7 +268,7 @@ export default function DashboardSection() {
   }
 
   return (
-    <section ref={sectionRef} id="dashboard" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
+    <section ref={sectionRef} id="dashboard" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
       {/* Background accent */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute inset-0 opacity-30" style={{

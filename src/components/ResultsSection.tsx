@@ -134,7 +134,7 @@ export default function ResultsSection() {
   const statsLive = useInView(statsRef, { amount: 0.35 })
 
   return (
-    <section id="results" className="relative bg-apex-black py-24 md:py-36 overflow-hidden">
+    <section id="results" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         {/* Large diagonal accent */}

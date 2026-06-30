@@ -155,7 +155,7 @@ export default function SportsSection() {
   }
 
   return (
-    <section id="sports" className="relative bg-apex-black-2 py-24 md:py-36 overflow-hidden">
+    <section id="sports" className="relative bg-apex-black-2 py-16 md:py-36 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute inset-0 opacity-15" style={{
           backgroundImage: `radial-gradient(circle at 50% 80%, rgba(214,31,38,0.06) 0%, transparent 55%)`
