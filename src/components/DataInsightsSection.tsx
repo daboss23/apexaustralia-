@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import Image from 'next/image'
+import { useIsMobile } from './useIsMobile'
 
 // Small inline glyphs for the report tabs.
 const ICONS: Record<string, React.ReactNode> = {
@@ -87,6 +88,8 @@ export default function DataInsightsSection() {
   // red/blue energy burst on every click (even re-clicking the same tab).
   const [active, setActive] = useState(0)
   const [pulse, setPulse] = useState(0)
+  // Phones: skip the perpetual sweeping shine on the active tab (battery).
+  const isMobile = useIsMobile()
   const report = RAW_DATA[active]
   const [first, ...rest] = report.label.split(' ')
   const selectReport = (i: number) => {
@@ -268,14 +271,16 @@ export default function DataInsightsSection() {
                         transition={{ type: 'spring', stiffness: 500, damping: 38 }}
                         aria-hidden="true"
                       >
-                        {/* sweeping shine across the active pill */}
-                        <motion.span
-                          className="absolute inset-y-0 w-1/2 -skew-x-12"
-                          style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent)' }}
-                          initial={{ x: '-150%' }}
-                          animate={{ x: '250%' }}
-                          transition={{ duration: 1.1, ease: 'easeInOut', repeat: Infinity, repeatDelay: 2.4 }}
-                        />
+                        {/* sweeping shine across the active pill (desktop only) */}
+                        {!isMobile && (
+                          <motion.span
+                            className="absolute inset-y-0 w-1/2 -skew-x-12"
+                            style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent)' }}
+                            initial={{ x: '-150%' }}
+                            animate={{ x: '250%' }}
+                            transition={{ duration: 1.1, ease: 'easeInOut', repeat: Infinity, repeatDelay: 2.4 }}
+                          />
+                        )}
                       </motion.span>
                     )}
 

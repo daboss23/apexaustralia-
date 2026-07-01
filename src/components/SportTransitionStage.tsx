@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useIsMobile } from './useIsMobile'
 
 export type Sport = {
   id: string
@@ -108,6 +109,19 @@ function SportClip({
  * and matches the motion energy of the video clips.
  */
 function SportStill({ src, accent }: { src: string; accent: string }) {
+  // On phones the perpetual Ken-Burns / streak / breathing loops are switched
+  // off (they run forever and drain the battery); the still simply sits in the
+  // frame and still crossfades as the slider moves across codes.
+  const isMobile = useIsMobile()
+  if (isMobile) {
+    return (
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${src})`, transform: 'scale(1.05)' }}
+        aria-hidden="true"
+      />
+    )
+  }
   return (
     <>
       {/* Ken-Burns: slow zoom + lateral drift, looping seamlessly */}
@@ -165,6 +179,8 @@ export default function SportTransitionStage({
   const accent = sport.color
   const index = Math.max(0, sports.findIndex((s) => s.id === activeId))
   const total = sports.length
+  // Phones: hold the ambient streak field static (perpetual loops = battery).
+  const isMobile = useIsMobile()
 
   // Show the morph video only once it actually has frames — a missing asset
   // stays invisible and the designed fallback shows through instead.
@@ -205,8 +221,8 @@ export default function SportTransitionStage({
               right: 0,
               background: `linear-gradient(90deg, transparent, ${accent}${i % 2 ? '30' : '18'} 45%, transparent)`,
             }}
-            animate={{ x: ['-12%', '12%'] }}
-            transition={{ duration: 7 + i, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+            animate={isMobile ? undefined : { x: ['-12%', '12%'] }}
+            transition={isMobile ? undefined : { duration: 7 + i, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
           />
         ))}
       </div>

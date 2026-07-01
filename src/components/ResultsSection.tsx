@@ -62,18 +62,23 @@ function CounterStat({
       setDisplay(0)
       return
     }
-    // Skip the digit-spin on reduced-motion AND on phones — the changing number
-    // width reflows every tick and makes the page appear to shake.
-    if (window.matchMedia('(prefers-reduced-motion: reduce), (max-width: 767px)').matches) {
+    // Skip the digit-spin only under a genuine reduced-motion preference. On
+    // phones the spin now runs too: the number sits over an invisible copy of
+    // the final figure that reserves its exact width, and the spin uses the
+    // same digit count as the target, so nothing reflows (no page shake).
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setDisplay(stat)
       setPhase('locked')
       return
     }
+    const digits = String(stat).length
+    const lo = digits > 1 ? Math.pow(10, digits - 1) : 0
+    const hi = Math.pow(10, digits)
     let spinIv: ReturnType<typeof setInterval> | undefined
     const start = setTimeout(() => {
       setPhase('spin')
       spinIv = setInterval(() => {
-        setDisplay(Math.floor(Math.random() * 90) + 10)
+        setDisplay(Math.floor(Math.random() * (hi - lo)) + lo)
       }, 45)
     }, delay * 1000)
     const stop = setTimeout(() => {
@@ -108,18 +113,32 @@ function CounterStat({
       <span className="font-luxia font-black t-red" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', marginTop: '0.15em' }}>
         {prefix}
       </span>
-      <motion.span
-        className="font-luxia font-black t-silver metric-value"
-        style={{
-          fontSize: 'clamp(4rem, 8vw, 7.5rem)',
-          filter: phase === 'spin' ? 'blur(2.5px)' : 'none',
-          opacity: phase === 'spin' ? 0.8 : 1,
-        }}
-        animate={phase === 'locked' ? { scale: [1.1, 1] } : { scale: 1 }}
-        transition={{ duration: 0.28, ease: 'easeOut' }}
-      >
-        {display}
-      </motion.span>
+      {/* Invisible copy of the final figure reserves the number's exact box so
+          the spinning digits can never reflow the row (no page shake). */}
+      <span className="relative inline-flex">
+        <span
+          className="font-luxia font-black t-silver metric-value"
+          style={{ fontSize: 'clamp(4rem, 8vw, 7.5rem)', visibility: 'hidden' }}
+          aria-hidden="true"
+        >
+          {stat}
+        </span>
+        <motion.span
+          className="font-luxia font-black t-silver metric-value"
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            fontSize: 'clamp(4rem, 8vw, 7.5rem)',
+            filter: phase === 'spin' ? 'blur(2.5px)' : 'none',
+            opacity: phase === 'spin' ? 0.8 : 1,
+          }}
+          animate={phase === 'locked' ? { scale: [1.1, 1] } : { scale: 1 }}
+          transition={{ duration: 0.28, ease: 'easeOut' }}
+        >
+          {display}
+        </motion.span>
+      </span>
       <span className="font-luxia font-black t-red" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', marginTop: '0.3em' }}>
         {unit}
       </span>

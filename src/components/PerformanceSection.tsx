@@ -20,9 +20,11 @@ function FlashStat({
       setDisplay(value)
       return
     }
-    // Skip the digit-spin on reduced-motion AND on phones: the changing number
-    // width reflows the layout every tick, which reads as the page "shaking".
-    if (window.matchMedia('(prefers-reduced-motion: reduce), (max-width: 767px)').matches) {
+    // Skip the digit-spin only under a genuine reduced-motion preference. On
+    // phones the spin now runs too — the layout can no longer shake because the
+    // number sits over an invisible copy of the final value that reserves its
+    // exact width (see render below).
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setDisplay(value)
       setPhase('locked')
       return
@@ -60,9 +62,14 @@ function FlashStat({
           aria-hidden="true"
         />
       )}
+      {/* Invisible copy of the final value reserves its exact box, so the
+          spinning digits never reflow surrounding layout (no page shake). */}
+      <span className={className} style={{ ...style, display: 'inline-block', visibility: 'hidden' }} aria-hidden="true">
+        {value}
+      </span>
       <motion.span
         className={className}
-        style={{ ...style, display: 'inline-block', filter: phase === 'spin' ? 'blur(2.5px)' : 'none', opacity: phase === 'spin' ? 0.8 : 1 }}
+        style={{ ...style, position: 'absolute', left: 0, top: 0, display: 'inline-block', filter: phase === 'spin' ? 'blur(2.5px)' : 'none', opacity: phase === 'spin' ? 0.8 : 1 }}
         animate={phase === 'locked' ? { scale: [1.1, 1] } : { scale: 1 }}
         transition={{ duration: 0.28, ease: 'easeOut' }}
       >

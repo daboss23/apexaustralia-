@@ -1,5 +1,9 @@
 'use client'
 
+import { useRef } from 'react'
+import { useInView } from 'framer-motion'
+import { useIsMobile } from './useIsMobile'
+
 /**
  * AnimatedBlueprint
  * -----------------
@@ -50,55 +54,70 @@ export default function AnimatedBlueprint({
   alt?: string
   className?: string
 }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { amount: 0.25 })
+  const isMobile = useIsMobile()
+
+  // On phones the decorative overlays are only mounted while the blueprint is
+  // in view. Combined with the global mobile rule (animation-iteration-count:1),
+  // that means the diagnostic scan + the numbered callouts light up in a single
+  // "glassy pass" the moment the diagram scrolls into view — and cost nothing
+  // when off-screen. Desktop keeps the always-on perpetual loop unchanged.
+  const showOverlays = !isMobile || inView
+
   return (
-    <div className={`ab-wrap ${className}`} aria-hidden={false}>
+    <div ref={ref} className={`ab-wrap ${className}`} aria-hidden={false}>
       {/* BASE LAYER — locked, pixel-perfect image. Never animated. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={src} alt={alt} className="ab-base" draggable={false} />
 
       {/* OVERLAYS — all transparent, pointer-events none, blended onto image */}
       <div className="ab-overlays" aria-hidden="true">
-        {/* 1 / 8 — frame breathing glow + final system-active brighten */}
-        <div className="ab-frame" />
+        {showOverlays && (
+          <>
+            {/* 1 / 8 — frame breathing glow + final system-active brighten */}
+            <div className="ab-frame" />
 
-        {/* 2 — diagnostic scan line, left → right */}
-        <div className="ab-scan" />
+            {/* 2 — diagnostic scan line, left → right */}
+            <div className="ab-scan" />
 
-        {/* 3 — blueprint energy pulses: front, then rear, then inset */}
-        <div className="ab-pulse ab-pulse-front" />
-        <div className="ab-pulse ab-pulse-rear" />
-        <div className="ab-pulse ab-pulse-inset" />
+            {/* 3 — blueprint energy pulses: front, then rear, then inset */}
+            <div className="ab-pulse ab-pulse-front" />
+            <div className="ab-pulse ab-pulse-rear" />
+            <div className="ab-pulse ab-pulse-inset" />
 
-        {/* 4 — red accent flicker over existing red elements */}
-        {RED_POINTS.map((p, i) => (
-          <span
-            key={`red-${i}`}
-            className="ab-red"
-            style={{
-              left: `${p.x}%`,
-              top: `${p.y}%`,
-              width: `${p.s}%`,
-              paddingBottom: `${p.s}%`,
-              animationDelay: `${(i % 3) * 0.4}s`,
-            }}
-          />
-        ))}
+            {/* 4 — red accent flicker over existing red elements */}
+            {RED_POINTS.map((p, i) => (
+              <span
+                key={`red-${i}`}
+                className="ab-red"
+                style={{
+                  left: `${p.x}%`,
+                  top: `${p.y}%`,
+                  width: `${p.s}%`,
+                  paddingBottom: `${p.s}%`,
+                  animationDelay: `${(i % 3) * 0.4}s`,
+                }}
+              />
+            ))}
 
-        {/* 5 — right component panel glassy edge glow */}
-        <div className="ab-panel" />
+            {/* 5 — right component panel glassy edge glow */}
+            <div className="ab-panel" />
 
-        {/* 6 — callout highlight illusion, 1 → 13 in sequence */}
-        {CALLOUTS.map((c, i) => (
-          <span
-            key={`cal-${i}`}
-            className="ab-callout"
-            style={{
-              left: `${c.x}%`,
-              top: `${c.y}%`,
-              animationDelay: `${3.4 + i * 0.32}s`,
-            }}
-          />
-        ))}
+            {/* 6 — callout highlight illusion, 1 → 13 in sequence */}
+            {CALLOUTS.map((c, i) => (
+              <span
+                key={`cal-${i}`}
+                className="ab-callout"
+                style={{
+                  left: `${c.x}%`,
+                  top: `${c.y}%`,
+                  animationDelay: `${3.4 + i * 0.32}s`,
+                }}
+              />
+            ))}
+          </>
+        )}
       </div>
 
       <style jsx>{`
@@ -367,7 +386,10 @@ export default function AnimatedBlueprint({
           }
         }
 
-        @media (prefers-reduced-motion: reduce), (max-width: 767px) {
+        /* Accessibility: no motion when the OS asks for reduced motion. On
+           phones the overlays instead run a single glassy pass on scroll-in
+           (mounted only while in view; one cycle via the global mobile rule). */
+        @media (prefers-reduced-motion: reduce) {
           .ab-frame,
           .ab-scan,
           .ab-pulse,

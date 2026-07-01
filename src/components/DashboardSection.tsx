@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { useIsMobile } from './useIsMobile'
 
 // ─── Shared rep cycle ─────────────────────────────────────────────────────────
 // Every instrument on the dashboard samples the SAME 8-second rep clock —
@@ -256,7 +257,13 @@ export default function DashboardSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const titleInView = useInView(titleRef, { once: true, margin: '-10% 0px' })
 
-  const clock = useRepClock(inView)
+  // On phones the live rep clock is frozen: its 250ms setInterval re-rendered
+  // (and reflowed) this full-height panel four times a second forever once the
+  // section had been seen — that continuous reflow fought iOS scroll-anchoring
+  // (the page "jumping" up and down) and cooked the battery. Desktop keeps the
+  // live session; mobile shows a stable, representative snapshot instead.
+  const isMobile = useIsMobile()
+  const clock = useRepClock(inView && !isMobile)
   const phaseInfo = phaseOf(clock.phase)
 
   // Gauge needles read the live waveforms directly (lightly damped — no noise)

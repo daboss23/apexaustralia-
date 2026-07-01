@@ -1,26 +1,16 @@
 'use client'
 
 import { MotionConfig } from 'framer-motion'
-import { useEffect, useState } from 'react'
 
-// On phones, force Framer Motion into reduced-motion. This stops the perpetual
-// transform-driven loops (drifting particles, sweeping streaks, etc.) and turns
-// reveal slide-ups into simple fades — content still animates in via opacity,
-// but the device isn't compositing dozens of infinite animations every frame.
-// Lazy-initialised from matchMedia so it's correct on the very first client
-// render (MotionConfig emits no DOM, so there's no hydration mismatch).
+// Honour the operating-system "reduce motion" setting only.
+//
+// We deliberately no longer force reduced-motion on phones. That blanket switch
+// killed the site's signature scroll-triggered motion on mobile — the counting
+// stat flashes, the data-line boot surge, the sport slider crossfades and the
+// portrait mirror sweep all went dead. Instead, the few genuinely *perpetual*
+// (always-looping) animations that actually cost battery are switched off
+// per-component on phones via `useIsMobile`, while cheap one-shot reveals play
+// everywhere. MotionConfig emits no DOM, so there's no hydration mismatch.
 export default function MotionProvider({ children }: { children: React.ReactNode }) {
-  const [mobile, setMobile] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches,
-  )
-
-  useEffect(() => {
-    const m = window.matchMedia('(max-width: 767px)')
-    const on = () => setMobile(m.matches)
-    on()
-    m.addEventListener('change', on)
-    return () => m.removeEventListener('change', on)
-  }, [])
-
-  return <MotionConfig reducedMotion={mobile ? 'always' : 'never'}>{children}</MotionConfig>
+  return <MotionConfig reducedMotion="user">{children}</MotionConfig>
 }

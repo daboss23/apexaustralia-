@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import ElectricAura from './ElectricAura'
+import { useIsMobile } from './useIsMobile'
 
 const SOLUTION_PILLARS = [
   {
@@ -43,6 +44,8 @@ function FloatingUnit({ active }: { active: boolean }) {
   // Rising energy particles around the unit (client-only for SSR safety,
   // skipped under prefers-reduced-motion)
   const [risers, setRisers] = useState<Riser[]>([])
+  // Phones: hold the unit still (the slow float loop is perpetual = battery).
+  const isMobile = useIsMobile()
   // The product film — a slow turntable of the unit with its background removed
   // and composited onto pure black, so `mix-blend-mode: screen` drops the black
   // and leaves the unit floating in the section's energy field (the same
@@ -118,7 +121,7 @@ function FloatingUnit({ active }: { active: boolean }) {
           className="relative h-[92%] max-w-full"
           style={{ transformStyle: 'preserve-3d', aspectRatio: '1 / 1' }}
           animate={
-            active
+            active && !isMobile
               ? { y: [-10, 10], rotateY: [-9, 9], rotateX: [1.5, -1.5] }
               : {}
           }

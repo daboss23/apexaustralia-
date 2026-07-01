@@ -16,7 +16,6 @@ const SPORTS = [
     // for 3s, then loops. Dwell is long enough to see the full hold.
     playbackRate: 0.55,
     freeze: { fraction: 0.9, ms: 3000 },
-    dwellMs: 18000,
     focuses: [
       'Block clearance and early acceleration',
       'Maximum velocity development',
@@ -138,10 +137,10 @@ export default function SportsSection() {
   useEffect(() => {
     if (userPicked || !inView) return
     const ids = SPORTS.map(s => s.id)
-    const current = SPORTS.find(s => s.id === activeSport) ?? SPORTS[0]
+    // Every code lingers for the same 9s before the stage slides to the next.
     const t = setTimeout(() => {
       setActiveSport(ids[(ids.indexOf(activeSport) + 1) % ids.length])
-    }, current.dwellMs ?? 9000)
+    }, 9000)
     return () => clearTimeout(t)
   }, [userPicked, inView, activeSport])
 

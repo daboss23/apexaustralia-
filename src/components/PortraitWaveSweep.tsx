@@ -22,18 +22,30 @@ export default function PortraitWaveSweep({ src }: { src: string }) {
   // Replays each time the frame re-enters view (once:false default).
   const inView = useInView(ref, { amount: 0.5 })
   const [reduced, setReduced] = useState(false)
+  const [mobile, setMobile] = useState(false)
 
   useEffect(() => {
-    // Treat phones like reduced-motion: the per-frame SVG displacement filter
-    // is a heavy GPU cost on mobile.
-    const m = window.matchMedia('(prefers-reduced-motion: reduce), (max-width: 767px)')
-    const on = () => setReduced(m.matches)
+    const rm = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const mob = window.matchMedia('(max-width: 767px)')
+    const on = () => {
+      setReduced(rm.matches)
+      setMobile(mob.matches)
+    }
     on()
-    m.addEventListener('change', on)
-    return () => m.removeEventListener('change', on)
+    rm.addEventListener('change', on)
+    mob.addEventListener('change', on)
+    return () => {
+      rm.removeEventListener('change', on)
+      mob.removeEventListener('change', on)
+    }
   }, [])
 
+  // The sweep still plays on phones — only while the frame is in view, so it
+  // isn't a perpetual drain — but the expensive per-frame SVG displacement
+  // ripple (the "glass water" warp) is desktop-only. On mobile the glassy
+  // specular light band still travels across, reading as the mirror sweep.
   const active = inView && !reduced
+  const heavy = active && !mobile
   const fid = 'piero-wave'
 
   // Vertical band sweeping across, then held off-frame (hidden) between passes.
@@ -59,41 +71,47 @@ export default function PortraitWaveSweep({ src }: { src: string }) {
     <div ref={ref} className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
       {active && (
         <>
-          {/* Displacement filter — the water/glass ripple, gently shimmering */}
-          <svg className="absolute w-0 h-0">
-            <filter id={fid} x="-12%" y="-12%" width="124%" height="124%" colorInterpolationFilters="sRGB">
-              <feTurbulence type="fractalNoise" baseFrequency="0.008 0.028" numOctaves="2" seed="7" result="noise">
-                <animate
-                  attributeName="baseFrequency"
-                  dur="7s"
-                  values="0.008 0.028;0.011 0.038;0.008 0.028"
-                  repeatCount="indefinite"
-                />
-              </feTurbulence>
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" xChannelSelector="R" yChannelSelector="G" />
-            </filter>
-          </svg>
+          {/* Displacement filter — the water/glass ripple, gently shimmering.
+              Desktop only (per-frame turbulence is a heavy GPU cost on phones). */}
+          {heavy && (
+            <svg className="absolute w-0 h-0">
+              <filter id={fid} x="-12%" y="-12%" width="124%" height="124%" colorInterpolationFilters="sRGB">
+                <feTurbulence type="fractalNoise" baseFrequency="0.008 0.028" numOctaves="2" seed="7" result="noise">
+                  <animate
+                    attributeName="baseFrequency"
+                    dur="7s"
+                    values="0.008 0.028;0.011 0.038;0.008 0.028"
+                    repeatCount="indefinite"
+                  />
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" xChannelSelector="R" yChannelSelector="G" />
+              </filter>
+            </svg>
+          )}
 
-          {/* The travelling band: a rippled, lightly lifted copy of the photo */}
+          {/* The travelling band. On desktop it carries a rippled copy of the
+              photo; on mobile it's just the glassy specular sheen sweeping. */}
           <motion.div
             className="absolute inset-0"
             initial={{ clipPath: clipKeys[0] }}
             animate={{ clipPath: clipKeys }}
             transition={sweep}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={src}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover object-top"
-              style={{
-                // match the base photo's grade so only the ripple + sheen read,
-                // not a hard-edged brightness rectangle at the band edges
-                filter: `url(#${fid}) saturate(0.94) contrast(1.04)`,
-                transform: 'scale(1.045)',
-                transformOrigin: 'center top',
-              }}
-            />
+            {heavy && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={src}
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover object-top"
+                style={{
+                  // match the base photo's grade so only the ripple + sheen read,
+                  // not a hard-edged brightness rectangle at the band edges
+                  filter: `url(#${fid}) saturate(0.94) contrast(1.04)`,
+                  transform: 'scale(1.045)',
+                  transformOrigin: 'center top',
+                }}
+              />
+            )}
             {/* glassy specular sheen riding inside the band */}
             <div
               className="absolute inset-0"
