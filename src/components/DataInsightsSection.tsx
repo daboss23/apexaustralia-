@@ -210,10 +210,13 @@ export default function DataInsightsSection() {
           {/* Overall darkening scrim — same tint depth as the top hero banner */}
           <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(5,5,8,0.45)' }} />
 
-          {/* Top & bottom vignette — melts the clip into the black, like the hero */}
+          {/* Top & bottom vignette — melts the clip into the black, like the hero.
+              Percentage stops (not a fixed band) so it blends the same on the
+              short mobile clip and the tall desktop one; bottom reaches solid
+              #050505 before the clip's edge, so no hard video outline shows. */}
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{ background: 'linear-gradient(180deg, #050505 0%, rgba(5,5,5,0.85) 7%, transparent 22%, transparent 64%, rgba(5,5,5,0.85) 88%, #050505 99%)' }}
+            style={{ background: 'linear-gradient(180deg, #050505 0%, rgba(5,5,5,0.85) 7%, transparent 22%, transparent 66%, rgba(5,5,5,0.8) 86%, #050505 96%)' }}
           />
         </motion.div>
 
@@ -229,7 +232,7 @@ export default function DataInsightsSection() {
               className="h-luxia t-silver leading-[0.9] max-w-4xl"
               style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
             >
-              <span className="t-blue">REAL PERFORMANCE DATA</span><br />WITHOUT THE GUESSWORK
+              <span className="t-blue">REAL PERFORMANCE DATA</span> WITHOUT THE GUESSWORK
             </h2>
           </div>
 

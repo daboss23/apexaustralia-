@@ -20,7 +20,9 @@ function FlashStat({
       setDisplay(value)
       return
     }
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Skip the digit-spin on reduced-motion AND on phones: the changing number
+    // width reflows the layout every tick, which reads as the page "shaking".
+    if (window.matchMedia('(prefers-reduced-motion: reduce), (max-width: 767px)').matches) {
       setDisplay(value)
       setPhase('locked')
       return

@@ -37,7 +37,9 @@ function TypeOn({ text, start, delay }: { text: string; start: boolean; delay: n
       setN(0) // re-arm for the next scroll-in
       return
     }
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Skip the typewriter reveal on reduced-motion and on phones (the growing
+    // text reflows each frame).
+    if (window.matchMedia('(prefers-reduced-motion: reduce), (max-width: 767px)').matches) {
       setN(text.length)
       return
     }
