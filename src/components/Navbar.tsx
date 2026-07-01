@@ -123,7 +123,7 @@ export default function Navbar() {
           >
             <Link
               href={href}
-              className="block text-4xl font-display font-black tracking-tight text-apex-white hover:text-apex-red transition-colors py-3 cursor-pointer"
+              className="block h-luxia t-silver text-4xl leading-[1.1] py-3 cursor-pointer"
               onClick={() => setMobileOpen(false)}
             >
               {label.toUpperCase()}
