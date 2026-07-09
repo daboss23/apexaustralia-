@@ -74,14 +74,14 @@ export default function Home() {
       {/* 12 — WHY T-APEX AUSTRALIA */}
       <LocalTrustSection />
 
-      {/* 13 — FAQ */}
-      <FAQSection />
-
-      {/* 13b — WHAT'S INCLUDED / PACKAGE */}
+      {/* 13 — WHAT'S INCLUDED / PACKAGE (builds the offer) */}
       <WhatsIncludedSection />
 
-      {/* 13c — ORDER / CHECKOUT (inline product + buy experience) */}
+      {/* 13b — ORDER / CHECKOUT (inline product + buy experience) */}
       <CheckoutSection />
+
+      {/* 13c — FAQ (clears the last objections after the offer) */}
+      <FAQSection />
 
       {/* 14 — FINAL CTA */}
       <FinalCTA />

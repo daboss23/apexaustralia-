@@ -41,7 +41,10 @@ src/
     layout.tsx     # root layout: fonts (next/font), <html>/<body>, metadata/SEO
     page.tsx       # the whole page — imports & orders the section components
     globals.css    # global styles + the metallic typography system + utilities
+    success/       # post-Stripe-checkout confirmation page (/success/)
   components/       # one component per page section (Hero, ProblemSection, …)
+  lib/site.ts       # contact email + demo/enquiry mailto hrefs (all CTAs use these)
+api/checkout.ts     # Vercel serverless fn — creates the Stripe Checkout session
 public/             # static assets (hero-video.mp4, logos, images)
 tailwind.config.ts  # design tokens (apex.* colors), font families, keyframes
 ```
@@ -53,6 +56,19 @@ flow) lives there as comments. Note: `TechnologySection.tsx` is imported as
 
 Most section components are client components (`'use client'`) using Framer
 Motion `useInView` / scroll transforms for reveal animations.
+
+## Stripe checkout
+
+The buy button in `CheckoutSection.tsx` POSTs `{ variant: 'core' | 'overspeed' }`
+to `/api/checkout` — a Vercel serverless function that deploys alongside the
+static export (works in production and `vercel dev`, but NOT under `next dev`).
+Prices live server-side in `api/checkout.ts`, never in the client. Env vars
+(documented in `.env.example`): `STRIPE_SECRET_KEY` (required),
+`STRIPE_PRICE_ID_CORE` / `STRIPE_PRICE_ID_OVERSPEED` (optional — falls back to
+inline AUD `price_data` placeholders), `NEXT_PUBLIC_SITE_URL`, and
+`NEXT_PUBLIC_CONTACT_EMAIL` (drives the demo/enquiry mailto links in
+`src/lib/site.ts`). Success redirects to `/success/` — note
+`trailingSlash: true` in `next.config.mjs`, so exported routes are directories.
 
 ## Design tokens (`tailwind.config.ts`, prefix `apex.`)
 

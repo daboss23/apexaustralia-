@@ -8,6 +8,11 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  /* Anchor jumps land clear of the fixed navbar */
+  section[id] {
+    scroll-margin-top: 64px;
+  }
+
   body {
     background-color: #050505;
     color: #F5F7FA;

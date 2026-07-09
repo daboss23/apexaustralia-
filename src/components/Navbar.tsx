@@ -79,12 +79,12 @@ export default function Navbar() {
         </div>
 
         {/* Desktop CTA */}
-        <button className="hidden md:inline-flex items-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-5 py-2.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_8px_28px_-6px_rgba(214,31,38,0.55)] hover:-translate-y-px active:translate-y-0" style={{ borderRadius: 0 }}>
-          Book Demo
+        <a href="#order" className="hidden md:inline-flex items-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-5 py-2.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_8px_28px_-6px_rgba(214,31,38,0.55)] hover:-translate-y-px active:translate-y-0" style={{ borderRadius: 0 }}>
+          Order Now
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
-        </button>
+        </a>
 
         {/* Mobile menu button */}
         <button
@@ -130,15 +130,17 @@ export default function Navbar() {
             </Link>
           </motion.div>
         ))}
-        <motion.button
+        <motion.a
+          href="#order"
+          onClick={() => setMobileOpen(false)}
           className="mt-8 cta-glow text-white font-display font-bold text-sm px-8 py-4 tracking-widest uppercase cursor-pointer"
           style={{ borderRadius: 0 }}
           initial={false}
           animate={{ y: mobileOpen ? 0 : 20, opacity: mobileOpen ? 1 : 0 }}
           transition={{ delay: 0.2, duration: 0.4 }}
         >
-          Book Demo
-        </motion.button>
+          Order Now
+        </motion.a>
       </motion.div>
     </>
   )

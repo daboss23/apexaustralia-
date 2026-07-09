@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import HeroScene from './HeroScene'
 import SeamlessVideo from './SeamlessVideo'
+import { DEMO_HREF } from '@/lib/site'
 
 // ─── Headline — clean staggered reveal (no telemetry lines / electricity) ─────
 
@@ -70,7 +71,7 @@ function HeroCopy({ showLogo = false }: { showLogo?: boolean }) {
           <img
             src="/apexaustralialogo.webp"
             alt="T-APEX Australia"
-            className="h-28 md:h-32 xl:h-36 w-auto object-contain"
+            className="h-20 md:h-32 xl:h-36 w-auto object-contain"
             style={{ filter: 'brightness(1.1)' }}
           />
         )}
@@ -92,7 +93,7 @@ function HeroCopy({ showLogo = false }: { showLogo?: boolean }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65, delay: 1.0 }}
       >
-        Real-time, intelligent resistance — engineered to add measurable speed, force, and control to every session. Built for the coaches and programs chasing the next tenth of a second.
+        Intelligent resistance, assisted overspeed, and real-time data in one portable system — measurable speed, force, and control on every rep. Built for coaches chasing the next tenth of a second.
       </motion.p>
 
       {/* CTAs */}
@@ -102,19 +103,19 @@ function HeroCopy({ showLogo = false }: { showLogo?: boolean }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65, delay: 1.15 }}
       >
-        <button className="group inline-flex items-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(214,31,38,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
-          Book Your Free Demo
+        <a href="#order" className="group inline-flex items-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(214,31,38,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
+          Order Your System
           <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
-        </button>
+        </a>
 
-        <button className="group inline-flex items-center gap-2.5 bg-transparent border border-apex-line hover:border-apex-grey-dim text-apex-grey hover:text-apex-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5" style={{ borderRadius: 0 }}>
-          See T-Apex In Action
+        <a href={DEMO_HREF} className="group inline-flex items-center gap-2.5 bg-transparent border border-apex-line hover:border-apex-grey-dim text-apex-grey hover:text-apex-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5" style={{ borderRadius: 0 }}>
+          Book Your Free Demo
           <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
           </svg>
-        </button>
+        </a>
       </motion.div>
 
       {/* Reassurance microcopy — lowers the cost of clicking */}
@@ -124,7 +125,7 @@ function HeroCopy({ showLogo = false }: { showLogo?: boolean }) {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 1.4 }}
       >
-        On-site or virtual · No obligation · Shipping Australia-wide
+        From A$9,450 · Free insured shipping Australia-wide · 12-month warranty
       </motion.p>
     </div>
   )
@@ -172,28 +173,6 @@ export default function Hero() {
 
         <div className="relative z-10 w-full px-6 md:px-10 pt-[4rem] pb-14 md:pb-24">
           <HeroCopy showLogo />
-
-          {/* Scroll cue */}
-          <motion.div
-            className="absolute bottom-8 left-6 flex flex-col items-center gap-2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.8 }}
-            aria-hidden="true"
-          >
-            <motion.div
-              className="w-px h-10"
-              style={{ background: 'linear-gradient(to bottom, #6E7783, transparent)' }}
-              animate={{ scaleY: [1, 0.3, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            <span
-              className="text-apex-grey-dim font-mono text-[8px] tracking-[0.35em] uppercase"
-              style={{ writingMode: 'vertical-lr' }}
-            >
-              Scroll
-            </span>
-          </motion.div>
         </div>
       </div>
     </section>

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import SportTransitionStage from './SportTransitionStage'
+import { DEMO_HREF } from '@/lib/site'
 
 const SPORTS = [
   {
@@ -370,7 +371,8 @@ export default function SportsSection() {
                   >
                     More precise.<br />More adaptable.
                   </div>
-                  <button
+                  <a
+                    href={DEMO_HREF}
                     className="inline-flex items-center gap-2 text-[11px] font-display font-bold tracking-[0.12em] uppercase px-5 py-2.5 border transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
                     style={{ borderRadius: 0, color: sport.color, borderColor: `${sport.color}50` }}
                   >
@@ -378,7 +380,7 @@ export default function SportsSection() {
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>

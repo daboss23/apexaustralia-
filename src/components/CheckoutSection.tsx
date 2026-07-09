@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { DEMO_HREF, CONTACT_EMAIL } from '@/lib/site'
 
 /* ────────────────────────────────────────────────────────────────────────────
    ORDER / CHECKOUT SECTION — inline, ecom-style product + buy experience.
@@ -50,6 +51,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     inBox: ['T-APEX Unit', 'Waist Belt', 'Tablet', 'Adaptor for T-APEX', 'Type-C Cable', 'User Manual'],
     modes: 'Resisted · Change-of-direction · Isotonic · Overload',
     gallery: [
+      { type: 'image', src: '/checkout/core-hero.webp', alt: 'Core T-APEX system — the portable Adaptive Resistance Intelligence unit' },
       { type: 'image', src: '/t-apex product 4.webp', alt: 'T-APEX unit wheeled trackside by an athlete — portable Adaptive Resistance Intelligence' },
       { type: 'image', src: '/t-apex product 0.webp', alt: 'T-APEX system — Core configuration on the training floor' },
       { type: 'image', src: '/t-apex product 3.webp', alt: 'T-APEX unit with sprint shoe' },
@@ -82,9 +84,9 @@ const VARIANTS: Record<VariantId, Variant> = {
     ],
     modes: 'Resisted · CoD · Isotonic · Overload · Assisted Overspeed',
     gallery: [
+      { type: 'image', src: '/t-apex product 2.webp', alt: 'T-APEX with the full Overspeed Module on the field — tether reel, pulley, weight anchor & fast-release strap' },
       { type: 'image', src: '/t-apex product 4.webp', alt: 'T-APEX Overspeed unit wheeled trackside by an athlete — portable, stadium-ready' },
       { type: 'image', src: '/t-apex product 0.webp', alt: 'T-APEX Overspeed system — full configuration' },
-      { type: 'image', src: '/t-apex product 2.webp', alt: 'T-APEX with the full Overspeed Module on the field — tether reel, pulley, weight anchor & fast-release strap' },
       { type: 'image', src: '/t-apex product 3.webp', alt: 'T-APEX Overspeed system — full configuration' },
       { type: 'image', src: '/t-apex product 1.webp', alt: 'T-APEX Overspeed unit with weight plate anchor' },
     ],
@@ -395,14 +397,47 @@ function Gallery({ variant }: { variant: Variant }) {
 /* ── Section ──────────────────────────────────────────────────────────────── */
 
 export default function CheckoutSection() {
+  // Margins only shrink the viewport from the BOTTOM so an anchor jump to
+  // #order (navbar / mobile bar) still counts the section top as in view —
+  // otherwise the headline stays at opacity 0 after the jump.
   const sectionRef = useRef<HTMLElement>(null)
-  const inView = useInView(sectionRef, { once: false, margin: '-12% 0px' })
+  const inView = useInView(sectionRef, { once: false, margin: '0px 0px -12% 0px' })
   const titleRef = useRef<HTMLDivElement>(null)
-  const titleInView = useInView(titleRef, { once: false, margin: '-10% 0px' })
+  const titleInView = useInView(titleRef, { once: false, margin: '0px 0px -10% 0px' })
 
   const [variantId, setVariantId] = useState<VariantId>('core')
   const variant = VARIANTS[variantId]
   const isOver = variantId === 'overspeed'
+
+  // Stripe checkout — POSTs the variant to the serverless function, which
+  // creates the session server-side (prices never come from the client) and
+  // returns the hosted-checkout URL to redirect to.
+  const [checkingOut, setCheckingOut] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
+
+  const startCheckout = async () => {
+    if (checkingOut) return
+    setCheckingOut(true)
+    setCheckoutError(null)
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ variant: variantId }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && typeof data.url === 'string') {
+        window.location.assign(data.url)
+        return // keep the loading state while the browser navigates
+      }
+      setCheckoutError(
+        typeof data.error === 'string' ? data.error : 'Could not start checkout. Please try again.'
+      )
+    } catch {
+      setCheckoutError('Could not start checkout. Please check your connection and try again.')
+    }
+    setCheckingOut(false)
+  }
 
   return (
     <section ref={sectionRef} id="order" className="relative bg-apex-black overflow-hidden py-16 md:py-36">
@@ -601,18 +636,50 @@ export default function CheckoutSection() {
                 </div>
               )}
 
-              {/* Primary CTA */}
-              <button className="group inline-flex items-center justify-center gap-3 cta-glow text-white font-display font-bold px-8 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer w-full mb-3"
-                style={{ fontSize: 'clamp(0.8rem, 1vw, 0.95rem)', borderRadius: 0 }}>
-                Secure Checkout — {fmt(variant.price)}
-                <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
+              {/* Primary CTA — creates a Stripe Checkout session */}
+              <button
+                onClick={startCheckout}
+                disabled={checkingOut}
+                aria-busy={checkingOut}
+                className="group inline-flex items-center justify-center gap-3 cta-glow text-white font-display font-bold px-8 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer w-full mb-3 disabled:opacity-80 disabled:cursor-wait"
+                style={{ fontSize: 'clamp(0.8rem, 1vw, 0.95rem)', borderRadius: 0 }}
+              >
+                {checkingOut ? (
+                  <>
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="12" cy="12" r="9" stroke="rgba(255,255,255,0.3)" strokeWidth="2.5" />
+                      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                    </svg>
+                    Opening Secure Checkout…
+                  </>
+                ) : (
+                  <>
+                    Secure Checkout — {fmt(variant.price)}
+                    <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                    </svg>
+                  </>
+                )}
               </button>
+
+              {/* Checkout error — inline, with a human fallback */}
+              {checkoutError && (
+                <div
+                  role="alert"
+                  className="mb-3 px-4 py-3 border text-[13px] leading-snug font-body"
+                  style={{ borderColor: 'rgba(214,31,38,0.45)', background: 'rgba(214,31,38,0.08)', color: '#F5F7FA' }}
+                >
+                  {checkoutError}{' '}
+                  <a href={`mailto:${CONTACT_EMAIL}`} className="text-apex-blue underline underline-offset-2">
+                    Or order by email
+                  </a>
+                  .
+                </div>
+              )}
 
               {/* Secondary CTA */}
               <a
-                href="#contact"
+                href={DEMO_HREF}
                 className="group inline-flex items-center justify-center gap-2 border border-apex-line hover:border-apex-grey/50 text-apex-grey hover:text-apex-white font-display font-bold px-8 py-4 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer w-full mb-5"
                 style={{ fontSize: 'clamp(0.72rem, 0.95vw, 0.85rem)', borderRadius: 0 }}
               >
@@ -688,13 +755,12 @@ export default function CheckoutSection() {
             </p>
             <p className="text-apex-grey font-body leading-[1.8] mb-4" style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.05rem)' }}>
               T-APEX applies intelligent resistance and assistance in motion, then measures the result in
-              real time — so every session produces data you can coach from, not just a workout you have to
-              guess at. It is engineered for hard use on demanding training floors and travels with the team.
+              real time — so every session produces data you can coach from, not a workout you have to
+              guess at. And it travels with the team: case to first sprint in about five minutes.
             </p>
             <p className="font-display font-black text-apex-white leading-tight" style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.35rem)' }}>
-              This is not just another sprint tool. It is an{' '}
-              <span className="text-apex-blue">Adaptive Resistance Intelligence system</span> for elite
-              performance programs.
+              One system for resistance, overspeed, and data —{' '}
+              <span className="text-apex-blue">every mode your program needs, on every ground you train.</span>
             </p>
           </div>
 

@@ -106,10 +106,9 @@ export default function LocalTrustSection() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.42 }}
             >
-              Because T-Apex Australia is not being brought to market by people chasing hype or
-              novelty. It is being introduced by coaches who understand what elite programs
-              actually demand, what separates impressive-looking equipment from
-              genuinely useful systems, and why better coaching tools create better outcomes over time.
+              T-Apex Australia is run by coaches, not distributors — people who know what elite
+              programs actually demand, and what separates impressive-looking equipment from
+              genuinely useful systems. When you buy, that experience comes with the machine.
             </motion.p>
           </div>
 

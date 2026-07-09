@@ -41,8 +41,8 @@ const BENEFITS = [
   },
   {
     num: '06',
-    title: 'Professional Edge',
-    body: 'Set your facility or performance centre apart with technology built for elite coaching — not generic gym floors.',
+    title: 'Facility Advantage',
+    body: 'Offer athletes something the gym down the road cannot: intelligent loading, overspeed exposure, and objective data on every session.',
     accent: '#00AEEF',
     tag: 'ADVANTAGE',
   },
@@ -79,9 +79,9 @@ export default function BenefitsSection() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            SIX REASONS<br />
-            <span className="t-blue">IT CHANGES</span><br />
-            EVERYTHING.
+            SIX ADVANTAGES<br />
+            <span className="t-blue">YOU CAN</span><br />
+            MEASURE.
           </motion.h2>
           <motion.div
             className="flex flex-col justify-center"
@@ -89,15 +89,11 @@ export default function BenefitsSection() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.65, delay: 0.2 }}
           >
-            <p className="text-apex-grey font-body leading-relaxed mb-6"
-              style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
-              T-Apex does not add more volume to your training programme. It adds control,
-              responsiveness, and measurability to everything you already do.
-            </p>
             <p className="text-apex-grey font-body leading-relaxed"
               style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)' }}>
-              The result: better athlete outcomes, better coaching decisions, and a facility that
-              operates with a clear advantage over those still training without it.
+              T-Apex does not add more volume to your programme. It adds control, responsiveness,
+              and measurability to everything you already do — so athletes develop faster and
+              coaching decisions get sharper.
             </p>
           </motion.div>
         </div>

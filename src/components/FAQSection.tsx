@@ -2,35 +2,40 @@
 
 import { useRef, useState } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { DEMO_HREF, ENQUIRY_HREF } from '@/lib/site'
 
 const FAQS = [
   {
-    q: 'What is T-Apex?',
-    a: 'T-Apex is an intelligent resistance training device built for elite performance, coaching, and rehabilitation.',
+    q: 'How much does T-Apex cost?',
+    a: 'The Core T-APEX system is A$9,450 including GST. Adding the full five-piece Overspeed Module brings the complete system to A$9,990. Both include free insured shipping Australia-wide, and flexible payment plans are available — comparable systems cost around A$30,000 plus annual software fees.',
+  },
+  {
+    q: 'Are there ongoing software fees or subscriptions?',
+    a: 'No. The standard T-APEX software comes preloaded on the included tablet with no annual licence. Your athlete data is stored on your own tablet — you own it outright, and raw data can be exported to other software at any time.',
+  },
+  {
+    q: 'How is T-Apex different from sprint-only systems like the 1080?',
+    a: 'Sprint tools are built for one lane: straight-line resisted and assisted running. T-Apex is built around Adaptive Resistance Intelligence — the same intelligent loading and 1000Hz measurement applied across acceleration, change of direction, strength work, conditioning, and rehab, at roughly a third of the price.',
   },
   {
     q: 'Who is T-Apex for?',
-    a: 'T-Apex suits athletes, coaches, performance centres, rehab clinics, academies, and facilities that want more control over how resistance is applied.',
-  },
-  {
-    q: 'How is T-Apex different from traditional resistance systems?',
-    a: 'T-Apex creates a more responsive, measurable, and adaptable session, supporting better coaching decisions, stronger athlete engagement, and more purposeful loading over time.',
-  },
-  {
-    q: 'How is T-Apex different from sprint-focused resistance systems?',
-    a: 'T-Apex is built around Adaptive Resistance Intelligence, giving coaches a wider performance system that extends well beyond straight-line sprint work.',
+    a: 'Coaches, athletes, clubs, academies, performance centres, and rehab clinics that want precise control over how load is applied — and objective data on every rep. One tablet can run multiple units, so it scales from a private studio to a full professional squad.',
   },
   {
     q: 'Can T-Apex be used for rehabilitation and return-to-play?',
-    a: 'Yes. T-Apex supports controlled loading and finely graded progressions, making it valuable in both performance and rehabilitation settings.',
+    a: 'Yes. Finely graded resistance (150 levels) and objective force and velocity data make progressions measurable, so return-to-play decisions are built on numbers rather than feel.',
   },
   {
-    q: 'Can I see T-Apex in action before making a decision?',
-    a: 'Yes. You can book a demo or enquire to learn more about how T-Apex may fit your set-up.',
+    q: 'What warranty and support do I get?',
+    a: 'Every system carries a 12-month manufacturer warranty and is backed by the Australian team — real coaches, led by Olympic-level sprint coach Piero Sacchetta, who help you onboard the system into your program.',
   },
   {
-    q: 'Is T-Apex available in Australia?',
-    a: 'Yes. T-Apex Australia is the local contact point for demos, enquiries, and opportunities within the Australian market.',
+    q: 'How long does delivery take?',
+    a: 'Systems ship insured and free Australia-wide. Once dispatched, you are typically training within days — setup takes about five minutes from case to first sprint, and the tablet arrives preloaded and calibrated.',
+  },
+  {
+    q: 'Can I see T-Apex in action before buying?',
+    a: 'Yes. Book a free on-site or virtual demo and watch it measure speed, force, and control with your own athletes — no obligation.',
   },
 ]
 
@@ -70,21 +75,23 @@ export default function FAQSection() {
               Australia is handled by someone with real performance experience.
             </p>
             <div className="flex flex-col gap-3">
-              <button
-                className="inline-flex items-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(214,31,38,0.55)] hover:-translate-y-0.5"
+              <a
+                href={DEMO_HREF}
+                className="inline-flex items-center justify-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(214,31,38,0.55)] hover:-translate-y-0.5"
                 style={{ borderRadius: 0 }}
               >
                 Book a Demo
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
-              </button>
-              <button
-                className="inline-flex items-center gap-2 border border-apex-line hover:border-apex-grey/40 text-apex-grey hover:text-apex-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
+              </a>
+              <a
+                href={ENQUIRY_HREF}
+                className="inline-flex items-center justify-center gap-2 border border-apex-line hover:border-apex-grey/40 text-apex-grey hover:text-apex-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
                 style={{ borderRadius: 0 }}
               >
                 Enquire Now
-              </button>
+              </a>
             </div>
           </motion.div>
 

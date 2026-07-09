@@ -12,7 +12,7 @@ const STEPS = [
   {
     num: '02',
     title: 'Apply Intelligent Resistance',
-    body: 'Use T-Apex to load movement more responsively, challenging athletes with more purpose than conventional resistance methods alone.',
+    body: 'Dial in load or assistance and let T-Apex respond to the athlete in motion — resisted, assisted, isotonic, or overload, all from the tablet.',
   },
   {
     num: '03',
