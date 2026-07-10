@@ -118,15 +118,48 @@ const TRUST_BADGES = [
     ),
   },
   {
-    label: 'Secure Checkout',
-    sub: '256-bit encrypted',
+    label: 'Secure Stripe Checkout',
+    sub: 'PCI DSS Level 1 encrypted',
     icon: (
       <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
     ),
   },
 ]
 
-const PAY_METHODS = ['VISA', 'Mastercard', 'AMEX', 'PayPal', 'Afterpay', 'Apple Pay']
+/* Generic outlined card mark — reused for networks without a simple, safe-to-freehand glyph
+   (Visa, AMEX, PayPal, Afterpay are wordmarks; redrawing them approximately would misrepresent
+   the brand, so they get the neutral card icon + accurate text instead). */
+const CARD_ICON = (
+  <>
+    <rect x="2.5" y="5.5" width="19" height="13" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
+    <path d="M2.5 9.5h19" stroke="currentColor" strokeWidth="1.4" />
+  </>
+)
+
+const PAY_METHODS = [
+  { label: 'VISA', icon: CARD_ICON },
+  {
+    label: 'Mastercard',
+    icon: (
+      <>
+        <circle cx="9" cy="12" r="6" fill="rgba(235,110,45,0.9)" />
+        <circle cx="15" cy="12" r="6" fill="rgba(214,31,38,0.85)" />
+      </>
+    ),
+  },
+  { label: 'AMEX', icon: CARD_ICON },
+  {
+    label: 'Apple Pay',
+    icon: (
+      <path
+        fill="currentColor"
+        d="M8.4 6.9c-.5.6-1.3 1.1-2.1 1-.1-.8.3-1.7.7-2.2.5-.6 1.4-1.1 2.1-1.1.1.8-.2 1.6-.7 2.3Zm.7 1.1c-1.2-.1-2.2.7-2.8.7-.6 0-1.4-.6-2.4-.6-1.2 0-2.4.7-3 1.9-1.3 2.2-.3 5.5.9 7.3.6.9 1.3 1.9 2.3 1.8.9 0 1.3-.6 2.4-.6s1.4.6 2.4.6c1 0 1.6-.9 2.2-1.8.7-1 1-2 1-2.1-.1 0-1.9-.7-1.9-2.8 0-1.7 1.4-2.5 1.5-2.6-.8-1.2-2.1-1.3-2.6-1.4v.6ZM17 5.4v13.2h1.7v-4.5h2.4c2.2 0 3.7-1.5 3.7-3.6s-1.5-3.1-3.6-3.1H17Zm1.7 1.4h2c1.5 0 2.4.8 2.4 2.2s-.9 2.2-2.4 2.2h-2V6.8Z"
+      />
+    ),
+  },
+  { label: 'PayPal', icon: CARD_ICON },
+  { label: 'Afterpay', icon: CARD_ICON },
+]
 
 const TESTIMONIALS = [
   {
@@ -690,18 +723,34 @@ export default function CheckoutSection() {
               </a>
 
               {/* Reassurance row */}
-              <div className="flex items-center justify-center gap-2 mb-4 text-apex-grey-dim">
-                <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-                </svg>
-                <span className="font-mono text-[10px] tracking-[0.14em] uppercase">Secure encrypted checkout</span>
+              <div className="flex flex-col items-center gap-1.5 mb-4 text-apex-grey-dim">
+                <div className="flex items-center gap-2">
+                  <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                  </svg>
+                  <span className="font-mono text-[10px] tracking-[0.14em] uppercase">256-bit encrypted checkout</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-apex-grey-dim/80">
+                  <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                  <span className="font-mono text-[9px] tracking-[0.1em] uppercase">
+                    Powered by <span className="text-apex-grey" style={{ color: 'rgb(99,91,255)' }}>Stripe</span> · PCI DSS Level 1 · card details never touch our servers
+                  </span>
+                </div>
               </div>
 
               {/* Payment methods */}
               <div className="flex flex-wrap items-center justify-center gap-2 mb-5">
                 {PAY_METHODS.map((m) => (
-                  <span key={m} className="font-mono text-[9px] tracking-[0.1em] uppercase text-apex-grey-dim border border-apex-line/60 px-2.5 py-1.5 bg-apex-black-2/60">
-                    {m}
+                  <span
+                    key={m.label}
+                    className="inline-flex items-center gap-1.5 font-mono text-[9px] tracking-[0.1em] uppercase text-apex-grey-dim border border-apex-line/60 px-2.5 py-1.5 bg-apex-black-2/60"
+                  >
+                    <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+                      {m.icon}
+                    </svg>
+                    {m.label}
                   </span>
                 ))}
               </div>
