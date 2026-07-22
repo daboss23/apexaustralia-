@@ -1,6 +1,6 @@
 import Navbar from '@/components/Navbar'
 import TelemetryLine from '@/components/TelemetryLine'
-import Hero from '@/components/Hero'
+import ScrollCinemaHero from '@/components/ScrollCinemaHero'
 import PerformanceSection from '@/components/PerformanceSection'
 import ProblemSection from '@/components/ProblemSection'
 import SolutionSection from '@/components/SolutionSection'
@@ -29,8 +29,9 @@ export default function Home() {
       {/* Scroll telemetry rail — fixed session-progress line with sector gates (xl+) */}
       <TelemetryLine />
 
-      {/* 01 — HERO / BIG PROMISE */}
-      <Hero />
+      {/* 01 — HERO / BIG PROMISE — scroll-cinema (frame-scrub travel-through);
+            falls back to the classic <Hero/> on phones + reduced-motion */}
+      <ScrollCinemaHero />
 
       {/* 02 — PERFORMANCE IN MOTION */}
       <PerformanceSection />
