@@ -20,7 +20,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 // Gracefully degrades: phones and `prefers-reduced-motion` users get the classic
 // <Hero /> (no pin, no scrub) instead of this.
 
-const FRAME_COUNT = 193
+const FRAME_COUNT = 211
 const FRAME_PATH = (i: number) =>
   `/hero-frames/frame-${String(i).padStart(3, '0')}.webp`
 
