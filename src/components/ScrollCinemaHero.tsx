@@ -62,12 +62,19 @@ function CinemaImpl() {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
-    const img = imagesRef.current[Math.round(render.frame)]
-    if (!img || !img.complete || !img.naturalWidth) return
+    // Sub-frame blending: draw the frame below and cross-fade the frame above
+    // by the fractional scroll position, so slow scrolls glide instead of
+    // stepping between the 24fps source frames.
+    const lo = Math.floor(render.frame)
+    const hi = Math.min(lo + 1, FRAME_COUNT - 1)
+    const frac = render.frame - lo
+    const imgA = imagesRef.current[lo]
+    const imgB = imagesRef.current[hi]
+    if (!imgA || !imgA.complete || !imgA.naturalWidth) return
 
     const cw = canvas.width
     const ch = canvas.height
-    const ir = img.naturalWidth / img.naturalHeight
+    const ir = imgA.naturalWidth / imgA.naturalHeight
     const cr = cw / ch
     let dw: number
     let dh: number
@@ -83,7 +90,13 @@ function CinemaImpl() {
     const dx = (cw - dw) / 2
     const dy = (ch - dh) / 2
     ctx.clearRect(0, 0, cw, ch)
-    ctx.drawImage(img, dx, dy, dw, dh)
+    ctx.globalAlpha = 1
+    ctx.drawImage(imgA, dx, dy, dw, dh)
+    if (frac > 0.01 && imgB && imgB.complete && imgB.naturalWidth) {
+      ctx.globalAlpha = frac
+      ctx.drawImage(imgB, dx, dy, dw, dh)
+      ctx.globalAlpha = 1
+    }
   }
 
   // ── Size the canvas backing store to the element (dpr-aware) ─────────────────
@@ -136,24 +149,24 @@ function CinemaImpl() {
       // Beat 1 — the promise. On screen at rest, then peels away as we push in.
       tl.to(
         '.beat-1',
-        { opacity: 0, y: -70, filter: 'blur(9px)', ease: 'power1.in', duration: 0.22 },
+        { opacity: 0, y: -70, ease: 'power1.in', duration: 0.22 },
         0.02,
       )
 
       // Beat 2 — telemetry HUD, revealed mid-travel then handed off.
       tl.fromTo(
         '.beat-2',
-        { opacity: 0, scale: 0.92, filter: 'blur(6px)' },
-        { opacity: 1, scale: 1, filter: 'blur(0px)', ease: 'power2.out', duration: 0.18 },
+        { opacity: 0, scale: 0.92 },
+        { opacity: 1, scale: 1, ease: 'power2.out', duration: 0.18 },
         0.34,
       )
-      tl.to('.beat-2', { opacity: 0, scale: 1.06, filter: 'blur(6px)', duration: 0.12 }, 0.6)
+      tl.to('.beat-2', { opacity: 0, scale: 1.06, duration: 0.12 }, 0.6)
 
       // Beat 3 — the resolve: final line + CTAs land as the machine reassembles.
       tl.fromTo(
         '.beat-3',
-        { opacity: 0, y: 60, filter: 'blur(8px)' },
-        { opacity: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.2 },
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, ease: 'power2.out', duration: 0.2 },
         0.74,
       )
 
