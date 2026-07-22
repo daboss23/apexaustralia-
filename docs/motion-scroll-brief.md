@@ -64,6 +64,29 @@ Seedance does **not** transform your existing 15s website video. It works from:
   hero-lit). Forces a clean landing.
 - **Text-to-video:** prompt only, no image — least control over how the device looks.
 
+### ✅ The real-product recipe (use this — supersedes generic guidance)
+
+You have white-background studio photos of the production unit (X-panel face,
+red e-stop, control cluster, tow mast, wheel carriage). Use them like this:
+
+| Slot in Seedance | Asset | Why |
+|---|---|---|
+| **Start frame** | `public/checkout/core-hero.webp` (device in dark gym, red neon) | The ride must *open* in the site's dark world — never a white-void product shot. |
+| **Reference / subject images** | The 4 white-bg product photos | Lock the real geometry so the machine in the ride is *your* machine. |
+| **End frame** | `core-hero.webp` again (or another dark hero still) | Clean landing, matched grade; start≈end also makes the scrub loopable. |
+
+**Finish consistency:** the weathered-gunmetal shot is a different surface
+finish from the clean matte-black unit. Feed only ONE finish per generation —
+the clean matte black matches `core-hero.webp` and the site.
+
+**Prompt add-on when using real references** (append to any shot prompt):
+```
+The device is the exact machine from the reference images: matte-black armored
+case with an X-shaped front panel, red emergency-stop button, silver control
+deck, black tow mast with red-capped handle, twin low wheels. Keep its
+proportions, panel lines and logo placement exactly as referenced.
+```
+
 ### References to supply (in priority order)
 1. **A clean product still of the T-Apex device** — sharp, dark or transparent
    background. This makes the machine in the ride *your actual product*, not a
