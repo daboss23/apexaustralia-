@@ -7,28 +7,27 @@ import Hero from './Hero'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// ─── Scroll-cinema hero — "immersive scrub" (Ferrari-style, T-Apex tuned) ──────
-// A centred card scrubs a frame sequence of real T-Apex footage while it scales
-// up to fully immersive; the giant title words split apart then fade; at the end
-// it collapses back and the resolve copy + CTAs land. Extra depth on top of the
-// base pattern: a perspective TILT on the card (flattens as it immerses),
-// aerospace HUD corner brackets, an ambient particle field and a telemetry
-// overlay at the immersive peak.
+// ─── Scroll-cinema hero — "immersive video" (Ferrari-style, T-Apex tuned) ──────
+// A centred card plays a looping T-Apex clip while it scales up to fully
+// immersive; the giant title words split apart then fade; at the end it collapses
+// back and the resolve copy + CTAs land. Extra depth on top of the base pattern:
+// a perspective TILT on the card (flattens as it immerses), aerospace HUD corner
+// brackets, an ambient particle field and a telemetry overlay at the peak.
 //
-// Swap the footage by dropping a numbered sequence into /public/hero-frames and
-// updating FRAME_COUNT / FRAME_URL below.
+// Swap the footage by changing MEDIA_SRC below (drop the file in /public).
 //
 // Gracefully degrades: phones + `prefers-reduced-motion` get the classic
 // <Hero /> (no scrub).
 
-const FRAME_COUNT = 147
-const FRAME_URL = (i: number) => `/hero-frames/frame-${String(i + 1).padStart(3, '0')}.webp`
+const MEDIA_SRC = '/hero-clip-c.mp4' // ← swap to a/b or the floating-device clip
+const MEDIA_POSTER = '/hero.webp'
 
-// Layout / feel constants (mirrors the reference, tuned for this footage).
+// Layout / feel constants.
 const PIN_VH_MULTIPLE = 3.4 // total scroll length = (this + 1) × viewport
 const IMMERSE_OVERFILL = 1.05
 const CARD_START_SCALE = 0.62
 const CARD_TILT = 9 // deg of perspective tilt at the "poster" state
+const DEFAULT_ASPECT = 16 / 9
 
 // ── Ambient telemetry particles — cheap canvas drift ───────────────────────────
 function ParticleField() {
@@ -99,10 +98,7 @@ function Bracket({ className }: { className: string }) {
 
 function CinemaImpl() {
   const sectionRef = useRef<HTMLElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const imagesRef = useRef<HTMLImageElement[]>([])
-  const lastDrawnRef = useRef<number>(-1)
-
+  const videoRef = useRef<HTMLVideoElement>(null)
   const cardRef = useRef<HTMLDivElement>(null)
   const titleTopRef = useRef<HTMLHeadingElement>(null)
   const titleBottomRef = useRef<HTMLHeadingElement>(null)
@@ -110,53 +106,21 @@ function CinemaImpl() {
   const ctaRef = useRef<HTMLDivElement>(null)
   const cueRef = useRef<HTMLDivElement>(null)
 
-  const [ready, setReady] = useState(false)
-  const [aspect, setAspect] = useState(16 / 9)
+  const [aspect, setAspect] = useState(DEFAULT_ASPECT)
 
-  // ── Progressive frame preload (prioritise the first frames) ─────────────────
+  // Match the card to the real clip aspect once metadata is in.
   useEffect(() => {
-    let cancelled = false
-    const images: HTMLImageElement[] = new Array(FRAME_COUNT)
-    imagesRef.current = images
-
-    const onFirstReady = (img: HTMLImageElement) => {
-      if (cancelled) return
-      const canvas = canvasRef.current
-      if (canvas && img.naturalWidth && img.naturalHeight) {
-        canvas.width = img.naturalWidth
-        canvas.height = img.naturalHeight
-        canvas.getContext('2d')?.drawImage(img, 0, 0)
-        lastDrawnRef.current = 0
-        setAspect(img.naturalWidth / img.naturalHeight)
+    const v = videoRef.current
+    if (!v) return
+    const onMeta = () => {
+      if (v.videoWidth && v.videoHeight) {
+        setAspect(v.videoWidth / v.videoHeight)
+        ScrollTrigger.refresh()
       }
-      setReady(true)
     }
-
-    const loadOne = (i: number) => {
-      const img = new window.Image()
-      img.decoding = 'async'
-      if (i < 4) (img as HTMLImageElement & { fetchPriority?: string }).fetchPriority = 'high'
-      if (i === 0) img.onload = () => onFirstReady(img)
-      img.src = FRAME_URL(i)
-      images[i] = img
-    }
-
-    const INITIAL = Math.min(24, FRAME_COUNT)
-    for (let i = 0; i < INITIAL; i++) loadOne(i)
-    let cursor = INITIAL
-    let timer: ReturnType<typeof setTimeout> | null = null
-    const loadNext = () => {
-      if (cancelled) return
-      const end = Math.min(FRAME_COUNT, cursor + 20)
-      for (let i = cursor; i < end; i++) loadOne(i)
-      cursor = end
-      if (cursor < FRAME_COUNT) timer = setTimeout(loadNext, 70)
-    }
-    timer = setTimeout(loadNext, 180)
-    return () => {
-      cancelled = true
-      if (timer) clearTimeout(timer)
-    }
+    v.addEventListener('loadedmetadata', onMeta)
+    if (v.readyState >= 1) onMeta()
+    return () => v.removeEventListener('loadedmetadata', onMeta)
   }, [])
 
   // ── Entry animation ─────────────────────────────────────────────────────────
@@ -172,7 +136,6 @@ function CinemaImpl() {
 
   // ── Scroll-driven choreography (sticky layout, scrub) ───────────────────────
   useEffect(() => {
-    if (!ready) return
     const section = sectionRef.current
     if (!section) return
 
@@ -184,38 +147,6 @@ function CinemaImpl() {
         const baseH = Math.min(vh * 0.72, (vw * 0.96) / aspect)
         if (baseW <= 0 || baseH <= 0) return 1.6
         return Math.max(vw / baseW, vh / baseH) * IMMERSE_OVERFILL
-      }
-
-      const isLoaded = (i: number) => {
-        const img = imagesRef.current[i]
-        return !!img && img.complete && img.naturalWidth > 0
-      }
-
-      const drawFrame = (index: number) => {
-        const canvas = canvasRef.current
-        if (!canvas) return
-        let useIdx = index
-        if (!isLoaded(useIdx)) {
-          let found = -1
-          for (let d = 1; d < FRAME_COUNT; d++) {
-            if (useIdx - d >= 0 && isLoaded(useIdx - d)) {
-              found = useIdx - d
-              break
-            }
-            if (useIdx + d < FRAME_COUNT && isLoaded(useIdx + d)) {
-              found = useIdx + d
-              break
-            }
-          }
-          if (found === -1) return
-          useIdx = found
-        }
-        if (lastDrawnRef.current === useIdx) return
-        const img = imagesRef.current[useIdx]
-        const c2 = canvas.getContext('2d')
-        if (!c2 || !img) return
-        c2.drawImage(img, 0, 0, canvas.width, canvas.height)
-        lastDrawnRef.current = useIdx
       }
 
       // Poster state: small, tilted in 3D.
@@ -233,10 +164,6 @@ function CinemaImpl() {
           end: 'bottom bottom',
           scrub: 0.5,
           invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            const mapped = gsap.utils.clamp(0, 1, (self.progress - 0.15) / 0.63)
-            drawFrame(Math.min(FRAME_COUNT - 1, Math.floor(mapped * FRAME_COUNT)))
-          },
         },
       })
 
@@ -260,12 +187,10 @@ function CinemaImpl() {
       master.to('.hud-bracket', { opacity: 1, ease: 'power1.out', duration: 0.18 }, 0.82)
       master.fromTo(eyebrowRef.current, { opacity: 0, y: -14 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.14 }, 0.84)
       master.fromTo(ctaRef.current, { opacity: 0, y: 22 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.16 }, 0.86)
-
-      ScrollTrigger.refresh()
     }, sectionRef)
 
     return () => ctx.revert()
-  }, [ready, aspect])
+  }, [aspect])
 
   const tallHeight = `${(PIN_VH_MULTIPLE + 1) * 100}vh`
 
@@ -328,7 +253,17 @@ function CinemaImpl() {
               aspectRatio: aspect,
             }}
           >
-            <canvas ref={canvasRef} className="absolute inset-0 h-full w-full object-cover" aria-hidden="true" />
+            <video
+              ref={videoRef}
+              className="absolute inset-0 h-full w-full object-cover"
+              src={MEDIA_SRC}
+              poster={MEDIA_POSTER}
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-hidden="true"
+            />
             {/* Readability + brand-tone ramp over the footage */}
             <div
               className="pointer-events-none absolute inset-0 z-10"
