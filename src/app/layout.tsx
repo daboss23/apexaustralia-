@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { Marcellus, Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
+import 'lenis/dist/lenis.css'
 import MotionProvider from '@/components/MotionProvider'
+import SmoothScroll from '@/components/SmoothScroll'
 
 // Headings — Marcellus: elegant high-contrast Roman serif (luxury display).
 const marcellus = Marcellus({
@@ -54,7 +56,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${marcellus.variable} ${inter.variable} ${jetbrains.variable}`}
     >
       <body className="font-body antialiased overflow-x-hidden grain">
-        <MotionProvider>{children}</MotionProvider>
+        <SmoothScroll>
+          <MotionProvider>{children}</MotionProvider>
+        </SmoothScroll>
       </body>
     </html>
   )
