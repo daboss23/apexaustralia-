@@ -4,21 +4,19 @@ This is the production brief for the **pinned, scroll-scrubbed hero** built in
 `src/components/ScrollCinemaHero.tsx`. It tells you exactly what footage to
 generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
-> **Current footage:** `public/apex-hero-cinema.mp4` (8.0s, 24fps, 1280×720) —
-> the T-Apex on a black plate with holographic athletes (sprinter, footballer,
-> tennis) passing through, red/blue light streaks, settling on a hero device
-> shot. Extracted at `fps=18` → **145 frames**.
+> **Current footage:** `public/apex-hero-cinema.mp4` (14.6s, 24fps, 1280×720) —
+> a **master edit cut from three source clips**, extracted at `fps=14`,
+> `scale=1152` → **205 frames, 8.6 MB**.
 >
-> Because it's shot on pure black it fades into the page seamlessly, which is
-> what makes the Act-1 aperture reveal work. It is **not** a fly-through: the
-> camera barely moves and the device holds dead-centre for the whole clip.
-> See §6 for the shots still missing from the full storyboard.
+> It now covers nearly the whole storyboard: sprinter → machine → panels open →
+> fly-through the internals → HUD → hero device. See §6 for how it was cut and
+> what's still missing.
 
 ---
 
 ## 1. What the scroll experience does
 
-As the visitor scrolls the hero (~2.1 viewport-heights ≈ **~10 seconds**
+As the visitor scrolls the hero (~3 viewport-heights ≈ **~15 seconds**
 unhurried), in four acts:
 
 - **ACT 0 — HOLD (0–12%).** Pure black. *TRAIN BEYOND HUMAN LIMITS* alone on the
@@ -29,19 +27,40 @@ unhurried), in four acts:
   gap. The film is revealed *by* the split: a `clip-path` aperture unclips
   vertically from that seam while fading up, so the video appears to be let
   through by the type rather than cross-faded under it.
-- **ACT 2 — TRAVEL (12–96%).** Frames scrub to scroll while the camera pushes in
-  (`1.0 → 1.18` — gentle, the source already dollies) and a tunnel vignette
-  closes. The two headline halves stay parked top and bottom, framing the film.
-  The telemetry HUD (Force / Velocity / Response / Control) fades in **flanked
-  left and right**, not centred — see the layout note below.
-- **ACT 3 — RESOLVE (74–100%).** A scrim dims the machine to a ghost so
-  *ENGINEERED FOR THE NEXT TENTH OF A SECOND* + CTAs read cleanly.
+- **ACT 2 — TRAVEL (10–97%).** Frames scrub to scroll while the camera adds a
+  whisper of push (`1.0 → 1.1` — the film does its own flying now) and a tunnel
+  vignette breathes in. The halves clear at 34% so nothing sits on the
+  panels-open reveal. The telemetry HUD (Force / Velocity / Response / Control)
+  fades in over the fly-through, **flanked left and right**, not centred.
+- **ACT 3 — RESOLVE (85–100%).** A scrim dims the machine so *ENGINEERED FOR THE
+  NEXT TENTH OF A SECOND* + CTAs read cleanly over the trackside hero shot.
 
-**Layout note (important):** the current clip keeps the device dead-centre for
-its whole run, so *any* centred mid-scroll copy lands on top of it and turns to
-mush. Hence the flanking HUD columns and the Act-3 scrim. If you replace the
-footage with a genuine fly-through (where the machine opens out and clears
-frame), both workarounds can be dropped and copy can return to centre.
+### Where the content sits (scroll progress → shot)
+
+The film scrubs across `0.10 → 0.97`, so `frame ≈ (p − 0.10) / 0.87 × 205`:
+
+| Progress | On screen |
+|---|---|
+| 0.10–0.29 | sprinter charges camera, turns to blue energy, runs the rope |
+| 0.29–0.46 | ✦ **panels split open along the seams** — the money shot |
+| 0.46–0.72 | fly-through: circuit macro, copper traces, cable spool + gears |
+| 0.72–0.84 | HUD panels of athletes wrapped in red/blue energy |
+| 0.84–0.97 | out to the hero device, trackside, T-APEX branding |
+
+**Two layout rules this footage forces:**
+
+1. **Nothing goes on screen between 29% and 46%.** The panels-open reveal is the
+   centrepiece; the headline halves are timed to clear before it.
+2. **Copy can't just sit on the film any more.** Unlike the old black plate,
+   this cut has a mean luma of 43–85. `.cine-dim` is therefore scheduled like a
+   lighting cue — it lifts under every copy beat (0.40 / 0.46 / 0.66) and drops
+   between them (0.08 / 0.12) so the film plays at full strength exactly when
+   nothing is written over it. If you recut the footage, **re-measure the luma
+   and re-time that cue** — it's the difference between premium and mush:
+   ```bash
+   ffmpeg -v error -i master.mp4 -vf "fps=14,signalstats,\
+     metadata=print:key=lavfi.signalstats.YAVG:file=-" -an -f null -
+   ```
 
 The single most important property of the footage: it must be a **slow,
 continuous, single-motion push** with **no hard cuts** — scrubbing amplifies any
@@ -101,28 +120,43 @@ duration** the tool allows. Higher fps source = smoother scrub.
 The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
 (`frame-001.webp … frame-NNN.webp`), NOT a video file. To swap footage:
 
-1. Put your new clip at `public/new-hero.mp4`.
-2. Extract a frame sequence (ffmpeg). ~100–160 frames is the sweet spot:
+1. Cut your clips into one master (see §6 for the current recipe) at
+   `public/apex-hero-cinema.mp4`.
+2. Extract a frame sequence (ffmpeg):
    ```bash
    rm -f public/hero-frames/*.webp
-   ffmpeg -y -i public/new-hero.mp4 \
-     -vf "fps=12,scale=1280:-1" -f image2 -c:v libwebp -quality 78 \
+   ffmpeg -y -i public/apex-hero-cinema.mp4 \
+     -vf "fps=14,scale=1152:-1" -f image2 -c:v libwebp -quality 72 \
      public/hero-frames/frame-%03d.webp
    ```
-   - `fps=12` → longer clips = more frames; aim for **120–160 total**.
-   - `scale=1280` keeps each frame ~20–30 KB; the whole set preloads (~4 MB).
 3. Update the frame count in `src/components/ScrollCinemaHero.tsx`:
    ```ts
    const FRAME_COUNT = <number of files in public/hero-frames>
    ```
-4. `npm run build` to verify, then commit `public/hero-frames/` + the component.
+4. Re-measure luma and re-time the `.cine-dim` cue (see §1).
+5. `npm run build` to verify, then commit `public/hero-frames/` + the component.
+
+### Sizing the sequence — the real trade-off
+Frame **count** sells smoothness far more than frame **resolution**: the scrub
+is a temporal effect, and a soft frame in motion reads fine where a chunky one
+does not. So when the budget gets tight, drop `scale` before you drop `fps`.
+
+Current: 205 frames @ 1152px / q72 = **8.6 MB**. For reference on this footage —
+`fps=15 scale=1280 q78` → 12.2 MB, `fps=13 scale=960 q70` → 6.5 MB.
+
+That weight is desktop-only (phones get `<Hero />` and never fetch a frame) and
+loads progressively — only `READY_FRAMES` (36) gate the start of scrubbing, and
+a frame that hasn't decoded holds the previous one rather than flashing black.
+Keep the total under ~10 MB.
 
 ### Optional tuning knobs (top of `ScrollCinemaHero.tsx`)
-- `PIN_DISTANCE` — `'+=1750'` px of scroll = how long the hero stays pinned
-  (raise for a slower, longer travel).
-- `ZOOM_START` / `ZOOM_END` — the push-in strength (`1.02 → 1.62`).
-- Beat timings — the `0.34`, `0.6`, `0.74` position values in the timeline map to
-  scroll progress (0–1); shift them to re-choreograph when copy appears.
+- `PIN_DISTANCE` — `'+=3000'` px of scroll = how long the hero stays pinned.
+  Keep it at roughly **15 px of scroll per frame** or the scrub changes feel.
+- `ZOOM_START` / `ZOOM_END` — extra push-in (`1.0 → 1.1`). Keep this small when
+  the footage already flies; the two motions fight otherwise.
+- `SPLIT_TRAVEL` — how far the headline halves part (`0.34` of viewport height).
+- Beat timings — the position values in the timeline map to scroll progress
+  (0–1); shift them to re-choreograph when copy appears.
 
 ---
 
@@ -135,42 +169,84 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
 
 ---
 
-## 5. Your one-day AI-video shortlist (priority order)
-1. **The travel-through/dismantle clip** (Seedance) — the hero moment. Longest,
-   highest-fps continuous shot you can get.
-2. A **clean wide push-in** on the device (Higgsfield) — the opening 3s.
-3. A **reassembly** beauty shot — the closing 3s.
-
-Send me any of these and I'll extract, retime, and wire them in.
-
----
-
-## 6. The full storyboard vs. what we have
-
-The scroll *mechanism* can drive any of this — it is footage, not code, that
-gates the rest. The full five-scene idea needs roughly five separate generated
-clips, stitched into one continuous move before extraction:
+## 5. Storyboard coverage
 
 | # | Shot | Status |
 |---|------|--------|
-| 1 | Camera pushes toward the T-Apex on black | ✅ **have it** — `apex-hero-cinema.mp4` opens on this |
-| 2 | Panels split and open along the seams, glowing internals revealed | ❌ needs generating |
-| 3 | Fly-through of the engine interior — red cable spool spinning, machined gears meshing, taut red cable threading, circuit-lined walls pulsing blue/red, sparks, macro detail + motion blur | ❌ needs generating (the hardest shot; likely 2 clips) |
-| 4 | Bank upward, burst out the top into black space, dissolve into a red-and-charcoal scanning grid / HUD tunnel | ❌ needs generating |
-| 5 | Land inside a performance centre — sprinter running at camera on the T-Apex, camera follows the electric red rope, settles on the device trackside with electrical frequency arcing around it | ❌ needs generating |
+| 1 | Camera moves toward the T-Apex | ✅ covered (source **C**, sprinter runs the rope into it) |
+| 2 | Panels split and open along the seams, glowing internals revealed | ✅ covered (source **A**) |
+| 3 | Fly-through of the interior — cable spool, machined gears meshing, taut red cable, circuit-lined walls | ✅ covered (source **C**) |
+| 4 | Bank up, burst out the top into black space, dissolve to a scanning-grid HUD tunnel | ⚠️ **not used.** Source A has a light-tunnel and a warp streak, but placing them mid-fly-through costs two more joins for a beat the cut doesn't need — the circuit→gears run already carries that stretch |
+| 5 | Performance centre — sprinter at camera, follow the electric rope, settle on the device trackside | ✅ covered, but **at the front** rather than the end (see below) |
 
-**Constraints that matter when generating these:**
-- **One continuous move, no hard cuts.** Scrubbing amplifies every jump — a cut
-  reads as a glitch, not an edit. Where two clips must join, join them on a
-  matched push (same direction, same speed) so the seam disappears.
-- **Constant camera speed.** Don't let the generator ease in/out; the scroll
-  supplies the pacing.
-- **Keep it on black wherever possible.** It's what lets the film dissolve into
-  the page instead of sitting in a box.
-- **Budget ~2.5–3s per scene.** Five scenes ≈ 13–15s ≈ 240–270 frames at
-  `fps=18`, ~6–7 MB of WebP. That's near the ceiling for a preloaded sequence —
-  past it, drop to `fps=14` or shorten scenes rather than lowering resolution.
+**The one deliberate departure from the storyboard:** you wanted the performance
+centre last. Source C shoots it first, and putting the athlete first is the
+better page anyway — you open on a human (relatable), go inside the machine
+(proof), and come out on the product (the thing to buy). Reversing it would cost
+two extra joins to land somewhere weaker. The film still *ends* trackside, on the
+hero device with the T-APEX branding, so the location bookends itself.
+
+---
+
+## 6. How the master is cut
+
+Three sources, two dissolves. Both joins were chosen where the outgoing and
+incoming frames already rhyme, so the blend reads as one continuous camera move
+rather than an edit:
+
+| Segment | Source | In–out | What it gives |
+|---|---|---|---|
+| 1 | **C** (`…101435_Lumina_1`) | 0.30–3.60 | sprinter → blue energy → rope to the machine |
+| 2 | **A** (`hf_20260722_125532…`) | 1.85–4.75 | panels split open, internals, slow push |
+| 3 | **C** | 5.40–14.80 | circuit macro → spool + gears → HUD athletes → hero device |
+
+```bash
+ffmpeg -y -i C.mp4 -i A.mp4 -i C.mp4 -filter_complex "\
+[0:v]trim=0.30:3.60,setpts=PTS-STARTPTS,fps=24[v0];\
+[1:v]trim=1.85:4.75,setpts=PTS-STARTPTS,fps=24[v1];\
+[2:v]trim=5.40:14.80,setpts=PTS-STARTPTS,fps=24[v2];\
+[v0][v1]xfade=transition=fade:duration=0.5:offset=2.8[x1];\
+[x1][v2]xfade=transition=fade:duration=0.5:offset=5.2[x2]" \
+-map "[x2]" -an -c:v libx264 -crf 15 -preset slow -pix_fmt yuv420p master.mp4
+```
+
+`xfade`'s `offset` is measured on the *incoming* chain, so each one is
+`(length so far) − (dissolve duration)`.
+
+**Why these two joins work, and how to pick more:**
+- **Join 1** cuts device→device. Both sides are a centred machine in a dark hall
+  under red neon, so the dissolve reads as the panels *opening*, not as a cut.
+- **Join 2** cuts interior→interior. Both sides are blue-lit macro circuitry, so
+  it reads as the camera diving deeper into the board. It's essentially
+  invisible.
+- The rule: **dissolve between frames that already share subject, scale and
+  palette.** A dissolve between mismatched frames is just a slow cut, and a
+  scrub makes that worse than a hard one, not better.
+
+### Checking a source before you cut it
+Scene-detect first — a hard cut mid-segment will wreck the scrub:
+```bash
+ffmpeg -v error -i clip.mp4 -vf "select='gt(scene,0.2)',metadata=print:file=-" \
+  -an -f null - 2>&1 | grep pts_time
+```
+Of the three sources, **C is continuous across all 15s** (one 0.17-score blip at
+t=12.0), which is why it carries two of the three segments. A cuts at t≈4.8–5.25
+(the warp) and B cuts at t≈10.8 — both were trimmed to avoid those.
+
+### Unused footage worth revisiting
+- **Source B** (`…101635_Lumina_1`, 15s) is a near-twin of C: same hall, same
+  beats, one hard cut at 10.8s. Nothing in it beats C, but it's a fallback if C
+  ever needs replacing.
+- **Source A, 0–1.8s** — the red/blue light-tunnel corridor. This is the
+  scanning-grid/HUD-tunnel beat from the storyboard. If you ever want scene 4,
+  this is the shot; budget a join either side of it.
+- **The original black-plate clip** (T-Apex with ghost athletes) is no longer in
+  the repo — it was replaced by this master. It's still in the upload history if
+  another section wants it.
+
+**Constraints for anything new you generate:**
+- **One continuous move, no hard cuts.** Scrubbing amplifies every jump.
+- **Constant camera speed** — the scroll supplies the pacing.
 - **No on-screen text** — all copy is live HTML over the top.
-
-Until scenes 2–5 exist, the hero runs the four-act cut described in §1, which
-uses the single clip we have honestly rather than faking a fly-through.
+- Watch the luma: bright footage forces the `.cine-dim` cue to work harder and
+  leaves less room for copy.

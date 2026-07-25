@@ -16,7 +16,8 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 //                  film opens out of the seam between them (clip-path aperture
 //                  + fade), so the video is literally revealed BY the split.
 //   ACT 2  TRAVEL  the frame sequence scrubs to scroll while the camera pushes
-//                  in; the split halves stay top/bottom framing the film.
+//                  in; the split halves stay top/bottom framing the film, then
+//                  clear so the panels-open reveal owns the screen.
 //   ACT 3  RESOLVE the device settles hero-lit; closing line + CTAs land.
 //
 // Frames are a pre-extracted WebP sequence (buttery, no <video> stutter). Swap
@@ -26,26 +27,41 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 // Gracefully degrades: phones and `prefers-reduced-motion` users get the classic
 // <Hero /> (no pin, no scrub) instead of this.
 
-const FRAME_COUNT = 145
+const FRAME_COUNT = 205
 const FRAME_PATH = (i: number) =>
   `/hero-frames/frame-${String(i).padStart(3, '0')}.webp`
 
 // Scrubbing may begin once this many frames are decoded; the rest keep loading
 // in the background. Act 0 is pure black + type, so it doubles as the loader.
-const READY_FRAMES = 40
+const READY_FRAMES = 36
 
-// How far (in px of scroll) the hero stays pinned. ~2.1 viewports ≈ an
-// unhurried ~10s scroll-through on a typical trackpad.
-const PIN_DISTANCE = '+=2100'
+// How far (in px of scroll) the hero stays pinned. ~3 viewports, which keeps the
+// scrub at ~15px of scroll per frame — the same pacing as the shorter cut.
+const PIN_DISTANCE = '+=3000'
 
-// Camera push across the travel. The source clip already dollies in, so this
-// stays gentle — too much and the device crops out of frame.
+// Camera push across the travel. The film does most of the moving itself now
+// (it flies into the machine), so this is only a whisper of extra drift.
 const ZOOM_START = 1.0
-const ZOOM_END = 1.18
+const ZOOM_END = 1.1
 
 // How far the two headline halves travel apart, as a fraction of viewport
 // height. Resolved at refresh so it survives resize.
 const SPLIT_TRAVEL = 0.34
+
+// ── Where the cut's content sits, as scroll progress ─────────────────────────
+// The film scrubs across 0.10 → 0.97, so frame ≈ (p - 0.10) / 0.87 * 205:
+//
+//   0.10–0.29  sprinter charges the camera, turns to blue energy, runs the rope
+//   0.29–0.46  ✦ the machine's panels split open along the seams (the money
+//              shot — no copy is allowed on screen here)
+//   0.46–0.72  fly-through: circuit macro, copper traces, cable spool + gears
+//   0.72–0.84  HUD panels of athletes wrapped in red/blue energy
+//   0.84–0.97  out to the hero device, trackside, T-APEX branding
+//
+// Unlike the old black-plate clip this footage is genuinely bright (mean luma
+// 43–85 vs near-zero), so copy can't just sit on it. `.cine-dim` is scheduled
+// like a lighting cue: it lifts under every copy beat and drops away between
+// them so the film breathes at full strength when nothing is over it.
 
 const STATS = [
   { k: 'Force', v: '412', u: 'N' },
@@ -173,35 +189,35 @@ function CinemaImpl() {
         },
       })
 
-      // ── ACT 2 bed — frame scrub + camera push run under everything ───────────
-      tl.to(render, { frame: FRAME_COUNT - 1, duration: 0.84 }, 0.12)
-      tl.to(render, { scale: ZOOM_END, duration: 0.84 }, 0.12)
+      // ── The bed — frame scrub + camera push run under everything ─────────────
+      tl.to(render, { frame: FRAME_COUNT - 1, duration: 0.87 }, 0.1)
+      tl.to(render, { scale: ZOOM_END, duration: 0.87 }, 0.1)
 
       // ── ACT 1 — the split ────────────────────────────────────────────────────
       // Eyebrow clears first so the words are alone as they part.
-      tl.to('.cine-eyebrow', { opacity: 0, y: -18, duration: 0.08 }, 0.08)
+      tl.to('.cine-eyebrow', { opacity: 0, y: -18, duration: 0.07 }, 0.06)
 
       // The two halves travel apart, tracking wider as they go — the type reads
       // as being pulled open rather than simply moved.
       tl.to(
         '.split-top',
         { y: () => -travel(), letterSpacing: '0.13em', ease: 'power2.inOut', duration: 0.26 },
-        0.12,
+        0.1,
       )
       tl.to(
         '.split-bot',
         { y: () => travel(), letterSpacing: '0.13em', ease: 'power2.inOut', duration: 0.26 },
-        0.12,
+        0.1,
       )
 
       // The seam: a blue hairline that opens across the gap, then dims away.
       tl.fromTo(
         '.cine-seam',
         { scaleX: 0, opacity: 0 },
-        { scaleX: 1, opacity: 1, ease: 'power2.out', duration: 0.16 },
-        0.12,
+        { scaleX: 1, opacity: 1, ease: 'power2.out', duration: 0.15 },
+        0.1,
       )
-      tl.to('.cine-seam', { opacity: 0, duration: 0.12 }, 0.3)
+      tl.to('.cine-seam', { opacity: 0, duration: 0.11 }, 0.27)
 
       // The film opens out of the seam — aperture unclips vertically as it fades
       // up, so the video is revealed *by* the headline splitting.
@@ -212,41 +228,51 @@ function CinemaImpl() {
           clipPath: 'inset(0% 0% 0% 0%)',
           opacity: 1,
           ease: 'power2.inOut',
-          duration: 0.28,
+          duration: 0.26,
         },
-        0.12,
+        0.1,
       )
 
       // Scroll cue clears the instant the split begins.
-      tl.to('.cine-cue', { opacity: 0, duration: 0.05 }, 0.1)
+      tl.to('.cine-cue', { opacity: 0, duration: 0.05 }, 0.08)
 
       // ── ACT 2 — travel ───────────────────────────────────────────────────────
-      // Tunnel vignette closes in as we push deeper.
-      tl.fromTo('.cine-tunnel', { opacity: 0 }, { opacity: 0.85, duration: 0.5 }, 0.3)
+      // Tunnel vignette breathes in over the fly-through, then eases back for the
+      // resolve so the closing hero shot isn't crushed at the edges.
+      tl.fromTo('.cine-tunnel', { opacity: 0 }, { opacity: 0.8, duration: 0.32 }, 0.4)
+      tl.to('.cine-tunnel', { opacity: 0.45, duration: 0.14 }, 0.84)
 
-      // Telemetry HUD, revealed mid-travel then handed off.
+      // The split halves clear BEFORE the panels-open reveal — that shot is the
+      // centrepiece and nothing sits on top of it.
+      tl.to('.split-top', { opacity: 0, y: () => -travel() - 60, duration: 0.1 }, 0.34)
+      tl.to('.split-bot', { opacity: 0, y: () => travel() + 60, duration: 0.1 }, 0.34)
+
+      // Telemetry HUD — lands over the fly-through (circuits, spool, gears),
+      // which is where a live instrument readout actually means something.
       tl.fromTo(
         '.beat-2',
         { opacity: 0, scale: 0.94, filter: 'blur(6px)' },
-        { opacity: 1, scale: 1, filter: 'blur(0px)', ease: 'power2.out', duration: 0.14 },
-        0.42,
+        { opacity: 1, scale: 1, filter: 'blur(0px)', ease: 'power2.out', duration: 0.1 },
+        0.54,
       )
-      tl.to('.beat-2', { opacity: 0, scale: 1.05, filter: 'blur(6px)', duration: 0.1 }, 0.62,)
-
-      // The split halves recede — they've framed the travel, now they clear.
-      tl.to('.split-top', { opacity: 0, y: () => -travel() - 60, duration: 0.12 }, 0.68)
-      tl.to('.split-bot', { opacity: 0, y: () => travel() + 60, duration: 0.12 }, 0.68)
+      tl.to('.beat-2', { opacity: 0, scale: 1.05, filter: 'blur(6px)', duration: 0.08 }, 0.72)
 
       // ── ACT 3 — resolve ──────────────────────────────────────────────────────
-      // Machine dims to a ghost so the closing statement + CTAs read cleanly.
-      tl.to('.cine-dim', { opacity: 0.78, ease: 'power2.inOut', duration: 0.18 }, 0.74)
-
       tl.fromTo(
         '.beat-3',
         { opacity: 0, y: 56, filter: 'blur(8px)' },
-        { opacity: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.16 },
-        0.8,
+        { opacity: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.14 },
+        0.85,
       )
+
+      // ── The lighting cue ─────────────────────────────────────────────────────
+      // `.cine-dim` lifts under each copy beat and drops between them, so the
+      // film plays at full strength exactly when nothing is written over it.
+      tl.to('.cine-dim', { opacity: 0.4, ease: 'power1.inOut', duration: 0.16 }, 0.1) // headline over film
+      tl.to('.cine-dim', { opacity: 0.08, ease: 'power1.inOut', duration: 0.1 }, 0.36) // ✦ panels open — clear
+      tl.to('.cine-dim', { opacity: 0.46, ease: 'power1.inOut', duration: 0.08 }, 0.54) // telemetry
+      tl.to('.cine-dim', { opacity: 0.12, ease: 'power1.inOut', duration: 0.08 }, 0.73) // HUD athletes — clear
+      tl.to('.cine-dim', { opacity: 0.66, ease: 'power1.inOut', duration: 0.1 }, 0.85) // resolve + CTAs
     },
     { scope: rootRef, dependencies: [ready] },
   )
