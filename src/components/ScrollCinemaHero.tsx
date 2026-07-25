@@ -27,7 +27,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 // Gracefully degrades: phones and `prefers-reduced-motion` users get the classic
 // <Hero /> (no pin, no scrub) instead of this.
 
-const FRAME_COUNT = 205
+const FRAME_COUNT = 226
 const FRAME_PATH = (i: number) =>
   `/hero-frames/frame-${String(i).padStart(3, '0')}.webp`
 
@@ -37,7 +37,7 @@ const READY_FRAMES = 36
 
 // How far (in px of scroll) the hero stays pinned. ~3 viewports, which keeps the
 // scrub at ~15px of scroll per frame — the same pacing as the shorter cut.
-const PIN_DISTANCE = '+=3000'
+const PIN_DISTANCE = '+=3300'
 
 // Camera push across the travel. The film does most of the moving itself now
 // (it flies into the machine), so this is only a whisper of extra drift.
@@ -49,19 +49,22 @@ const ZOOM_END = 1.1
 const SPLIT_TRAVEL = 0.34
 
 // ── Where the cut's content sits, as scroll progress ─────────────────────────
-// The film scrubs across 0.10 → 0.97, so frame ≈ (p - 0.10) / 0.87 * 205:
+// The film scrubs across 0.10 → 0.97, so frame ≈ (p - 0.10) / 0.87 * 226:
 //
-//   0.10–0.29  sprinter charges the camera, turns to blue energy, runs the rope
-//   0.29–0.46  ✦ the machine's panels split open along the seams (the money
+//   0.10–0.25  the black plate — device on pure black, holographic athletes
+//   0.27–0.34  a real sprinter's energy streams down the track into the machine
+//   0.37–0.47  ✦ the machine's panels split open along the seams (the money
 //              shot — no copy is allowed on screen here)
-//   0.46–0.72  fly-through: circuit macro, copper traces, cable spool + gears
-//   0.72–0.84  HUD panels of athletes wrapped in red/blue energy
+//   0.50–0.73  fly-through: circuit macro, copper traces, cable spool + gears
+//   0.73–0.84  HUD panels of athletes wrapped in red/blue energy
 //   0.84–0.97  out to the hero device, trackside, T-APEX branding
 //
-// Unlike the old black-plate clip this footage is genuinely bright (mean luma
-// 43–85 vs near-zero), so copy can't just sit on it. `.cine-dim` is scheduled
-// like a lighting cue: it lifts under every copy beat and drops away between
-// them so the film breathes at full strength when nothing is over it.
+// The black plate leads deliberately: it is the only near-black footage we have,
+// so it is the only thing the Act-1 aperture can open onto without the type
+// fighting a lit background. Everything after it is bright (mean luma 43–85),
+// so `.cine-dim` is scheduled like a lighting cue — it lifts under every copy
+// beat and drops away between them, letting the film play at full strength
+// exactly when nothing is written over it.
 
 const STATS = [
   { k: 'Force', v: '412', u: 'N' },
@@ -127,6 +130,11 @@ function CinemaImpl() {
     // Frame still decoding — hold the previous one rather than flashing black.
     if (!img || !img.complete || !img.naturalWidth) return
 
+    // The frames are upscaled 720p, so resampling quality is doing real work
+    // here — the cheap default sampler is a visible part of the softness.
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = 'high'
+
     const cw = canvas.width
     const ch = canvas.height
     const ir = img.naturalWidth / img.naturalHeight
@@ -152,7 +160,11 @@ function CinemaImpl() {
   const sizeCanvas = () => {
     const canvas = canvasRef.current
     if (!canvas) return
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    // Capped at 1.5 rather than 2. The frames top out at 1440px wide, so a 2×
+    // backing store on a large retina display is pushing 4× the pixels to draw
+    // an image that has no extra detail to show — it buys nothing and costs
+    // fill rate, which is framerate, which is smoothness.
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
     const w = canvas.clientWidth
     const h = canvas.clientHeight
     canvas.width = Math.round(w * dpr)
@@ -183,7 +195,10 @@ function CinemaImpl() {
           start: 'top top',
           end: PIN_DISTANCE,
           pin: true,
-          scrub: 1,
+          // Tight, because <SmoothScroll/> (Lenis) already interpolates the
+          // scroll position itself. A big scrub value on top of that stacks two
+          // lags and the film starts trailing the page.
+          scrub: 0.35,
           onUpdate: draw,
           invalidateOnRefresh: true,
         },
@@ -268,8 +283,9 @@ function CinemaImpl() {
       // ── The lighting cue ─────────────────────────────────────────────────────
       // `.cine-dim` lifts under each copy beat and drops between them, so the
       // film plays at full strength exactly when nothing is written over it.
-      tl.to('.cine-dim', { opacity: 0.4, ease: 'power1.inOut', duration: 0.16 }, 0.1) // headline over film
-      tl.to('.cine-dim', { opacity: 0.08, ease: 'power1.inOut', duration: 0.1 }, 0.36) // ✦ panels open — clear
+      tl.to('.cine-dim', { opacity: 0.14, ease: 'power1.inOut', duration: 0.12 }, 0.1) // black plate — barely needed
+      tl.to('.cine-dim', { opacity: 0.36, ease: 'power1.inOut', duration: 0.08 }, 0.27) // lit hall, halves still up
+      tl.to('.cine-dim', { opacity: 0.08, ease: 'power1.inOut', duration: 0.1 }, 0.38) // ✦ panels open — clear
       tl.to('.cine-dim', { opacity: 0.46, ease: 'power1.inOut', duration: 0.08 }, 0.54) // telemetry
       tl.to('.cine-dim', { opacity: 0.12, ease: 'power1.inOut', duration: 0.08 }, 0.73) // HUD athletes — clear
       tl.to('.cine-dim', { opacity: 0.66, ease: 'power1.inOut', duration: 0.1 }, 0.85) // resolve + CTAs

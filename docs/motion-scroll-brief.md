@@ -4,19 +4,19 @@ This is the production brief for the **pinned, scroll-scrubbed hero** built in
 `src/components/ScrollCinemaHero.tsx`. It tells you exactly what footage to
 generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
-> **Current footage:** `public/apex-hero-cinema.mp4` (14.6s, 24fps, 1280×720) —
-> a **master edit cut from three source clips**, extracted at `fps=14`,
-> `scale=1152` → **205 frames, 8.6 MB**.
+> **Current footage:** `public/apex-hero-cinema.mp4` (16.1s, 24fps, 1280×720) —
+> a **master edit cut from four source clips**, extracted at `fps=14`,
+> `scale=1440` (lanczos + unsharp) → **226 frames, 14 MB**.
 >
-> It now covers nearly the whole storyboard: sprinter → machine → panels open →
-> fly-through the internals → HUD → hero device. See §6 for how it was cut and
-> what's still missing.
+> It covers nearly the whole storyboard: black plate → sprinter → machine →
+> panels open → fly-through the internals → HUD → hero device. See §6 for how
+> it was cut and §7 for the resolution ceiling.
 
 ---
 
 ## 1. What the scroll experience does
 
-As the visitor scrolls the hero (~3 viewport-heights ≈ **~15 seconds**
+As the visitor scrolls the hero (~3.4 viewport-heights ≈ **~16 seconds**
 unhurried), in four acts:
 
 - **ACT 0 — HOLD (0–12%).** Pure black. *TRAIN BEYOND HUMAN LIMITS* alone on the
@@ -37,14 +37,15 @@ unhurried), in four acts:
 
 ### Where the content sits (scroll progress → shot)
 
-The film scrubs across `0.10 → 0.97`, so `frame ≈ (p − 0.10) / 0.87 × 205`:
+The film scrubs across `0.10 → 0.97`, so `frame ≈ (p − 0.10) / 0.87 × 226`:
 
 | Progress | On screen |
 |---|---|
-| 0.10–0.29 | sprinter charges camera, turns to blue energy, runs the rope |
-| 0.29–0.46 | ✦ **panels split open along the seams** — the money shot |
-| 0.46–0.72 | fly-through: circuit macro, copper traces, cable spool + gears |
-| 0.72–0.84 | HUD panels of athletes wrapped in red/blue energy |
+| 0.10–0.25 | the **black plate** — device on pure black, holographic athletes |
+| 0.27–0.34 | a real sprinter's energy streams down the track into the machine |
+| 0.37–0.47 | ✦ **panels split open along the seams** — the money shot |
+| 0.50–0.73 | fly-through: circuit macro, copper traces, cable spool + gears |
+| 0.73–0.84 | HUD panels of athletes wrapped in red/blue energy |
 | 0.84–0.97 | out to the hero device, trackside, T-APEX branding |
 
 **Two layout rules this footage forces:**
@@ -55,8 +56,10 @@ The film scrubs across `0.10 → 0.97`, so `frame ≈ (p − 0.10) / 0.87 × 205
    this cut has a mean luma of 43–85. `.cine-dim` is therefore scheduled like a
    lighting cue — it lifts under every copy beat (0.40 / 0.46 / 0.66) and drops
    between them (0.08 / 0.12) so the film plays at full strength exactly when
-   nothing is written over it. If you recut the footage, **re-measure the luma
-   and re-time that cue** — it's the difference between premium and mush:
+   nothing is written over it. The **black plate leads deliberately** — it's the
+   only near-black footage available, so it's the only thing the Act-1 aperture
+   can open onto without the type fighting a lit background. If you recut,
+   **re-measure the luma and re-time that cue** — it's the difference between premium and mush:
    ```bash
    ffmpeg -v error -i master.mp4 -vf "fps=14,signalstats,\
      metadata=print:key=lavfi.signalstats.YAVG:file=-" -an -f null -
@@ -126,9 +129,13 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
    ```bash
    rm -f public/hero-frames/*.webp
    ffmpeg -y -i public/apex-hero-cinema.mp4 \
-     -vf "fps=14,scale=1152:-1" -f image2 -c:v libwebp -quality 72 \
+     -vf "fps=14,scale=1440:-1:flags=lanczos,unsharp=5:5:0.7:3:3:0.35" \
+     -f image2 -c:v libwebp -quality 74 \
      public/hero-frames/frame-%03d.webp
    ```
+   `lanczos` + a light `unsharp` matter: the source is 720p, so these frames are
+   upscaled. A good resampler and a touch of sharpening is the difference
+   between "soft" and "blurry" — never let the browser do that upscale for you.
 3. Update the frame count in `src/components/ScrollCinemaHero.tsx`:
    ```ts
    const FRAME_COUNT = <number of files in public/hero-frames>
@@ -141,8 +148,14 @@ Frame **count** sells smoothness far more than frame **resolution**: the scrub
 is a temporal effect, and a soft frame in motion reads fine where a chunky one
 does not. So when the budget gets tight, drop `scale` before you drop `fps`.
 
-Current: 205 frames @ 1152px / q72 = **8.6 MB**. For reference on this footage —
-`fps=15 scale=1280 q78` → 12.2 MB, `fps=13 scale=960 q70` → 6.5 MB.
+Current: 226 frames @ 1440px / q74 = **14 MB**. Measured alternatives on this
+footage — `fps=13 scale=1600 q68` → 12.3 MB, `fps=14 scale=1280 q82` → 12 MB,
+`fps=14 scale=1920 q78` → 19 MB.
+
+AVIF at 1600px/crf34 measured ~42 KB/frame vs WebP's ~64 KB — about a third
+smaller *and* sharper. It was **not** adopted because AVIF decodes considerably
+slower than WebP, and a decode stall during a scrub costs smoothness, which is
+the more valuable of the two. Revisit if the weight ever has to come down.
 
 That weight is desktop-only (phones get `<Hero />` and never fetch a frame) and
 loads progressively — only `READY_FRAMES` (36) gate the start of scrubbing, and
@@ -196,27 +209,33 @@ rather than an edit:
 
 | Segment | Source | In–out | What it gives |
 |---|---|---|---|
-| 1 | **C** (`…101435_Lumina_1`) | 0.30–3.60 | sprinter → blue energy → rope to the machine |
-| 2 | **A** (`hf_20260722_125532…`) | 1.85–4.75 | panels split open, internals, slow push |
-| 3 | **C** | 5.40–14.80 | circuit macro → spool + gears → HUD athletes → hero device |
+| 1 | **V1** (`Apex_Vid_1`) | 0.20–3.50 | the black plate — device + holographic athletes |
+| 2 | **C** (`…101435_Lumina_1`) | 1.40–3.60 | sprinter's energy streaming down the track |
+| 3 | **A** (`hf_20260722_125532…`) | 1.85–4.75 | panels split open, internals, slow push |
+| 4 | **C** | 5.40–14.60 | circuit macro → spool + gears → HUD athletes → hero device |
 
 ```bash
-ffmpeg -y -i C.mp4 -i A.mp4 -i C.mp4 -filter_complex "\
-[0:v]trim=0.30:3.60,setpts=PTS-STARTPTS,fps=24[v0];\
-[1:v]trim=1.85:4.75,setpts=PTS-STARTPTS,fps=24[v1];\
-[2:v]trim=5.40:14.80,setpts=PTS-STARTPTS,fps=24[v2];\
+ffmpeg -y -i V1.mp4 -i C.mp4 -i A.mp4 -i C.mp4 -filter_complex "\
+[0:v]trim=0.20:3.50,setpts=PTS-STARTPTS,fps=24[v0];\
+[1:v]trim=1.40:3.60,setpts=PTS-STARTPTS,fps=24[v1];\
+[2:v]trim=1.85:4.75,setpts=PTS-STARTPTS,fps=24[v2];\
+[3:v]trim=5.40:14.60,setpts=PTS-STARTPTS,fps=24[v3];\
 [v0][v1]xfade=transition=fade:duration=0.5:offset=2.8[x1];\
-[x1][v2]xfade=transition=fade:duration=0.5:offset=5.2[x2]" \
--map "[x2]" -an -c:v libx264 -crf 15 -preset slow -pix_fmt yuv420p master.mp4
+[x1][v2]xfade=transition=fade:duration=0.5:offset=4.5[x2];\
+[x2][v3]xfade=transition=fade:duration=0.5:offset=6.9[x3]" \
+-map "[x3]" -an -c:v libx264 -crf 14 -preset slow -pix_fmt yuv420p master.mp4
 ```
 
 `xfade`'s `offset` is measured on the *incoming* chain, so each one is
 `(length so far) − (dissolve duration)`.
 
-**Why these two joins work, and how to pick more:**
-- **Join 1** cuts device→device. Both sides are a centred machine in a dark hall
+**Why these three joins work, and how to pick more:**
+- **Join 1** cuts black-plate device → track-hall device, and lands as the blue
+  energy is streaming toward the machine in both. The dissolve reads as the
+  black studio opening out into the real hall.
+- **Join 2** cuts device→device. Both sides are a centred machine in a dark hall
   under red neon, so the dissolve reads as the panels *opening*, not as a cut.
-- **Join 2** cuts interior→interior. Both sides are blue-lit macro circuitry, so
+- **Join 3** cuts interior→interior. Both sides are blue-lit macro circuitry, so
   it reads as the camera diving deeper into the board. It's essentially
   invisible.
 - The rule: **dissolve between frames that already share subject, scale and
@@ -240,9 +259,9 @@ t=12.0), which is why it carries two of the three segments. A cuts at t≈4.8–
 - **Source A, 0–1.8s** — the red/blue light-tunnel corridor. This is the
   scanning-grid/HUD-tunnel beat from the storyboard. If you ever want scene 4,
   this is the shot; budget a join either side of it.
-- **The original black-plate clip** (T-Apex with ghost athletes) is no longer in
-  the repo — it was replaced by this master. It's still in the upload history if
-  another section wants it.
+- **Source A, 5.25–6.5s** — a warp/hyperspeed streak and a wireframe hologram
+  insert. Usable as a transition if a future recut needs to bridge two
+  mismatched shots.
 
 **Constraints for anything new you generate:**
 - **One continuous move, no hard cuts.** Scrubbing amplifies every jump.
@@ -250,3 +269,54 @@ t=12.0), which is why it carries two of the three segments. A cuts at t≈4.8–
 - **No on-screen text** — all copy is live HTML over the top.
 - Watch the luma: bright footage forces the `.cine-dim` cue to work harder and
   leaves less room for copy.
+
+---
+
+## 7. The resolution ceiling — read this before chasing sharpness
+
+**Every source clip is 1280×720.** There is no 1080p in the material, so the
+hero cannot be truly 1080p; any larger frame is interpolated. What was fixed
+was the *avoidable* softness stacked on top of that:
+
+| Cause | Fix |
+|---|---|
+| Frames were extracted at **1152px — below the 1280px source** | Extract at 1440 with `lanczos` + `unsharp` |
+| WebP quality 72 on detailed macro shots | Raised to 74 at the larger size |
+| Canvas used the browser's default (cheap) resampler | `ctx.imageSmoothingQuality = 'high'` |
+| Canvas backing store ran at DPR 2 — 4× the pixels of a 1440px frame, with no extra detail to show for it | Capped at 1.5; costs nothing visually, gives the fill rate back to framerate |
+
+**To go genuinely beyond this you have to add pixels that aren't in the source** —
+i.e. an AI upscale of `apex-hero-cinema.mp4` to 1080p/2K before extraction
+(Higgsfield `upscale_video`, Topaz, etc.). Upscale the **master**, not the
+individual sources, so the graded/dissolved result stays consistent. Then
+re-extract at `scale=1920` and expect ~19 MB — at which point AVIF (see §3)
+becomes worth the decode trade-off.
+
+---
+
+## 8. Smooth scroll (`src/components/SmoothScroll.tsx`)
+
+A mouse wheel does not emit continuous motion — it fires discrete notches of
+roughly 100–120px. On an ordinary page nobody notices. Here, scroll position
+maps straight onto film frames (~15px of scroll per frame), so **one notch used
+to jump ~8 frames at once**. No amount of extra frames fixes that; the input
+itself is stepped.
+
+[Lenis](https://github.com/darkroomengineering/lenis) interpolates the real
+scroll position toward the target every frame, turning each notch into a short
+eased glide. Measured on this page: one 120px notch now resolves across **34
+distinct scroll positions with a largest single-frame step of 15px** — about one
+film frame per rendered frame, which is what "smooth video" actually means.
+
+Two things are load-bearing and easy to break:
+
+1. **Lenis and ScrollTrigger must share one clock.** Lenis is driven from
+   `gsap.ticker` and ScrollTrigger updates on Lenis's `scroll` event. If both
+   run their own RAF loop they sample the scroll position at different points in
+   the frame and the hero judders — *worse* than no smoothing at all.
+2. **`scrub` must come down.** Lenis already adds easing; a large `scrub` on top
+   stacks a second lag and the film visibly trails the page. It's `0.35` now
+   (was `1`).
+
+Disabled entirely under `prefers-reduced-motion` — hijacking scroll is exactly
+what that setting asks you not to do.

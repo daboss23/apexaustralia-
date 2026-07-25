@@ -1,4 +1,5 @@
 import Navbar from '@/components/Navbar'
+import SmoothScroll from '@/components/SmoothScroll'
 import TelemetryLine from '@/components/TelemetryLine'
 import ScrollCinemaHero from '@/components/ScrollCinemaHero'
 import PerformanceSection from '@/components/PerformanceSection'
@@ -24,6 +25,10 @@ import MobileCTABar from '@/components/MobileCTABar'
 export default function Home() {
   return (
     <main className="bg-apex-black text-apex-white">
+      {/* Interpolates wheel input so the hero's frame-scrub gets continuous
+          scroll instead of ~100px notches (no-op under reduced-motion) */}
+      <SmoothScroll />
+
       <Navbar />
 
       {/* Scroll telemetry rail — fixed session-progress line with sector gates (xl+) */}
