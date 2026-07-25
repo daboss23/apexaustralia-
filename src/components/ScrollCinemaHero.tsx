@@ -27,7 +27,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 // Gracefully degrades: phones and `prefers-reduced-motion` users get the classic
 // <Hero /> (no pin, no scrub) instead of this.
 
-const FRAME_COUNT = 226
+const FRAME_COUNT = 241
 const FRAME_PATH = (i: number) =>
   `/hero-frames/frame-${String(i).padStart(3, '0')}.webp`
 
@@ -36,8 +36,8 @@ const FRAME_PATH = (i: number) =>
 const READY_FRAMES = 36
 
 // How far (in px of scroll) the hero stays pinned. ~3 viewports, which keeps the
-// scrub at ~15px of scroll per frame — the same pacing as the shorter cut.
-const PIN_DISTANCE = '+=3300'
+// scrub at ~15px of scroll per frame — the pacing held across every recut.
+const PIN_DISTANCE = '+=3600'
 
 // Camera push across the travel. The film does most of the moving itself now
 // (it flies into the machine), so this is only a whisper of extra drift.
@@ -49,22 +49,27 @@ const ZOOM_END = 1.1
 const SPLIT_TRAVEL = 0.34
 
 // ── Where the cut's content sits, as scroll progress ─────────────────────────
-// The film scrubs across 0.10 → 0.97, so frame ≈ (p - 0.10) / 0.87 * 226:
+// The film scrubs across 0.10 → 0.97, so frame ≈ (p - 0.10) / 0.87 * 241:
 //
-//   0.10–0.25  the black plate — device on pure black, holographic athletes
-//   0.27–0.34  a real sprinter's energy streams down the track into the machine
-//   0.37–0.47  ✦ the machine's panels split open along the seams (the money
-//              shot — no copy is allowed on screen here)
-//   0.50–0.73  fly-through: circuit macro, copper traces, cable spool + gears
-//   0.73–0.84  HUD panels of athletes wrapped in red/blue energy
-//   0.84–0.97  out to the hero device, trackside, T-APEX branding
+//   0.10–0.38  the black plate — the device on pure black, holographic athletes
+//              running through it. This is the scene that "plays out".
+//   0.38–0.50  ✦ THE SAME BOX OPENS. Panels split along the seams, internals lit
+//              (the money shot — no copy is allowed on screen here)
+//   0.53–0.81  fly-through: circuit macro, copper traces, cable spool + gears
+//   0.81–0.89  HUD panels of athletes wrapped in red/blue energy
+//   0.89–0.97  out to the hero device, trackside, T-APEX branding
 //
-// The black plate leads deliberately: it is the only near-black footage we have,
-// so it is the only thing the Act-1 aperture can open onto without the type
-// fighting a lit background. Everything after it is bright (mean luma 43–85),
-// so `.cine-dim` is scheduled like a lighting cue — it lifts under every copy
-// beat and drops away between them, letting the film play at full strength
-// exactly when nothing is written over it.
+// The read we're protecting is ONE continuous shot: you watch the box, then that
+// box opens. Two things buy it. The lit hall the opening was filmed in is graded
+// out at the cut stage (crushed + double-vignetted to black) so both halves sit
+// in the same void, and the dissolve between them is long (0.7s) so the change
+// of camera angle reads as a move around the machine rather than a cut to other
+// footage. See docs/motion-scroll-brief.md §6.
+//
+// The plate is near-black; everything after it is bright (mean luma 43–85), so
+// `.cine-dim` is scheduled like a lighting cue — it lifts under every copy beat
+// and drops away between them, letting the film play at full strength exactly
+// when nothing is written over it.
 
 const STATS = [
   { k: 'Force', v: '412', u: 'N' },
@@ -260,8 +265,8 @@ function CinemaImpl() {
 
       // The split halves clear BEFORE the panels-open reveal — that shot is the
       // centrepiece and nothing sits on top of it.
-      tl.to('.split-top', { opacity: 0, y: () => -travel() - 60, duration: 0.1 }, 0.34)
-      tl.to('.split-bot', { opacity: 0, y: () => travel() + 60, duration: 0.1 }, 0.34)
+      tl.to('.split-top', { opacity: 0, y: () => -travel() - 60, duration: 0.09 }, 0.33)
+      tl.to('.split-bot', { opacity: 0, y: () => travel() + 60, duration: 0.09 }, 0.33)
 
       // Telemetry HUD — lands over the fly-through (circuits, spool, gears),
       // which is where a live instrument readout actually means something.
@@ -269,27 +274,26 @@ function CinemaImpl() {
         '.beat-2',
         { opacity: 0, scale: 0.94, filter: 'blur(6px)' },
         { opacity: 1, scale: 1, filter: 'blur(0px)', ease: 'power2.out', duration: 0.1 },
-        0.54,
+        0.58,
       )
-      tl.to('.beat-2', { opacity: 0, scale: 1.05, filter: 'blur(6px)', duration: 0.08 }, 0.72)
+      tl.to('.beat-2', { opacity: 0, scale: 1.05, filter: 'blur(6px)', duration: 0.08 }, 0.75)
 
       // ── ACT 3 — resolve ──────────────────────────────────────────────────────
       tl.fromTo(
         '.beat-3',
         { opacity: 0, y: 56, filter: 'blur(8px)' },
         { opacity: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.14 },
-        0.85,
+        0.88,
       )
 
       // ── The lighting cue ─────────────────────────────────────────────────────
       // `.cine-dim` lifts under each copy beat and drops between them, so the
       // film plays at full strength exactly when nothing is written over it.
-      tl.to('.cine-dim', { opacity: 0.14, ease: 'power1.inOut', duration: 0.12 }, 0.1) // black plate — barely needed
-      tl.to('.cine-dim', { opacity: 0.36, ease: 'power1.inOut', duration: 0.08 }, 0.27) // lit hall, halves still up
-      tl.to('.cine-dim', { opacity: 0.08, ease: 'power1.inOut', duration: 0.1 }, 0.38) // ✦ panels open — clear
-      tl.to('.cine-dim', { opacity: 0.46, ease: 'power1.inOut', duration: 0.08 }, 0.54) // telemetry
-      tl.to('.cine-dim', { opacity: 0.12, ease: 'power1.inOut', duration: 0.08 }, 0.73) // HUD athletes — clear
-      tl.to('.cine-dim', { opacity: 0.66, ease: 'power1.inOut', duration: 0.1 }, 0.85) // resolve + CTAs
+      tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.12 }, 0.1) // black plate — barely needed
+      tl.to('.cine-dim', { opacity: 0.05, ease: 'power1.inOut', duration: 0.08 }, 0.37) // ✦ the box opens — clear
+      tl.to('.cine-dim', { opacity: 0.46, ease: 'power1.inOut', duration: 0.08 }, 0.58) // telemetry
+      tl.to('.cine-dim', { opacity: 0.12, ease: 'power1.inOut', duration: 0.08 }, 0.79) // HUD athletes — clear
+      tl.to('.cine-dim', { opacity: 0.66, ease: 'power1.inOut', duration: 0.1 }, 0.88) // resolve + CTAs
     },
     { scope: rootRef, dependencies: [ready] },
   )

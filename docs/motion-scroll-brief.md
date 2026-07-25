@@ -4,19 +4,19 @@ This is the production brief for the **pinned, scroll-scrubbed hero** built in
 `src/components/ScrollCinemaHero.tsx`. It tells you exactly what footage to
 generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
-> **Current footage:** `public/apex-hero-cinema.mp4` (16.1s, 24fps, 1280×720) —
-> a **master edit cut from four source clips**, extracted at `fps=14`,
-> `scale=1920` (lanczos + unsharp) → **226 frames at 1920×1080, 16 MB**.
+> **Current footage:** `public/apex-hero-cinema.mp4` (17.2s, 24fps, 1280×720) —
+> a **master edit cut from three source clips**, extracted at `fps=14`,
+> `scale=1920` (lanczos + unsharp) → **241 frames at 1920×1080, 15 MB**.
 >
-> It covers nearly the whole storyboard: black plate → sprinter → machine →
-> panels open → fly-through the internals → HUD → hero device. See §6 for how
-> it was cut and §7 for the resolution ceiling.
+> The spine is deliberately simple: **the black-plate scene plays out, then that
+> same box opens.** Then fly-through the internals → HUD → hero device. See §6
+> for how the one-flow read is bought and §7 for the resolution ceiling.
 
 ---
 
 ## 1. What the scroll experience does
 
-As the visitor scrolls the hero (~3.4 viewport-heights ≈ **~16 seconds**
+As the visitor scrolls the hero (~3.7 viewport-heights ≈ **~17 seconds**
 unhurried), in four acts:
 
 - **ACT 0 — HOLD (0–12%).** Pure black. *TRAIN BEYOND HUMAN LIMITS* alone on the
@@ -29,33 +29,32 @@ unhurried), in four acts:
   through by the type rather than cross-faded under it.
 - **ACT 2 — TRAVEL (10–97%).** Frames scrub to scroll while the camera adds a
   whisper of push (`1.0 → 1.1` — the film does its own flying now) and a tunnel
-  vignette breathes in. The halves clear at 34% so nothing sits on the
-  panels-open reveal. The telemetry HUD (Force / Velocity / Response / Control)
+  vignette breathes in. The halves clear at 33% so nothing sits on the
+  box-opening reveal. The telemetry HUD (Force / Velocity / Response / Control)
   fades in over the fly-through, **flanked left and right**, not centred.
-- **ACT 3 — RESOLVE (85–100%).** A scrim dims the machine so *ENGINEERED FOR THE
+- **ACT 3 — RESOLVE (88–100%).** A scrim dims the machine so *ENGINEERED FOR THE
   NEXT TENTH OF A SECOND* + CTAs read cleanly over the trackside hero shot.
 
 ### Where the content sits (scroll progress → shot)
 
-The film scrubs across `0.10 → 0.97`, so `frame ≈ (p − 0.10) / 0.87 × 226`:
+The film scrubs across `0.10 → 0.97`, so `frame ≈ (p − 0.10) / 0.87 × 241`:
 
 | Progress | On screen |
 |---|---|
-| 0.10–0.25 | the **black plate** — device on pure black, holographic athletes |
-| 0.27–0.34 | a real sprinter's energy streams down the track into the machine |
-| 0.37–0.47 | ✦ **panels split open along the seams** — the money shot |
-| 0.50–0.73 | fly-through: circuit macro, copper traces, cable spool + gears |
-| 0.73–0.84 | HUD panels of athletes wrapped in red/blue energy |
-| 0.84–0.97 | out to the hero device, trackside, T-APEX branding |
+| 0.10–0.38 | the **black plate** — device on pure black, holographic athletes running through it. The scene "plays out". |
+| 0.38–0.50 | ✦ **that same box opens** — panels split along the seams, internals lit |
+| 0.53–0.81 | fly-through: circuit macro, copper traces, cable spool + gears |
+| 0.81–0.89 | HUD panels of athletes wrapped in red/blue energy |
+| 0.89–0.97 | out to the hero device, trackside, T-APEX branding |
 
 **Two layout rules this footage forces:**
 
-1. **Nothing goes on screen between 29% and 46%.** The panels-open reveal is the
-   centrepiece; the headline halves are timed to clear before it.
+1. **Nothing goes on screen between 38% and 50%.** The box opening is the
+   centrepiece; the headline halves are timed to clear just before it starts.
 2. **Copy can't just sit on the film any more.** Unlike the old black plate,
    this cut has a mean luma of 43–85. `.cine-dim` is therefore scheduled like a
-   lighting cue — it lifts under every copy beat (0.40 / 0.46 / 0.66) and drops
-   between them (0.08 / 0.12) so the film plays at full strength exactly when
+   lighting cue — it lifts under every copy beat (0.16 / 0.46 / 0.66) and drops
+   between them (0.05 / 0.12) so the film plays at full strength exactly when
    nothing is written over it. The **black plate leads deliberately** — it's the
    only near-black footage available, so it's the only thing the Act-1 aperture
    can open onto without the type fighting a lit background. If you recut,
@@ -148,7 +147,7 @@ Frame **count** sells smoothness far more than frame **resolution**: the scrub
 is a temporal effect, and a soft frame in motion reads fine where a chunky one
 does not. So when the budget gets tight, drop `scale` before you drop `fps`.
 
-Current: 226 frames @ 1920px / q70 = **16 MB**. Measured alternatives on this
+Current: 241 frames @ 1920px / q70 = **15 MB**. Measured alternatives on this
 footage — `1920 q78` → 18.8 MB, `1920 q72 fps13` → 15.1 MB, `1440 q74` → 14 MB,
 `1280 q82` → 12 MB, `1600 q68 fps13` → 12.3 MB.
 
@@ -191,18 +190,17 @@ Keep the total under ~10 MB.
 
 | # | Shot | Status |
 |---|------|--------|
-| 1 | Camera moves toward the T-Apex | ✅ covered (source **C**, sprinter runs the rope into it) |
+| 1 | Camera moves toward the T-Apex | ✅ covered (source **V1**, the black plate) |
 | 2 | Panels split and open along the seams, glowing internals revealed | ✅ covered (source **A**) |
 | 3 | Fly-through of the interior — cable spool, machined gears meshing, taut red cable, circuit-lined walls | ✅ covered (source **C**) |
 | 4 | Bank up, burst out the top into black space, dissolve to a scanning-grid HUD tunnel | ⚠️ **not used.** Source A has a light-tunnel and a warp streak, but placing them mid-fly-through costs two more joins for a beat the cut doesn't need — the circuit→gears run already carries that stretch |
-| 5 | Performance centre — sprinter at camera, follow the electric rope, settle on the device trackside | ✅ covered, but **at the front** rather than the end (see below) |
+| 5 | Performance centre — sprinter at camera, follow the electric rope, settle on the device trackside | ⚠️ **partly.** The film still ends trackside on the hero device, but the sprinter-charging-camera shot was cut — it sat between the plate and the box opening and broke the one-flow read (§6). Source C 0.3–3.6s if you want it back. |
 
-**The one deliberate departure from the storyboard:** you wanted the performance
-centre last. Source C shoots it first, and putting the athlete first is the
-better page anyway — you open on a human (relatable), go inside the machine
-(proof), and come out on the product (the thing to buy). Reversing it would cost
-two extra joins to land somewhere weaker. The film still *ends* trackside, on the
-hero device with the T-APEX branding, so the location bookends itself.
+**The deliberate departure from the storyboard:** the film opens on the product
+rather than an athlete, because the priority is that the box you watch is
+visibly the box that opens. The holographic athletes running through the black
+plate carry the human beat instead, and the film still *ends* trackside on the
+hero device with the T-APEX branding.
 
 ---
 
@@ -214,35 +212,50 @@ rather than an edit:
 
 | Segment | Source | In–out | What it gives |
 |---|---|---|---|
-| 1 | **V1** (`Apex_Vid_1`) | 0.20–3.50 | the black plate — device + holographic athletes |
-| 2 | **C** (`…101435_Lumina_1`) | 1.40–3.60 | sprinter's energy streaming down the track |
-| 3 | **A** (`hf_20260722_125532…`) | 1.85–4.75 | panels split open, internals, slow push |
-| 4 | **C** | 5.40–14.60 | circuit macro → spool + gears → HUD athletes → hero device |
+| 1 | **V1** (`Apex_Vid_1`) | 0.30–6.60 | the black plate — device + holographic athletes, playing out |
+| 2 | **A** (`hf_20260722_125532…`) | 1.85–4.75 | **the same box opens** — graded to black, see below |
+| 3 | **C** (`…101435_Lumina_1`) | 5.40–14.60 | circuit macro → spool + gears → HUD athletes → hero device |
 
 ```bash
-ffmpeg -y -i V1.mp4 -i C.mp4 -i A.mp4 -i C.mp4 -filter_complex "\
-[0:v]trim=0.20:3.50,setpts=PTS-STARTPTS,fps=24[v0];\
-[1:v]trim=1.40:3.60,setpts=PTS-STARTPTS,fps=24[v1];\
-[2:v]trim=1.85:4.75,setpts=PTS-STARTPTS,fps=24[v2];\
-[3:v]trim=5.40:14.60,setpts=PTS-STARTPTS,fps=24[v3];\
-[v0][v1]xfade=transition=fade:duration=0.5:offset=2.8[x1];\
-[x1][v2]xfade=transition=fade:duration=0.5:offset=4.5[x2];\
-[x2][v3]xfade=transition=fade:duration=0.5:offset=6.9[x3]" \
--map "[x3]" -an -c:v libx264 -crf 14 -preset slow -pix_fmt yuv420p master.mp4
+ffmpeg -y -i V1.mp4 -i A.mp4 -i C.mp4 -filter_complex "\
+[0:v]trim=0.30:6.60,setpts=PTS-STARTPTS,fps=24[v0];\
+[1:v]trim=1.85:4.75,setpts=PTS-STARTPTS,fps=24,\
+scale=1600:900:flags=lanczos,crop=1280:720:160:120,\
+curves=all='0/0 0.20/0.015 0.45/0.42 0.75/0.82 1/1',\
+vignette=angle=PI/2.9:x0=w/2:y0=h/1.9,vignette=angle=PI/3.6:x0=w/2:y0=h/1.9[v1];\
+[2:v]trim=5.40:14.60,setpts=PTS-STARTPTS,fps=24[v2];\
+[v0][v1]xfade=transition=fade:duration=0.7:offset=5.6[x1];\
+[x1][v2]xfade=transition=fade:duration=0.5:offset=8.0[x2]" \
+-map "[x2]" -an -c:v libx264 -crf 14 -preset slow -pix_fmt yuv420p master.mp4
 ```
 
 `xfade`'s `offset` is measured on the *incoming* chain, so each one is
 `(length so far) − (dissolve duration)`.
 
-**Why these three joins work, and how to pick more:**
-- **Join 1** cuts black-plate device → track-hall device, and lands as the blue
-  energy is streaming toward the machine in both. The dissolve reads as the
-  black studio opening out into the real hall.
-- **Join 2** cuts device→device. Both sides are a centred machine in a dark hall
-  under red neon, so the dissolve reads as the panels *opening*, not as a cut.
-- **Join 3** cuts interior→interior. Both sides are blue-lit macro circuitry, so
-  it reads as the camera diving deeper into the board. It's essentially
-  invisible.
+### ⭐ How the "one flow" read is bought
+
+The brief is: *you watch the box, then **that** box opens* — not two videos
+played back to back. The two shots were filmed in different places (a pure black
+void vs a lit hall with neon strips and a wet floor) and from different angles
+(3/4 vs near face-on). Three things reconcile that, in order of importance:
+
+1. **Grade the hall out.** The `curves` + double `vignette` on segment 2 crushes
+   the floor, walls and neon to black so the opening box sits in the same void as
+   the plate. *This is the big one* — the change of environment, not the change
+   of angle, is what makes an edit read as "different video".
+2. **Zoom slightly and re-centre** (`scale` then `crop`) so the box lands at a
+   comparable size and the neon strips at the frame edges are pushed out.
+3. **Make the dissolve long** — 0.7s rather than 0.5s. Held over that duration
+   with both boxes in black, the change of angle reads as the camera moving
+   around the machine, not as a cut.
+
+The track-hall segment that used to sit between them was **removed**: cutting
+black void → lit hall → different lit hall was exactly what broke the illusion.
+The hall returns later, after the fly-through, where the journey justifies it.
+
+**The other two joins:**
+- **Join 2** cuts interior→interior. Both sides are blue-lit macro circuitry, so
+  it reads as the camera diving deeper into the board. Essentially invisible.
 - The rule: **dissolve between frames that already share subject, scale and
   palette.** A dissolve between mismatched frames is just a slow cut, and a
   scrub makes that worse than a hard one, not better.
