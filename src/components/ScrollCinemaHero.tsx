@@ -160,10 +160,11 @@ function CinemaImpl() {
   const sizeCanvas = () => {
     const canvas = canvasRef.current
     if (!canvas) return
-    // Capped at 1.5 rather than 2. The frames top out at 1440px wide, so a 2×
-    // backing store on a large retina display is pushing 4× the pixels to draw
-    // an image that has no extra detail to show — it buys nothing and costs
-    // fill rate, which is framerate, which is smoothness.
+    // Capped at 1.5 rather than 2. Frames are 1920×1080, so on a standard 1080p
+    // desktop (DPR 1) the canvas is already pixel-for-pixel with the source.
+    // Above that we're upscaling regardless — and a 2× backing store on a large
+    // retina display pushes 4× the pixels to show detail the frame doesn't have.
+    // That fill rate is better spent on framerate, which is smoothness.
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
     const w = canvas.clientWidth
     const h = canvas.clientHeight

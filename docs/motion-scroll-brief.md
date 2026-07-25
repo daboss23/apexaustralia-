@@ -6,7 +6,7 @@ generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
 > **Current footage:** `public/apex-hero-cinema.mp4` (16.1s, 24fps, 1280×720) —
 > a **master edit cut from four source clips**, extracted at `fps=14`,
-> `scale=1440` (lanczos + unsharp) → **226 frames, 14 MB**.
+> `scale=1920` (lanczos + unsharp) → **226 frames at 1920×1080, 16 MB**.
 >
 > It covers nearly the whole storyboard: black plate → sprinter → machine →
 > panels open → fly-through the internals → HUD → hero device. See §6 for how
@@ -129,8 +129,8 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
    ```bash
    rm -f public/hero-frames/*.webp
    ffmpeg -y -i public/apex-hero-cinema.mp4 \
-     -vf "fps=14,scale=1440:-1:flags=lanczos,unsharp=5:5:0.7:3:3:0.35" \
-     -f image2 -c:v libwebp -quality 74 \
+     -vf "fps=14,scale=1920:-1:flags=lanczos,unsharp=5:5:0.7:3:3:0.35" \
+     -f image2 -c:v libwebp -quality 70 \
      public/hero-frames/frame-%03d.webp
    ```
    `lanczos` + a light `unsharp` matter: the source is 720p, so these frames are
@@ -148,9 +148,14 @@ Frame **count** sells smoothness far more than frame **resolution**: the scrub
 is a temporal effect, and a soft frame in motion reads fine where a chunky one
 does not. So when the budget gets tight, drop `scale` before you drop `fps`.
 
-Current: 226 frames @ 1440px / q74 = **14 MB**. Measured alternatives on this
-footage — `fps=13 scale=1600 q68` → 12.3 MB, `fps=14 scale=1280 q82` → 12 MB,
-`fps=14 scale=1920 q78` → 19 MB.
+Current: 226 frames @ 1920px / q70 = **16 MB**. Measured alternatives on this
+footage — `1920 q78` → 18.8 MB, `1920 q72 fps13` → 15.1 MB, `1440 q74` → 14 MB,
+`1280 q82` → 12 MB, `1600 q68 fps13` → 12.3 MB.
+
+Note the shape of that table: **going from 1440 to 1920 cost only ~2 MB**, because
+dropping quality 74 → 70 pays for most of the extra pixels. On this footage that
+is a clear win — resolution buys more perceived sharpness than quantisation does,
+and q70 shows no banding even on the dark panel gradients (the worst case).
 
 AVIF at 1600px/crf34 measured ~42 KB/frame vs WebP's ~64 KB — about a third
 smaller *and* sharper. It was **not** adopted because AVIF decodes considerably
@@ -285,12 +290,35 @@ was the *avoidable* softness stacked on top of that:
 | Canvas used the browser's default (cheap) resampler | `ctx.imageSmoothingQuality = 'high'` |
 | Canvas backing store ran at DPR 2 — 4× the pixels of a 1440px frame, with no extra detail to show for it | Capped at 1.5; costs nothing visually, gives the fill rate back to framerate |
 
-**To go genuinely beyond this you have to add pixels that aren't in the source** —
-i.e. an AI upscale of `apex-hero-cinema.mp4` to 1080p/2K before extraction
-(Higgsfield `upscale_video`, Topaz, etc.). Upscale the **master**, not the
-individual sources, so the graded/dissolved result stays consistent. Then
-re-extract at `scale=1920` and expect ~19 MB — at which point AVIF (see §3)
-becomes worth the decode trade-off.
+### How much detail is actually in there?
+
+Measured with a resolution round-trip (`psnr` after halving and restoring):
+
+| Round trip | PSNR (Y) | Reading |
+|---|---|---|
+| 720p → 360p → 720p | **30.6 dB** | Low, so a lot is lost — the source genuinely carries detail all the way to 720p. It is a sharp master, not a soft one. |
+| 720p → 1080p → 720p | **46.1 dB** | Near-lossless, i.e. the 1080p step adds no information. Confirms nothing exists above 720p. |
+
+```bash
+ffmpeg -i master.mp4 -filter_complex "[0:v]split=2[a][b];\
+[a]scale=640:360:flags=lanczos,scale=1280:720:flags=lanczos[d];\
+[b][d]psnr=stats_file=-" -f null -
+```
+
+**The practical consequence:** the biggest available win was never an upscale
+service — it was that the extraction was *under-supplying* the canvas. On a
+standard 1080p desktop the canvas backing store asks for 1920px and was being
+handed 1152, then 1440. Extracting at 1920 makes it pixel-for-pixel on the most
+common desktop configuration, using only pixels lanczos can honestly interpolate.
+
+**An AI upscale (Higgsfield `upscale_video`, Topaz) remains the only way to go
+further**, and the sharp source measured above is the favourable case for one.
+But the expected gain on *this* content is modest: it's synthetic CG — smooth
+gradients, bokeh, glowing filaments — where upscalers earn least and risk
+over-sharpening artefacts on exactly the delicate energy effects that carry the
+film. Worth trying only if 1920 still isn't enough; do it on the **master**, not
+the individual sources, so the dissolves stay consistent, then re-extract at
+`scale=2560` and expect AVIF (see §3) to become necessary for the weight.
 
 ---
 
