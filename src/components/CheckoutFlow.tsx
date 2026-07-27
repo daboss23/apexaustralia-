@@ -360,6 +360,34 @@ function TrustBadges() {
   )
 }
 
+/* Feature bullets — the "what you get" checklist, shown directly beneath the
+   product imagery (both on the sales page and inside the checkout popup). */
+export function HighlightBullets({
+  highlights,
+  className = '',
+}: {
+  highlights: { title: string; desc: string }[]
+  className?: string
+}) {
+  return (
+    <div className={`flex flex-col gap-3 ${className}`}>
+      {highlights.map((h) => (
+        <div key={h.title} className="flex items-start gap-3">
+          <div className="flex-shrink-0 w-5 h-5 mt-0.5 border border-apex-red/40 bg-apex-red/10 flex items-center justify-center">
+            <svg className="w-3 h-3 text-apex-red" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          </div>
+          <p className="text-sm leading-snug">
+            <span className="text-apex-white font-semibold">{h.title}</span>
+            <span className="text-apex-grey"> — {h.desc}</span>
+          </p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 /* ── The flow ──────────────────────────────────────────────────────────────── */
 
 export default function CheckoutFlow({
@@ -497,8 +525,11 @@ export default function CheckoutFlow({
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-14 items-start"
           >
-            {/* LEFT — product gallery (owned by the section) */}
-            <div className="order-2 lg:order-1">{gallery}</div>
+            {/* LEFT — product gallery (owned by the section) + feature bullets */}
+            <div className="order-2 lg:order-1">
+              {gallery}
+              <HighlightBullets highlights={product.highlights} className="mt-6" />
+            </div>
 
             {/* RIGHT — product identity + the two-step form */}
             <div className="order-1 lg:order-2 flex flex-col">
@@ -533,23 +564,6 @@ export default function CheckoutFlow({
               <p className="text-apex-grey font-body mb-6" style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
                 {product.tagline}
               </p>
-
-              {/* Highlights */}
-              <div className="flex flex-col gap-3 mb-6">
-                {product.highlights.map((h) => (
-                  <div key={h.title} className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-5 h-5 mt-0.5 border border-apex-red/30 bg-apex-red/10 flex items-center justify-center">
-                      <svg className="w-3 h-3 text-apex-red" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
-                    </div>
-                    <p className="text-sm leading-snug">
-                      <span className="text-apex-white font-semibold">{h.title}</span>
-                      <span className="text-apex-grey"> — {h.desc}</span>
-                    </p>
-                  </div>
-                ))}
-              </div>
 
               {/* Variant upgrade nudge (step 1 only — it swaps the configuration) */}
               {stage === 'shipping' && upsell}
@@ -613,7 +627,7 @@ export default function CheckoutFlow({
                           className="group inline-flex flex-col items-center justify-center gap-0.5 cta-glow text-white font-display font-black px-6 py-4 tracking-[0.1em] uppercase w-full mt-7 cursor-pointer"
                           style={{ borderRadius: 0 }}
                         >
-                          <span className="inline-flex items-center gap-2.5 text-[14px] sm:text-[15px]">
+                          <span className="inline-flex items-center gap-2.5 text-[16px] sm:text-[18px]">
                             Continue to Step 2
                             <svg className="w-[18px] h-[18px] transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
@@ -772,7 +786,7 @@ export default function CheckoutFlow({
                           className="group inline-flex flex-col items-center justify-center gap-0.5 cta-glow text-white font-display font-black px-6 py-4 tracking-[0.1em] uppercase w-full mt-5 cursor-pointer"
                           style={{ borderRadius: 0 }}
                         >
-                          <span className="inline-flex items-center gap-2.5 text-[14px] sm:text-[15px]">
+                          <span className="inline-flex items-center gap-2.5 text-[16px] sm:text-[18px]">
                             {payMethod === 'card' ? 'Complete My Order' : 'Reserve & Send My Invoice'}
                             <svg className="w-[18px] h-[18px] transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
@@ -914,7 +928,7 @@ export default function CheckoutFlow({
               className="group inline-flex flex-col items-center justify-center gap-0.5 cta-glow text-white font-display font-black px-8 py-5 tracking-[0.1em] uppercase w-full max-w-xl mx-auto cursor-pointer"
               style={{ borderRadius: 0 }}
             >
-              <span className="inline-flex items-center gap-2.5 text-[14px] sm:text-[16px]">
+              <span className="inline-flex items-center gap-2.5 text-[16px] sm:text-[18px]">
                 Yes — add it to my order
                 <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />

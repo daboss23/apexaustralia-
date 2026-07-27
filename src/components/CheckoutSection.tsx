@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import CheckoutFlow, { type Stage } from './CheckoutFlow'
+import CheckoutFlow, { HighlightBullets } from './CheckoutFlow'
 
 /* ────────────────────────────────────────────────────────────────────────────
    ORDER / CHECKOUT SECTION — inline, ecom-style product + buy experience.
@@ -330,7 +330,7 @@ function Gallery({ variant }: { variant: Variant }) {
       <AnimatePresence>
         {lightbox && (
           <motion.div
-            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 sm:p-8"
+            className="fixed inset-0 z-[140] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 sm:p-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -402,15 +402,27 @@ export default function CheckoutSection() {
   const titleInView = useInView(titleRef, { once: false, margin: '-10% 0px' })
 
   const [variantId, setVariantId] = useState<VariantId>('core')
-  const [stage, setStage] = useState<Stage>('shipping')
+  const [cartOpen, setCartOpen] = useState(false)
   const variant = VARIANTS[variantId]
   const isOver = variantId === 'overspeed'
 
-  // Once the order is placed the section becomes the OTO / receipt page — the
-  // surrounding sell copy would only compete with it, so it steps aside.
-  const postPurchase = stage === 'oto' || stage === 'receipt'
-
   const firstImage = variant.gallery.find((s) => s.type === 'image')?.src ?? '/t-apex product 0.webp'
+
+  // The checkout popup is its own entity: while it is open the page beneath is
+  // frozen so only the popup scrolls, and Esc closes it.
+  useEffect(() => {
+    if (!cartOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setCartOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [cartOpen])
 
   return (
     <section ref={sectionRef} id="order" className="relative bg-apex-black overflow-hidden py-16 md:py-36">
@@ -434,8 +446,6 @@ export default function CheckoutSection() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        {!postPurchase && (
-        <>
         {/* Eyebrow */}
         <div ref={titleRef} className="flex items-center gap-3 mb-6 justify-center">
           <div className="w-8 h-px bg-apex-red" />
@@ -494,16 +504,53 @@ export default function CheckoutSection() {
             })}
           </div>
         </div>
-        </>
-        )}
 
-        {/* ── The two-step order flow (gallery + form → OTO → receipt) ── */}
-        <CheckoutFlow
-          key={variant.id}
-          gallery={<Gallery variant={variant} />}
-          onStageChange={setStage}
-          upsell={
-            !isOver ? (
+        {/* ── Product showcase + ADD TO CART (opens the two-step popup) ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-14 items-start">
+          {/* LEFT — gallery + feature bullets */}
+          <div className="order-2 lg:order-1">
+            <Gallery variant={variant} />
+            <HighlightBullets highlights={variant.highlights} className="mt-6" />
+          </div>
+
+          {/* RIGHT — identity + price + ADD TO CART */}
+          <div className="order-1 lg:order-2 flex flex-col lg:sticky lg:top-24">
+            {/* Chip + rating */}
+            <div className="flex items-center gap-3 mb-3 flex-wrap">
+              <span
+                className="font-mono text-[9px] tracking-[0.26em] uppercase px-2.5 py-1 border"
+                style={
+                  isOver
+                    ? { color: GOLD, borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.1)' }
+                    : { color: '#D61F26', borderColor: 'rgba(214,31,38,0.4)', background: 'rgba(214,31,38,0.1)' }
+                }
+              >
+                {variant.chip}
+              </span>
+              <div className="flex items-center gap-2">
+                <Stars />
+                <span className="font-mono text-[10px] tracking-wide text-apex-grey-dim">Trusted by elite programs</span>
+              </div>
+            </div>
+
+            {/* Name + tagline */}
+            <h3 className="font-display font-black t-feature leading-none mb-2" style={{ fontSize: 'clamp(1.7rem, 3.4vw, 2.6rem)' }}>
+              {variant.name}
+            </h3>
+            <p className="text-apex-grey font-body mb-6" style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
+              {variant.tagline}
+            </p>
+
+            {/* Price */}
+            <div className="flex items-baseline gap-3 mb-6 pb-6 border-b border-apex-line/50">
+              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-apex-grey-dim">{variant.priceLabel}</span>
+              <span className={`font-luxia ${variant.priceClass} leading-none metric-value`} style={{ fontSize: 'clamp(2.4rem, 5.4vw, 3.6rem)' }}>
+                {fmt(variant.price)}
+              </span>
+            </div>
+
+            {/* Variant upgrade nudge */}
+            {!isOver ? (
               <button
                 onClick={() => setVariantId('overspeed')}
                 className="group flex items-center justify-between gap-3 w-full text-left border border-dashed px-4 py-3 mb-6 transition-all duration-300 cursor-pointer"
@@ -530,23 +577,32 @@ export default function CheckoutSection() {
                   assisted overspeed mode, included in this configuration.
                 </span>
               </div>
-            )
-          }
-          product={{
-            id: variant.id,
-            name: variant.name,
-            chip: variant.chip,
-            tagline: variant.tagline,
-            price: variant.price,
-            image: firstImage,
-            inBox: variant.inBox,
-            highlights: variant.highlights,
-            isOverspeed: isOver,
-          }}
-        />
+            )}
 
-        {!postPurchase && (
-        <>
+            {/* ADD TO CART — opens the two-step checkout popup */}
+            <button
+              onClick={() => setCartOpen(true)}
+              className="group inline-flex flex-col items-center justify-center gap-1 cta-glow text-white font-display font-black px-6 py-5 tracking-[0.1em] uppercase w-full cursor-pointer"
+              style={{ borderRadius: 0 }}
+            >
+              <span className="inline-flex items-center gap-3 text-[19px] sm:text-[23px]">
+                Add to Cart
+                <svg className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+              </span>
+              <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.16em] uppercase text-white/85 font-normal">
+                You&rsquo;re only two steps away from owning your T-APEX machine
+              </span>
+            </button>
+
+            {/* Reassurance line */}
+            <p className="font-mono text-[9px] tracking-[0.12em] uppercase text-apex-grey-dim text-center mt-4 leading-relaxed">
+              12-month warranty · free insured shipping · secure checkout
+            </p>
+          </div>
+        </div>
+
         {/* ── Trust badge strip ── */}
         <motion.div
           className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-apex-line/40 border border-apex-line/40 mt-10 md:mt-16"
@@ -670,9 +726,103 @@ export default function CheckoutSection() {
             </p>
           </div>
         </motion.div>
-        </>
-        )}
       </div>
+
+      {/* ══ CHECKOUT POPUP — its own entity: dark backdrop, only this scrolls ══ */}
+      <AnimatePresence>
+        {cartOpen && (
+          <motion.div
+            className="fixed inset-0 z-[130] overflow-y-auto overscroll-contain bg-black/90 backdrop-blur-md"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setCartOpen(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Checkout"
+          >
+            <div className="min-h-full flex items-start justify-center p-3 sm:p-6 md:p-10">
+              <motion.div
+                className="relative w-full max-w-6xl bg-apex-black-2 border border-apex-line/70 my-2 sm:my-6"
+                style={{ borderTop: '2px solid rgba(214,31,38,0.6)' }}
+                initial={{ opacity: 0, y: 26, scale: 0.985 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 16, scale: 0.985 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Sticky header with close */}
+                <div className="sticky top-0 z-30 flex items-center justify-between gap-4 px-5 sm:px-8 py-4 bg-apex-black-2/95 backdrop-blur-sm border-b border-apex-line/60">
+                  <div className="min-w-0">
+                    <div className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-red">Secure Checkout</div>
+                    <div className="font-display font-black text-apex-white text-[14px] sm:text-[15px] leading-tight truncate">
+                      You&rsquo;re only two steps away
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setCartOpen(false)}
+                    aria-label="Close checkout"
+                    className="flex-shrink-0 w-10 h-10 flex items-center justify-center border border-apex-line/60 text-apex-white hover:border-apex-red/60 transition-colors duration-300 cursor-pointer"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="p-5 sm:p-8 md:p-10">
+                  <CheckoutFlow
+                    key={variant.id}
+                    gallery={<Gallery variant={variant} />}
+                    upsell={
+                      !isOver ? (
+                        <button
+                          onClick={() => setVariantId('overspeed')}
+                          className="group flex items-center justify-between gap-3 w-full text-left border border-dashed px-4 py-3 mb-6 transition-all duration-300 cursor-pointer"
+                          style={{ borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.05)' }}
+                        >
+                          <span className="text-[13px] leading-snug">
+                            <span className="text-apex-white font-semibold">Add the full Overspeed Module</span>
+                            <span className="text-apex-grey"> — unlock assisted overspeed training</span>
+                          </span>
+                          <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.16em] uppercase flex-shrink-0" style={{ color: GOLD }}>
+                            Upgrade
+                            <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                            </svg>
+                          </span>
+                        </button>
+                      ) : (
+                        <div className="flex items-center gap-3 px-4 py-3 mb-6 border" style={{ borderColor: 'rgba(180,140,60,0.3)', background: 'rgba(180,140,60,0.05)' }}>
+                          <svg className="w-5 h-5 flex-shrink-0" style={{ color: GOLD }} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                          </svg>
+                          <span className="text-[13px] leading-snug text-apex-grey">
+                            <span className="text-apex-white font-semibold">Best value</span> — the complete five-piece module and
+                            assisted overspeed mode, included in this configuration.
+                          </span>
+                        </div>
+                      )
+                    }
+                    product={{
+                      id: variant.id,
+                      name: variant.name,
+                      chip: variant.chip,
+                      tagline: variant.tagline,
+                      price: variant.price,
+                      image: firstImage,
+                      inBox: variant.inBox,
+                      highlights: variant.highlights,
+                      isOverspeed: isOver,
+                    }}
+                  />
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }
