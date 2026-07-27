@@ -79,7 +79,67 @@ const OTO_OVER = {
 
 const AU_STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT']
 
-const PAY_MARKS = ['VISA', 'Mastercard', 'AMEX', 'PayPal', 'Afterpay', 'Apple Pay']
+/* Payment marks. Rendered as light tiles carrying each brand's own wordmark /
+   device, the way a real checkout badge row reads — recognisable at a glance
+   instead of the mono text chips they replace. */
+function PayMark({ brand }: { brand: string }) {
+  const tile =
+    'flex items-center justify-center h-[26px] min-w-[46px] px-2 bg-[#F5F7FA] border border-apex-line/40'
+
+  switch (brand) {
+    case 'visa':
+      return (
+        <span className={tile} aria-label="Visa">
+          <span className="font-display font-black italic text-[13px] leading-none tracking-tight" style={{ color: '#1A1F71' }}>
+            VISA
+          </span>
+        </span>
+      )
+    case 'mastercard':
+      return (
+        <span className={tile} aria-label="Mastercard">
+          <svg width="30" height="19" viewBox="0 0 30 19" aria-hidden="true">
+            <circle cx="11" cy="9.5" r="7.5" fill="#EB001B" />
+            <circle cx="19" cy="9.5" r="7.5" fill="#F79E1B" fillOpacity="0.9" />
+          </svg>
+        </span>
+      )
+    case 'amex':
+      return (
+        <span className={`${tile} !bg-[#2E77BC] !border-[#2E77BC]`} aria-label="American Express">
+          <span className="font-display font-black text-[10px] leading-none tracking-[0.06em] text-white">AMEX</span>
+        </span>
+      )
+    case 'paypal':
+      return (
+        <span className={tile} aria-label="PayPal">
+          <span className="font-display font-black italic text-[11px] leading-none">
+            <span style={{ color: '#003087' }}>Pay</span>
+            <span style={{ color: '#009CDE' }}>Pal</span>
+          </span>
+        </span>
+      )
+    case 'afterpay':
+      return (
+        <span className={`${tile} !bg-[#B2FCE4] !border-[#B2FCE4]`} aria-label="Afterpay">
+          <span className="font-display font-black text-[10px] leading-none tracking-tight text-black">afterpay</span>
+        </span>
+      )
+    case 'applepay':
+      return (
+        <span className={`${tile} !bg-black !border-apex-line/60`} aria-label="Apple Pay">
+          <svg width="11" height="13" viewBox="0 0 14 17" fill="#fff" aria-hidden="true" className="mr-1">
+            <path d="M11.2 8.9c0-1.9 1.5-2.8 1.6-2.9-.9-1.3-2.2-1.4-2.7-1.5-1.2-.1-2.3.7-2.9.7-.6 0-1.5-.7-2.5-.7-1.3 0-2.5.7-3.1 1.9C.3 8.9 1.2 12.3 2.5 14.2c.6.9 1.4 1.9 2.4 1.9.9 0 1.3-.6 2.4-.6s1.4.6 2.4.6 1.7-.9 2.3-1.8c.7-1 1-2 1-2.1 0 0-2-.8-2-3.3ZM9.4 3.3c.5-.6.9-1.5.8-2.4-.8 0-1.7.5-2.3 1.2-.5.6-.9 1.5-.8 2.4.9.1 1.8-.5 2.3-1.2Z" />
+          </svg>
+          <span className="font-display font-semibold text-[10px] leading-none text-white">Pay</span>
+        </span>
+      )
+    default:
+      return null
+  }
+}
+
+const PAY_MARKS = ['visa', 'mastercard', 'amex', 'paypal', 'afterpay', 'applepay']
 
 /* ── Small building blocks ─────────────────────────────────────────────────── */
 
@@ -291,7 +351,7 @@ function TrustBadges() {
       label: 'AES-256',
       sub: 'Encrypted',
       icon: (
-        <path strokeLinecap="round" strokeLinejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
       ),
     },
     {
@@ -335,12 +395,7 @@ function TrustBadges() {
 
       <div className="flex flex-wrap items-center justify-center gap-1.5 px-3 py-3 border-t border-apex-line/40">
         {PAY_MARKS.map((m) => (
-          <span
-            key={m}
-            className="font-mono text-[9px] tracking-[0.1em] uppercase text-apex-grey-dim border border-apex-line/60 px-2.5 py-1.5 bg-apex-black-2/60"
-          >
-            {m}
-          </span>
+          <PayMark key={m} brand={m} />
         ))}
       </div>
     </div>
