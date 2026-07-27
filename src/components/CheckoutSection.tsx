@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
+import CheckoutFlow from './CheckoutFlow'
 
 /* ────────────────────────────────────────────────────────────────────────────
    ORDER / CHECKOUT SECTION — inline, ecom-style product + buy experience.
@@ -401,8 +402,11 @@ export default function CheckoutSection() {
   const titleInView = useInView(titleRef, { once: false, margin: '-10% 0px' })
 
   const [variantId, setVariantId] = useState<VariantId>('core')
+  const [checkoutOpen, setCheckoutOpen] = useState(false)
   const variant = VARIANTS[variantId]
   const isOver = variantId === 'overspeed'
+
+  const firstImage = variant.gallery.find((s) => s.type === 'image')?.src ?? '/t-apex product 0.webp'
 
   return (
     <section ref={sectionRef} id="order" className="relative bg-apex-black overflow-hidden py-16 md:py-36">
@@ -601,13 +605,21 @@ export default function CheckoutSection() {
                 </div>
               )}
 
-              {/* Primary CTA */}
-              <button className="group inline-flex items-center justify-center gap-3 cta-glow text-white font-display font-bold px-8 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer w-full mb-3"
-                style={{ fontSize: 'clamp(0.8rem, 1vw, 0.95rem)', borderRadius: 0 }}>
-                Secure Checkout — {fmt(variant.price)}
-                <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
+              {/* Primary CTA — opens the two-step order form */}
+              <button
+                onClick={() => setCheckoutOpen(true)}
+                className="group inline-flex flex-col items-center justify-center gap-1 cta-glow text-white font-display font-bold px-8 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer w-full mb-3"
+                style={{ borderRadius: 0 }}
+              >
+                <span className="inline-flex items-center gap-3" style={{ fontSize: 'clamp(0.8rem, 1vw, 0.95rem)' }}>
+                  Secure Checkout — {fmt(variant.price)}
+                  <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                  </svg>
+                </span>
+                <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-white/80 font-normal">
+                  Step 1 of 2 · shipping first, no payment details yet
+                </span>
               </button>
 
               {/* Secondary CTA */}
@@ -777,6 +789,21 @@ export default function CheckoutSection() {
           </div>
         </motion.div>
       </div>
+
+      {/* Two-step order form → OTO → receipt / offer wall */}
+      <CheckoutFlow
+        open={checkoutOpen}
+        onClose={() => setCheckoutOpen(false)}
+        product={{
+          id: variant.id,
+          name: variant.name,
+          chip: variant.chip,
+          price: variant.price,
+          image: firstImage,
+          inBox: variant.inBox,
+          isOverspeed: isOver,
+        }}
+      />
     </section>
   )
 }

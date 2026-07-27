@@ -1,0 +1,1256 @@
+'use client'
+
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+
+/* ────────────────────────────────────────────────────────────────────────────
+   TWO-STEP CHECKOUT FLOW — direct-response ("ClickFunnels") order form, built
+   in the T-APEX motorsport/HUD language.
+
+   The flow is a focused full-screen overlay (distraction-free = the single
+   biggest CRO lever on a checkout) with four stages:
+
+     1  SHIPPING   — where to ship it. Low-commitment fields only, no payment
+                     in sight. This is the classic two-step micro-commitment:
+                     the visitor is already invested by the time money appears.
+     2  YOUR INFO  — payment + the order bump (dashed gold box), the highest-
+                     yield add-on placement in direct response.
+     3  OTO        — one-time offer immediately after the sale, before the
+                     receipt, while buying momentum is at its peak.
+     4  RECEIPT    — the "offer wall": confirmation, itemised receipt, what
+                     happens next, and the follow-on offers.
+
+   No payment is actually processed — the submit handler simulates the
+   authorisation so the whole flow can be demoed end-to-end.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+const GOLD = 'rgba(180,140,60,1)'
+
+export type CheckoutProduct = {
+  id: string
+  name: string
+  chip: string
+  price: number
+  image: string
+  inBox: string[]
+  isOverspeed: boolean
+}
+
+type Stage = 'shipping' | 'payment' | 'processing' | 'oto' | 'receipt'
+type PayMethod = 'card' | 'invoice'
+
+const fmt = (n: number) => `A$${n.toLocaleString('en-AU')}`
+
+/* The order bump — offered inline on step 2, pre-checked never (opt-in only). */
+const BUMP = {
+  id: 'onboarding',
+  title: 'Add Elite Onboarding & Calibration',
+  price: 390,
+  was: 750,
+  desc:
+    'A 90-minute session with an Australian T-APEX performance specialist: unit calibration, athlete profiles built, and your first four sessions programmed with your staff.',
+}
+
+/* The post-purchase one-time offer. Core buyers get the module they skipped; */
+/* Overspeed buyers get the multi-athlete expansion.                          */
+const OTO_CORE = {
+  chip: 'One-Time Upgrade · This Screen Only',
+  title: 'Add the Overspeed Module',
+  price: 540,
+  was: 1290,
+  headline: 'Unlock assisted overspeed before your unit ships',
+  desc:
+    'The five-piece Overspeed Module is the one training mode Core cannot access — supramaximal, controlled, and measured. Added to your order now it ships in the same crate, fully calibrated, for A$540 instead of A$1,290 later.',
+  items: ['OS Tether Reel', 'OS Pulley', 'OS Weight Anchor', 'Fast-Release Strap', 'Shoulder Harness'],
+  image: '/Overspeed trainng kit.webp',
+}
+const OTO_OVER = {
+  chip: 'One-Time Upgrade · This Screen Only',
+  title: 'Add the Squad Expansion Pack',
+  price: 690,
+  was: 1450,
+  headline: 'Run the whole squad through, back to back',
+  desc:
+    'Two additional waist belts, a second shoulder harness and a spare fast-release strap — so athletes rotate through the unit without stripping and refitting kit between reps.',
+  items: ['2× Waist Belt', 'Shoulder Harness', 'Fast-Release Strap', 'Transit Case Insert', 'Spare Type-C Cable'],
+  image: '/accessories/shoulder-harness.png',
+}
+
+const AU_STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT']
+
+const STEP_VALUE_PROPS = [
+  'Free insured Australia-wide shipping',
+  '12-month full manufacturer warranty',
+  'Preloaded tablet — calibrated before dispatch',
+  'Australian support team, real coaches',
+]
+
+/* ── Small building blocks ─────────────────────────────────────────────────── */
+
+function Field({
+  label,
+  name,
+  value,
+  onChange,
+  error,
+  placeholder,
+  type = 'text',
+  autoComplete,
+  inputMode,
+  maxLength,
+  className = '',
+}: {
+  label: string
+  name: string
+  value: string
+  onChange: (v: string) => void
+  error?: string
+  placeholder?: string
+  type?: string
+  autoComplete?: string
+  inputMode?: 'text' | 'numeric' | 'tel' | 'email'
+  maxLength?: number
+  className?: string
+}) {
+  return (
+    <div className={className}>
+      <label
+        htmlFor={name}
+        className="block font-mono text-[9px] tracking-[0.22em] uppercase text-apex-grey-dim mb-1.5"
+      >
+        {label}
+      </label>
+      <input
+        id={name}
+        name={name}
+        type={type}
+        value={value}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        inputMode={inputMode}
+        maxLength={maxLength}
+        onChange={(e) => onChange(e.target.value)}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${name}-error` : undefined}
+        className={`w-full bg-apex-black-2/80 border px-3.5 py-3 font-body text-[14px] text-apex-white placeholder:text-apex-grey-dim/60 outline-none transition-colors duration-200 focus:border-apex-blue ${
+          error ? 'border-apex-red' : 'border-apex-line/70 hover:border-apex-line'
+        }`}
+        style={{ borderRadius: 0 }}
+      />
+      {error && (
+        <p id={`${name}-error`} className="mt-1 font-mono text-[10px] tracking-wide text-apex-red">
+          {error}
+        </p>
+      )}
+    </div>
+  )
+}
+
+function SelectField({
+  label,
+  name,
+  value,
+  onChange,
+  error,
+  options,
+  className = '',
+}: {
+  label: string
+  name: string
+  value: string
+  onChange: (v: string) => void
+  error?: string
+  options: string[]
+  className?: string
+}) {
+  return (
+    <div className={className}>
+      <label
+        htmlFor={name}
+        className="block font-mono text-[9px] tracking-[0.22em] uppercase text-apex-grey-dim mb-1.5"
+      >
+        {label}
+      </label>
+      <select
+        id={name}
+        name={name}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        aria-invalid={!!error}
+        className={`w-full bg-apex-black-2/80 border px-3.5 py-3 font-body text-[14px] text-apex-white outline-none transition-colors duration-200 focus:border-apex-blue cursor-pointer ${
+          error ? 'border-apex-red' : 'border-apex-line/70 hover:border-apex-line'
+        }`}
+        style={{ borderRadius: 0 }}
+      >
+        <option value="">Select…</option>
+        {options.map((o) => (
+          <option key={o} value={o}>
+            {o}
+          </option>
+        ))}
+      </select>
+      {error && <p className="mt-1 font-mono text-[10px] tracking-wide text-apex-red">{error}</p>}
+    </div>
+  )
+}
+
+function StepTabs({ stage, onBack }: { stage: Stage; onBack: () => void }) {
+  const onStep2 = stage !== 'shipping'
+  const tabs = [
+    { n: '1', label: 'Shipping', sub: 'Where we ship it', active: !onStep2, done: onStep2 },
+    { n: '2', label: 'Your Info', sub: 'Payment & billing', active: onStep2, done: false },
+  ]
+  return (
+    <div className="grid grid-cols-2 gap-px bg-apex-line/50">
+      {tabs.map((t, i) => (
+        <button
+          key={t.n}
+          type="button"
+          onClick={i === 0 && onStep2 ? onBack : undefined}
+          disabled={!(i === 0 && onStep2)}
+          className={`relative flex items-center gap-3 px-4 sm:px-5 py-3.5 text-left transition-colors duration-300 ${
+            t.active ? 'bg-apex-panel' : 'bg-apex-black-2/70'
+          } ${i === 0 && onStep2 ? 'cursor-pointer hover:bg-apex-panel/70' : 'cursor-default'}`}
+        >
+          <span
+            className={`flex-shrink-0 w-7 h-7 flex items-center justify-center font-mono text-[12px] font-bold border ${
+              t.active
+                ? 'border-apex-red bg-apex-red text-white'
+                : t.done
+                ? 'border-apex-blue/60 text-apex-blue bg-apex-blue/10'
+                : 'border-apex-line text-apex-grey-dim'
+            }`}
+          >
+            {t.done ? (
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            ) : (
+              t.n
+            )}
+          </span>
+          <span className="min-w-0">
+            <span
+              className={`block font-display font-black text-[12px] sm:text-[13px] tracking-[0.1em] uppercase leading-tight ${
+                t.active ? 'text-apex-white' : 'text-apex-grey-dim'
+              }`}
+            >
+              {t.label}
+            </span>
+            <span className="block font-mono text-[9px] tracking-[0.12em] uppercase text-apex-grey-dim/80 leading-tight mt-0.5 truncate">
+              {t.sub}
+            </span>
+          </span>
+          {t.active && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-apex-red" />}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+/* Countdown — the price/allocation hold. Purely a scarcity device on the UI;
+   it reserves the configured allocation for the length of the session. */
+function Countdown({ seconds }: { seconds: number }) {
+  const clamped = Math.max(0, seconds)
+  const parts = [
+    { v: Math.floor(clamped / 3600), l: 'Hrs' },
+    { v: Math.floor((clamped % 3600) / 60), l: 'Min' },
+    { v: clamped % 60, l: 'Sec' },
+  ]
+  return (
+    <div className="flex items-center gap-1.5">
+      {parts.map((p) => (
+        <div key={p.l} className="flex flex-col items-center">
+          <span
+            className="font-mono metric-value text-[13px] sm:text-[15px] font-bold text-apex-white bg-apex-black/70 border border-apex-red/40 px-2 py-1 leading-none"
+            style={{ minWidth: '2.2rem', textAlign: 'center' }}
+          >
+            {String(p.v).padStart(2, '0')}
+          </span>
+          <span className="font-mono text-[7px] tracking-[0.2em] uppercase text-apex-grey-dim mt-1">{p.l}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/* ── The flow ──────────────────────────────────────────────────────────────── */
+
+export default function CheckoutFlow({
+  open,
+  product,
+  onClose,
+}: {
+  open: boolean
+  product: CheckoutProduct
+  onClose: () => void
+}) {
+  const [stage, setStage] = useState<Stage>('shipping')
+  const [payMethod, setPayMethod] = useState<PayMethod>('card')
+  const [bump, setBump] = useState(false)
+  const [oto, setOto] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [secondsLeft, setSecondsLeft] = useState(15 * 60)
+  const [orderNo, setOrderNo] = useState('')
+  const panelRef = useRef<HTMLDivElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    org: '',
+    address: '',
+    city: '',
+    state: '',
+    postcode: '',
+    country: 'Australia',
+    cardName: '',
+    cardNumber: '',
+    expiry: '',
+    cvc: '',
+    po: '',
+  })
+
+  const set = (k: keyof typeof form) => (v: string) => {
+    setForm((f) => ({ ...f, [k]: v }))
+    setErrors((e) => (e[k] ? { ...e, [k]: '' } : e))
+  }
+
+  const otoOffer = product.isOverspeed ? OTO_OVER : OTO_CORE
+
+  const total = useMemo(
+    () => product.price + (bump ? BUMP.price : 0) + (oto ? otoOffer.price : 0),
+    [product.price, bump, oto, otoOffer.price],
+  )
+
+  /* Reset whenever the overlay is opened fresh. */
+  useEffect(() => {
+    if (!open) return
+    setStage('shipping')
+    setErrors({})
+    setSecondsLeft(15 * 60)
+  }, [open])
+
+  /* Body scroll lock + Esc to close. */
+  useEffect(() => {
+    if (!open) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = prev
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open, onClose])
+
+  /* Allocation-hold countdown. Stops once the order is placed. */
+  useEffect(() => {
+    if (!open || stage === 'receipt' || stage === 'oto') return
+    const t = window.setInterval(() => setSecondsLeft((s) => (s > 0 ? s - 1 : 0)), 1000)
+    return () => window.clearInterval(t)
+  }, [open, stage])
+
+  /* Scroll the panel back to the top on every stage change. */
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [stage])
+
+  const validEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+
+  const submitShipping = (e: React.FormEvent) => {
+    e.preventDefault()
+    const next: Record<string, string> = {}
+    if (!form.name.trim()) next.name = 'Enter the name for delivery'
+    if (!validEmail(form.email)) next.email = 'Enter a valid email address'
+    if (form.phone.replace(/\D/g, '').length < 8) next.phone = 'Enter a contactable phone number'
+    if (!form.address.trim()) next.address = 'Enter the delivery address'
+    if (!form.city.trim()) next.city = 'Enter the suburb or city'
+    if (!form.state) next.state = 'Select a state'
+    if (!/^\d{4}$/.test(form.postcode)) next.postcode = 'Enter a 4-digit postcode'
+    setErrors(next)
+    if (Object.keys(next).length) return
+    setStage('payment')
+  }
+
+  const submitPayment = (e: React.FormEvent) => {
+    e.preventDefault()
+    const next: Record<string, string> = {}
+    if (payMethod === 'card') {
+      if (!form.cardName.trim()) next.cardName = 'Enter the name on the card'
+      const digits = form.cardNumber.replace(/\s/g, '')
+      if (digits.length < 15) next.cardNumber = 'Enter a valid card number'
+      if (!/^\d{2}\/\d{2}$/.test(form.expiry)) next.expiry = 'MM/YY'
+      if (form.cvc.length < 3) next.cvc = '3–4 digits'
+    }
+    setErrors(next)
+    if (Object.keys(next).length) return
+
+    setStage('processing')
+    setOrderNo(`TA-AU-${Math.floor(100000 + Math.random() * 899999)}`)
+    window.setTimeout(() => setStage('oto'), 2100)
+  }
+
+  const takeOto = (accept: boolean) => {
+    setOto(accept)
+    setStage('receipt')
+  }
+
+  const onCardNumber = (v: string) => {
+    const digits = v.replace(/\D/g, '').slice(0, 16)
+    set('cardNumber')(digits.replace(/(.{4})/g, '$1 ').trim())
+  }
+
+  const onExpiry = (v: string) => {
+    const digits = v.replace(/\D/g, '').slice(0, 4)
+    set('expiry')(digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits)
+  }
+
+  const isReceipt = stage === 'receipt'
+  const isOto = stage === 'oto'
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-[200] bg-black/92 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="T-APEX secure checkout"
+        >
+          <div ref={scrollRef} className="absolute inset-0 overflow-y-auto overscroll-contain">
+            <motion.div
+              ref={panelRef}
+              className="relative min-h-full bg-apex-black"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 16 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="carbon-weave absolute inset-0 opacity-[0.45] pointer-events-none" aria-hidden="true" />
+              <div
+                className="absolute inset-x-0 top-0 h-[60vh] pointer-events-none"
+                aria-hidden="true"
+                style={{
+                  background: isReceipt
+                    ? 'radial-gradient(ellipse 50% 60% at 50% 0%, rgba(0,174,239,0.10) 0%, transparent 70%)'
+                    : 'radial-gradient(ellipse 50% 60% at 50% 0%, rgba(214,31,38,0.10) 0%, transparent 70%)',
+                }}
+              />
+
+              {/* ── Header rail ── */}
+              <header className="relative z-10 border-b border-apex-line/60 bg-apex-black/85 backdrop-blur-md sticky top-0">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-3 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 min-w-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/tapexlogo.webp" alt="T-APEX" className="h-6 sm:h-7 w-auto object-contain" />
+                    <span className="hidden sm:flex items-center gap-1.5 font-mono text-[9px] tracking-[0.2em] uppercase text-apex-grey-dim border-l border-apex-line/60 pl-3">
+                      <svg className="w-3.5 h-3.5 text-apex-blue" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                      </svg>
+                      256-bit secure checkout
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-3 sm:gap-5">
+                    <a
+                      href="#contact"
+                      onClick={onClose}
+                      className="hidden md:block font-mono text-[10px] tracking-[0.14em] uppercase text-apex-grey hover:text-apex-white transition-colors"
+                    >
+                      Need help? Talk to the AU team
+                    </a>
+                    <button
+                      onClick={onClose}
+                      aria-label="Close checkout"
+                      className="w-9 h-9 flex items-center justify-center border border-apex-line/70 text-apex-grey hover:text-apex-white hover:border-apex-red/60 transition-colors cursor-pointer"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Allocation hold bar — the reference's green countdown strip, in brand red */}
+                {!isReceipt && !isOto && (
+                  <div
+                    className="border-t border-apex-red/30"
+                    style={{ background: 'linear-gradient(90deg, rgba(156,15,13,0.35), rgba(214,31,38,0.22) 50%, rgba(156,15,13,0.35))' }}
+                  >
+                    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-2.5 flex items-center justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="font-display font-black text-apex-white text-[12px] sm:text-[14px] leading-tight tracking-wide uppercase">
+                          Your configuration is held
+                        </p>
+                        <p className="hidden sm:block font-mono text-[10px] tracking-[0.14em] uppercase text-apex-white/70 leading-tight mt-0.5">
+                          Quarterly allocation · released back to the queue when the timer ends
+                        </p>
+                        <p className="sm:hidden font-mono text-[9px] tracking-[0.14em] uppercase text-apex-white/70 leading-tight mt-0.5">
+                          Allocation reserved
+                        </p>
+                      </div>
+                      <Countdown seconds={secondsLeft} />
+                    </div>
+                  </div>
+                )}
+              </header>
+
+              <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-8 sm:py-12">
+                <AnimatePresence mode="wait">
+                  {/* ══ STAGES 1 & 2 — the two-step order form ══════════════ */}
+                  {(stage === 'shipping' || stage === 'payment' || stage === 'processing') && (
+                    <motion.div
+                      key="order"
+                      initial={{ opacity: 0, y: 14 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                      className="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] gap-8 lg:gap-12 items-start"
+                    >
+                      {/* ── LEFT — the pitch / reassurance column ── */}
+                      <div className="order-2 lg:order-1">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-8 h-px bg-apex-red" />
+                          <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase">
+                            Order Summary
+                          </span>
+                        </div>
+
+                        <h2
+                          className="h-luxia t-silver leading-[0.95] mb-4"
+                          style={{ fontSize: 'clamp(1.7rem, 3.6vw, 2.9rem)', letterSpacing: '0.03em' }}
+                        >
+                          YOU ARE <span className="t-red">SECONDS AWAY</span> FROM COACHING WITH DATA
+                        </h2>
+
+                        <p className="text-apex-grey font-body leading-relaxed mb-6 text-[14px] sm:text-[15px]">
+                          Complete both steps and your {product.name} is built, calibrated and dispatched from the
+                          Australian team — preloaded and ready to run its first session the day it lands.
+                        </p>
+
+                        {/* Product card */}
+                        <div
+                          className="border border-apex-line/60 bg-apex-panel/40 p-4 sm:p-5 mb-5"
+                          style={{ borderTop: '2px solid rgba(214,31,38,0.6)' }}
+                        >
+                          <div className="flex gap-4">
+                            <div className="relative flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 border border-apex-line/60 bg-apex-black-2 overflow-hidden">
+                              <div className="carbon-weave absolute inset-0 opacity-40" aria-hidden="true" />
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={product.image}
+                                alt={product.name}
+                                className="absolute inset-0 w-full h-full object-contain p-1.5"
+                              />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <span
+                                className="inline-block font-mono text-[8px] tracking-[0.24em] uppercase px-2 py-1 border mb-2"
+                                style={
+                                  product.isOverspeed
+                                    ? { color: GOLD, borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.1)' }
+                                    : { color: '#D61F26', borderColor: 'rgba(214,31,38,0.4)', background: 'rgba(214,31,38,0.1)' }
+                                }
+                              >
+                                {product.chip}
+                              </span>
+                              <h3 className="font-display font-black text-apex-white text-[15px] sm:text-[17px] leading-tight">
+                                {product.name}
+                              </h3>
+                              <p className="font-mono text-[10px] tracking-[0.12em] uppercase text-apex-grey-dim mt-1.5">
+                                Qty 1 · GST included
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Running total */}
+                          <dl className="mt-5 pt-4 border-t border-apex-line/50 flex flex-col gap-2.5">
+                            <div className="flex items-baseline justify-between gap-4">
+                              <dt className="text-apex-grey font-body text-[13px]">{product.name}</dt>
+                              <dd className="font-mono text-apex-white text-[13px] metric-value">{fmt(product.price)}</dd>
+                            </div>
+                            {bump && (
+                              <div className="flex items-baseline justify-between gap-4">
+                                <dt className="font-body text-[13px]" style={{ color: GOLD }}>
+                                  Elite Onboarding & Calibration
+                                </dt>
+                                <dd className="font-mono text-[13px] metric-value" style={{ color: GOLD }}>
+                                  {fmt(BUMP.price)}
+                                </dd>
+                              </div>
+                            )}
+                            <div className="flex items-baseline justify-between gap-4">
+                              <dt className="text-apex-grey font-body text-[13px]">Insured shipping</dt>
+                              <dd className="font-mono text-apex-blue text-[13px] uppercase tracking-wide">Free</dd>
+                            </div>
+                            <div className="flex items-baseline justify-between gap-4 pt-3 mt-1 border-t border-apex-line/50">
+                              <dt className="font-display font-black text-apex-white text-[13px] tracking-[0.1em] uppercase">
+                                Total today
+                              </dt>
+                              <dd className="font-luxia t-silver leading-none metric-value" style={{ fontSize: '1.65rem' }}>
+                                {fmt(total)}
+                              </dd>
+                            </div>
+                          </dl>
+                        </div>
+
+                        {/* In the box */}
+                        <div className="border border-apex-line/60 bg-apex-panel/30 p-4 sm:p-5 mb-5" style={{ borderTop: '2px solid rgba(0,174,239,0.5)' }}>
+                          <div className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-blue mb-3.5">
+                            Shipping to you
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2">
+                            {product.inBox.map((item) => (
+                              <div key={item} className="flex items-center gap-2.5">
+                                <svg className="w-3.5 h-3.5 text-apex-blue flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                                <span className="text-apex-grey font-body text-[12.5px]">{item}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Value props */}
+                        <ul className="flex flex-col gap-2.5 mb-6">
+                          {STEP_VALUE_PROPS.map((v) => (
+                            <li key={v} className="flex items-start gap-3">
+                              <div className="flex-shrink-0 w-5 h-5 mt-px border border-apex-red/30 bg-apex-red/10 flex items-center justify-center">
+                                <svg className="w-3 h-3 text-apex-red" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                              </div>
+                              <span className="text-apex-grey font-body text-[13px] leading-snug">{v}</span>
+                            </li>
+                          ))}
+                        </ul>
+
+                        {/* Guarantee — the reference's "About my money-back guarantee" block */}
+                        <div className="border border-apex-line/60 bg-apex-black-2/60 p-5 mb-5">
+                          <div className="flex items-center gap-2.5 mb-3">
+                            <svg className="w-5 h-5 text-apex-blue flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.6} stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                            <span className="font-mono text-[9px] tracking-[0.24em] uppercase text-apex-blue">
+                              About the T-APEX commitment
+                            </span>
+                          </div>
+                          <p className="text-apex-grey font-body text-[13px] leading-relaxed">
+                            Every system carries a full <span className="text-apex-white font-semibold">12-month manufacturer warranty</span>,
+                            and if the unit does not perform to specification in your program, the Australian team repairs or
+                            replaces it — <span className="text-apex-white font-semibold">you are never left with a dead unit mid-season.</span>
+                          </p>
+                        </div>
+
+                        {/* Testimonial */}
+                        <figure className="border border-apex-line/60 bg-apex-panel/40 p-5" style={{ borderTop: '2px solid rgba(214,31,38,0.5)' }}>
+                          <div className="flex items-center gap-0.5 mb-3" aria-label="5 out of 5 stars">
+                            {[0, 1, 2, 3, 4].map((i) => (
+                              <svg key={i} className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="#D61F26" aria-hidden="true">
+                                <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                              </svg>
+                            ))}
+                          </div>
+                          <blockquote className="text-apex-white font-body text-[13.5px] leading-relaxed mb-3">
+                            &ldquo;We can finally see speed, force and control on every rep. That feedback loop has
+                            changed how we coach acceleration.&rdquo;
+                          </blockquote>
+                          <figcaption className="font-mono text-[10px] tracking-[0.12em] uppercase text-apex-grey-dim">
+                            Head of Athletic Performance · NRL Club
+                          </figcaption>
+                        </figure>
+                      </div>
+
+                      {/* ── RIGHT — the two-step form panel ── */}
+                      <div className="order-1 lg:order-2 lg:sticky lg:top-32">
+                        <div className="border border-apex-line/70 bg-apex-black-2/70 backdrop-blur-sm">
+                          <StepTabs stage={stage} onBack={() => setStage('shipping')} />
+
+                          <div className="relative p-5 sm:p-7">
+                            {/* HUD corner brackets */}
+                            {['top-2 left-2', 'top-2 right-2 rotate-90', 'bottom-2 right-2 rotate-180', 'bottom-2 left-2 -rotate-90'].map((pos) => (
+                              <div key={pos} className={`absolute ${pos} pointer-events-none opacity-30`} aria-hidden="true">
+                                <svg width="16" height="16" viewBox="0 0 22 22" fill="none">
+                                  <path d="M0 22V0h22" stroke="#00AEEF" strokeWidth="1.4" />
+                                </svg>
+                              </div>
+                            ))}
+
+                            <AnimatePresence mode="wait">
+                              {/* ── STEP 1 — SHIPPING ── */}
+                              {stage === 'shipping' && (
+                                <motion.form
+                                  key="s1"
+                                  onSubmit={submitShipping}
+                                  initial={{ opacity: 0, x: 18 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  exit={{ opacity: 0, x: -18 }}
+                                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                                  noValidate
+                                >
+                                  <p className="font-display font-black text-apex-white text-[15px] leading-tight mb-1">
+                                    Where should we ship your system?
+                                  </p>
+                                  <p className="font-mono text-[10px] tracking-[0.14em] uppercase text-apex-grey-dim mb-5">
+                                    Step 1 of 2 · no payment details yet
+                                  </p>
+
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <Field label="Full name" name="name" value={form.name} onChange={set('name')} error={errors.name} placeholder="Alex Marsh" autoComplete="name" className="sm:col-span-2" />
+                                    <Field label="Email address" name="email" type="email" inputMode="email" value={form.email} onChange={set('email')} error={errors.email} placeholder="alex@club.com.au" autoComplete="email" />
+                                    <Field label="Phone" name="phone" type="tel" inputMode="tel" value={form.phone} onChange={set('phone')} error={errors.phone} placeholder="0400 000 000" autoComplete="tel" />
+                                    <Field label="Club / organisation (optional)" name="org" value={form.org} onChange={set('org')} placeholder="High Performance Unit" autoComplete="organization" className="sm:col-span-2" />
+                                  </div>
+
+                                  <div className="flex items-center gap-3 mt-6 mb-4">
+                                    <span className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-blue">Delivery Address</span>
+                                    <div className="flex-1 h-px bg-apex-line/60" />
+                                  </div>
+
+                                  <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
+                                    <Field label="Street address" name="address" value={form.address} onChange={set('address')} error={errors.address} placeholder="12 Training Centre Drive" autoComplete="address-line1" className="sm:col-span-6" />
+                                    <Field label="Suburb / City" name="city" value={form.city} onChange={set('city')} error={errors.city} placeholder="Moore Park" autoComplete="address-level2" className="sm:col-span-3" />
+                                    <SelectField label="State" name="state" value={form.state} onChange={set('state')} error={errors.state} options={AU_STATES} className="sm:col-span-2" />
+                                    <Field label="Postcode" name="postcode" value={form.postcode} onChange={set('postcode')} error={errors.postcode} inputMode="numeric" maxLength={4} placeholder="2021" autoComplete="postal-code" className="sm:col-span-1" />
+                                    <Field label="Country" name="country" value={form.country} onChange={set('country')} autoComplete="country-name" className="sm:col-span-6" />
+                                  </div>
+
+                                  <button
+                                    type="submit"
+                                    className="group inline-flex flex-col items-center justify-center gap-0.5 cta-glow text-white font-display font-black px-6 py-4 tracking-[0.1em] uppercase w-full mt-7 cursor-pointer"
+                                    style={{ borderRadius: 0 }}
+                                  >
+                                    <span className="inline-flex items-center gap-2.5 text-[14px] sm:text-[15px]">
+                                      Continue to Step 2
+                                      <svg className="w-[18px] h-[18px] transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                      </svg>
+                                    </span>
+                                    <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-white/80 font-normal normal-case">
+                                      Payment details on the next step
+                                    </span>
+                                  </button>
+
+                                  <p className="font-mono text-[9px] tracking-[0.12em] uppercase text-apex-grey-dim text-center mt-4 leading-relaxed">
+                                    We respect your privacy · your details are never sold or shared
+                                  </p>
+                                </motion.form>
+                              )}
+
+                              {/* ── STEP 2 — YOUR INFO ── */}
+                              {stage === 'payment' && (
+                                <motion.form
+                                  key="s2"
+                                  onSubmit={submitPayment}
+                                  initial={{ opacity: 0, x: 18 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  exit={{ opacity: 0, x: -18 }}
+                                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                                  noValidate
+                                >
+                                  <div className="flex items-start justify-between gap-4 mb-5">
+                                    <div>
+                                      <p className="font-display font-black text-apex-white text-[15px] leading-tight mb-1">
+                                        Almost yours — how would you like to pay?
+                                      </p>
+                                      <p className="font-mono text-[10px] tracking-[0.14em] uppercase text-apex-grey-dim">
+                                        Step 2 of 2 · shipping locked in
+                                      </p>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => setStage('shipping')}
+                                      className="font-mono text-[9px] tracking-[0.14em] uppercase text-apex-grey-dim hover:text-apex-white transition-colors cursor-pointer flex-shrink-0 pt-1"
+                                    >
+                                      ← Edit
+                                    </button>
+                                  </div>
+
+                                  {/* Shipping recap */}
+                                  <div className="border border-apex-line/50 bg-apex-black/50 px-4 py-3 mb-6">
+                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-apex-blue mb-1.5">
+                                      Shipping to
+                                    </div>
+                                    <p className="text-apex-grey font-body text-[12.5px] leading-snug">
+                                      <span className="text-apex-white">{form.name}</span>
+                                      {form.org && ` · ${form.org}`}
+                                      <br />
+                                      {form.address}, {form.city} {form.state} {form.postcode}, {form.country}
+                                    </p>
+                                  </div>
+
+                                  {/* Payment method toggle */}
+                                  <div className="grid grid-cols-2 gap-px bg-apex-line/50 mb-6">
+                                    {([
+                                      { id: 'card' as PayMethod, label: 'Card', sub: 'Instant · secure' },
+                                      { id: 'invoice' as PayMethod, label: 'Invoice / EFT', sub: 'Club purchase order' },
+                                    ]).map((m) => (
+                                      <button
+                                        key={m.id}
+                                        type="button"
+                                        onClick={() => setPayMethod(m.id)}
+                                        className={`px-4 py-3 text-left transition-colors duration-300 cursor-pointer ${
+                                          payMethod === m.id ? 'bg-apex-panel' : 'bg-apex-black-2/70 hover:bg-apex-panel/60'
+                                        }`}
+                                      >
+                                        <span className={`block font-display font-bold text-[12px] tracking-[0.1em] uppercase ${payMethod === m.id ? 'text-apex-white' : 'text-apex-grey-dim'}`}>
+                                          {m.label}
+                                        </span>
+                                        <span className="block font-mono text-[9px] tracking-[0.12em] uppercase text-apex-grey-dim mt-0.5">
+                                          {m.sub}
+                                        </span>
+                                      </button>
+                                    ))}
+                                  </div>
+
+                                  {payMethod === 'card' ? (
+                                    <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
+                                      <Field label="Name on card" name="cardName" value={form.cardName} onChange={set('cardName')} error={errors.cardName} placeholder="Alex Marsh" autoComplete="cc-name" className="sm:col-span-6" />
+                                      <Field label="Card number" name="cardNumber" value={form.cardNumber} onChange={onCardNumber} error={errors.cardNumber} inputMode="numeric" placeholder="0000 0000 0000 0000" autoComplete="cc-number" className="sm:col-span-6" />
+                                      <Field label="Expiry" name="expiry" value={form.expiry} onChange={onExpiry} error={errors.expiry} inputMode="numeric" maxLength={5} placeholder="MM/YY" autoComplete="cc-exp" className="sm:col-span-3" />
+                                      <Field label="CVC" name="cvc" value={form.cvc} onChange={(v) => set('cvc')(v.replace(/\D/g, '').slice(0, 4))} error={errors.cvc} inputMode="numeric" maxLength={4} placeholder="123" autoComplete="cc-csc" className="sm:col-span-3" />
+                                    </div>
+                                  ) : (
+                                    <div className="border border-apex-line/60 bg-apex-black/50 p-4">
+                                      <p className="text-apex-grey font-body text-[13px] leading-relaxed mb-4">
+                                        We will issue a tax invoice with EFT details to{' '}
+                                        <span className="text-apex-white">{form.email || 'your email'}</span> within one
+                                        business hour. Your allocation is held for 7 days while the purchase order clears.
+                                      </p>
+                                      <Field label="Purchase order reference (optional)" name="po" value={form.po} onChange={set('po')} placeholder="PO-2026-0142" />
+                                    </div>
+                                  )}
+
+                                  {/* ORDER BUMP */}
+                                  <div
+                                    className="mt-6 border-2 border-dashed p-4"
+                                    style={{ borderColor: 'rgba(180,140,60,0.55)', background: 'rgba(180,140,60,0.06)' }}
+                                  >
+                                    <label className="flex items-start gap-3 cursor-pointer">
+                                      <input
+                                        type="checkbox"
+                                        checked={bump}
+                                        onChange={(e) => setBump(e.target.checked)}
+                                        className="mt-0.5 w-4 h-4 flex-shrink-0 accent-[#b48c3c] cursor-pointer"
+                                      />
+                                      <span>
+                                        <span className="block font-display font-black text-[13px] tracking-wide uppercase mb-1" style={{ color: GOLD }}>
+                                          ✓ Yes — {BUMP.title} (+{fmt(BUMP.price)})
+                                        </span>
+                                        <span className="block text-apex-grey font-body text-[12.5px] leading-relaxed">
+                                          {BUMP.desc}{' '}
+                                          <span className="text-apex-white font-semibold">
+                                            Normally {fmt(BUMP.was)} — {fmt(BUMP.price)} when added to this order.
+                                          </span>
+                                        </span>
+                                      </span>
+                                    </label>
+                                  </div>
+
+                                  {/* Total */}
+                                  <div className="flex items-baseline justify-between gap-4 mt-6 pt-4 border-t border-apex-line/50">
+                                    <span className="font-display font-black text-apex-white text-[13px] tracking-[0.1em] uppercase">
+                                      Total today
+                                    </span>
+                                    <span className="font-luxia t-silver leading-none metric-value" style={{ fontSize: '2rem' }}>
+                                      {fmt(total)}
+                                    </span>
+                                  </div>
+
+                                  <button
+                                    type="submit"
+                                    className="group inline-flex flex-col items-center justify-center gap-0.5 cta-glow text-white font-display font-black px-6 py-4 tracking-[0.1em] uppercase w-full mt-5 cursor-pointer"
+                                    style={{ borderRadius: 0 }}
+                                  >
+                                    <span className="inline-flex items-center gap-2.5 text-[14px] sm:text-[15px]">
+                                      {payMethod === 'card' ? 'Complete My Order' : 'Reserve & Send My Invoice'}
+                                      <svg className="w-[18px] h-[18px] transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                      </svg>
+                                    </span>
+                                    <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-white/80 font-normal">
+                                      {fmt(total)} · 12-month warranty · free insured shipping
+                                    </span>
+                                  </button>
+
+                                  <div className="flex items-center justify-center gap-2 mt-4 text-apex-grey-dim">
+                                    <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                                    </svg>
+                                    <span className="font-mono text-[9px] tracking-[0.14em] uppercase">
+                                      Encrypted · your card details never touch our servers
+                                    </span>
+                                  </div>
+
+                                  <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+                                    {['VISA', 'Mastercard', 'AMEX', 'PayPal', 'Apple Pay', 'EFT'].map((m) => (
+                                      <span key={m} className="font-mono text-[9px] tracking-[0.1em] uppercase text-apex-grey-dim border border-apex-line/60 px-2.5 py-1.5 bg-apex-black-2/60">
+                                        {m}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </motion.form>
+                              )}
+
+                              {/* ── PROCESSING ── */}
+                              {stage === 'processing' && (
+                                <motion.div
+                                  key="proc"
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  transition={{ duration: 0.25 }}
+                                  className="py-16 text-center"
+                                >
+                                  <div className="relative w-14 h-14 mx-auto mb-6">
+                                    <div className="absolute inset-0 border-2 border-apex-line/60" />
+                                    <motion.div
+                                      className="absolute inset-0 border-2 border-transparent"
+                                      style={{ borderTopColor: '#D61F26', borderRightColor: '#00AEEF' }}
+                                      animate={{ rotate: 360 }}
+                                      transition={{ duration: 1.1, repeat: Infinity, ease: 'linear' }}
+                                    />
+                                  </div>
+                                  <p className="font-display font-black text-apex-white text-[15px] tracking-[0.1em] uppercase mb-2">
+                                    Authorising your order
+                                  </p>
+                                  <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-apex-grey-dim">
+                                    Securing allocation · do not close this window
+                                  </p>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </div>
+
+                        {/* Under-form reassurance */}
+                        <div className="flex items-center justify-center gap-2.5 mt-4">
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-apex-red opacity-60" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-apex-red" />
+                          </span>
+                          <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.14em] uppercase text-apex-grey text-center">
+                            Limited allocation for Australian programs this quarter
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* ══ STAGE 3 — ONE-TIME OFFER ═══════════════════════════ */}
+                  {isOto && (
+                    <motion.div
+                      key="oto"
+                      initial={{ opacity: 0, y: 18 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      className="max-w-3xl mx-auto text-center"
+                    >
+                      <div className="flex items-center justify-center gap-2 mb-6">
+                        <svg className="w-4 h-4 text-apex-blue" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                        <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-apex-blue">
+                          Order {orderNo} confirmed — do not close this page
+                        </span>
+                      </div>
+
+                      <span
+                        className="inline-block font-mono text-[9px] tracking-[0.26em] uppercase px-3 py-1.5 border mb-6"
+                        style={{ color: GOLD, borderColor: 'rgba(180,140,60,0.5)', background: 'rgba(180,140,60,0.08)' }}
+                      >
+                        {otoOffer.chip}
+                      </span>
+
+                      <h2
+                        className="h-luxia t-silver leading-[0.95] mb-5"
+                        style={{ fontSize: 'clamp(1.9rem, 4.6vw, 3.4rem)', letterSpacing: '0.03em' }}
+                      >
+                        WAIT — <span className="t-red">{otoOffer.title.toUpperCase()}</span>
+                      </h2>
+
+                      <p className="font-display font-black text-apex-white leading-tight mb-4" style={{ fontSize: 'clamp(1.05rem, 1.9vw, 1.4rem)' }}>
+                        {otoOffer.headline}
+                      </p>
+
+                      <p className="text-apex-grey font-body leading-relaxed max-w-2xl mx-auto mb-8 text-[14px] sm:text-[15px]">
+                        {otoOffer.desc}
+                      </p>
+
+                      <div className="border border-apex-line/60 bg-apex-panel/40 p-6 sm:p-8 mb-8 text-left" style={{ borderTop: `2px solid ${GOLD}` }}>
+                        <div className="grid grid-cols-1 sm:grid-cols-[0.9fr_1fr] gap-6 sm:gap-8 items-center mb-6">
+                          <div className="relative w-full border border-apex-line/60 bg-apex-black-2 overflow-hidden" style={{ aspectRatio: '4 / 3' }}>
+                            <div className="carbon-weave absolute inset-0 opacity-40" aria-hidden="true" />
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={otoOffer.image}
+                              alt={otoOffer.title}
+                              className="absolute inset-0 w-full h-full object-contain p-3"
+                            />
+                          </div>
+                          <div className="grid grid-cols-1 gap-3">
+                            {otoOffer.items.map((it) => (
+                              <div key={it} className="flex items-center gap-2.5">
+                                <svg className="w-4 h-4 flex-shrink-0" style={{ color: GOLD }} fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                                <span className="text-apex-grey font-body text-[13.5px]">{it}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="flex items-end justify-between gap-4 pt-5 border-t border-apex-line/50">
+                          <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-apex-grey-dim pb-2">
+                            Added to your order today
+                          </span>
+                          <span className="flex items-baseline gap-3">
+                            <span className="font-mono text-apex-grey-dim line-through text-[15px]">{fmt(otoOffer.was)}</span>
+                            <span className="font-luxia t-gold leading-none metric-value" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)' }}>
+                              {fmt(otoOffer.price)}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => takeOto(true)}
+                        className="group inline-flex flex-col items-center justify-center gap-0.5 cta-glow text-white font-display font-black px-8 py-5 tracking-[0.1em] uppercase w-full max-w-xl mx-auto cursor-pointer"
+                        style={{ borderRadius: 0 }}
+                      >
+                        <span className="inline-flex items-center gap-2.5 text-[14px] sm:text-[16px]">
+                          Yes — add it to my order
+                          <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                          </svg>
+                        </span>
+                        <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-white/80 font-normal">
+                          One click · same card · ships in the same crate
+                        </span>
+                      </button>
+
+                      <button
+                        onClick={() => takeOto(false)}
+                        className="block mx-auto mt-5 font-mono text-[10px] tracking-[0.14em] uppercase text-apex-grey-dim hover:text-apex-grey underline underline-offset-4 transition-colors cursor-pointer"
+                      >
+                        No thanks — I understand this offer will not be shown again
+                      </button>
+                    </motion.div>
+                  )}
+
+                  {/* ══ STAGE 4 — RECEIPT / OFFER WALL ═════════════════════ */}
+                  {isReceipt && (
+                    <motion.div
+                      key="receipt"
+                      initial={{ opacity: 0, y: 18 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                      className="max-w-4xl mx-auto"
+                    >
+                      <div className="text-center mb-10">
+                        <motion.div
+                          className="w-16 h-16 mx-auto mb-6 border-2 border-apex-blue/60 bg-apex-blue/10 flex items-center justify-center"
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                        >
+                          <svg className="w-8 h-8 text-apex-blue" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                          </svg>
+                        </motion.div>
+
+                        <h2
+                          className="h-luxia t-silver leading-[0.95] mb-4"
+                          style={{ fontSize: 'clamp(1.9rem, 4.6vw, 3.4rem)', letterSpacing: '0.03em' }}
+                        >
+                          YOUR ORDER IS <span className="t-blue">CONFIRMED</span>
+                        </h2>
+                        <p className="text-apex-grey font-body max-w-xl mx-auto text-[14px] sm:text-[15px] leading-relaxed">
+                          Thank you, {form.name.split(' ')[0] || 'Coach'}. A confirmation is on its way to{' '}
+                          <span className="text-apex-white">{form.email}</span>. Your build slot is locked and the
+                          Australian team will be in touch within one business day.
+                        </p>
+                      </div>
+
+                      {/* Receipt */}
+                      <div className="border border-apex-line/60 bg-apex-panel/40 mb-8" style={{ borderTop: '2px solid rgba(0,174,239,0.6)' }}>
+                        <div className="flex flex-wrap items-center justify-between gap-3 px-5 sm:px-7 py-4 border-b border-apex-line/50">
+                          <span className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-blue">Your Receipt</span>
+                          <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-apex-grey-dim">
+                            Order {orderNo}
+                          </span>
+                        </div>
+
+                        <div className="px-5 sm:px-7 py-5">
+                          <div className="flex items-center justify-between gap-4 pb-3 mb-3 border-b border-apex-line/40">
+                            <span className="font-mono text-[9px] tracking-[0.22em] uppercase text-apex-grey-dim">Item</span>
+                            <span className="font-mono text-[9px] tracking-[0.22em] uppercase text-apex-grey-dim">Price</span>
+                          </div>
+
+                          <dl className="flex flex-col">
+                            {[
+                              { label: product.name, price: product.price, accent: false },
+                              ...(bump ? [{ label: BUMP.title.replace('Add ', ''), price: BUMP.price, accent: true }] : []),
+                              ...(oto ? [{ label: otoOffer.title.replace('Add the ', ''), price: otoOffer.price, accent: true }] : []),
+                            ].map((row) => (
+                              <div key={row.label} className="flex items-baseline justify-between gap-4 py-2.5 border-b border-apex-line/25">
+                                <dt className="font-body text-[13.5px]" style={row.accent ? { color: GOLD } : { color: '#F5F7FA' }}>
+                                  {row.label}
+                                </dt>
+                                <dd className="font-mono text-[13.5px] metric-value" style={row.accent ? { color: GOLD } : { color: '#F5F7FA' }}>
+                                  {fmt(row.price)}
+                                </dd>
+                              </div>
+                            ))}
+                            <div className="flex items-baseline justify-between gap-4 py-2.5 border-b border-apex-line/25">
+                              <dt className="text-apex-grey font-body text-[13.5px]">Insured shipping · Australia-wide</dt>
+                              <dd className="font-mono text-apex-blue text-[13px] uppercase tracking-wide">Free</dd>
+                            </div>
+                            <div className="flex items-baseline justify-between gap-4 pt-5">
+                              <dt className="font-display font-black text-apex-white text-[13px] tracking-[0.1em] uppercase">
+                                Total paid {payMethod === 'invoice' && '(invoice issued)'}
+                              </dt>
+                              <dd className="font-luxia t-silver leading-none metric-value" style={{ fontSize: 'clamp(1.8rem, 3.4vw, 2.4rem)' }}>
+                                {fmt(total)}
+                              </dd>
+                            </div>
+                          </dl>
+                        </div>
+
+                        <div className="px-5 sm:px-7 py-4 border-t border-apex-line/50 bg-apex-black/40 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-apex-grey-dim mb-1.5">Shipping to</div>
+                            <p className="text-apex-grey font-body text-[12.5px] leading-snug">
+                              <span className="text-apex-white">{form.name}</span>
+                              {form.org && ` · ${form.org}`}
+                              <br />
+                              {form.address}, {form.city} {form.state} {form.postcode}
+                            </p>
+                          </div>
+                          <div>
+                            <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-apex-grey-dim mb-1.5">Payment</div>
+                            <p className="text-apex-grey font-body text-[12.5px] leading-snug">
+                              {payMethod === 'card'
+                                ? `Card ending ${form.cardNumber.replace(/\s/g, '').slice(-4) || '••••'}`
+                                : `Invoice / EFT${form.po ? ` · ${form.po}` : ''}`}
+                              <br />
+                              GST included · AUD
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* What happens next */}
+                      <div className="mb-10">
+                        <div className="flex items-center gap-3 mb-5">
+                          <div className="w-8 h-px bg-apex-red" />
+                          <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase">
+                            What Happens Next
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-apex-line/40 border border-apex-line/40">
+                          {[
+                            { n: '01', t: 'Confirmation email', d: 'Your receipt and order reference land in your inbox within minutes.' },
+                            { n: '02', t: 'Build & calibration', d: 'Your unit is assembled, the tablet is preloaded and every mode is calibrated.' },
+                            { n: '03', t: 'Dispatch & onboarding', d: 'Insured delivery Australia-wide, then a walkthrough with the AU team.' },
+                          ].map((s) => (
+                            <div key={s.n} className="bg-apex-black px-5 py-6">
+                              <span className="font-mono text-[11px] tracking-[0.2em] text-apex-blue">{s.n}</span>
+                              <h4 className="font-display font-black text-apex-white text-[14px] leading-tight mt-2 mb-1.5">{s.t}</h4>
+                              <p className="text-apex-grey font-body text-[12.5px] leading-relaxed">{s.d}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Offer wall */}
+                      <div className="flex items-center gap-3 mb-5">
+                        <div className="w-8 h-px bg-apex-blue" />
+                        <span className="text-apex-blue font-mono text-[10px] tracking-[0.3em] uppercase">
+                          Recommended For Your Program
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+                        {[
+                          {
+                            t: 'Coach Certification',
+                            d: 'Two-day accreditation in adaptive resistance programming for your staff.',
+                            price: 'A$1,200',
+                            img: '/sports/rugby-league.webp',
+                            fit: 'object-cover',
+                          },
+                          {
+                            t: 'Team Analytics Pro',
+                            d: 'Squad-wide dashboards, longitudinal profiling and exportable session reports.',
+                            price: 'A$890 / yr',
+                            img: '/accessories/tablet-software.png',
+                            fit: 'object-contain',
+                          },
+                          {
+                            t: 'Extended Cover',
+                            d: 'Two extra years of warranty plus priority replacement, anywhere in Australia.',
+                            price: 'A$450',
+                            img: '/accessories/engineering-blueprint.webp',
+                            fit: 'object-cover',
+                          },
+                        ].map((o) => (
+                          <div
+                            key={o.t}
+                            className="group border border-apex-line/60 bg-apex-panel/40 p-5 flex flex-col"
+                            style={{ borderTop: '2px solid rgba(214,31,38,0.5)' }}
+                          >
+                            <div className="relative w-full border border-apex-line/50 bg-apex-black-2 overflow-hidden mb-4" style={{ aspectRatio: '16 / 9' }}>
+                              <div className="carbon-weave absolute inset-0 opacity-40" aria-hidden="true" />
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={o.img} alt="" className={`absolute inset-0 w-full h-full ${o.fit} ${o.fit === 'object-contain' ? 'p-2' : ''} opacity-90`} />
+                            </div>
+                            <h4 className="font-display font-black t-feature text-[16px] leading-tight mb-2">{o.t}</h4>
+                            <p className="text-apex-grey font-body text-[12.5px] leading-relaxed mb-4 flex-1">{o.d}</p>
+                            <div className="font-mono text-[11px] tracking-[0.16em] uppercase text-apex-white mb-4">{o.price}</div>
+                            <a
+                              href="#contact"
+                              onClick={onClose}
+                              className="inline-flex items-center justify-center gap-2 border border-apex-line hover:border-apex-red/60 text-apex-grey hover:text-apex-white font-display font-bold px-4 py-3 text-[11px] tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer"
+                            >
+                              Add to my program
+                              <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                              </svg>
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="text-center border-t border-apex-line/40 pt-8">
+                        <p className="font-display font-black text-apex-white leading-tight max-w-2xl mx-auto mb-4" style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.35rem)' }}>
+                          You did not just buy a sprint tool. You bought an{' '}
+                          <span className="text-apex-blue">Adaptive Resistance Intelligence system</span> for your program.
+                        </p>
+                        <button
+                          onClick={onClose}
+                          className="inline-flex items-center justify-center gap-2 border border-apex-line hover:border-apex-grey/60 text-apex-grey hover:text-apex-white font-display font-bold px-8 py-4 text-[12px] tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer"
+                        >
+                          Back to the site
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
