@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import CheckoutFlow, { HighlightBullets } from './CheckoutFlow'
 
@@ -159,8 +160,6 @@ function Stars({ className = '' }: { className?: string }) {
     </div>
   )
 }
-
-const fmt = (n: number) => `A$${n.toLocaleString('en-AU')}`
 
 /* ── Gallery ──────────────────────────────────────────────────────────────── */
 
@@ -403,24 +402,32 @@ export default function CheckoutSection() {
 
   const [variantId, setVariantId] = useState<VariantId>('core')
   const [cartOpen, setCartOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const variant = VARIANTS[variantId]
   const isOver = variantId === 'overspeed'
 
   const firstImage = variant.gallery.find((s) => s.type === 'image')?.src ?? '/t-apex product 0.webp'
 
+  // The popup is portalled to <body>, so guard the portal until we're mounted
+  // on the client (static export prerenders this component).
+  useEffect(() => setMounted(true), [])
+
   // The checkout popup is its own entity: while it is open the page beneath is
-  // frozen so only the popup scrolls, and Esc closes it.
+  // frozen so only the popup scrolls, Esc closes it, and the exact scroll
+  // position is restored on close so the page never jumps.
   useEffect(() => {
     if (!cartOpen) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setCartOpen(false)
     }
     document.addEventListener('keydown', onKey)
+    const scrollY = window.scrollY
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = prevOverflow
+      window.scrollTo(0, scrollY)
     }
   }, [cartOpen])
 
@@ -541,13 +548,7 @@ export default function CheckoutSection() {
               {variant.tagline}
             </p>
 
-            {/* Price */}
-            <div className="flex items-baseline gap-3 mb-6 pb-6 border-b border-apex-line/50">
-              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-apex-grey-dim">{variant.priceLabel}</span>
-              <span className={`font-luxia ${variant.priceClass} leading-none metric-value`} style={{ fontSize: 'clamp(2.4rem, 5.4vw, 3.6rem)' }}>
-                {fmt(variant.price)}
-              </span>
-            </div>
+            <div className="mb-6 pb-2 border-b border-apex-line/50" />
 
             {/* Variant upgrade nudge */}
             {!isOver ? (
@@ -592,7 +593,7 @@ export default function CheckoutSection() {
                 </svg>
               </span>
               <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.16em] uppercase text-white/85 font-normal">
-                You&rsquo;re only two steps away from owning your T-APEX machine
+                Two steps away from owning your T-APEX machine
               </span>
             </button>
 
@@ -729,8 +730,10 @@ export default function CheckoutSection() {
       </div>
 
       {/* ══ CHECKOUT POPUP — its own entity: dark backdrop, only this scrolls ══ */}
-      <AnimatePresence>
-        {cartOpen && (
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {cartOpen && (
           <motion.div
             className="fixed inset-0 z-[130] overflow-y-auto overscroll-contain bg-black/90 backdrop-blur-md"
             initial={{ opacity: 0 }}
@@ -741,6 +744,9 @@ export default function CheckoutSection() {
             role="dialog"
             aria-modal="true"
             aria-label="Checkout"
+            /* The page uses Lenis smooth-scroll, which hijacks the wheel
+               globally; this opts the popup out so it scrolls natively. */
+            data-lenis-prevent
           >
             <div className="min-h-full flex items-start justify-center p-3 sm:p-6 md:p-10">
               <motion.div
@@ -757,7 +763,7 @@ export default function CheckoutSection() {
                   <div className="min-w-0">
                     <div className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-red">Secure Checkout</div>
                     <div className="font-display font-black text-apex-white text-[14px] sm:text-[15px] leading-tight truncate">
-                      You&rsquo;re only two steps away
+                      Two steps away
                     </div>
                   </div>
                   <button
@@ -821,8 +827,10 @@ export default function CheckoutSection() {
               </motion.div>
             </div>
           </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body,
         )}
-      </AnimatePresence>
     </section>
   )
 }
