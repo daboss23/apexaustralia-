@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import CheckoutFlow from './CheckoutFlow'
+import CheckoutFlow, { type Stage } from './CheckoutFlow'
 
 /* ────────────────────────────────────────────────────────────────────────────
    ORDER / CHECKOUT SECTION — inline, ecom-style product + buy experience.
@@ -402,9 +402,13 @@ export default function CheckoutSection() {
   const titleInView = useInView(titleRef, { once: false, margin: '-10% 0px' })
 
   const [variantId, setVariantId] = useState<VariantId>('core')
-  const [checkoutOpen, setCheckoutOpen] = useState(false)
+  const [stage, setStage] = useState<Stage>('shipping')
   const variant = VARIANTS[variantId]
   const isOver = variantId === 'overspeed'
+
+  // Once the order is placed the section becomes the OTO / receipt page — the
+  // surrounding sell copy would only compete with it, so it steps aside.
+  const postPurchase = stage === 'oto' || stage === 'receipt'
 
   const firstImage = variant.gallery.find((s) => s.type === 'image')?.src ?? '/t-apex product 0.webp'
 
@@ -430,6 +434,8 @@ export default function CheckoutSection() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
+        {!postPurchase && (
+        <>
         {/* Eyebrow */}
         <div ref={titleRef} className="flex items-center gap-3 mb-6 justify-center">
           <div className="w-8 h-px bg-apex-red" />
@@ -488,183 +494,59 @@ export default function CheckoutSection() {
             })}
           </div>
         </div>
+        </>
+        )}
 
-        {/* Product grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-14 items-start">
-          {/* LEFT — gallery */}
-          <Gallery variant={variant} />
-
-          {/* RIGHT — buy box */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={variant.id}
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col"
-            >
-              {/* Chip */}
-              <div className="flex items-center gap-3 mb-3 flex-wrap">
-                <span
-                  className="font-mono text-[9px] tracking-[0.26em] uppercase px-2.5 py-1 border"
-                  style={
-                    isOver
-                      ? { color: GOLD, borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.1)' }
-                      : { color: '#D61F26', borderColor: 'rgba(214,31,38,0.4)', background: 'rgba(214,31,38,0.1)' }
-                  }
-                >
-                  {variant.chip}
-                </span>
-                <div className="flex items-center gap-2">
-                  <Stars />
-                  <span className="font-mono text-[10px] tracking-wide text-apex-grey-dim">Trusted by elite programs</span>
-                </div>
-              </div>
-
-              {/* Name + tagline */}
-              <h3 className="font-display font-black t-feature leading-none mb-2" style={{ fontSize: 'clamp(1.7rem, 3.4vw, 2.6rem)' }}>
-                {variant.name}
-              </h3>
-              <p className="text-apex-grey font-body mb-6" style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
-                {variant.tagline}
-              </p>
-
-              {/* Price */}
-              <div className="flex items-end gap-3 mb-1">
-                <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-apex-grey-dim pb-2">
-                  {variant.priceLabel}
-                </span>
-                <span className={`font-luxia ${variant.priceClass} leading-none`} style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)' }}>
-                  {fmt(variant.price)}
-                </span>
-              </div>
-              <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-apex-grey-dim mb-6">
-                AUD · GST included · Flexible payment plans available
-              </p>
-
-              {/* Highlights */}
-              <div className="flex flex-col gap-3 mb-6">
-                {variant.highlights.map((h) => (
-                  <div key={h.title} className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-5 h-5 mt-0.5 border border-apex-red/30 bg-apex-red/10 flex items-center justify-center">
-                      <svg className="w-3 h-3 text-apex-red" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
-                    </div>
-                    <p className="text-sm leading-snug">
-                      <span className="text-apex-white font-semibold">{h.title}</span>
-                      <span className="text-apex-grey"> — {h.desc}</span>
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              {/* In the box */}
-              <div className="border border-apex-line/60 bg-apex-panel/40 p-5 mb-6" style={{ borderTop: '2px solid rgba(0,174,239,0.5)' }}>
-                <div className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-blue mb-4">In the Box</div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
-                  {variant.inBox.map((item) => (
-                    <div key={item} className="flex items-center gap-2.5">
-                      <svg className="w-3.5 h-3.5 text-apex-blue flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
-                      <span className="text-apex-grey font-body text-[13px]">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Upsell / value nudge */}
-              {!isOver ? (
-                <button
-                  onClick={() => setVariantId('overspeed')}
-                  className="group flex items-center justify-between gap-3 w-full text-left border border-dashed px-4 py-3 mb-6 transition-all duration-300 cursor-pointer"
-                  style={{ borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.05)' }}
-                >
-                  <span className="text-[13px] leading-snug">
-                    <span className="text-apex-white font-semibold">Add the full Overspeed Module</span>
-                    <span className="text-apex-grey"> for just A$540 more</span>
-                  </span>
-                  <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.16em] uppercase flex-shrink-0" style={{ color: GOLD }}>
-                    Upgrade
-                    <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                    </svg>
-                  </span>
-                </button>
-              ) : (
-                <div className="flex items-center gap-3 px-4 py-3 mb-6 border" style={{ borderColor: 'rgba(180,140,60,0.3)', background: 'rgba(180,140,60,0.05)' }}>
-                  <svg className="w-5 h-5 flex-shrink-0" style={{ color: GOLD }} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                  </svg>
-                  <span className="text-[13px] leading-snug text-apex-grey">
-                    <span className="text-apex-white font-semibold">Best value</span> — the complete five-piece module and
-                    assisted overspeed mode for only <span className="font-semibold" style={{ color: GOLD }}>A$540</span> over Core.
-                  </span>
-                </div>
-              )}
-
-              {/* Primary CTA — opens the two-step order form */}
+        {/* ── The two-step order flow (gallery + form → OTO → receipt) ── */}
+        <CheckoutFlow
+          key={variant.id}
+          gallery={<Gallery variant={variant} />}
+          onStageChange={setStage}
+          upsell={
+            !isOver ? (
               <button
-                onClick={() => setCheckoutOpen(true)}
-                className="group inline-flex flex-col items-center justify-center gap-1 cta-glow text-white font-display font-bold px-8 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer w-full mb-3"
-                style={{ borderRadius: 0 }}
+                onClick={() => setVariantId('overspeed')}
+                className="group flex items-center justify-between gap-3 w-full text-left border border-dashed px-4 py-3 mb-6 transition-all duration-300 cursor-pointer"
+                style={{ borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.05)' }}
               >
-                <span className="inline-flex items-center gap-3" style={{ fontSize: 'clamp(0.8rem, 1vw, 0.95rem)' }}>
-                  Secure Checkout — {fmt(variant.price)}
-                  <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                <span className="text-[13px] leading-snug">
+                  <span className="text-apex-white font-semibold">Add the full Overspeed Module</span>
+                  <span className="text-apex-grey"> — unlock assisted overspeed training</span>
+                </span>
+                <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.16em] uppercase flex-shrink-0" style={{ color: GOLD }}>
+                  Upgrade
+                  <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                   </svg>
                 </span>
-                <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-white/80 font-normal">
-                  Step 1 of 2 · shipping first, no payment details yet
-                </span>
               </button>
-
-              {/* Secondary CTA */}
-              <a
-                href="#contact"
-                className="group inline-flex items-center justify-center gap-2 border border-apex-line hover:border-apex-grey/50 text-apex-grey hover:text-apex-white font-display font-bold px-8 py-4 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer w-full mb-5"
-                style={{ fontSize: 'clamp(0.72rem, 0.95vw, 0.85rem)', borderRadius: 0 }}
-              >
-                Book a Free Demo First
-                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            ) : (
+              <div className="flex items-center gap-3 px-4 py-3 mb-6 border" style={{ borderColor: 'rgba(180,140,60,0.3)', background: 'rgba(180,140,60,0.05)' }}>
+                <svg className="w-5 h-5 flex-shrink-0" style={{ color: GOLD }} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
-              </a>
-
-              {/* Reassurance row */}
-              <div className="flex items-center justify-center gap-2 mb-4 text-apex-grey-dim">
-                <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-                </svg>
-                <span className="font-mono text-[10px] tracking-[0.14em] uppercase">Secure encrypted checkout</span>
-              </div>
-
-              {/* Payment methods */}
-              <div className="flex flex-wrap items-center justify-center gap-2 mb-5">
-                {PAY_METHODS.map((m) => (
-                  <span key={m} className="font-mono text-[9px] tracking-[0.1em] uppercase text-apex-grey-dim border border-apex-line/60 px-2.5 py-1.5 bg-apex-black-2/60">
-                    {m}
-                  </span>
-                ))}
-              </div>
-
-              {/* Urgency */}
-              <div className="flex items-center justify-center gap-2.5 border-t border-apex-line/40 pt-4">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-apex-red opacity-60" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-apex-red" />
-                </span>
-                <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-apex-grey">
-                  Limited allocation for Australian programs this quarter
+                <span className="text-[13px] leading-snug text-apex-grey">
+                  <span className="text-apex-white font-semibold">Best value</span> — the complete five-piece module and
+                  assisted overspeed mode, included in this configuration.
                 </span>
               </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
+            )
+          }
+          product={{
+            id: variant.id,
+            name: variant.name,
+            chip: variant.chip,
+            tagline: variant.tagline,
+            price: variant.price,
+            image: firstImage,
+            inBox: variant.inBox,
+            highlights: variant.highlights,
+            isOverspeed: isOver,
+          }}
+        />
 
+        {!postPurchase && (
+        <>
         {/* ── Trust badge strip ── */}
         <motion.div
           className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-apex-line/40 border border-apex-line/40 mt-10 md:mt-16"
@@ -788,22 +670,9 @@ export default function CheckoutSection() {
             </p>
           </div>
         </motion.div>
+        </>
+        )}
       </div>
-
-      {/* Two-step order form → OTO → receipt / offer wall */}
-      <CheckoutFlow
-        open={checkoutOpen}
-        onClose={() => setCheckoutOpen(false)}
-        product={{
-          id: variant.id,
-          name: variant.name,
-          chip: variant.chip,
-          price: variant.price,
-          image: firstImage,
-          inBox: variant.inBox,
-          isOverspeed: isOver,
-        }}
-      />
     </section>
   )
 }
