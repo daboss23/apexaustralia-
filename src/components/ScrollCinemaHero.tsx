@@ -9,28 +9,97 @@ import Hero from './Hero'
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
 // ─── Scroll-cinema hero ───────────────────────────────────────────────────────
-// A pinned, scroll-scrubbed cinematic banner. As the visitor scrolls, we scrub a
-// pre-extracted image sequence frame-by-frame (buttery, no <video> stutter) while
-// pushing the "camera" into the frame — so it reads as *travelling through the
-// machine*. Three copy beats (promise → telemetry → CTA) resolve over the top.
+// A pinned, scroll-scrubbed cinematic banner staged in four acts:
 //
-// Swap the footage by dropping a new numbered sequence into /public/hero-frames
-// and updating FRAME_COUNT / FRAME_PATH below (see docs/motion-scroll-brief.md).
+//   ACT 0  HOLD    black frame, the headline alone — no film, no motion.
+//   ACT 1  SPLIT   the headline parts (TRAIN BEYOND ↑ / HUMAN LIMITS ↓) and the
+//                  film opens out of the seam between them (clip-path aperture
+//                  + fade), so the video is literally revealed BY the split.
+//   ACT 2  TRAVEL  the frame sequence scrubs to scroll while the camera pushes
+//                  in; the split halves stay top/bottom framing the film, then
+//                  clear so the panels-open reveal owns the screen.
+//   ACT 3  RESOLVE the device settles hero-lit; closing line + CTAs land.
+//
+// Frames are a pre-extracted WebP sequence (buttery, no <video> stutter). Swap
+// the footage by dropping a new numbered sequence into /public/hero-frames and
+// updating FRAME_COUNT below (see docs/motion-scroll-brief.md).
 //
 // Gracefully degrades: phones and `prefers-reduced-motion` users get the classic
 // <Hero /> (no pin, no scrub) instead of this.
 
-const FRAME_COUNT = 147
+const FRAME_COUNT = 241
 const FRAME_PATH = (i: number) =>
   `/hero-frames/frame-${String(i).padStart(3, '0')}.webp`
 
-// How far (in px of scroll) the hero stays pinned. ~1.8 viewports ≈ an unhurried
-// ~8s scroll-through on a typical trackpad.
-const PIN_DISTANCE = '+=1750'
+// Scrubbing may begin once this many frames are decoded; the rest keep loading
+// in the background. Act 0 is pure black + type, so it doubles as the loader.
+const READY_FRAMES = 36
 
-// Camera push: frame scale from start → end of the travel-through.
-const ZOOM_START = 1.02
-const ZOOM_END = 1.62
+// How far (in px of scroll) the hero stays pinned. ~3 viewports, which keeps the
+// scrub at ~15px of scroll per frame — the pacing held across every recut.
+const PIN_DISTANCE = '+=3600'
+
+// Camera push across the travel. The film does most of the moving itself now
+// (it flies into the machine), so this is only a whisper of extra drift.
+const ZOOM_START = 1.0
+const ZOOM_END = 1.1
+
+// How far the two headline halves travel apart, as a fraction of viewport
+// height. Resolved at refresh so it survives resize.
+const SPLIT_TRAVEL = 0.34
+
+// ── Where the cut's content sits, as scroll progress ─────────────────────────
+// The film scrubs across 0.10 → 0.97, so frame ≈ (p - 0.10) / 0.87 * 241:
+//
+//   0.10–0.38  the black plate — the device on pure black, holographic athletes
+//              running through it. This is the scene that "plays out".
+//   0.38–0.50  ✦ THE SAME BOX OPENS. Panels split along the seams, internals lit
+//              (the money shot — no copy is allowed on screen here)
+//   0.53–0.81  fly-through: circuit macro, copper traces, cable spool + gears
+//   0.81–0.89  HUD panels of athletes wrapped in red/blue energy
+//   0.89–0.97  out to the hero device, trackside, T-APEX branding
+//
+// The read we're protecting is ONE continuous shot: you watch the box, then that
+// box opens. Two things buy it. The lit hall the opening was filmed in is graded
+// out at the cut stage (crushed + double-vignetted to black) so both halves sit
+// in the same void, and the dissolve between them is long (0.7s) so the change
+// of camera angle reads as a move around the machine rather than a cut to other
+// footage. See docs/motion-scroll-brief.md §6.
+//
+// The plate is near-black; everything after it is bright (mean luma 43–85), so
+// `.cine-dim` is scheduled like a lighting cue — it lifts under every copy beat
+// and drops away between them, letting the film play at full strength exactly
+// when nothing is written over it.
+
+const STATS = [
+  { k: 'Force', v: '412', u: 'N' },
+  { k: 'Velocity', v: '9.6', u: 'm/s' },
+  { k: 'Response', v: '<2', u: 'ms' },
+  { k: 'Control', v: '100', u: '%' },
+]
+
+function Stat({ k, v, u, align }: { k: string; v: string; u: string; align: 'left' | 'right' }) {
+  return (
+    <div>
+      <div className="font-mono text-[8px] tracking-[0.3em] uppercase text-apex-grey-dim mb-2">
+        {k}
+      </div>
+      <div className="font-display font-black text-apex-white leading-none text-4xl xl:text-5xl">
+        {v}
+        <span className="text-apex-blue text-base xl:text-lg ml-1 align-top">{u}</span>
+      </div>
+      <div
+        className={`mt-3 h-px w-12 ${align === 'right' ? 'ml-auto' : ''}`}
+        style={{
+          background:
+            align === 'right'
+              ? 'linear-gradient(90deg,transparent,rgba(0,174,239,0.7))'
+              : 'linear-gradient(270deg,transparent,rgba(0,174,239,0.7))',
+        }}
+      />
+    </div>
+  )
+}
 
 function CinemaImpl() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -41,7 +110,7 @@ function CinemaImpl() {
   // Mutable render state the scroll timeline drives; the draw loop reads it.
   const render = useRef({ frame: 0, scale: ZOOM_START }).current
 
-  // ── Preload the whole sequence up front so scrubbing never waits on I/O ──────
+  // ── Preload the sequence so scrubbing never waits on I/O ────────────────────
   useEffect(() => {
     let loaded = 0
     const imgs: HTMLImageElement[] = []
@@ -50,7 +119,7 @@ function CinemaImpl() {
       img.src = FRAME_PATH(i)
       img.onload = img.onerror = () => {
         loaded++
-        if (loaded === FRAME_COUNT) setReady(true)
+        if (loaded >= READY_FRAMES) setReady(true)
       }
       imgs.push(img)
     }
@@ -63,7 +132,13 @@ function CinemaImpl() {
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
     const img = imagesRef.current[Math.round(render.frame)]
+    // Frame still decoding — hold the previous one rather than flashing black.
     if (!img || !img.complete || !img.naturalWidth) return
+
+    // The frames are upscaled 720p, so resampling quality is doing real work
+    // here — the cheap default sampler is a visible part of the softness.
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = 'high'
 
     const cw = canvas.width
     const ch = canvas.height
@@ -90,7 +165,12 @@ function CinemaImpl() {
   const sizeCanvas = () => {
     const canvas = canvasRef.current
     if (!canvas) return
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    // Capped at 1.5 rather than 2. Frames are 1920×1080, so on a standard 1080p
+    // desktop (DPR 1) the canvas is already pixel-for-pixel with the source.
+    // Above that we're upscaling regardless — and a 2× backing store on a large
+    // retina display pushes 4× the pixels to show detail the frame doesn't have.
+    // That fill rate is better spent on framerate, which is smoothness.
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
     const w = canvas.clientWidth
     const h = canvas.clientHeight
     canvas.width = Math.round(w * dpr)
@@ -101,17 +181,18 @@ function CinemaImpl() {
   useEffect(() => {
     if (!ready) return
     sizeCanvas()
-    draw()
     const onResize = () => sizeCanvas()
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready])
 
-  // ── The scroll-driven timeline: frame scrub + push-in + copy beats ───────────
+  // ── The scroll-driven timeline ───────────────────────────────────────────────
   useGSAP(
     () => {
       if (!ready) return
+
+      const travel = () => window.innerHeight * SPLIT_TRAVEL
 
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
@@ -120,152 +201,212 @@ function CinemaImpl() {
           start: 'top top',
           end: PIN_DISTANCE,
           pin: true,
-          scrub: 1,
+          // Tight, because <SmoothScroll/> (Lenis) already interpolates the
+          // scroll position itself. A big scrub value on top of that stacks two
+          // lags and the film starts trailing the page.
+          scrub: 0.35,
           onUpdate: draw,
           invalidateOnRefresh: true,
         },
       })
 
-      // Frame scrub + camera push run across the whole pin, in lockstep.
-      tl.to(render, { frame: FRAME_COUNT - 1 }, 0)
-      tl.to(render, { scale: ZOOM_END }, 0)
+      // ── The bed — frame scrub + camera push run under everything ─────────────
+      tl.to(render, { frame: FRAME_COUNT - 1, duration: 0.87 }, 0.1)
+      tl.to(render, { scale: ZOOM_END, duration: 0.87 }, 0.1)
 
-      // Tunnel vignette closes in as we travel deeper into the machine.
-      tl.fromTo('.cine-tunnel', { opacity: 0.15 }, { opacity: 0.9 }, 0)
+      // ── ACT 1 — the split ────────────────────────────────────────────────────
+      // Eyebrow clears first so the words are alone as they part.
+      tl.to('.cine-eyebrow', { opacity: 0, y: -18, duration: 0.07 }, 0.06)
 
-      // Beat 1 — the promise. On screen at rest, then peels away as we push in.
+      // The two halves travel apart, tracking wider as they go — the type reads
+      // as being pulled open rather than simply moved.
       tl.to(
-        '.beat-1',
-        { opacity: 0, y: -70, filter: 'blur(9px)', ease: 'power1.in', duration: 0.22 },
-        0.02,
+        '.split-top',
+        { y: () => -travel(), letterSpacing: '0.13em', ease: 'power2.inOut', duration: 0.26 },
+        0.1,
+      )
+      tl.to(
+        '.split-bot',
+        { y: () => travel(), letterSpacing: '0.13em', ease: 'power2.inOut', duration: 0.26 },
+        0.1,
       )
 
-      // Beat 2 — telemetry HUD, revealed mid-travel then handed off.
+      // The seam: a blue hairline that opens across the gap, then dims away.
+      tl.fromTo(
+        '.cine-seam',
+        { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, ease: 'power2.out', duration: 0.15 },
+        0.1,
+      )
+      tl.to('.cine-seam', { opacity: 0, duration: 0.11 }, 0.27)
+
+      // The film opens out of the seam — aperture unclips vertically as it fades
+      // up, so the video is revealed *by* the headline splitting.
+      tl.fromTo(
+        '.cine-aperture',
+        { clipPath: 'inset(50% 0% 50% 0%)', opacity: 0 },
+        {
+          clipPath: 'inset(0% 0% 0% 0%)',
+          opacity: 1,
+          ease: 'power2.inOut',
+          duration: 0.26,
+        },
+        0.1,
+      )
+
+      // Scroll cue clears the instant the split begins.
+      tl.to('.cine-cue', { opacity: 0, duration: 0.05 }, 0.08)
+
+      // ── ACT 2 — travel ───────────────────────────────────────────────────────
+      // Tunnel vignette breathes in over the fly-through, then eases back for the
+      // resolve so the closing hero shot isn't crushed at the edges.
+      tl.fromTo('.cine-tunnel', { opacity: 0 }, { opacity: 0.8, duration: 0.32 }, 0.4)
+      tl.to('.cine-tunnel', { opacity: 0.45, duration: 0.14 }, 0.84)
+
+      // The split halves clear BEFORE the panels-open reveal — that shot is the
+      // centrepiece and nothing sits on top of it.
+      tl.to('.split-top', { opacity: 0, y: () => -travel() - 60, duration: 0.09 }, 0.33)
+      tl.to('.split-bot', { opacity: 0, y: () => travel() + 60, duration: 0.09 }, 0.33)
+
+      // Telemetry HUD — lands over the fly-through (circuits, spool, gears),
+      // which is where a live instrument readout actually means something.
       tl.fromTo(
         '.beat-2',
-        { opacity: 0, scale: 0.92, filter: 'blur(6px)' },
-        { opacity: 1, scale: 1, filter: 'blur(0px)', ease: 'power2.out', duration: 0.18 },
-        0.34,
+        { opacity: 0, scale: 0.94, filter: 'blur(6px)' },
+        { opacity: 1, scale: 1, filter: 'blur(0px)', ease: 'power2.out', duration: 0.1 },
+        0.58,
       )
-      tl.to('.beat-2', { opacity: 0, scale: 1.06, filter: 'blur(6px)', duration: 0.12 }, 0.6)
+      tl.to('.beat-2', { opacity: 0, scale: 1.05, filter: 'blur(6px)', duration: 0.08 }, 0.75)
 
-      // Beat 3 — the resolve: final line + CTAs land as the machine reassembles.
+      // ── ACT 3 — resolve ──────────────────────────────────────────────────────
       tl.fromTo(
         '.beat-3',
-        { opacity: 0, y: 60, filter: 'blur(8px)' },
-        { opacity: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.2 },
-        0.74,
+        { opacity: 0, y: 56, filter: 'blur(8px)' },
+        { opacity: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.14 },
+        0.88,
       )
 
-      // Scroll cue fades the instant travel begins.
-      tl.to('.cine-cue', { opacity: 0, duration: 0.04 }, 0.02)
+      // ── The lighting cue ─────────────────────────────────────────────────────
+      // `.cine-dim` lifts under each copy beat and drops between them, so the
+      // film plays at full strength exactly when nothing is written over it.
+      tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.12 }, 0.1) // black plate — barely needed
+      tl.to('.cine-dim', { opacity: 0.05, ease: 'power1.inOut', duration: 0.08 }, 0.37) // ✦ the box opens — clear
+      tl.to('.cine-dim', { opacity: 0.46, ease: 'power1.inOut', duration: 0.08 }, 0.58) // telemetry
+      tl.to('.cine-dim', { opacity: 0.12, ease: 'power1.inOut', duration: 0.08 }, 0.79) // HUD athletes — clear
+      tl.to('.cine-dim', { opacity: 0.66, ease: 'power1.inOut', duration: 0.1 }, 0.88) // resolve + CTAs
     },
     { scope: rootRef, dependencies: [ready] },
   )
 
   return (
-    <section ref={rootRef} id="hero" className="relative h-[100svh] w-full overflow-hidden bg-apex-black">
-      {/* The scrubbed film */}
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" aria-hidden="true" />
-
-      {/* Brand-tone wash + readability ramp over any frame */}
+    <section
+      ref={rootRef}
+      id="hero"
+      className="relative h-[100svh] w-full overflow-hidden bg-apex-black"
+    >
+      {/* ─── The film, inside the aperture that the headline split opens ─── */}
       <div
-        className="absolute inset-0 z-[2] pointer-events-none"
-        style={{ background: 'rgba(5,5,8,0.34)' }}
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-0 z-[2] pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(ellipse 120% 90% at 62% 42%, transparent 30%, rgba(5,8,14,0.6) 100%)',
-        }}
-        aria-hidden="true"
-      />
-      {/* Tunnel vignette — intensifies on travel, sells the fly-through */}
-      <div
-        className="cine-tunnel absolute inset-0 z-[3] pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(circle at 50% 46%, transparent 22%, rgba(3,5,9,0.55) 62%, rgba(2,3,6,0.96) 100%)',
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Centre reticle — a faint aerospace crosshair we push through */}
-      <div
-        className="absolute inset-0 z-[4] pointer-events-none flex items-center justify-center"
+        className="cine-aperture absolute inset-0 z-[1]"
+        style={{ clipPath: 'inset(50% 0% 50% 0%)', opacity: 0 }}
         aria-hidden="true"
       >
+        <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+
+        {/* Readability ramp — light touch; the plate is already near-black */}
         <div
-          className="h-px w-[40vw]"
-          style={{ background: 'linear-gradient(90deg,transparent,rgba(0,174,239,0.28),transparent)' }}
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(ellipse 120% 90% at 55% 45%, transparent 42%, rgba(5,8,14,0.55) 100%)',
+          }}
         />
+        {/* Tunnel vignette — intensifies on travel, sells the push-in */}
         <div
-          className="absolute w-px h-[30vh]"
-          style={{ background: 'linear-gradient(180deg,transparent,rgba(0,174,239,0.18),transparent)' }}
+          className="cine-tunnel absolute inset-0 pointer-events-none"
+          style={{
+            opacity: 0,
+            background:
+              'radial-gradient(circle at 50% 48%, transparent 26%, rgba(3,5,9,0.5) 64%, rgba(2,3,6,0.94) 100%)',
+          }}
+        />
+        {/* Act-3 scrim — the machine recedes to a ghost so the closing
+            statement owns the frame (the film rests dead-centre, so centred
+            copy has nowhere else to go). */}
+        <div
+          className="cine-dim absolute inset-0 pointer-events-none"
+          style={{ opacity: 0, background: '#04070c' }}
         />
       </div>
 
-      {/* ─── Copy beats, all stacked centre-stage ─── */}
-      <div className="absolute inset-0 z-20 flex items-center justify-center px-6 text-center">
-        {/* Beat 1 — the promise */}
-        <div className="beat-1 absolute max-w-[860px]">
-          <div className="mb-6 flex items-center justify-center gap-3">
+      {/* ─── Copy beats ─── */}
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        {/* ACT 0/1 — the promise, which becomes the split */}
+        <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
+          <div className="w-full max-w-[1000px]">
+          <div className="cine-eyebrow mb-7 flex items-center justify-center gap-3">
             <div className="w-8 h-px bg-apex-blue" />
             <span className="text-apex-blue font-mono text-[9px] font-medium tracking-[0.34em] uppercase">
               Elite Sports Performance Technology
             </span>
             <div className="w-8 h-px bg-apex-blue" />
           </div>
+
           <h1
-            className="h-luxia leading-[0.94]"
+            className="relative h-luxia leading-[0.94]"
             style={{ fontSize: 'clamp(2.4rem, 6vw, 5.4rem)', letterSpacing: '0.045em' }}
           >
-            <span className="t-silver">TRAIN&nbsp;BEYOND</span>
-            <br />
-            <span className="t-red">HUMAN&nbsp;LIMITS</span>
+            <div className="split-top will-change-transform">
+              <span className="t-silver">TRAIN&nbsp;BEYOND</span>
+            </div>
+
+            {/* The seam the film opens out of, pinned to the split line */}
+            <div
+              className="cine-seam absolute left-1/2 top-1/2 h-px w-[46vw] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              style={{
+                opacity: 0,
+                background:
+                  'linear-gradient(90deg,transparent,rgba(0,174,239,0.75),rgba(214,31,38,0.55),transparent)',
+              }}
+              aria-hidden="true"
+            />
+
+            <div className="split-bot will-change-transform">
+              <span className="t-red">HUMAN&nbsp;LIMITS</span>
+            </div>
           </h1>
+          </div>
         </div>
 
-        {/* Beat 2 — telemetry HUD mid-travel */}
-        <div className="beat-2 absolute max-w-[900px] opacity-0">
-          <p className="font-mono text-[10px] tracking-[0.34em] uppercase text-apex-blue mb-5">
-            Adaptive Resistance Intelligence · Live
-          </p>
-          <div className="flex flex-wrap items-stretch justify-center gap-4 md:gap-8">
-            {[
-              { k: 'Force', v: '412', u: 'N' },
-              { k: 'Velocity', v: '9.6', u: 'm/s' },
-              { k: 'Response', v: '<2', u: 'ms' },
-              { k: 'Control', v: '100', u: '%' },
-            ].map((s) => (
-              <div
-                key={s.k}
-                className="min-w-[7.5rem] border border-apex-line/70 bg-black/30 px-5 py-4 backdrop-blur-sm"
-                style={{ borderRadius: 0 }}
-              >
-                <div className="font-mono text-[8px] tracking-[0.3em] uppercase text-apex-grey-dim mb-2">
-                  {s.k}
-                </div>
-                <div className="font-display font-black text-apex-white leading-none text-3xl md:text-4xl">
-                  {s.v}
-                  <span className="text-apex-blue text-base md:text-lg ml-1 align-top">{s.u}</span>
-                </div>
-              </div>
+        {/* ACT 2 — telemetry HUD mid-travel.
+            Flanked left/right rather than centred: the machine holds the middle
+            of frame for the whole clip, so the instrument readout lives in the
+            dark margins either side of it — and reads as an overlay ON the
+            machine rather than copy fighting it. */}
+        <div className="beat-2 absolute inset-0 opacity-0">
+          <div className="absolute left-[4.5%] top-1/2 -translate-y-1/2 flex flex-col items-end gap-9 text-right">
+            <div className="flex items-center gap-2">
+              <span
+                className="h-1.5 w-1.5 bg-apex-red"
+                style={{ animation: 'cta-glow-pulse 1.6s ease-in-out infinite' }}
+              />
+              <span className="font-mono text-[8px] tracking-[0.3em] uppercase text-apex-blue">
+                ARI · Live
+              </span>
+            </div>
+            {STATS.slice(0, 2).map((s) => (
+              <Stat key={s.k} {...s} align="right" />
             ))}
           </div>
-          <p
-            className="mt-7 font-display font-black text-apex-white leading-tight mx-auto max-w-[620px]"
-            style={{ fontSize: 'clamp(1rem, 1.6vw, 1.4rem)' }}
-          >
-            Every rep, measured. Every session, an{' '}
-            <span className="text-apex-blue">intelligence system</span>.
-          </p>
+          <div className="absolute right-[4.5%] top-1/2 -translate-y-1/2 flex flex-col items-start gap-9 text-left">
+            {STATS.slice(2).map((s) => (
+              <Stat key={s.k} {...s} align="left" />
+            ))}
+          </div>
         </div>
 
-        {/* Beat 3 — the resolve + CTA */}
-        <div className="beat-3 absolute max-w-[900px] opacity-0">
+        {/* ACT 3 — the resolve + CTA */}
+        <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
+        <div className="beat-3 max-w-[900px] opacity-0 pointer-events-auto">
           <h2
             className="h-luxia leading-[0.96] mb-8"
             style={{ fontSize: 'clamp(1.9rem, 4.4vw, 4rem)', letterSpacing: '0.04em' }}
@@ -297,6 +438,7 @@ function CinemaImpl() {
             </a>
           </div>
         </div>
+        </div>
       </div>
 
       {/* Scroll cue */}
@@ -314,15 +456,6 @@ function CinemaImpl() {
           />
         </div>
       </div>
-
-      {/* Loading veil until frames are decoded (kept minimal + on-brand) */}
-      {!ready && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center bg-apex-black">
-          <span className="font-mono text-[9px] tracking-[0.4em] uppercase text-apex-grey-dim animate-pulse">
-            Initialising
-          </span>
-        </div>
-      )}
     </section>
   )
 }
