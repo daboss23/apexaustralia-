@@ -79,67 +79,19 @@ const OTO_OVER = {
 
 const AU_STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT']
 
-/* Payment marks. Rendered as light tiles carrying each brand's own wordmark /
-   device, the way a real checkout badge row reads — recognisable at a glance
-   instead of the mono text chips they replace. */
-function PayMark({ brand }: { brand: string }) {
-  const tile =
-    'flex items-center justify-center h-[26px] min-w-[46px] px-2 bg-[#F5F7FA] border border-apex-line/40'
+/* Payment marks. Real brand card badges served from public/checkout/badges —
+   Visa, Mastercard, Amex and PayPal are the official artwork (payment-icons,
+   MPL-2.0, licence kept alongside them); Apple Pay and Afterpay are drawn to
+   match the same 750×471 card format so the row stays even. */
+const PAY_MARKS = [
+  { id: 'visa', label: 'Visa' },
+  { id: 'mastercard', label: 'Mastercard' },
+  { id: 'amex', label: 'American Express' },
+  { id: 'paypal', label: 'PayPal' },
+  { id: 'afterpay', label: 'Afterpay' },
+  { id: 'applepay', label: 'Apple Pay' },
+]
 
-  switch (brand) {
-    case 'visa':
-      return (
-        <span className={tile} aria-label="Visa">
-          <span className="font-display font-black italic text-[13px] leading-none tracking-tight" style={{ color: '#1A1F71' }}>
-            VISA
-          </span>
-        </span>
-      )
-    case 'mastercard':
-      return (
-        <span className={tile} aria-label="Mastercard">
-          <svg width="30" height="19" viewBox="0 0 30 19" aria-hidden="true">
-            <circle cx="11" cy="9.5" r="7.5" fill="#EB001B" />
-            <circle cx="19" cy="9.5" r="7.5" fill="#F79E1B" fillOpacity="0.9" />
-          </svg>
-        </span>
-      )
-    case 'amex':
-      return (
-        <span className={`${tile} !bg-[#2E77BC] !border-[#2E77BC]`} aria-label="American Express">
-          <span className="font-display font-black text-[10px] leading-none tracking-[0.06em] text-white">AMEX</span>
-        </span>
-      )
-    case 'paypal':
-      return (
-        <span className={tile} aria-label="PayPal">
-          <span className="font-display font-black italic text-[11px] leading-none">
-            <span style={{ color: '#003087' }}>Pay</span>
-            <span style={{ color: '#009CDE' }}>Pal</span>
-          </span>
-        </span>
-      )
-    case 'afterpay':
-      return (
-        <span className={`${tile} !bg-[#B2FCE4] !border-[#B2FCE4]`} aria-label="Afterpay">
-          <span className="font-display font-black text-[10px] leading-none tracking-tight text-black">afterpay</span>
-        </span>
-      )
-    case 'applepay':
-      return (
-        <span className={`${tile} !bg-black !border-apex-line/60`} aria-label="Apple Pay">
-          <svg width="11" height="13" viewBox="0 0 14 17" fill="#fff" aria-hidden="true" className="mr-1">
-            <path d="M11.2 8.9c0-1.9 1.5-2.8 1.6-2.9-.9-1.3-2.2-1.4-2.7-1.5-1.2-.1-2.3.7-2.9.7-.6 0-1.5-.7-2.5-.7-1.3 0-2.5.7-3.1 1.9C.3 8.9 1.2 12.3 2.5 14.2c.6.9 1.4 1.9 2.4 1.9.9 0 1.3-.6 2.4-.6s1.4.6 2.4.6 1.7-.9 2.3-1.8c.7-1 1-2 1-2.1 0 0-2-.8-2-3.3ZM9.4 3.3c.5-.6.9-1.5.8-2.4-.8 0-1.7.5-2.3 1.2-.5.6-.9 1.5-.8 2.4.9.1 1.8-.5 2.3-1.2Z" />
-          </svg>
-          <span className="font-display font-semibold text-[10px] leading-none text-white">Pay</span>
-        </span>
-      )
-    default:
-      return null
-  }
-}
-
-const PAY_MARKS = ['visa', 'mastercard', 'amex', 'paypal', 'afterpay', 'applepay']
 
 /* ── Small building blocks ─────────────────────────────────────────────────── */
 
@@ -395,7 +347,13 @@ function TrustBadges() {
 
       <div className="flex flex-wrap items-center justify-center gap-1.5 px-3 py-3 border-t border-apex-line/40">
         {PAY_MARKS.map((m) => (
-          <PayMark key={m} brand={m} />
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            key={m.id}
+            src={`/checkout/badges/${m.id}.svg`}
+            alt={m.label}
+            className="h-[30px] w-[48px] object-contain"
+          />
         ))}
       </div>
     </div>
