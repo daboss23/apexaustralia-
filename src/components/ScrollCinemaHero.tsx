@@ -5,6 +5,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import Hero from './Hero'
+import Lightning from './ui/Lightning'
 import { DEMO_HREF } from '@/lib/site'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
@@ -12,7 +13,8 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 // ─── Scroll-cinema hero ───────────────────────────────────────────────────────
 // A pinned, scroll-scrubbed cinematic banner staged in four acts:
 //
-//   ACT 0  HOLD    black frame, the headline alone — no film, no motion.
+//   ACT 0  HOLD    black frame, the headline alone, a bolt of electricity
+//                  running behind it — no film yet.
 //   ACT 1  SPLIT   the headline parts (TRAIN BEYOND ↑ / HUMAN LIMITS ↓) and the
 //                  film opens out of the seam between them (clip-path aperture
 //                  + fade), so the video is literally revealed BY the split.
@@ -160,6 +162,8 @@ const MOBILE: CinemaConfig = {
 const ZOOM_START = 0.34
 const ZOOM_OPEN = 1.0
 const ZOOM_END = 1.1
+// Carried on through the closing act — see the tail note in the timeline.
+const ZOOM_TAIL = 1.17
 
 // ── ACT SCRUB — where the scroll budget is spent ─────────────────────────────
 // Fractions of the sequence, and the share of the pinned scroll each act gets.
@@ -175,6 +179,15 @@ const ZOOM_END = 1.1
 //
 // Expressed as ratios so the mobile sequence — half the frames, same cut — lands
 // its act boundaries on exactly the same moments of the film.
+// How long Act 0 holds before anything moves, as a fraction of the pinned
+// scroll. ~215px on desktop's 4800px pin: the second wheel notch. See the map
+// below — this number has been tuned from both directions.
+const HOLD = 0.045
+
+// Progress past which the bolt's shader is switched off. It is fully faded by
+// ~0.16; the margin is so a small scroll back up does not strobe it.
+const BOLT_OFF = 0.2
+
 const ACT_OPEN_END = 59 / 318
 const ACT_INNER_END = 185 / 318
 const ACT_TUNNEL_END = 227 / 318
@@ -182,14 +195,19 @@ const ACT_TUNNEL_END = 227 / 318
 // ── Where the cut's content sits, as scroll progress ─────────────────────────
 // The film scrubs 0.10 → 0.97, act by act (see ACT SCRUB above):
 //
-//   0–0.10     ACT 0 holds. Black, the brand mark, the headline whole. ~480px of
-//              scroll where nothing moves but the page, and it is the reason the
-//              split lands as an event rather than as something that was already
-//              happening when you arrived. It was once cut to 0.03 to make the
-//              hero answer the first wheel notch; that bought responsiveness and
-//              spent the opening. The hold is the opening — keep it. If it ever
-//              needs to feel quicker, take it to 0.07, not to zero.
-//   0.10–0.40  the machine on pure black — deep down the lens, travelling in and
+//   0–HOLD     ACT 0 holds: black, the brand mark, the headline whole, the bolt
+//              running behind it. Nothing else moves.
+//
+//              HOLD is the one number that decides whether the opening reads as
+//              composed or as broken, and it has been wrong in both directions.
+//              At 0.10 (480px, five wheel notches) the page felt dead on
+//              arrival; cut to 0.03 the split was already underway before you
+//              had seen the headline. It is now 0.045 — about 215px, so the
+//              type parts on the SECOND notch — and the reason that can be this
+//              short without feeling abrupt is that Act 0 is no longer still:
+//              the bolt is alive from the first pixel, so the hold reads as a
+//              charge rather than as a stall.
+//   HOLD–0.40  the machine on pure black — deep down the lens, travelling in and
 //              turning, then ✦ THE PANELS OPEN and the internals light. This is
 //              the hero shot and it owns a third of the scroll; the headline
 //              halves clear at 0.26 so nothing sits on top of the opening.
@@ -414,6 +432,11 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imagesRef = useRef<HTMLImageElement[]>([])
   const [ready, setReady] = useState(false)
+  // The bolt only exists in Act 0. Past the split it is fully faded out, and a
+  // full-screen ten-octave noise shader nobody can see is pure heat — so the
+  // render loop stops rather than being drawn under an opacity of 0.
+  const [boltLive, setBoltLive] = useState(true)
+  const boltLiveRef = useRef(true)
 
   // Mutable render state the scroll timeline drives; the draw loop reads it.
   const render = useRef({ frame: 0, scale: ZOOM_START }).current
@@ -662,6 +685,16 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
           pin: true,
           scrub: cfg.scrub,
           invalidateOnRefresh: true,
+          // Stop the bolt's shader once it is off screen, and start it again on
+          // the way back up. Flipped through a ref so this only calls setState
+          // on the crossing, not on every scroll frame.
+          onUpdate: (self) => {
+            const live = self.progress < BOLT_OFF
+            if (live !== boltLiveRef.current) {
+              boltLiveRef.current = live
+              setBoltLive(live)
+            }
+          },
         },
       })
 
@@ -670,22 +703,60 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // shot gets a third of the scroll instead of a fifth. Each leg is still
       // linear (ease 'none' from defaults) — the rate changes only at the act
       // boundaries, which fall on cuts, so no leg visibly speeds up mid-shot.
-      tl.to(render, { frame: f(ACT_OPEN_END), duration: 0.3 }, 0.1)
+      tl.to(render, { frame: f(ACT_OPEN_END), duration: 0.3 + (0.1 - HOLD) }, HOLD)
       tl.to(render, { frame: f(ACT_INNER_END), duration: 0.23 }, 0.4)
       tl.to(render, { frame: f(ACT_TUNNEL_END), duration: 0.09 }, 0.63)
-      tl.to(render, { frame: last, duration: 0.25 }, 0.72)
+      // Runs to 1.0, not to 0.97. The footage ends with the athlete still
+      // half in frame (it was trimmed there), so parking the last frame three
+      // per cent early left a visible freeze at the bottom of the pin — the
+      // sprint stopping dead under the CTAs. Scrubbing to the very end means
+      // the film is still moving as you reach the release, and the still frame
+      // only exists once the hero unpins and leaves. The real fix is footage
+      // that lets him run out of frame; see docs/motion-scroll-brief.md §2.
+      tl.to(render, { frame: last, duration: 0.28 }, 0.72)
 
       // The machine flies in from deep in the lens and lands at full frame just
       // as the panels open; the rest is the slow push across the travel.
       // 'in', not 'out' — the machine must HOLD its distance while the headline
       // is still on screen and only close the gap at the end of the act. An
       // 'out' ease front-loads the travel and it arrives on top of the type.
-      tl.to(render, { scale: ZOOM_OPEN, ease: 'power2.in', duration: 0.3 }, 0.1)
+      tl.to(render, { scale: ZOOM_OPEN, ease: 'power2.in', duration: 0.3 + (0.1 - HOLD) }, HOLD)
       tl.to(render, { scale: ZOOM_END, duration: 0.57 }, 0.4)
+      // A last whisper of push across the close, so the resolve keeps breathing
+      // even on the frames where the footage itself has almost stopped moving.
+      tl.to(render, { scale: ZOOM_TAIL, duration: 0.28 }, 0.72)
+
+      // ── ACT 0 — the charge ───────────────────────────────────────────────────
+      // The bolt is at full strength for the hold, then travels UP and out as
+      // the headline parts — the charge leaving with the type rather than
+      // simply switching off. It clears well before the film's aperture is
+      // open, so the two never overlap on screen.
+      // Fades UP on arrival rather than being switched on: the static export
+      // paints a black plate with no bolt in it (see OpeningStill), so without
+      // this the charge would pop into existence the moment the frames finish
+      // decoding. `immediateRender: false` on the scrub tween below is what
+      // lets this one own the opacity until the split actually starts.
+      gsap.fromTo(
+        '.cine-bolt',
+        { opacity: 0 },
+        { opacity: 0.55, duration: 1.1, ease: 'power1.out' },
+      )
+      tl.fromTo(
+        '.cine-bolt',
+        { opacity: 0.55, y: 0 },
+        {
+          opacity: 0,
+          y: () => -window.innerHeight * 0.3,
+          ease: 'power1.in',
+          duration: 0.11,
+          immediateRender: false,
+        },
+        HOLD,
+      )
 
       // ── ACT 1 — the split ────────────────────────────────────────────────────
       // Logo and eyebrow clear first so the words are alone as they part.
-      tl.to('.cine-logo, .cine-eyebrow', { opacity: 0, y: -18, duration: 0.06 }, 0.07)
+      tl.to('.cine-logo, .cine-eyebrow', { opacity: 0, y: -18, duration: 0.05 }, HOLD - 0.02)
 
       // The two halves travel apart, tracking wider as they go — the type reads
       // as being pulled open rather than simply moved.
@@ -697,12 +768,12 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       tl.to(
         '.split-top',
         { y: () => -travel(), letterSpacing: '0.13em', ease: 'power2.out', duration: 0.26 },
-        0.1,
+        HOLD,
       )
       tl.to(
         '.split-bot',
         { y: () => travel(), letterSpacing: '0.13em', ease: 'power2.out', duration: 0.26 },
-        0.1,
+        HOLD,
       )
 
       // The seam: a blue hairline that opens across the gap, then dims away.
@@ -710,9 +781,9 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
         '.cine-seam',
         { scaleX: 0, opacity: 0 },
         { scaleX: 1, opacity: 1, ease: 'power2.out', duration: 0.15 },
-        0.1,
+        HOLD,
       )
-      tl.to('.cine-seam', { opacity: 0, duration: 0.11 }, 0.27)
+      tl.to('.cine-seam', { opacity: 0, duration: 0.11 }, 0.24)
 
       // The film opens out of the seam — aperture unclips vertically as it fades
       // up, so the video is revealed *by* the headline splitting.
@@ -725,11 +796,11 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
           ease: 'power2.out',
           duration: 0.26,
         },
-        0.1,
+        HOLD,
       )
 
       // Scroll cue clears as the split begins.
-      tl.to('.cine-cue', { opacity: 0, duration: 0.05 }, 0.08)
+      tl.to('.cine-cue', { opacity: 0, duration: 0.05 }, HOLD - 0.015)
 
       // ── ACT 2 — travel ───────────────────────────────────────────────────────
       // Tunnel vignette breathes in over the fly-through, then eases back for the
@@ -774,7 +845,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // ── The lighting cue ─────────────────────────────────────────────────────
       // `.cine-dim` lifts under each copy beat and drops between them, so the
       // film plays at full strength exactly when nothing is written over it.
-      tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.1 }, 0.1) // machine far back — barely needed
+      tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.1 }, HOLD) // machine far back — barely needed
       tl.to('.cine-dim', { opacity: 0.04, ease: 'power1.inOut', duration: 0.07 }, 0.28) // ✦ the box opens — clear
       tl.to('.cine-dim', { opacity: 0.46, ease: 'power1.inOut', duration: 0.07 }, 0.46) // telemetry
       tl.to('.cine-dim', { opacity: 0.1, ease: 'power1.inOut', duration: 0.07 }, 0.62) // tunnel — clear
@@ -796,6 +867,45 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       id="hero"
       className="relative h-[100svh] w-full overflow-hidden bg-apex-black"
     >
+      {/* ─── ACT 0's charge — the bolt behind the type ─────────────────────
+          A WebGL bolt (src/components/ui/Lightning.tsx) keyed to the brand
+          blue, running behind the logo and headline while the screen is still
+          black, then travelling up and fading out as the split begins. It is
+          Act 0's only motion, which is the whole point: the opening holds for
+          two wheel notches before the film moves, and a dead-still black
+          screen for that long reads as a page that hasn't loaded.
+
+          Below the aperture (z-0 against z-[1]) so the film always covers it,
+          and `screen` blended so the shader's black plate composites to exactly
+          the page background rather than sitting there as a dark rectangle —
+          the same rule as the floating product films (see CLAUDE.md).
+
+          Masked at the edges: at full bleed it lit the navbar and drew the eye
+          to the corners of the screen instead of to the words. */}
+      <div
+        className="cine-bolt absolute inset-0 z-0 pointer-events-none"
+        style={{
+          opacity: 0,
+          mixBlendMode: 'screen',
+          WebkitMaskImage:
+            'radial-gradient(ellipse 78% 62% at 50% 46%, rgba(0,0,0,1) 24%, rgba(0,0,0,0) 100%)',
+          maskImage:
+            'radial-gradient(ellipse 78% 62% at 50% 46%, rgba(0,0,0,1) 24%, rgba(0,0,0,0) 100%)',
+        }}
+        aria-hidden="true"
+      >
+        <Lightning
+          hue={196}
+          xOffset={0}
+          speed={phone ? 0.9 : 1.1}
+          intensity={0.55}
+          size={phone ? 1.7 : 2.2}
+          paused={!boltLive}
+          resolutionCap={phone ? 460 : 700}
+          className="h-full w-full"
+        />
+      </div>
+
       {/* ─── The film, inside the aperture that the headline split opens ─── */}
       <div
         className="cine-aperture absolute inset-0 z-[1]"

@@ -4,6 +4,16 @@ This is the production brief for the **pinned, scroll-scrubbed hero** built in
 `src/components/ScrollCinemaHero.tsx`. It tells you exactly what footage to
 generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
+> **⚠ The next cut must let the athlete run OUT of frame.** The current
+> generation ends with the sprinter still half in shot — his trailing leg is
+> mid-stride at the frame edge on the last frame — so however the scrub is
+> timed, the shot ends on a body frozen in motion. The film now scrubs to the
+> very end of the pin (rather than parking at 0.97) so the freeze coincides with
+> the hero releasing, which hides it; it does not fix it. When re-generating,
+> ask for **~1.5–2s of tail after the athlete clears frame**, camera holding on
+> the machine on the empty track. That gives the closing act something to rest
+> on and the CTAs a still, composed frame to land against.
+>
 > **Current footage:** `public/apex-hero-cinema.mp4` (22.7s, 30fps) — a single
 > continuous Seedance 2.0 generation delivered at 2560×1440, unmodified, tail-trimmed at 22.7s, extracted at `fps=14`, `scale=1600` (lanczos, no
 > unsharp) → **318 frames at 1600×900, 22 MB**.
