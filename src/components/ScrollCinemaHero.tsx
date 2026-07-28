@@ -67,9 +67,13 @@ const ACT_TUNNEL_END = 227
 const SPLIT_TRAVEL = 0.34
 
 // ── Where the cut's content sits, as scroll progress ─────────────────────────
-// The film scrubs 0.10 → 0.97, act by act (see ACT SCRUB above):
+// The film scrubs 0.03 → 0.97, act by act (see ACT SCRUB above):
 //
-//   0.10–0.40  the machine on pure black — deep down the lens, travelling in and
+//   0.03       the split starts almost immediately. It used to wait until 0.10
+//              — 480px, five-odd wheel notches of nothing before the headline
+//              budged, which read as the page being broken. 0.03 is ~144px, so
+//              it is moving by the second notch.
+//   0.03–0.40  the machine on pure black — deep down the lens, travelling in and
 //              turning, then ✦ THE PANELS OPEN and the internals light. This is
 //              the hero shot and it owns a third of the scroll; the headline
 //              halves clear at 0.26 so nothing sits on top of the opening.
@@ -233,7 +237,7 @@ function CinemaImpl() {
       // shot gets a third of the scroll instead of a fifth. Each leg is still
       // linear (ease 'none' from defaults) — the rate changes only at the act
       // boundaries, which fall on cuts, so no leg visibly speeds up mid-shot.
-      tl.to(render, { frame: ACT_OPEN_END, duration: 0.3 }, 0.1)
+      tl.to(render, { frame: ACT_OPEN_END, duration: 0.37 }, 0.03)
       tl.to(render, { frame: ACT_INNER_END, duration: 0.23 }, 0.4)
       tl.to(render, { frame: ACT_TUNNEL_END, duration: 0.09 }, 0.63)
       tl.to(render, { frame: FRAME_COUNT - 1, duration: 0.25 }, 0.72)
@@ -243,34 +247,39 @@ function CinemaImpl() {
       // 'in', not 'out' — the machine must HOLD its distance while the headline
       // is still on screen and only close the gap at the end of the act. An
       // 'out' ease front-loads the travel and it arrives on top of the type.
-      tl.to(render, { scale: ZOOM_OPEN, ease: 'power2.in', duration: 0.3 }, 0.1)
+      tl.to(render, { scale: ZOOM_OPEN, ease: 'power2.in', duration: 0.37 }, 0.03)
       tl.to(render, { scale: ZOOM_END, duration: 0.57 }, 0.4)
 
       // ── ACT 1 — the split ────────────────────────────────────────────────────
       // Eyebrow clears first so the words are alone as they part.
-      tl.to('.cine-eyebrow', { opacity: 0, y: -18, duration: 0.07 }, 0.06)
+      tl.to('.cine-eyebrow', { opacity: 0, y: -18, duration: 0.04 }, 0.01)
 
       // The two halves travel apart, tracking wider as they go — the type reads
       // as being pulled open rather than simply moved.
+      //
+      // 'out', not 'inOut': an inOut ease leaves the split at near-zero velocity
+      // for its first several percent, so even starting at 0.03 the words still
+      // crept and the page read as unresponsive. An out-ease breaks them apart on
+      // contact and settles into the travel.
       tl.to(
         '.split-top',
-        { y: () => -travel(), letterSpacing: '0.13em', ease: 'power2.inOut', duration: 0.26 },
-        0.1,
+        { y: () => -travel(), letterSpacing: '0.13em', ease: 'power2.out', duration: 0.23 },
+        0.03,
       )
       tl.to(
         '.split-bot',
-        { y: () => travel(), letterSpacing: '0.13em', ease: 'power2.inOut', duration: 0.26 },
-        0.1,
+        { y: () => travel(), letterSpacing: '0.13em', ease: 'power2.out', duration: 0.23 },
+        0.03,
       )
 
       // The seam: a blue hairline that opens across the gap, then dims away.
       tl.fromTo(
         '.cine-seam',
         { scaleX: 0, opacity: 0 },
-        { scaleX: 1, opacity: 1, ease: 'power2.out', duration: 0.15 },
-        0.1,
+        { scaleX: 1, opacity: 1, ease: 'power2.out', duration: 0.13 },
+        0.03,
       )
-      tl.to('.cine-seam', { opacity: 0, duration: 0.11 }, 0.27)
+      tl.to('.cine-seam', { opacity: 0, duration: 0.09 }, 0.19)
 
       // The film opens out of the seam — aperture unclips vertically as it fades
       // up, so the video is revealed *by* the headline splitting.
@@ -280,14 +289,14 @@ function CinemaImpl() {
         {
           clipPath: 'inset(0% 0% 0% 0%)',
           opacity: 1,
-          ease: 'power2.inOut',
-          duration: 0.26,
+          ease: 'power2.out',
+          duration: 0.23,
         },
-        0.1,
+        0.03,
       )
 
       // Scroll cue clears the instant the split begins.
-      tl.to('.cine-cue', { opacity: 0, duration: 0.05 }, 0.08)
+      tl.to('.cine-cue', { opacity: 0, duration: 0.04 }, 0.015)
 
       // ── ACT 2 — travel ───────────────────────────────────────────────────────
       // Tunnel vignette breathes in over the fly-through, then eases back for the
@@ -332,7 +341,7 @@ function CinemaImpl() {
       // ── The lighting cue ─────────────────────────────────────────────────────
       // `.cine-dim` lifts under each copy beat and drops between them, so the
       // film plays at full strength exactly when nothing is written over it.
-      tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.1 }, 0.1) // machine far back — barely needed
+      tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.1 }, 0.03) // machine far back — barely needed
       tl.to('.cine-dim', { opacity: 0.04, ease: 'power1.inOut', duration: 0.07 }, 0.28) // ✦ the box opens — clear
       tl.to('.cine-dim', { opacity: 0.46, ease: 'power1.inOut', duration: 0.07 }, 0.46) // telemetry
       tl.to('.cine-dim', { opacity: 0.1, ease: 'power1.inOut', duration: 0.07 }, 0.62) // tunnel — clear

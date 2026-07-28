@@ -263,7 +263,8 @@ export default function PerformanceSection() {
         >
           <video
             className="absolute inset-0 w-full h-full object-cover"
-            src="/athlete-intro.mp4"
+            src="/athlete-holograms.mp4"
+            poster="/athlete-holograms-poster.jpg"
             autoPlay
             loop
             muted
