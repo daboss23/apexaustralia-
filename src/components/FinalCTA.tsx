@@ -248,7 +248,7 @@ export default function FinalCTA() {
           {['Privacy', 'Terms', 'Contact'].map(label => (
             <button
               key={label}
-              className="px-3 py-2.5 text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider cursor-pointer uppercase"
+              className="px-3 py-3.5 text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider cursor-pointer uppercase"
             >
               {label}
             </button>

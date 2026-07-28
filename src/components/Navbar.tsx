@@ -52,8 +52,15 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Scroll progress rail */}
-      <div className="fixed top-0 left-0 right-0 h-[2px] z-[200] bg-apex-line/40">
+      {/* ── Stacking order for the whole site ───────────────────────────────
+          120  mobile CTA bar
+          140  mobile menu sheet — deliberately UNDER the navbar so the close
+               button stays on top of it and reachable
+          150  navbar
+          155  this progress rail (just clear of the navbar)
+          180  checkout popup      ┐ portalled to <body>; both must sit above
+          190  gallery lightbox    ┘ the navbar or it draws over them          */}
+      <div className="fixed top-0 left-0 right-0 h-[2px] z-[155] bg-apex-line/40">
         <motion.div
           className="h-full bg-gradient-to-r from-apex-red to-apex-red-bright"
           style={{ width: progressWidth }}
@@ -78,7 +85,7 @@ export default function Navbar() {
             fades into the corner once you scroll past the hero */}
         <a
           href="#hero"
-          className="flex-shrink-0 transition-opacity duration-500"
+          className="flex-shrink-0 -my-1.5 py-1.5 pr-3 transition-opacity duration-500"
           style={{
             opacity: scrolled || mobileOpen ? 1 : 0,
             pointerEvents: scrolled || mobileOpen ? 'auto' : 'none',

@@ -264,7 +264,8 @@ export default function ComparisonSection() {
             You&apos;re not choosing between products — you&apos;re choosing whether to{' '}
             <span className="text-apex-blue">measure, or keep guessing.</span>
           </h3>
-          <button
+          <a
+            href="#order"
             className="flex-shrink-0 inline-flex items-center gap-2.5 cta-glow text-white font-display font-bold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
             style={{ borderRadius: 8 }}
           >
@@ -272,7 +273,7 @@ export default function ComparisonSection() {
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
-          </button>
+          </a>
         </motion.div>
       </div>
     </section>

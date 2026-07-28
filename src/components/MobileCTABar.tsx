@@ -44,7 +44,7 @@ export default function MobileCTABar() {
 
   return (
     <div
-      className={`md:hidden fixed bottom-0 left-0 right-0 z-[130] transition-transform duration-300 ease-out ${
+      className={`md:hidden fixed bottom-0 left-0 right-0 z-[120] transition-transform duration-300 ease-out ${
         visible ? 'translate-y-0' : 'translate-y-full'
       }`}
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}

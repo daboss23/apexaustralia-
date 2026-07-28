@@ -278,7 +278,11 @@ function Gallery({ variant }: { variant: Variant }) {
           <button
             onClick={(e) => { e.stopPropagation(); setLightbox(true) }}
             aria-label="Enlarge image"
-            className="absolute bottom-4 left-4 z-10 w-9 h-9 flex items-center justify-center bg-black/55 backdrop-blur-sm border border-apex-line/60 text-apex-white opacity-0 group-hover:opacity-100 hover:border-apex-red/60 transition-all duration-300 cursor-pointer"
+            /* Visible by default, hover-revealed only from md up. It was
+               opacity-0 until hover — and a phone never hovers, so the one
+               control that opens the full-size product shots was invisible on
+               every touch device. */
+            className="absolute bottom-4 left-4 z-10 w-10 h-10 flex items-center justify-center bg-black/55 backdrop-blur-sm border border-apex-line/60 text-apex-white opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:border-apex-red/60 transition-all duration-300 cursor-pointer"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 8.25V3.75h4.5M15.75 3.75h4.5v4.5M20.25 15.75v4.5h-4.5M8.25 20.25h-4.5v-4.5" />
@@ -329,7 +333,9 @@ function Gallery({ variant }: { variant: Variant }) {
       <AnimatePresence>
         {lightbox && (
           <motion.div
-            className="fixed inset-0 z-[140] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 sm:p-8"
+            /* Topmost: the lightbox can be opened from inside the checkout
+               popup, so it has to clear both that (180) and the navbar (150). */
+            className="fixed inset-0 z-[190] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 sm:p-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -736,7 +742,10 @@ export default function CheckoutSection() {
           <AnimatePresence>
             {cartOpen && (
           <motion.div
-            className="fixed inset-0 z-[130] overflow-y-auto overscroll-contain bg-black/90 backdrop-blur-md"
+            /* Above the navbar (150), not below it. At z-130 the fixed navbar
+               drew straight over the top of the popup — on a phone that is the
+               popup's own header and close button hidden behind the site nav. */
+            className="fixed inset-0 z-[180] overflow-y-auto overscroll-contain bg-black/90 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

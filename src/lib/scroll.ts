@@ -33,7 +33,15 @@ export function navOffset() {
   return Number.isFinite(n) ? n : 56
 }
 
-/** Smoothly move the page to an element / selector, clearing the navbar. */
+/**
+ * Smoothly move the page to an element / selector, clearing the navbar.
+ *
+ * Lenis reads the target's `scroll-margin-top` itself, so the navbar clearance
+ * set in globals.css is already applied on that path — passing `navOffset()` as
+ * well double-counted it and every section landed a nav-height too low. The
+ * native fallback does *not* honour scroll-margin, so it still needs the offset
+ * applied by hand.
+ */
 export function scrollToTarget(target: string | HTMLElement) {
   const el =
     typeof target === 'string'
@@ -41,13 +49,12 @@ export function scrollToTarget(target: string | HTMLElement) {
       : target
   if (!el) return false
 
-  const offset = -navOffset()
   if (lenis) {
-    lenis.scrollTo(el, { offset, duration: 1.15 })
+    lenis.scrollTo(el, { duration: 1.15 })
   } else {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const top = el.getBoundingClientRect().top + window.scrollY + offset
-    window.scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' })
+    const top = el.getBoundingClientRect().top + window.scrollY - navOffset() - 12
+    window.scrollTo({ top: Math.max(0, top), behavior: reduced ? 'auto' : 'smooth' })
   }
   return true
 }
@@ -93,5 +100,13 @@ export function unlockScroll() {
   body.style.width = ''
   body.style.overflow = ''
   window.scrollTo(0, savedY)
+
+  // Lenis has to be told what just happened. While the body was fixed the
+  // document collapsed to one viewport, so Lenis's cached scroll limit went to
+  // ~0 and its internal position drifted to the top. Starting it again without
+  // resyncing meant the next `scrollTo` clamped against a stale limit and threw
+  // the page to 0 — which is what closing the menu on a link used to do.
+  lenis?.resize()
+  lenis?.scrollTo(savedY, { immediate: true, force: true })
   lenis?.start()
 }

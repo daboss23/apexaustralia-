@@ -70,7 +70,8 @@ export default function FAQSection() {
               Australia is handled by someone with real performance experience.
             </p>
             <div className="flex flex-col gap-3">
-              <button
+              <a
+                href="#order"
                 className="inline-flex items-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(214,31,38,0.55)] hover:-translate-y-0.5"
                 style={{ borderRadius: 0 }}
               >
@@ -78,13 +79,14 @@ export default function FAQSection() {
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
-              </button>
-              <button
-                className="inline-flex items-center gap-2 border border-apex-line hover:border-apex-grey/40 text-apex-grey hover:text-apex-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
+              </a>
+              <a
+                href="#order"
+                className="inline-flex items-center justify-center gap-2 border border-apex-line hover:border-apex-grey/40 text-apex-grey hover:text-apex-white font-display font-bold text-[11px] px-6 py-3.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
                 style={{ borderRadius: 0 }}
               >
                 Enquire Now
-              </button>
+              </a>
             </div>
           </motion.div>
 

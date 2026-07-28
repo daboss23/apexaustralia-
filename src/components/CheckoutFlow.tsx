@@ -128,6 +128,10 @@ function Field({
       >
         {label}
       </label>
+      {/* 16px on phones, 14px from sm up. Not a taste call: iOS Safari zooms the
+          whole page in whenever you focus a field under 16px, and it does not
+          zoom back out — so every checkout field left the visitor stranded at
+          1.4x with the form running off the side of the screen. */}
       <input
         id={name}
         name={name}
@@ -140,7 +144,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={!!error}
         aria-describedby={error ? `${name}-error` : undefined}
-        className={`w-full bg-apex-black-2/80 border px-3.5 py-3 font-body text-[14px] text-apex-white placeholder:text-apex-grey-dim/60 outline-none transition-colors duration-200 focus:border-apex-blue ${
+        className={`w-full bg-apex-black-2/80 border px-3.5 py-3 font-body text-[16px] sm:text-[14px] text-apex-white placeholder:text-apex-grey-dim/60 outline-none transition-colors duration-200 focus:border-apex-blue ${
           error ? 'border-apex-red' : 'border-apex-line/70 hover:border-apex-line'
         }`}
         style={{ borderRadius: 0 }}
@@ -185,7 +189,7 @@ function SelectField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={!!error}
-        className={`w-full bg-apex-black-2/80 border px-3.5 py-3 font-body text-[14px] text-apex-white outline-none transition-colors duration-200 focus:border-apex-blue cursor-pointer ${
+        className={`w-full bg-apex-black-2/80 border px-3.5 py-3 font-body text-[16px] sm:text-[14px] text-apex-white outline-none transition-colors duration-200 focus:border-apex-blue cursor-pointer ${
           error ? 'border-apex-red' : 'border-apex-line/70 hover:border-apex-line'
         }`}
         style={{ borderRadius: 0 }}
