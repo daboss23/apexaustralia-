@@ -222,18 +222,19 @@ export default function PerformanceSection() {
         {/* Section label */}
         <motion.div
           ref={titleRef}
-          className="flex items-center gap-3 mb-6"
-          initial={{ opacity: 0, x: -20 }}
+          className="flex items-center justify-center gap-3 mb-6"
+          initial={{ opacity: 0, y: -10 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.5 }}
         >
           <div className="w-8 h-px bg-apex-blue" />
           <span className="text-apex-blue font-mono text-[10px] tracking-[0.3em] uppercase font-medium">02 — Performance In Motion</span>
+          <div className="w-8 h-px bg-apex-blue" />
         </motion.div>
 
         {/* Title */}
         <motion.h2
-          className="h-luxia t-silver mb-4 leading-[0.9]"
+          className="h-luxia t-silver mb-4 leading-[0.9] text-center"
           style={{ fontSize: 'clamp(2.1rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -244,7 +245,7 @@ export default function PerformanceSection() {
         </motion.h2>
 
         <motion.p
-          className="text-apex-grey font-body max-w-xl mb-10 md:mb-16 leading-relaxed"
+          className="text-apex-grey font-body max-w-xl mx-auto text-center mb-10 md:mb-16 leading-relaxed"
           style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1.05rem)' }}
           initial={{ opacity: 0, y: 18 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -256,7 +257,6 @@ export default function PerformanceSection() {
         {/* Cinematic product film */}
         <motion.div
           className="relative mb-12 md:mb-20 overflow-hidden aspect-video"
-          style={{ border: '1px solid rgba(214,31,38,0.22)', borderTop: '2px solid #D61F26' }}
           initial={{ opacity: 0, y: 26 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
@@ -281,21 +281,18 @@ export default function PerformanceSection() {
             <div className="w-1.5 h-1.5 rounded-full bg-apex-blue animate-pulse" />
             <span className="text-[9px] font-mono tracking-[0.28em] uppercase text-apex-white/90">T-APEX // In Motion</span>
           </div>
-          {/* Corner reticles */}
-          <svg className="absolute top-3 right-3 pointer-events-none" width="9" height="9" viewBox="0 0 9 9" aria-hidden="true"><path d="M0 0 L9 0 L9 9" fill="none" stroke="#D61F26" strokeWidth="1.2" opacity="0.6" /></svg>
-          <svg className="absolute bottom-3 left-3 pointer-events-none" width="9" height="9" viewBox="0 0 9 9" aria-hidden="true"><path d="M0 0 L0 9 L9 9" fill="none" stroke="#D61F26" strokeWidth="1.2" opacity="0.6" /></svg>
         </motion.div>
 
         {/* Headline metrics — editorial asymmetric layout */}
-        <div ref={metricsRef} className="flex flex-col lg:flex-row gap-8 lg:gap-14 mb-12 md:mb-20 pb-12 md:pb-20 border-b border-apex-line/40 items-start lg:items-center">
+        <div ref={metricsRef} className="flex flex-col lg:flex-row gap-8 lg:gap-14 mb-12 md:mb-20 pb-12 md:pb-20 border-b border-apex-line/40 items-center justify-center">
           {/* Primary stat: oversized editorial anchor */}
           <motion.div
-            className="flex-shrink-0"
-            initial={{ opacity: 0, x: -24 }}
+            className="flex-shrink-0 text-center lg:text-left"
+            initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="flex items-baseline leading-none">
+            <div className="flex items-baseline leading-none justify-center lg:justify-start">
               <FlashStat
                 value={HEADLINE_METRICS[0].value}
                 active={metricsLive}
@@ -310,7 +307,7 @@ export default function PerformanceSection() {
                 {HEADLINE_METRICS[0].unit}
               </span>
             </div>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex items-center gap-2 mt-1 justify-center lg:justify-start">
               <div className="w-6 h-px bg-apex-blue" />
               <span className="font-display font-semibold text-apex-white tracking-[0.14em] uppercase text-sm">
                 {HEADLINE_METRICS[0].label}
@@ -328,7 +325,7 @@ export default function PerformanceSection() {
               <motion.div
                 key={label}
                 className="flex items-center gap-5"
-                initial={{ opacity: 0, x: 18 }}
+                initial={{ opacity: 0, y: 14 }}
                 animate={inView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.25 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               >
