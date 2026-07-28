@@ -469,6 +469,8 @@ export default function DashboardSection() {
               alt="T-APEX"
               className="h-14 sm:h-16 w-auto object-contain"
               style={{ mixBlendMode: 'screen' }}
+              loading="lazy"
+              decoding="async"
             />
           </div>
         </motion.div>

@@ -70,7 +70,10 @@ type CinemaConfig = {
 const DESKTOP: CinemaConfig = {
   frameCount: 318,
   framePath: (i) => `/hero-frames/frame-${String(i).padStart(3, '0')}.webp`,
-  readyFrames: 36,
+  // The gate is deliberately low. A frame that hasn't decoded holds the previous
+  // one rather than flashing black, so arming early costs nothing visually — and
+  // the alternative is a hero that ignores your scroll while 2.7 MB lands.
+  readyFrames: 18,
   // ~15px of scroll per frame on average, but that budget is spent unevenly —
   // see ACT SCRUB below.
   pinDistance: '+=4800',
@@ -91,8 +94,9 @@ const MOBILE: CinemaConfig = {
   // enough that the per-frame movement still reads as continuous.
   frameCount: 159,
   framePath: (i) => `/hero-frames-mobile/frame-${String(i).padStart(3, '0')}.webp`,
-  // ~430 KB before the film can start moving.
-  readyFrames: 24,
+  // ~200 KB before the film can start moving, and the first six of those are
+  // already in flight from the HTML preloads (see layout.tsx).
+  readyFrames: 12,
   // Shorter than desktop: a thumb covers ground far faster than a wheel, and a
   // 4800px pin on a phone feels like the page has stopped responding.
   pinDistance: '+=3200',
@@ -201,6 +205,105 @@ function Stat({
         }}
       />
     </div>
+  )
+}
+
+/**
+ * ACT 0 — black plate, eyebrow, split headline, scroll cue.
+ *
+ * Shared by the live cinema and by the pre-hydration still below, so the two are
+ * the same markup and the handover is invisible. Do not let them drift.
+ */
+function ActZero() {
+  return (
+    <>
+      <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
+        <div className="w-full max-w-[1000px]">
+          <div className="cine-eyebrow mb-6 sm:mb-7 flex items-center justify-center gap-2 sm:gap-3">
+            <div className="w-5 sm:w-8 h-px bg-apex-blue" />
+            <span className="text-apex-blue font-mono text-[8px] sm:text-[9px] font-medium tracking-[0.24em] sm:tracking-[0.34em] uppercase">
+              Elite Sports Performance Technology
+            </span>
+            <div className="w-5 sm:w-8 h-px bg-apex-blue" />
+          </div>
+
+          <h1
+            className="relative h-luxia leading-[0.94]"
+            style={{ fontSize: 'clamp(2.1rem, 6vw, 5.4rem)', letterSpacing: '0.045em' }}
+          >
+            <div className="split-top will-change-transform">
+              <span className="t-silver">TRAIN&nbsp;BEYOND</span>
+            </div>
+
+            {/* The seam the film opens out of, pinned to the split line */}
+            <div
+              className="cine-seam absolute left-1/2 top-1/2 h-px w-[72vw] sm:w-[46vw] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              style={{
+                opacity: 0,
+                background:
+                  'linear-gradient(90deg,transparent,rgba(0,174,239,0.75),rgba(214,31,38,0.55),transparent)',
+              }}
+              aria-hidden="true"
+            />
+
+            <div className="split-bot will-change-transform">
+              <span className="t-red">HUMAN&nbsp;LIMITS</span>
+            </div>
+          </h1>
+        </div>
+      </div>
+    </>
+  )
+}
+
+/** The scroll cue that sits under Act 0. Shared for the same reason. */
+function ScrollCue() {
+  return (
+    <div
+      className="cine-cue absolute left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-none"
+      style={{ bottom: 'calc(env(safe-area-inset-bottom) + 24px)' }}
+    >
+      <span className="text-apex-grey-dim font-mono text-[8px] tracking-[0.4em] uppercase">
+        Scroll to enter
+      </span>
+      <div className="w-px h-8 overflow-hidden">
+        <div
+          className="w-px h-full"
+          style={{
+            background: 'linear-gradient(to bottom,#00AEEF,transparent)',
+            animation: 'slow-sprint 1.8s ease-in-out infinite',
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+
+/**
+ * What the static export ships, and therefore what every visitor paints before
+ * any JavaScript has run.
+ *
+ * It used to ship the classic <Hero/> — an entirely different hero, built around
+ * a full-bleed photograph of a sprinter. On a phone that painted as a giant
+ * crop of the athlete's arm, held for as long as hydration took, and was then
+ * replaced by a black screen with a headline. A completely unrelated image
+ * flashing up and vanishing reads as a broken page, and the photo was 144 KB
+ * fetched purely to be thrown away.
+ *
+ * This is Act 0 instead: the same black plate, eyebrow and headline the cinema
+ * opens on. The handover is now invisible — black to black, headline to
+ * headline, in the same position — and nothing is downloaded for it. The <h1>
+ * is still in the exported HTML, so the page reads the same to a crawler or a
+ * JS-less browser.
+ */
+function OpeningStill() {
+  return (
+    <section id="hero" className="relative h-[100svh] w-full overflow-hidden bg-apex-black">
+      <div className="absolute inset-0 z-20">
+        <ActZero />
+      </div>
+      <ScrollCue />
+    </section>
   )
 }
 
@@ -534,41 +637,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       {/* ─── Copy beats ─── */}
       <div className="absolute inset-0 z-20 pointer-events-none">
         {/* ACT 0/1 — the promise, which becomes the split */}
-        <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
-          <div className="w-full max-w-[1000px]">
-            <div className="cine-eyebrow mb-6 sm:mb-7 flex items-center justify-center gap-2 sm:gap-3">
-              <div className="w-5 sm:w-8 h-px bg-apex-blue" />
-              <span className="text-apex-blue font-mono text-[8px] sm:text-[9px] font-medium tracking-[0.24em] sm:tracking-[0.34em] uppercase">
-                Elite Sports Performance Technology
-              </span>
-              <div className="w-5 sm:w-8 h-px bg-apex-blue" />
-            </div>
-
-            <h1
-              className="relative h-luxia leading-[0.94]"
-              style={{ fontSize: 'clamp(2.1rem, 6vw, 5.4rem)', letterSpacing: '0.045em' }}
-            >
-              <div className="split-top will-change-transform">
-                <span className="t-silver">TRAIN&nbsp;BEYOND</span>
-              </div>
-
-              {/* The seam the film opens out of, pinned to the split line */}
-              <div
-                className="cine-seam absolute left-1/2 top-1/2 h-px w-[72vw] sm:w-[46vw] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                style={{
-                  opacity: 0,
-                  background:
-                    'linear-gradient(90deg,transparent,rgba(0,174,239,0.75),rgba(214,31,38,0.55),transparent)',
-                }}
-                aria-hidden="true"
-              />
-
-              <div className="split-bot will-change-transform">
-                <span className="t-red">HUMAN&nbsp;LIMITS</span>
-              </div>
-            </h1>
-          </div>
-        </div>
+        <ActZero />
 
         {/* ACT 2 — telemetry HUD mid-travel.
             Desktop flanks the film left/right: the machine holds the middle of
@@ -663,23 +732,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       </div>
 
       {/* Scroll cue */}
-      <div
-        className="cine-cue absolute left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-none"
-        style={{ bottom: 'calc(env(safe-area-inset-bottom) + 24px)' }}
-      >
-        <span className="text-apex-grey-dim font-mono text-[8px] tracking-[0.4em] uppercase">
-          Scroll to enter
-        </span>
-        <div className="w-px h-8 overflow-hidden">
-          <div
-            className="w-px h-full"
-            style={{
-              background: 'linear-gradient(to bottom,#00AEEF,transparent)',
-              animation: 'slow-sprint 1.8s ease-in-out infinite',
-            }}
-          />
-        </div>
-      </div>
+      <ScrollCue />
     </section>
   )
 }
@@ -702,11 +755,14 @@ export default function ScrollCinemaHero() {
     setMode(window.matchMedia('(min-width: 1024px)').matches ? 'desktop' : 'phone')
   }, [])
 
-  // SSR / first paint: render the classic hero so there's never a blank frame —
-  // as a still, so the 13 MB banner film isn't fetched for a hero that is about
-  // to be replaced a few milliseconds later. The fallback keeps the still too:
-  // reduced-motion and Data Saver are both requests not to autoplay a loop.
   if (mode === 'desktop') return <CinemaImpl cfg={DESKTOP} phone={false} />
   if (mode === 'phone') return <CinemaImpl cfg={MOBILE} phone />
-  return <Hero still />
+
+  // Reduced motion / Data Saver — the classic hero, as a still. Those settings
+  // are a request not to autoplay a 13 MB loop, so it keeps the poster.
+  if (mode === 'fallback') return <Hero still />
+
+  // 'pending' — what the export ships and every visitor paints first. Act 0, so
+  // the swap to the live cinema is black-to-black and invisible. See OpeningStill.
+  return <OpeningStill />
 }

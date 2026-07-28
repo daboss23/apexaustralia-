@@ -96,13 +96,17 @@ export default function Navbar() {
             if (mobileOpen) goFromMenu(e, '#hero')
           }}
         >
+          {/* Not `priority`. This logo is invisible until you scroll past the
+              hero (see the opacity above), but priority put a 69 KB fetch at the
+              very front of the queue — ahead of the hero frames, on a cold load,
+              for something nobody can see yet. */}
           <Image
             src="/apexaustralialogo.webp"
             alt="T-APEX Australia"
             width={140}
             height={46}
             className="h-8 md:h-9 w-auto object-contain"
-            priority
+            loading="lazy"
           />
         </a>
 

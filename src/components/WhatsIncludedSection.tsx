@@ -59,6 +59,8 @@ export default function WhatsIncludedSection() {
             src="/T-apex box.webp"
             alt="Everything in the T-APEX box — T-APEX unit, pull rod, belt, tablet, user guide, power cord, Type-C charger and Allen wrench"
             className="w-full h-auto block select-none"
+            loading="lazy"
+            decoding="async"
           />
           {/* Feather left/right edges into the #0A0D10 surface */}
           <div
@@ -99,6 +101,8 @@ export default function WhatsIncludedSection() {
             src="/Overspeed trainng kit.webp"
             alt="Overspeed Training Kit — OS Tether Reel, OS Pulley, OS Weight Anchor and Fast-Release Strap"
             className="w-full h-auto block select-none"
+            loading="lazy"
+            decoding="async"
           />
           {/* Feather left/right edges into the #0A0D10 surface */}
           <div

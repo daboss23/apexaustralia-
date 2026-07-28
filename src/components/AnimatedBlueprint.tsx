@@ -69,7 +69,7 @@ export default function AnimatedBlueprint({
     <div ref={ref} className={`ab-wrap ${className}`} aria-hidden={false}>
       {/* BASE LAYER — locked, pixel-perfect image. Never animated. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={src} alt={alt} className="ab-base" draggable={false} />
+      <img src={src} alt={alt} className="ab-base" draggable={false} loading="lazy" decoding="async" />
 
       {/* OVERLAYS — all transparent, pointer-events none, blended onto image */}
       <div className="ab-overlays" aria-hidden="true">

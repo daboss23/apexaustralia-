@@ -221,6 +221,8 @@ function Gallery({ variant }: { variant: Variant }) {
                   src={active.src}
                   alt={active.alt}
                   className="w-full h-full object-contain"
+                  loading="lazy"
+                  decoding="async"
                 />
               ) : (
                 <video
@@ -311,7 +313,7 @@ function Gallery({ variant }: { variant: Variant }) {
             <div className="carbon-weave absolute inset-0 opacity-30" aria-hidden="true" />
             {s.type === 'image' ? (
               /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={s.src} alt="" className="absolute inset-0 w-full h-full object-contain p-1.5" />
+              <img src={s.src} alt="" className="absolute inset-0 w-full h-full object-contain p-1.5" loading="lazy" decoding="async" />
             ) : (
               <>
                 <video src={s.src} muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-80" />
