@@ -323,14 +323,27 @@ function ActZero() {
   )
 }
 
-/** The scroll cue that sits under Act 0. Shared for the same reason. */
+/**
+ * The scroll cue that sits under Act 0. Shared for the same reason.
+ *
+ * It sat 24px off the bottom at 8px type and was hard to read and, worse, hard
+ * to place: the hero is `100svh`, the *small* viewport height, so the moment
+ * mobile Safari collapses its toolbar the visible area grows past the section
+ * and the next one starts showing underneath. A cue pinned near the section's
+ * bottom edge then reads as though it belongs to whatever is below it.
+ *
+ * `svh` is the right unit for a pinned section — `dvh` would resize the pin
+ * mid-scroll and fight ScrollTrigger — so the fix is clearance instead: bigger
+ * type, and far enough up that it stays unambiguously part of the hero however
+ * much browser chrome is showing.
+ */
 function ScrollCue() {
   return (
     <div
-      className="cine-cue absolute left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-none"
-      style={{ bottom: 'calc(env(safe-area-inset-bottom) + 24px)' }}
+      className="cine-cue absolute left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2.5 pointer-events-none"
+      style={{ bottom: 'calc(env(safe-area-inset-bottom) + 72px)' }}
     >
-      <span className="text-apex-grey-dim font-mono text-[8px] tracking-[0.4em] uppercase">
+      <span className="text-apex-grey-dim font-mono text-[11px] sm:text-[10px] tracking-[0.36em] uppercase">
         Scroll to enter
       </span>
       <div className="w-px h-8 overflow-hidden">
