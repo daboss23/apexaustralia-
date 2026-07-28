@@ -4,13 +4,34 @@ This is the production brief for the **pinned, scroll-scrubbed hero** built in
 `src/components/ScrollCinemaHero.tsx`. It tells you exactly what footage to
 generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
-> **Current footage:** `public/apex-hero-cinema.mp4` (17.2s, 24fps, 1280×720) —
-> a **master edit cut from three source clips**, extracted at `fps=14`,
-> `scale=1920` (lanczos + unsharp) → **241 frames at 1920×1080, 15 MB**.
+> **Current footage:** `public/apex-hero-cinema.mp4` (22.7s, 30fps) — a single
+> continuous Seedance 2.0 generation delivered at 2560×1440, stabilised (below),
+> tail-trimmed at 22.7s, extracted at `fps=14`, `scale=1600` (lanczos, no
+> unsharp) → **318 frames at 1600×900, 22 MB**.
 >
 > The spine is deliberately simple: **the black-plate scene plays out, then that
-> same box opens.** Then fly-through the internals → HUD → hero device. See §6
-> for how the one-flow read is bought and §7 for the resolution ceiling.
+> same box opens.** Then fly-through the internals → red tunnel → the sprint.
+> See §6 for how the one-flow read is bought and §7 for the resolution ceiling.
+>
+> **The device is post-stabilised.** As generated, the sprint read as though the
+> athlete were towing the machine. Tracking the track surface (optical flow +
+> RANSAC ground-plane homography) showed the machine was in fact already welded
+> to the tarmac — the towed read came from the camera dollying toward it while
+> the athlete ran toward camera, so the two never separated on screen. The fix
+> locks the machine's *screen position* across the sprint so the athlete and
+> track move around it. Two things matter if this is ever redone:
+>
+> - Anchor the lock to the device's **mean** tracked position, not the frame
+>   centre. Anchoring to centre shoves the picture up by the device's offset
+>   (~278px here) against a much smaller zoom margin, and `BORDER_REPLICATE`
+>   smears a band into the bottom of frame.
+> - Size the zoom from the device's **excursion**: `Z = max(W/(W-rangeX),
+>   H/(H-rangeY))`. Here that is 1.254×, which reads 2041px of real detail from
+>   a 2560px source — lossless for 1600px frames. Ease the lock in over ~24
+>   frames or it visibly snaps where it engages.
+>
+> Scripts live in the session scratch, not the repo; the recipe above is enough
+> to rebuild them.
 
 ---
 
@@ -151,7 +172,16 @@ Current: 241 frames @ 1920px / q70 = **15 MB**. Measured alternatives on this
 footage — `1920 q78` → 18.8 MB, `1920 q72 fps13` → 15.1 MB, `1440 q74` → 14 MB,
 `1280 q82` → 12 MB, `1600 q68 fps13` → 12.3 MB.
 
-Note the shape of that table: **going from 1440 to 1920 cost only ~2 MB**, because
+**That table does not survive the current footage.** Re-measured on the 2K cut,
+the picture is dense enough (circuit macros, cable texture, upscaler grain) that
+neither lever buys much: `1600 q70` → 64 KB/frame, `1600 q52` → 63, `1280 q68`
+→ 57, and denoising first saved ~2 KB. Dropping `unsharp` was the only real win
+(76 → 64 KB) and it looks better anyway, the source being a 2K upscale that has
+already been sharpened once. So 318 frames land at 22 MB and there is no cheap
+way down — the weight is the picture. Kept whole rather than traded away, since
+frame count is what sells the scrub.
+
+Note the shape of the older table: **going from 1440 to 1920 cost only ~2 MB**, because
 dropping quality 74 → 70 pays for most of the extra pixels. On this footage that
 is a clear win — resolution buys more perceived sharpness than quantisation does,
 and q70 shows no banding even on the dark panel gradients (the worst case).
