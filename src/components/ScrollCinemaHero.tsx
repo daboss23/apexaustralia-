@@ -455,11 +455,47 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
     return img && img.complete && img.naturalWidth ? img : null
   }
 
+  /**
+   * Keep the backing store matched to the element's own box.
+   *
+   * A canvas has TWO sizes: the pixel buffer (`width`/`height`) and the CSS box
+   * it is painted into. If they disagree, the browser stretches the buffer to
+   * fit — non-uniformly. That is what put a 16:9 frame on screen as a tall thin
+   * smear: the buffer was still the 300x150 default while the box was a full
+   * portrait viewport, so every frame was drawn correctly and then scaled 4x
+   * harder vertically than horizontally. Blurry for the same reason.
+   *
+   * This used to be a `sizeCanvas()` called from a passive effect and a
+   * `resize` listener — which meant it depended on effect ordering (useGSAP is
+   * a *layout* effect, so its ticker could start drawing first) and on guessing
+   * which window events change the element. It also deliberately ignored
+   * height-only resizes on phones, which is exactly the class of change mobile
+   * Safari produces. Measuring the element itself on every draw removes all of
+   * that guesswork: the buffer cannot be out of step at the moment it matters.
+   *
+   * Returns false when the element has no layout yet — nothing safe to draw.
+   */
+  const syncCanvasSize = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return false
+    const dpr = Math.min(window.devicePixelRatio || 1, cfg.maxDpr)
+    const w = Math.round(canvas.clientWidth * dpr)
+    const h = Math.round(canvas.clientHeight * dpr)
+    if (!w || !h) return false
+    // Assigning width/height clears the canvas, so only touch it on a real change.
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w
+      canvas.height = h
+    }
+    return true
+  }
+
   // ── Canvas draw — fit the active frame, scaled for the push-in ──────────────
   const draw = () => {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
+    if (!syncCanvasSize()) return
 
     // ── Sub-frame blending ────────────────────────────────────────────────────
     // The scrub gives a fractional frame position; this used to Math.round() it,
@@ -542,32 +578,21 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
     }
   }
 
-  // ── Size the canvas backing store to the element (dpr-aware) ─────────────────
-  const sizeCanvas = () => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const dpr = Math.min(window.devicePixelRatio || 1, cfg.maxDpr)
-    const w = canvas.clientWidth
-    const h = canvas.clientHeight
-    canvas.width = Math.round(w * dpr)
-    canvas.height = Math.round(h * dpr)
-    draw()
-  }
-
+  // ── Repaint whenever the canvas's own box changes ────────────────────────────
+  // A ResizeObserver on the element rather than a `resize` listener on the
+  // window: the box can change without the window doing anything (ScrollTrigger
+  // pinning it, a rotation, the URL bar reflowing the section) and the window
+  // can change without the box moving. `draw()` re-syncs the buffer itself, so
+  // this only has to say "something moved, repaint".
   useEffect(() => {
     if (!ready) return
-    sizeCanvas()
-    // Phones fire `resize` every time the URL bar slides away, which would
-    // otherwise re-size the canvas mid-scroll. Only react to a real change of
-    // width (rotation, or a desktop window drag).
-    let lastW = window.innerWidth
-    const onResize = () => {
-      if (phone && window.innerWidth === lastW) return
-      lastW = window.innerWidth
-      sizeCanvas()
-    }
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
+    const canvas = canvasRef.current
+    if (!canvas) return
+    draw()
+    if (typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver(() => draw())
+    ro.observe(canvas)
+    return () => ro.disconnect()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready])
 
