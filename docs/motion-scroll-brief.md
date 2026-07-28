@@ -185,12 +185,12 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
    upscaled. A good resampler and a touch of sharpening is the difference
    between "soft" and "blurry" — never let the browser do that upscale for you.
 3. Extract the **phone** sequence into `public/hero-frames-mobile/` — same cut,
-   every second frame, 640×360 (see §3b):
+   every second frame, 960×540 (see §3b):
    ```bash
    rm -f public/hero-frames-mobile/*.webp
    ffmpeg -y -i public/apex-hero-cinema.mp4 \
-     -vf "fps=7,scale=640:-1:flags=lanczos" \
-     -f image2 -c:v libwebp -quality 56 \
+     -vf "fps=7,scale=960:-1:flags=lanczos" \
+     -f image2 -c:v libwebp -quality 68 \
      public/hero-frames-mobile/frame-%03d.webp
    ```
 4. Update **both** frame counts in `src/components/ScrollCinemaHero.tsx` —
@@ -199,11 +199,11 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
 6. `npm run build` to verify, then commit both frame directories + the component.
 
 ### 3b. The phone sequence
-Phones run the same four acts off their own sequence: **159 frames at 640×360,
-2.8 MB**, with `readyFrames: 24` (~430 KB) gating the start. That is not a
-downgrade of the mobile hero — it *replaced* a 13 MB looping banner video that
-was being loaded through two stacked `<video preload="auto">` elements, so the
-phone gained the film and got several times lighter at once.
+Phones run the same four acts off their own sequence: **159 frames at 960×540,
+6.0 MB**, with `readyFrames: 12` (~450 KB) gating the start. That is still less
+than half the 13 MB looping banner video it replaced — which was being loaded
+through two stacked `<video preload="auto">` elements and had to buffer
+contiguously — so the phone gained the film and got lighter at the same time.
 
 Act boundaries are expressed as **ratios** of the sequence (`ACT_OPEN_END` and
 friends), not frame indices, so half the frames still land every cut on the same
@@ -219,9 +219,15 @@ sprint starts cropping the athlete. The band's top and bottom edges are faded
 **in the canvas itself** (see `draw()`), not with an overlay, so the fade tracks
 the camera push — a fixed CSS gradient cannot.
 
-Resolution follows from that: the band draws at ~526 CSS px wide, so at
-`maxDpr: 1.25` a 640-wide source is already a mild upscale. Going wider only
-burns fill rate on a phone GPU.
+Resolution follows from that — and the first pass got it wrong. The band draws
+at ~526 CSS px wide, which was read as "a 640-wide source is already a mild
+upscale" with `maxDpr: 1.25` to match. But a 1.25 cap on a DPR-3 phone makes the
+backing store 488px against a 390pt box, and the browser then stretches that
+2.4x to fill it: the film was resampled twice and looked soft on precisely the
+screens that could have shown it sharp. The sequence is now **960 wide** at
+`maxDpr: 2` — an 780px buffer, the band drawn ~1150px from a 960px source, once.
+It costs 3 MB and it is the difference between "soft" and "fuzzy" on a phone.
+Going to DPR 3 is 2.25x the fill rate for detail the source does not have.
 
 ### Sizing the sequence — the real trade-off
 Frame **count** sells smoothness far more than frame **resolution**: the scrub
@@ -251,7 +257,7 @@ smaller *and* sharper. It was **not** adopted because AVIF decodes considerably
 slower than WebP, and a decode stall during a scrub costs smoothness, which is
 the more valuable of the two. Revisit if the weight ever has to come down.
 
-That weight is desktop-only (phones fetch the 2.8 MB sequence in §3b instead)
+That weight is desktop-only (phones fetch the 6.0 MB sequence in §3b instead)
 and loads progressively — only `readyFrames` (36) gate the start of scrubbing,
 and a frame that hasn't decoded holds the previous one rather than flashing
 black.

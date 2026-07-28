@@ -47,7 +47,7 @@ src/
     site.ts         # contact email + demo/enquiry mailto hrefs (all CTAs use these)
 public/             # static assets (hero-video.mp4, logos, images)
   hero-frames/        # desktop scroll-cinema sequence (318 @ 1600x900)
-  hero-frames-mobile/ # phone sequence (159 @ 640x360)
+  hero-frames-mobile/ # phone sequence (159 @ 960x540)
 tailwind.config.ts  # design tokens (apex.* colors), font families, keyframes
 ```
 

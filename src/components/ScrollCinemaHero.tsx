@@ -30,8 +30,8 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 // looping banner video — the single heaviest thing on the mobile site, loaded
 // through two stacked <video> elements. The scroll-cinema now runs there too,
 // off a separate sequence (/hero-frames-mobile) that is half the frames at
-// 640×360 — 2.8 MB all in, and only the first two dozen frames gate the start.
-// So mobile gained the motion AND got several times lighter.
+// 960×540 — 6 MB all in, and only the first dozen frames gate the start.
+// So mobile gained the motion and still weighs less than half the video.
 //
 // The one thing that could NOT come across is the framing. The footage is 16:9
 // and a phone is roughly 9:19.5, so cover-fitting it would show a ~26 % wide
@@ -121,7 +121,7 @@ const MOBILE: CinemaConfig = {
   // enough that the per-frame movement still reads as continuous.
   frameCount: 159,
   framePath: (i) => `/hero-frames-mobile/frame-${String(i).padStart(3, '0')}.webp`,
-  // ~200 KB before the film can start moving, and the first six of those are
+  // ~450 KB before the film can start moving, and the first six of those are
   // already in flight from the HTML preloads (see layout.tsx).
   readyFrames: 12,
   // Shorter than desktop: a thumb covers ground far faster than a wheel, and a
@@ -134,9 +134,15 @@ const MOBILE: CinemaConfig = {
   // Enough to clear the film band (≈296px tall at rest) without throwing the
   // type off the top of a short phone.
   splitTravel: 0.21,
-  // The source is 640 wide and the band draws at ~526 CSS px, so 1.25 is already
-  // a mild upscale; going higher only burns fill rate on a phone GPU.
-  maxDpr: 1.25,
+  // The phone sequence is 960 wide (it was 640, and looked it — see below), and
+  // the band draws at ~526 CSS px, so there is real detail to spend on a dense
+  // screen. 1.25 was capping the canvas at 488px on a 390pt phone, which the
+  // browser then stretched 2.4x to fill the box — the film was being resampled
+  // twice and arrived soft on exactly the devices that could show it sharp. At 2
+  // the backing store is 780px and the band draws ~1150px from a 960px source:
+  // a mild upscale, drawn once. Not 3 — that is 2.25x the fill rate for detail
+  // the source does not have.
+  maxDpr: 2,
   // Higher than desktop on purpose. Lenis leaves touch alone — momentum
   // scrolling fights any JS smoothing layered on top of it — so nothing
   // upstream is interpolating a finger drag, and the scrub is the only place
@@ -174,13 +180,16 @@ const ACT_INNER_END = 185 / 318
 const ACT_TUNNEL_END = 227 / 318
 
 // ── Where the cut's content sits, as scroll progress ─────────────────────────
-// The film scrubs 0.03 → 0.97, act by act (see ACT SCRUB above):
+// The film scrubs 0.10 → 0.97, act by act (see ACT SCRUB above):
 //
-//   0.03       the split starts almost immediately. It used to wait until 0.10
-//              — 480px, five-odd wheel notches of nothing before the headline
-//              budged, which read as the page being broken. 0.03 is ~144px, so
-//              it is moving by the second notch.
-//   0.03–0.40  the machine on pure black — deep down the lens, travelling in and
+//   0–0.10     ACT 0 holds. Black, the brand mark, the headline whole. ~480px of
+//              scroll where nothing moves but the page, and it is the reason the
+//              split lands as an event rather than as something that was already
+//              happening when you arrived. It was once cut to 0.03 to make the
+//              hero answer the first wheel notch; that bought responsiveness and
+//              spent the opening. The hold is the opening — keep it. If it ever
+//              needs to feel quicker, take it to 0.07, not to zero.
+//   0.10–0.40  the machine on pure black — deep down the lens, travelling in and
 //              turning, then ✦ THE PANELS OPEN and the internals light. This is
 //              the hero shot and it owns a third of the scroll; the headline
 //              halves clear at 0.26 so nothing sits on top of the opening.
@@ -470,17 +479,34 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
    * a *layout* effect, so its ticker could start drawing first) and on guessing
    * which window events change the element. It also deliberately ignored
    * height-only resizes on phones, which is exactly the class of change mobile
-   * Safari produces. Measuring the element itself on every draw removes all of
-   * that guesswork: the buffer cannot be out of step at the moment it matters.
+   * Safari produces. A ResizeObserver on the element removes all of that
+   * guesswork: the buffer cannot be out of step at the moment it matters.
+   *
+   * The measurement is taken IN the observer (and once up front), not on every
+   * draw. Reading `clientWidth` is a forced layout, and doing that from the
+   * ticker while ScrollTrigger is writing pin styles on the same frame is a
+   * read-after-write every frame of the scrub — measurably the jerkiest thing
+   * in the loop. The observer already fires for every box change there is, so
+   * the cached box cannot go stale; nothing is lost by trusting it.
    *
    * Returns false when the element has no layout yet — nothing safe to draw.
    */
+  const boxRef = useRef({ w: 0, h: 0 })
+
+  /** Re-measure the element's CSS box. Only call outside the draw loop. */
+  const measureCanvas = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    boxRef.current = { w: canvas.clientWidth, h: canvas.clientHeight }
+  }
+
   const syncCanvasSize = () => {
     const canvas = canvasRef.current
     if (!canvas) return false
+    if (!boxRef.current.w || !boxRef.current.h) measureCanvas()
     const dpr = Math.min(window.devicePixelRatio || 1, cfg.maxDpr)
-    const w = Math.round(canvas.clientWidth * dpr)
-    const h = Math.round(canvas.clientHeight * dpr)
+    const w = Math.round(boxRef.current.w * dpr)
+    const h = Math.round(boxRef.current.h * dpr)
     if (!w || !h) return false
     // Assigning width/height clears the canvas, so only touch it on a real change.
     if (canvas.width !== w || canvas.height !== h) {
@@ -497,22 +523,18 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
     if (!canvas || !ctx) return
     if (!syncCanvasSize()) return
 
-    // ── Sub-frame blending ────────────────────────────────────────────────────
-    // The scrub gives a fractional frame position; this used to Math.round() it,
-    // so the film advanced in hard steps and all the precision in between was
-    // thrown away. Now the two adjacent frames are cross-dissolved by that
-    // fraction, which reads as motion blur and makes a sparse sequence look
-    // continuous. It matters most on phones, where the sequence is every second
-    // frame of the cut and each step is therefore twice the movement.
-    //
-    // Costs one extra drawImage and adds no latency — it is showing you a
-    // position the scrub had already computed.
+    // ── One frame, nearest ────────────────────────────────────────────────────
+    // NOT a cross-dissolve between the two adjacent frames. That was tried, on
+    // the theory that blending by the scrub's fractional position reads as motion
+    // blur. It does not — it reads as the film being out of focus. The frame
+    // value is fractional almost all of the time (Lenis interpolates the wheel,
+    // so it is rarely sitting exactly on an integer), which means the picture is
+    // a ~50/50 double-exposure of two different moments for most of the scrub:
+    // every hard edge doubles, and 22 MB of sharp frames arrive on screen soft.
+    // The same trap is documented for video in docs/motion-scroll-brief.md —
+    // frame blending to smooth motion always ghosts. Draw the nearest real frame.
     const f = Math.min(Math.max(render.frame, 0), cfg.frameCount - 1)
-    const i0 = Math.floor(f)
-    const frac = f - i0
-    const a = decoded(i0)
-    const b = frac > 0.004 ? decoded(i0 + 1) : null
-    const ref = a || b
+    const ref = decoded(Math.round(f)) ?? decoded(Math.floor(f))
     // Nothing decoded yet — hold whatever is on the canvas rather than flashing.
     if (!ref) return
 
@@ -542,12 +564,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
     const dx = (cw - dw) / 2
     const dy = (ch - dh) / 2
     ctx.clearRect(0, 0, cw, ch)
-    if (a) ctx.drawImage(a, dx, dy, dw, dh)
-    if (b) {
-      ctx.globalAlpha = a ? frac : 1
-      ctx.drawImage(b, dx, dy, dw, dh)
-      ctx.globalAlpha = 1
-    }
+    ctx.drawImage(ref, dx, dy, dw, dh)
 
     // Melt the band's horizontal edges into the page.
     //
@@ -588,9 +605,20 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
     if (!ready) return
     const canvas = canvasRef.current
     if (!canvas) return
+    measureCanvas()
     draw()
-    if (typeof ResizeObserver === 'undefined') return
-    const ro = new ResizeObserver(() => draw())
+    if (typeof ResizeObserver === 'undefined') {
+      const onResize = () => {
+        measureCanvas()
+        draw()
+      }
+      window.addEventListener('resize', onResize)
+      return () => window.removeEventListener('resize', onResize)
+    }
+    const ro = new ResizeObserver(() => {
+      measureCanvas()
+      draw()
+    })
     ro.observe(canvas)
     return () => ro.disconnect()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -642,7 +670,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // shot gets a third of the scroll instead of a fifth. Each leg is still
       // linear (ease 'none' from defaults) — the rate changes only at the act
       // boundaries, which fall on cuts, so no leg visibly speeds up mid-shot.
-      tl.to(render, { frame: f(ACT_OPEN_END), duration: 0.37 }, 0.03)
+      tl.to(render, { frame: f(ACT_OPEN_END), duration: 0.3 }, 0.1)
       tl.to(render, { frame: f(ACT_INNER_END), duration: 0.23 }, 0.4)
       tl.to(render, { frame: f(ACT_TUNNEL_END), duration: 0.09 }, 0.63)
       tl.to(render, { frame: last, duration: 0.25 }, 0.72)
@@ -652,12 +680,12 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // 'in', not 'out' — the machine must HOLD its distance while the headline
       // is still on screen and only close the gap at the end of the act. An
       // 'out' ease front-loads the travel and it arrives on top of the type.
-      tl.to(render, { scale: ZOOM_OPEN, ease: 'power2.in', duration: 0.37 }, 0.03)
+      tl.to(render, { scale: ZOOM_OPEN, ease: 'power2.in', duration: 0.3 }, 0.1)
       tl.to(render, { scale: ZOOM_END, duration: 0.57 }, 0.4)
 
       // ── ACT 1 — the split ────────────────────────────────────────────────────
       // Logo and eyebrow clear first so the words are alone as they part.
-      tl.to('.cine-logo, .cine-eyebrow', { opacity: 0, y: -18, duration: 0.04 }, 0.01)
+      tl.to('.cine-logo, .cine-eyebrow', { opacity: 0, y: -18, duration: 0.06 }, 0.07)
 
       // The two halves travel apart, tracking wider as they go — the type reads
       // as being pulled open rather than simply moved.
@@ -668,23 +696,23 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // contact and settles into the travel.
       tl.to(
         '.split-top',
-        { y: () => -travel(), letterSpacing: '0.13em', ease: 'power2.out', duration: 0.23 },
-        0.03,
+        { y: () => -travel(), letterSpacing: '0.13em', ease: 'power2.out', duration: 0.26 },
+        0.1,
       )
       tl.to(
         '.split-bot',
-        { y: () => travel(), letterSpacing: '0.13em', ease: 'power2.out', duration: 0.23 },
-        0.03,
+        { y: () => travel(), letterSpacing: '0.13em', ease: 'power2.out', duration: 0.26 },
+        0.1,
       )
 
       // The seam: a blue hairline that opens across the gap, then dims away.
       tl.fromTo(
         '.cine-seam',
         { scaleX: 0, opacity: 0 },
-        { scaleX: 1, opacity: 1, ease: 'power2.out', duration: 0.13 },
-        0.03,
+        { scaleX: 1, opacity: 1, ease: 'power2.out', duration: 0.15 },
+        0.1,
       )
-      tl.to('.cine-seam', { opacity: 0, duration: 0.09 }, 0.19)
+      tl.to('.cine-seam', { opacity: 0, duration: 0.11 }, 0.27)
 
       // The film opens out of the seam — aperture unclips vertically as it fades
       // up, so the video is revealed *by* the headline splitting.
@@ -695,13 +723,13 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
           clipPath: 'inset(0% 0% 0% 0%)',
           opacity: 1,
           ease: 'power2.out',
-          duration: 0.23,
+          duration: 0.26,
         },
-        0.03,
+        0.1,
       )
 
-      // Scroll cue clears the instant the split begins.
-      tl.to('.cine-cue', { opacity: 0, duration: 0.04 }, 0.015)
+      // Scroll cue clears as the split begins.
+      tl.to('.cine-cue', { opacity: 0, duration: 0.05 }, 0.08)
 
       // ── ACT 2 — travel ───────────────────────────────────────────────────────
       // Tunnel vignette breathes in over the fly-through, then eases back for the
@@ -746,7 +774,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // ── The lighting cue ─────────────────────────────────────────────────────
       // `.cine-dim` lifts under each copy beat and drops between them, so the
       // film plays at full strength exactly when nothing is written over it.
-      tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.1 }, 0.03) // machine far back — barely needed
+      tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.1 }, 0.1) // machine far back — barely needed
       tl.to('.cine-dim', { opacity: 0.04, ease: 'power1.inOut', duration: 0.07 }, 0.28) // ✦ the box opens — clear
       tl.to('.cine-dim', { opacity: 0.46, ease: 'power1.inOut', duration: 0.07 }, 0.46) // telemetry
       tl.to('.cine-dim', { opacity: 0.1, ease: 'power1.inOut', duration: 0.07 }, 0.62) // tunnel — clear
