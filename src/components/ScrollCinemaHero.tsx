@@ -218,8 +218,28 @@ function ActZero() {
   return (
     <>
       <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
-        <div className="w-full max-w-[1000px]">
-          <div className="cine-eyebrow mb-6 sm:mb-7 flex items-center justify-center gap-2 sm:gap-3">
+        <div className="w-full max-w-[1000px] flex flex-col items-center">
+          {/* Brand mark. Sits in the exported HTML (see OpeningStill), so the
+              preload scanner finds it without waiting for JavaScript. Clears
+              with the eyebrow the moment the split starts.
+
+              Its own asset, not the navbar's: that file is 2528x1696 of which
+              the logo occupies a 2093x555 band in the middle, so sizing it by
+              height gave a box four times taller than the ink and the mark read
+              as tiny. This one is cropped to the ink (900x239, and 26 KB rather
+              than 69 KB), so a width is a width. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/tapex-logo-hero.webp"
+            alt="T-APEX Australia"
+            width={900}
+            height={239}
+            className="cine-logo mb-6 sm:mb-7 w-[178px] sm:w-[210px] lg:w-[260px] h-auto"
+            style={{ filter: 'brightness(1.08)' }}
+            decoding="async"
+          />
+
+          <div className="cine-eyebrow mb-5 sm:mb-6 flex items-center justify-center gap-2 sm:gap-3">
             <div className="w-5 sm:w-8 h-px bg-apex-blue" />
             <span className="text-apex-blue font-mono text-[8px] sm:text-[9px] font-medium tracking-[0.24em] sm:tracking-[0.34em] uppercase">
               Elite Sports Performance Technology
@@ -227,9 +247,18 @@ function ActZero() {
             <div className="w-5 sm:w-8 h-px bg-apex-blue" />
           </div>
 
+          {/* The floor used to be 2.1rem, which is what a 390px phone actually
+              got — 6vw only overtakes it past ~560px, so every phone rendered
+              the headline at its smallest possible size. Driven from vw now, so
+              it grows with the screen; the 5.4rem ceiling keeps desktop as it was.
+              10vw, not more: the words are joined by &nbsp; so they cannot wrap,
+              they can only overflow, and Marcellus is `display: swap` — measured
+              on a 375px screen the serif fallback runs 3px WIDER than the box at
+              11vw, so every cold load would clip the headline until the webfont
+              landed. At 10vw the fallback still has ~27px of slack. */}
           <h1
-            className="relative h-luxia leading-[0.94]"
-            style={{ fontSize: 'clamp(2.1rem, 6vw, 5.4rem)', letterSpacing: '0.045em' }}
+            className="relative w-full h-luxia leading-[0.94]"
+            style={{ fontSize: 'clamp(2.4rem, 10vw, 5.4rem)', letterSpacing: '0.045em' }}
           >
             <div className="split-top will-change-transform">
               <span className="t-silver">TRAIN&nbsp;BEYOND</span>
@@ -493,8 +522,8 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       tl.to(render, { scale: ZOOM_END, duration: 0.57 }, 0.4)
 
       // ── ACT 1 — the split ────────────────────────────────────────────────────
-      // Eyebrow clears first so the words are alone as they part.
-      tl.to('.cine-eyebrow', { opacity: 0, y: -18, duration: 0.04 }, 0.01)
+      // Logo and eyebrow clear first so the words are alone as they part.
+      tl.to('.cine-logo, .cine-eyebrow', { opacity: 0, y: -18, duration: 0.04 }, 0.01)
 
       // The two halves travel apart, tracking wider as they go — the type reads
       // as being pulled open rather than simply moved.
