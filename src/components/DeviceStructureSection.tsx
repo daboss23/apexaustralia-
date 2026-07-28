@@ -49,7 +49,7 @@ export default function DeviceStructureSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          ENGINEERED<br /><span className="t-blue">DOWN TO THE PART.</span>
+          13 COMPONENTS.<br /><span className="t-blue">ZERO GIMMICKS.</span>
         </motion.h2>
 
         <motion.p

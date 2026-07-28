@@ -72,7 +72,7 @@ export default function MobileCTABar() {
             T-APEX Australia
           </span>
           <span className="block font-display font-bold text-[13px] text-apex-white leading-tight truncate">
-            See it in your facility
+            From A$9,450 · Ships free
           </span>
         </div>
         <a
@@ -81,7 +81,7 @@ export default function MobileCTABar() {
           style={{ borderRadius: 0 }}
           tabIndex={visible ? 0 : -1}
         >
-          Book a Demo
+          Order Now
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>

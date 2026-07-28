@@ -178,7 +178,7 @@ export default function ResultsSection() {
         <div ref={titleRef} className="flex items-center gap-3 mb-6">
           <div className="w-8 h-px bg-apex-blue" />
           <span className="text-apex-blue font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
-            07 — Results
+            Proof
           </span>
         </div>
 
@@ -193,8 +193,8 @@ export default function ResultsSection() {
             className="h-luxia t-silver leading-[0.88]"
             style={{ fontSize: 'clamp(2.1rem, 5.2vw, 4.3rem)' }}
           >
-            ENGINEERED RESULTS.<br />
-            <span className="t-red">ELITE OUTCOMES.</span>
+            THE NUMBERS<br />
+            <span className="t-red">MAKE THE CASE.</span>
           </h2>
         </motion.div>
 

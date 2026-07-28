@@ -229,7 +229,7 @@ export default function PerformanceSection() {
           transition={{ duration: 0.5 }}
         >
           <div className="w-8 h-px bg-apex-blue" />
-          <span className="text-apex-blue font-mono text-[10px] tracking-[0.3em] uppercase font-medium">02 — Performance In Motion</span>
+          <span className="text-apex-blue font-mono text-[10px] tracking-[0.3em] uppercase font-medium">What T-APEX Does</span>
           <div className="w-8 h-px bg-apex-blue" />
         </motion.div>
 
@@ -241,8 +241,8 @@ export default function PerformanceSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.1 }}
         >
-          ENGINEERED FOR<br />
-          <span className="t-red">EVERY ATHLETE</span>
+          RESIST. ASSIST.<br />
+          <span className="t-red">MEASURE EVERYTHING.</span>
         </motion.h2>
 
         <motion.p
@@ -252,7 +252,7 @@ export default function PerformanceSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          From Olympic sprinters to professional rugby squads — T-APEX delivers adaptive resistance, assisted overspeed, and real-time data across every movement, every athlete.
+          One portable unit loads any movement, tows athletes past their top speed, and captures force and velocity at up to 1000Hz — from Olympic sprinters to full professional squads.
         </motion.p>
 
         {/* Cinematic product film */}

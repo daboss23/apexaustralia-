@@ -44,6 +44,7 @@ src/
   components/       # one component per page section (Hero, ProblemSection, …)
   lib/
     scroll.ts       # shared Lenis handle: scrollToTarget + the scroll lock
+    site.ts         # contact email + demo/enquiry mailto hrefs (all CTAs use these)
 public/             # static assets (hero-video.mp4, logos, images)
   hero-frames/        # desktop scroll-cinema sequence (318 @ 1600x900)
   hero-frames-mobile/ # phone sequence (159 @ 640x360)
@@ -57,6 +58,28 @@ flow) lives there as comments. Note: `TechnologySection.tsx` is imported as
 
 Most section components are client components (`'use client'`) using Framer
 Motion `useInView` / scroll transforms for reveal animations.
+
+## Checkout
+
+`CheckoutSection.tsx` is the storefront (gallery, variants, price). Its ADD TO
+CART button opens `CheckoutFlow.tsx` — a two-step popup (shipping → details)
+portalled to `<body>`. **No payment is processed**: the submit handler simulates
+the authorisation so the flow can be demoed end to end.
+
+A working **Stripe Checkout** integration — serverless function, Price ID env
+vars, `/success/` page — exists on the branch
+`claude/t-apex-sales-page-polish-vrk7h8`. It was written against the older
+single-button checkout that this two-step flow replaced, so it needs
+re-pointing at `CheckoutFlow`'s final step before it can ship, and
+`STRIPE_SECRET_KEY` set in Vercel. Until then the site takes no money and needs
+no keys.
+
+## CTA destinations
+
+- **Order / buy** CTAs → `#order` (the checkout section).
+- **Demo / enquiry** CTAs → `DEMO_HREF` / `ENQUIRY_HREF` from `src/lib/site.ts`,
+  prefilled `mailto:` links. Override the inbox with
+  `NEXT_PUBLIC_CONTACT_EMAIL` (inlined at build time — see `.env.example`).
 
 ## Design tokens (`tailwind.config.ts`, prefix `apex.`)
 

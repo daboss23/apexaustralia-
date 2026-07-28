@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import SportTransitionStage from './SportTransitionStage'
+import { DEMO_HREF } from '@/lib/site'
 
 const SPORTS = [
   {
@@ -384,7 +385,7 @@ export default function SportsSection() {
                     More precise.<br />More adaptable.
                   </div>
                   <a
-                    href="#order"
+                    href={DEMO_HREF}
                     className="inline-flex items-center gap-2 min-h-11 text-[11px] font-display font-bold tracking-[0.12em] uppercase px-5 py-2.5 border transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
                     style={{ borderRadius: 0, color: sport.color, borderColor: `${sport.color}50` }}
                   >

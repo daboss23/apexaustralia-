@@ -5,6 +5,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import Hero from './Hero'
+import { DEMO_HREF } from '@/lib/site'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
@@ -634,22 +635,24 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
           <div className="beat-3 w-full max-w-[900px] opacity-0 pointer-events-auto">
             <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-3 sm:gap-4">
+              {/* Same pair, same destinations, as the classic <Hero/> this
+                  replaces — order first, demo enquiry second. */}
               <a
                 href="#order"
                 className="group inline-flex items-center justify-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-8 py-4 tracking-[0.14em] uppercase transition-all duration-300 hover:-translate-y-0.5"
                 style={{ borderRadius: 0 }}
               >
-                Book Your Free Demo
+                Order Your System
                 <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </a>
               <a
-                href="#how"
+                href={DEMO_HREF}
                 className="group inline-flex items-center justify-center gap-2.5 bg-transparent border border-apex-line hover:border-apex-grey-dim text-apex-grey hover:text-apex-white font-display font-semibold text-[11px] px-8 py-4 tracking-[0.14em] uppercase transition-all duration-300 hover:-translate-y-0.5"
                 style={{ borderRadius: 0 }}
               >
-                See T-Apex In Action
+                Book Your Free Demo
                 <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                 </svg>

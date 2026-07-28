@@ -175,7 +175,7 @@ export default function ComparisonSection() {
 
           {/* COLUMN 2 — T-APEX: premium graphite-glass telemetry panel */}
           <div
-            className="relative overflow-hidden rounded-2xl"
+            className="relative overflow-hidden"
             style={{
               background: '#11151B',
               border: '1px solid rgba(228,232,237,0.14)',
@@ -243,7 +243,7 @@ export default function ComparisonSection() {
 
         {/* Verdict + CTA — graphite glass with blue edge, red accent line */}
         <motion.div
-          className="mt-8 md:mt-14 p-8 md:p-9 flex flex-col md:flex-row md:items-center gap-6 md:gap-10 rounded-2xl relative overflow-hidden"
+          className="mt-8 md:mt-14 p-8 md:p-9 flex flex-col md:flex-row md:items-center gap-6 md:gap-10 relative overflow-hidden"
           style={{
             background: 'rgba(12,12,14,0.7)',
             backdropFilter: 'blur(20px)',
@@ -267,9 +267,9 @@ export default function ComparisonSection() {
           <a
             href="#order"
             className="flex-shrink-0 inline-flex items-center gap-2.5 cta-glow text-white font-display font-bold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
-            style={{ borderRadius: 8 }}
+            style={{ borderRadius: 0 }}
           >
-            Book Your Free Demo
+            Start Measuring
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>

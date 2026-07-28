@@ -42,8 +42,8 @@ export default function WhatsIncludedSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.65, delay: 0.15 }}
         >
-          Extract and assemble the T-Apex and you&apos;ll be ready to train on day one, every
-          component calibrated to work as one system, no extra purchases to get started.
+          Everything arrives calibrated to work as one system — ready to train on day one,
+          with no extra purchases to get started.
         </motion.p>
 
         {/* Everything-in-the-box hero — full annotated kit, edges feathered into the section bg.

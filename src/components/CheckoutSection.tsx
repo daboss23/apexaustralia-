@@ -53,6 +53,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     inBox: ['T-APEX Unit', 'Waist Belt', 'Tablet', 'Adaptor for T-APEX', 'Type-C Cable', 'User Manual'],
     modes: 'Resisted · Change-of-direction · Isotonic · Overload',
     gallery: [
+      { type: 'image', src: '/checkout/core-hero.webp', alt: 'Core T-APEX system — the portable Adaptive Resistance Intelligence unit' },
       { type: 'image', src: '/t-apex product 4.webp', alt: 'T-APEX unit wheeled trackside by an athlete — portable Adaptive Resistance Intelligence' },
       { type: 'image', src: '/t-apex product 0.webp', alt: 'T-APEX system — Core configuration on the training floor' },
       { type: 'image', src: '/t-apex product 3.webp', alt: 'T-APEX unit with sprint shoe' },
@@ -85,9 +86,9 @@ const VARIANTS: Record<VariantId, Variant> = {
     ],
     modes: 'Resisted · CoD · Isotonic · Overload · Assisted Overspeed',
     gallery: [
+      { type: 'image', src: '/t-apex product 2.webp', alt: 'T-APEX with the full Overspeed Module on the field — tether reel, pulley, weight anchor & fast-release strap' },
       { type: 'image', src: '/t-apex product 4.webp', alt: 'T-APEX Overspeed unit wheeled trackside by an athlete — portable, stadium-ready' },
       { type: 'image', src: '/t-apex product 0.webp', alt: 'T-APEX Overspeed system — full configuration' },
-      { type: 'image', src: '/t-apex product 2.webp', alt: 'T-APEX with the full Overspeed Module on the field — tether reel, pulley, weight anchor & fast-release strap' },
       { type: 'image', src: '/t-apex product 3.webp', alt: 'T-APEX Overspeed system — full configuration' },
       { type: 'image', src: '/t-apex product 1.webp', alt: 'T-APEX Overspeed unit with weight plate anchor' },
     ],
@@ -401,10 +402,13 @@ function Gallery({ variant }: { variant: Variant }) {
 /* ── Section ──────────────────────────────────────────────────────────────── */
 
 export default function CheckoutSection() {
+  // Margins only shrink the viewport from the BOTTOM so an anchor jump to
+  // #order (navbar / mobile bar) still counts the section top as in view —
+  // otherwise the headline stays at opacity 0 after the jump.
   const sectionRef = useRef<HTMLElement>(null)
-  const inView = useInView(sectionRef, { once: false, margin: '-12% 0px' })
+  const inView = useInView(sectionRef, { once: false, margin: '0px 0px -12% 0px' })
   const titleRef = useRef<HTMLDivElement>(null)
-  const titleInView = useInView(titleRef, { once: false, margin: '-10% 0px' })
+  const titleInView = useInView(titleRef, { once: false, margin: '0px 0px -10% 0px' })
 
   const [variantId, setVariantId] = useState<VariantId>('core')
   const [cartOpen, setCartOpen] = useState(false)
@@ -646,13 +650,12 @@ export default function CheckoutSection() {
             </p>
             <p className="text-apex-grey font-body leading-[1.8] mb-4" style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.05rem)' }}>
               T-APEX applies intelligent resistance and assistance in motion, then measures the result in
-              real time — so every session produces data you can coach from, not just a workout you have to
-              guess at. It is engineered for hard use on demanding training floors and travels with the team.
+              real time — so every session produces data you can coach from, not a workout you have to
+              guess at. And it travels with the team: case to first sprint in about five minutes.
             </p>
             <p className="font-display font-black text-apex-white leading-tight" style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.35rem)' }}>
-              This is not just another sprint tool. It is an{' '}
-              <span className="text-apex-blue">Adaptive Resistance Intelligence system</span> for elite
-              performance programs.
+              One system for resistance, overspeed, and data —{' '}
+              <span className="text-apex-blue">every mode your program needs, on every ground you train.</span>
             </p>
           </div>
 

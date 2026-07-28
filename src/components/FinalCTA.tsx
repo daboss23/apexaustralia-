@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
+import { DEMO_HREF, ENQUIRY_HREF, CONTACT_EMAIL } from '@/lib/site'
 
 export default function FinalCTA() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -19,7 +20,7 @@ export default function FinalCTA() {
       }} />
 
       <motion.div
-        className="relative min-h-screen flex flex-col items-center justify-center px-6 py-24 text-center"
+        className="relative min-h-[100svh] flex flex-col items-center justify-center px-6 py-16 md:py-24 text-center"
         style={{ scale, opacity }}
       >
         {/* Background red glow */}
@@ -189,18 +190,15 @@ export default function FinalCTA() {
           >
             <a href="#order" className="group inline-flex items-center justify-center gap-3 cta-glow text-white font-display font-bold px-8 sm:px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(214,31,38,0.7)] hover:-translate-y-0.5 active:translate-y-0"
               style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', borderRadius: 0 }}>
-              Book Your Free Demo
+              Order Your T-APEX
               <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
             </a>
 
-            {/* No contact form exists yet, so the secondary action goes to the
-                FAQ — the one place on the page that actually answers a question
-                before someone commits. Repoint it the moment there's a form. */}
-            <a href="#faq" className="group inline-flex items-center justify-center gap-3 border border-apex-line hover:border-apex-grey/50 text-apex-grey hover:text-apex-white font-display font-bold px-8 sm:px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
+            <a href={DEMO_HREF} className="group inline-flex items-center justify-center gap-3 border border-apex-line hover:border-apex-grey/50 text-apex-grey hover:text-apex-white font-display font-bold px-8 sm:px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
               style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', borderRadius: 0 }}>
-              Read The FAQ
+              Book a Free Demo
               <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
               </svg>
@@ -241,24 +239,37 @@ export default function FinalCTA() {
       {/* Footer bar */}
       <div className="relative border-t border-apex-line/40 px-6 md:px-16 py-8 flex flex-col items-center gap-4">
         {/* Nav links — centred */}
-        {/* These have no destination yet — there is no privacy or terms page in
-            the export. Kept as buttons (not dead links) and padded to a real
-            touch size so they at least don't read as broken taps. */}
+        {/* Real destinations — these used to be three dead <button>s labelled
+            Privacy / Terms / Contact with no pages behind them. Padded to a
+            proper touch size rather than a 15px-tall line of type. */}
         <div className="flex items-center gap-2">
-          {['Privacy', 'Terms', 'Contact'].map(label => (
-            <button
-              key={label}
-              className="px-3 py-3.5 text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider cursor-pointer uppercase"
-            >
-              {label}
-            </button>
-          ))}
+          <a
+            href="#order"
+            className="px-3 py-3.5 text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider cursor-pointer uppercase"
+          >
+            Order
+          </a>
+          <a
+            href="#faq"
+            className="px-3 py-3.5 text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider cursor-pointer uppercase"
+          >
+            FAQ
+          </a>
+          <a
+            href={ENQUIRY_HREF}
+            className="px-3 py-3.5 text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider cursor-pointer uppercase"
+          >
+            Contact
+          </a>
         </div>
-        {/* Bottom row — copyright */}
-        <div className="flex items-center gap-6">
+        {/* Bottom row — copyright + contact */}
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6">
           <span className="text-apex-grey-dim font-mono text-[10px] tracking-wide">
             © 2026 T-APEX Australia. All rights reserved.
           </span>
+          <a href={`mailto:${CONTACT_EMAIL}`} className="text-apex-grey-dim hover:text-apex-grey font-mono text-[10px] tracking-wide transition-colors">
+            {CONTACT_EMAIL}
+          </a>
         </div>
       </div>
     </section>

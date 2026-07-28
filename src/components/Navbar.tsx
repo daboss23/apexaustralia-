@@ -125,7 +125,7 @@ export default function Navbar() {
           className="hidden md:inline-flex items-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-5 py-2.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_8px_28px_-6px_rgba(214,31,38,0.55)] hover:-translate-y-px active:translate-y-0"
           style={{ borderRadius: 0 }}
         >
-          Book Demo
+          Order Now
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
@@ -200,7 +200,7 @@ export default function Navbar() {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.35 }}
               >
-                Book Demo
+                Order Now
               </motion.a>
             </div>
           </motion.div>
