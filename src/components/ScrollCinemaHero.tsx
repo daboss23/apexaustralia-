@@ -285,18 +285,30 @@ function ActZero() {
             <div className="w-5 sm:w-8 h-px bg-apex-blue" />
           </div>
 
-          {/* The floor used to be 2.1rem, which is what a 390px phone actually
-              got — 6vw only overtakes it past ~560px, so every phone rendered
-              the headline at its smallest possible size. Driven from vw now, so
-              it grows with the screen; the 5.4rem ceiling keeps desktop as it was.
-              10vw, not more: the words are joined by &nbsp; so they cannot wrap,
-              they can only overflow, and Marcellus is `display: swap` — measured
-              on a 375px screen the serif fallback runs 3px WIDER than the box at
-              11vw, so every cold load would clip the headline until the webfont
-              landed. At 10vw the fallback still has ~27px of slack. */}
+          {/* Sized from the viewport, and deliberately NOT from rem.
+
+              The bounds used to be rem (2.4rem / 5.4rem) and that shipped
+              broken: `rem` tracks the reader's default text size — iOS Larger
+              Text, Safari's per-site page zoom — while the box around it is a
+              px-padded viewport that does not move. At a 24px root the floor
+              became 57.6px, the line needed 440px and the box was 318px, and
+              because the words are &nbsp;-joined for the split they cannot
+              wrap, only overflow. The headline ran clean off the side of the
+              screen. px bounds make the size a pure function of viewport width,
+              which is the only thing the container depends on too.
+
+              (Pinch and browser zoom still scale it — those change the layout
+              viewport, so vw moves with them. It is only the default-font-size
+              preference that no longer applies, which is the right call for
+              display type at this scale.)
+
+              10vw, not more: Marcellus is `display: swap`, and measured on a
+              375px screen the serif fallback runs 3px WIDER than the box at
+              11vw, so every cold load would clip until the webfont landed. At
+              10vw the fallback keeps ~20px of slack. */}
           <h1
             className="relative w-full h-luxia leading-[0.94]"
-            style={{ fontSize: 'clamp(2.4rem, 10vw, 5.4rem)', letterSpacing: '0.045em' }}
+            style={{ fontSize: 'clamp(38px, 10vw, 86px)', letterSpacing: '0.045em' }}
           >
             <div className="split-top will-change-transform">
               <span className="t-silver">TRAIN&nbsp;BEYOND</span>
@@ -820,9 +832,12 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
 
         {/* ACT 3a — the promise, centred over the sprint, then gone */}
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
+          {/* px bounds for the same reason as the h1 above — "NEXT TENTH OF A
+              SECOND" is a 22-character non-breaking string, so it is the most
+              overflow-prone line on the page. */}
           <h2
             className="beat-sprint h-luxia leading-[1.04] sm:leading-[0.96] max-w-[900px] opacity-0"
-            style={{ fontSize: 'clamp(1.6rem, 4.4vw, 4rem)', letterSpacing: '0.04em' }}
+            style={{ fontSize: 'clamp(26px, 4.4vw, 64px)', letterSpacing: '0.04em' }}
           >
             <span className="t-silver">DEVELOPED&nbsp;FOR&nbsp;THE</span>
             <br />
