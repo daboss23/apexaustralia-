@@ -290,6 +290,52 @@
   }
 }
 
+/* …with a short exemption list. The blanket rule above is about the *mass* of
+   looping decoration further down the page; it also caught the two or three
+   hairlines in the hero opening, which are the only motion on an otherwise
+   still black screen and are each a single 1px element. Class beats `*`, so
+   these win regardless of order. Reduced-motion still overrides everything. */
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .cine-tele-line,
+  .cine-cue-pulse {
+    animation-iteration-count: infinite !important;
+  }
+}
+
+/* ── Hero eyebrow hairlines — a signal running through them ─────────────────
+   The two rules flanking "ELITE SPORTS PERFORMANCE TECHNOLOGY". They were flat
+   blue bars; this sends a bright pulse along each one, left to right, so the
+   pair reads as a live telemetry feed crossing the label rather than two
+   pieces of trim. Both scan the same direction so it reads as one signal
+   travelling through the words. */
+@keyframes cine-tele-scan {
+  0% {
+    background-position: 190% 0;
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    background-position: -90% 0;
+    opacity: 0.5;
+  }
+}
+.cine-tele-line {
+  background-image: linear-gradient(
+    90deg,
+    rgba(0, 174, 239, 0.22) 0%,
+    rgba(0, 174, 239, 0.22) 32%,
+    #9fe4ff 47%,
+    #00aeef 57%,
+    rgba(0, 174, 239, 0.22) 72%,
+    rgba(0, 174, 239, 0.22) 100%
+  );
+  background-size: 280% 100%;
+  background-repeat: no-repeat;
+  animation: cine-tele-scan 3.4s linear infinite;
+}
+
 /* ── Primary CTA: premium all-red gradient, sweeping shine, pulsing glow ───── */
 .cta-glow {
   position: relative;

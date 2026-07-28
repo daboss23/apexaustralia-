@@ -278,11 +278,12 @@ function ActZero() {
           />
 
           <div className="cine-eyebrow mb-5 sm:mb-6 flex items-center justify-center gap-2 sm:gap-3">
-            <div className="w-5 sm:w-8 h-px bg-apex-blue" />
+            {/* Wider than the old w-5 so the scanning pulse has room to read */}
+            <div className="cine-tele-line w-7 sm:w-10 h-px" />
             <span className="text-apex-blue font-mono text-[8px] sm:text-[9px] font-medium tracking-[0.24em] sm:tracking-[0.34em] uppercase">
               Elite Sports Performance Technology
             </span>
-            <div className="w-5 sm:w-8 h-px bg-apex-blue" />
+            <div className="cine-tele-line w-7 sm:w-10 h-px" />
           </div>
 
           {/* Sized from the viewport, and deliberately NOT from rem.
@@ -360,7 +361,7 @@ function ScrollCue() {
       </span>
       <div className="w-px h-8 overflow-hidden">
         <div
-          className="w-px h-full"
+          className="cine-cue-pulse w-px h-full"
           style={{
             background: 'linear-gradient(to bottom,#00AEEF,transparent)',
             animation: 'slow-sprint 1.8s ease-in-out infinite',
