@@ -33,6 +33,31 @@ generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 > Scripts live in the session scratch, not the repo; the recipe above is enough
 > to rebuild them.
 
+> **Floating product films** (`SolutionSection`'s turntable, and anything else
+> using `mix-blend-mode: screen` on the black page): the blend composites black
+> to exactly the page background, which is what makes the unit look like it is
+> floating rather than sitting in a video box. It only works on a **true black**
+> plate. Two traps:
+>
+> - **Do not supply a background-removed clip.** Alpha does not survive mp4, so
+>   a "transparent" export arrives on **white** — the worst possible case, since
+>   screen renders white as white and you get a white square. Key it back onto
+>   black first: `lumakey=threshold=0.86:tolerance=0.12` over a black `color`
+>   source, then crush with `colorlevels=rimin=0.03:gimin=0.03:bimin=0.03`. A
+>   plate grading out at ~2.5 reads as a faint lighter box; crushed, it lands
+>   within 0.2/255 of the page.
+> - **Do not motion-interpolate to slow a turntable down.** Both `minterpolate`
+>   (warping across the machine face) and `framerate` blending (ghosting two
+>   rotation angles into a mottled smear) were tried and produced visible
+>   artefacts. Re-time instead: keep every real frame and lower the output rate
+>   (`setpts=1.667*PTS,fps=18`), which is judder-free because no frame is
+>   invented or duplicated.
+>
+> These turntables rarely loop on their own — the unit does not return to its
+> opening pose, so a matched hard cut pops wherever you put it. Crossfade the
+> tail into the head instead (~1.5s) and check the seam difference; under
+> ~5/255 is clean.
+
 ---
 
 ## 1. What the scroll experience does

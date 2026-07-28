@@ -129,8 +129,8 @@ function FloatingUnit({ active }: { active: boolean }) {
         >
           <video
             ref={unitRef}
-            src="/product-rotation-v2.mp4"
-            poster="/product-rotation-v2-poster.jpg"
+            src="/product-rotation-v3.mp4"
+            poster="/product-rotation-v3-poster.jpg"
             autoPlay
             muted
             loop
@@ -139,10 +139,12 @@ function FloatingUnit({ active }: { active: boolean }) {
             className="absolute inset-0 w-full h-full object-contain"
             // 'screen' is what makes the unit float: black composites to exactly
             // the page background, so there is no video rectangle to see. It only
-            // holds if the plate is *true* black — the source graded out at ~2.5,
-            // which would have read as a faint lighter box, so its blacks are
-            // crushed below 0.03 at encode. Keep that step if this is ever
-            // re-cut (see docs/motion-scroll-brief.md).
+            // holds if the plate is *true* black, so the source is keyed onto
+            // black and its blacks crushed below 0.03 at encode — the border now
+            // reads 5.16 against a page background of 5.00. A background-removed
+            // source is NOT a shortcut here: alpha does not survive mp4, so it
+            // arrives on white and would render as a white square under screen.
+            // Key it back onto black first (see docs/motion-scroll-brief.md).
             style={{ mixBlendMode: 'screen' }}
           />
 
