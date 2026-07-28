@@ -11,12 +11,30 @@
     /* Height of the mobile CTA bar, so the last section can reserve room for it
        instead of being covered by it. */
     --mobile-cta-h: 72px;
+    /* How far the hero's opening copy sits ABOVE true centre. Mathematically
+       centred, a hero block reads low — the eye weights the top of the frame,
+       and the scroll cue adds weight at the bottom. Phones feel it most because
+       the viewport is tall and narrow. Desktop has the width to carry it, so it
+       stays honestly centred.
+       ScrollCinemaHero's MOBILE.copyShift must match the phone value: that is
+       what moves the film's aperture up with the headline, so the shot still
+       opens out of the seam. */
+    --cine-copy-shift: 10svh;
   }
 
   @media (min-width: 768px) {
     :root {
       --nav-h: 76px;
       --mobile-cta-h: 0px;
+    }
+  }
+
+  /* 1024px, not 768px — this has to switch on the same breakpoint that decides
+     between the phone and desktop cinema, or the copy shifts without the
+     aperture shifting with it. */
+  @media (min-width: 1024px) {
+    :root {
+      --cine-copy-shift: 0px;
     }
   }
 

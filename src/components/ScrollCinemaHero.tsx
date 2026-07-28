@@ -73,6 +73,20 @@ type CinemaConfig = {
    * more of it here.
    */
   scrub: number
+  /**
+   * How far the opening copy sits above true centre, as a fraction of viewport
+   * height. Must match `--cine-copy-shift` in globals.css: the CSS moves the
+   * headline, this moves the film's aperture with it so the shot still opens
+   * out of the seam between the two halves rather than from the middle of a
+   * screen the headline has left.
+   */
+  copyShift: number
+}
+
+/** The closed aperture — a zero-height slit sitting on the headline's seam. */
+function apertureSlit(copyShift: number) {
+  const top = 50 - copyShift * 100
+  return `inset(${top}% 0% ${100 - top}% 0%)`
 }
 
 const DESKTOP: CinemaConfig = {
@@ -97,6 +111,8 @@ const DESKTOP: CinemaConfig = {
   // Tight, because <SmoothScroll/> (Lenis) already interpolates the wheel. A big
   // scrub on top of that stacks two lags and the film trails the page.
   scrub: 0.35,
+  // Desktop has the width to carry an honestly-centred block.
+  copyShift: 0,
 }
 
 const MOBILE: CinemaConfig = {
@@ -127,6 +143,8 @@ const MOBILE: CinemaConfig = {
   // that can soften the platform's own scroll cadence. 0.5 is about as far as
   // it goes before the film visibly trails your thumb.
   scrub: 0.5,
+  // Keep in step with `--cine-copy-shift` in globals.css.
+  copyShift: 0.1,
 }
 
 // Camera push. The film opens on the machine sitting a long way back down the
@@ -234,7 +252,10 @@ function Stat({
 function ActZero() {
   return (
     <>
-      <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
+      <div
+        className="absolute inset-0 flex items-center justify-center px-6 text-center"
+        style={{ transform: 'translateY(calc(-1 * var(--cine-copy-shift, 0px)))' }}
+      >
         <div className="w-full max-w-[1000px] flex flex-col items-center">
           {/* Brand mark. Sits in the exported HTML (see OpeningStill), so the
               preload scanner finds it without waiting for JavaScript. Clears
@@ -251,7 +272,7 @@ function ActZero() {
             alt="T-APEX Australia"
             width={900}
             height={239}
-            className="cine-logo mb-6 sm:mb-7 w-[178px] sm:w-[210px] lg:w-[260px] h-auto"
+            className="cine-logo mb-6 sm:mb-7 w-[136px] sm:w-[158px] lg:w-[196px] h-auto"
             style={{ filter: 'brightness(1.08)' }}
             decoding="async"
           />
@@ -618,7 +639,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // up, so the video is revealed *by* the headline splitting.
       tl.fromTo(
         '.cine-aperture',
-        { clipPath: 'inset(50% 0% 50% 0%)', opacity: 0 },
+        { clipPath: apertureSlit(cfg.copyShift), opacity: 0 },
         {
           clipPath: 'inset(0% 0% 0% 0%)',
           opacity: 1,
@@ -699,7 +720,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       {/* ─── The film, inside the aperture that the headline split opens ─── */}
       <div
         className="cine-aperture absolute inset-0 z-[1]"
-        style={{ clipPath: 'inset(50% 0% 50% 0%)', opacity: 0 }}
+        style={{ clipPath: apertureSlit(cfg.copyShift), opacity: 0 }}
         aria-hidden="true"
       >
         <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
