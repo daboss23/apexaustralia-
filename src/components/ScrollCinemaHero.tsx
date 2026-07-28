@@ -27,7 +27,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 // Gracefully degrades: phones and `prefers-reduced-motion` users get the classic
 // <Hero /> (no pin, no scrub) instead of this.
 
-const FRAME_COUNT = 241
+const FRAME_COUNT = 350
 const FRAME_PATH = (i: number) =>
   `/hero-frames/frame-${String(i).padStart(3, '0')}.webp`
 
@@ -35,9 +35,9 @@ const FRAME_PATH = (i: number) =>
 // in the background. Act 0 is pure black + type, so it doubles as the loader.
 const READY_FRAMES = 36
 
-// How far (in px of scroll) the hero stays pinned. ~3 viewports, which keeps the
-// scrub at ~15px of scroll per frame — the pacing held across every recut.
-const PIN_DISTANCE = '+=3600'
+// How far (in px of scroll) the hero stays pinned, at ~15px of scroll per frame —
+// the pacing held across every recut. 350 frames × 15 = 5200.
+const PIN_DISTANCE = '+=5200'
 
 // Camera push across the travel. The film does most of the moving itself now
 // (it flies into the machine), so this is only a whisper of extra drift.
