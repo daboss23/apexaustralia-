@@ -42,7 +42,11 @@ src/
     page.tsx       # the whole page — imports & orders the section components
     globals.css    # global styles + the metallic typography system + utilities
   components/       # one component per page section (Hero, ProblemSection, …)
+  lib/
+    scroll.ts       # shared Lenis handle: scrollToTarget + the scroll lock
 public/             # static assets (hero-video.mp4, logos, images)
+  hero-frames/        # desktop scroll-cinema sequence (318 @ 1600x900)
+  hero-frames-mobile/ # phone sequence (159 @ 640x360)
 tailwind.config.ts  # design tokens (apex.* colors), font families, keyframes
 ```
 
@@ -115,6 +119,45 @@ mostly square (`borderRadius: 0`). All animation respects
 Static export → `out/`, hosted on **Vercel**. Merging to `main` publishes the
 production (live) site. Feature work happens on `claude/*` branches via PRs.
 Live site: **https://apexaustralia.vercel.app/**
+
+## Scrolling, overlays and links — use the shared helpers
+
+`src/lib/scroll.ts` is the single owner of moving and freezing the page. Two
+things run on top of the native scroll (Lenis, and GSAP ScrollTrigger's pin), so
+anything that writes `window.scrollY` behind their back is a bug you will feel
+rather than see.
+
+- **Same-page links are plain `<a href="#section">`.** A delegated listener in
+  `SmoothScroll.tsx` catches them and routes them through `scrollToTarget()`.
+  Don't use `next/link` for hashes (this is a single-page static export — it just
+  adds router churn), and don't add your own click handler.
+- **Never `html { scroll-behavior: smooth }`.** The browser and Lenis both write
+  the scroll position every frame and the fight is visible.
+- **Navbar clearance** comes from the `--nav-h` custom property plus the
+  `[id] { scroll-margin-top }` rule in `globals.css`. Lenis reads scroll-margin
+  itself, so don't *also* pass an offset — that double-counts.
+- **Overlays call `lockScroll()` / `unlockScroll()`**, never
+  `body { overflow: hidden }` (iOS Safari scrolls straight through it, and Lenis
+  ignores it entirely). The lock is reference-counted, so overlays can stack.
+- **Every CTA needs a destination.** The site's conversion point is `#order`.
+  A styled `<button>` with no handler looks identical to a working one and is
+  invisible in review — the whole site once shipped with seven of them.
+- **Stacking order** is documented at the top of `Navbar.tsx`. Portalled modals
+  must clear the navbar (150), or it draws over them.
+
+## Mobile
+
+- `useIsMobile()` starts `false` and corrects in an effect. Don't "improve" it by
+  reading matchMedia in the initial state — the export is prerendered with
+  `false`, and disagreeing on the first client render breaks hydration.
+- Heavy `<video>` goes through `<LazyVideo/>`: no `src` until it's near the
+  viewport, paused when it leaves, held on frame 1 under reduced motion.
+- Form fields are **≥16px on phones** (`text-[16px] sm:text-[...]`). Below that
+  iOS Safari zooms the page in on focus and never zooms back out.
+- Hover-revealed controls (`opacity-0 group-hover:opacity-100`) need an
+  `md:` prefix if they *do* something — a phone never hovers. Decorative glows
+  are fine as-is.
+- Interactive targets: **≥40px**, ideally 44.
 
 ## Conventions for changes
 

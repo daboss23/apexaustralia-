@@ -182,7 +182,7 @@ export default function FinalCTA() {
 
           {/* CTA buttons */}
           <motion.div
-            className="flex flex-wrap items-center justify-center gap-4 mb-10"
+            className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-center gap-4 mb-10 max-w-md sm:max-w-none mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.65 }}

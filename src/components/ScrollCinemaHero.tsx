@@ -213,17 +213,35 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
   const render = useRef({ frame: 0, scale: ZOOM_START }).current
 
   // ── Preload the sequence so scrubbing never waits on I/O ────────────────────
+  //
+  // Two details that decide how a cold load *feels*:
+  //
+  // 1. The opening frames are fetched at high priority and everything after
+  //    them at low. All 318 used to go out as one undifferentiated burst, so
+  //    frame 4 queued behind frame 200 — which nobody sees for another four
+  //    thousand pixels of scroll. The tail still streams in during Act 0's
+  //    black hold; it just stops competing with the frames that gate the start.
+  //
+  // 2. The ready gate counts the *first* N frames, not any N. Counting
+  //    completions meant a scattered set of late frames could satisfy it while
+  //    the opening was still in flight.
   useEffect(() => {
-    let loaded = 0
     let cancelled = false
+    const pending = new Set<number>()
+    for (let i = 1; i <= cfg.readyFrames; i++) pending.add(i)
+
     const imgs: HTMLImageElement[] = []
     for (let i = 1; i <= cfg.frameCount; i++) {
       const img = new Image()
-      img.src = cfg.framePath(i)
-      img.onload = img.onerror = () => {
-        loaded++
-        if (!cancelled && loaded >= cfg.readyFrames) setReady(true)
+      if ('fetchPriority' in img) {
+        ;(img as HTMLImageElement & { fetchPriority: string }).fetchPriority =
+          i <= cfg.readyFrames ? 'high' : 'low'
       }
+      img.onload = img.onerror = () => {
+        pending.delete(i)
+        if (!cancelled && pending.size === 0) setReady(true)
+      }
+      img.src = cfg.framePath(i)
       imgs.push(img)
     }
     imagesRef.current = imgs

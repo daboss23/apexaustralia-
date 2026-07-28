@@ -184,12 +184,44 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
    `lanczos` + a light `unsharp` matter: the source is 720p, so these frames are
    upscaled. A good resampler and a touch of sharpening is the difference
    between "soft" and "blurry" — never let the browser do that upscale for you.
-3. Update the frame count in `src/components/ScrollCinemaHero.tsx`:
-   ```ts
-   const FRAME_COUNT = <number of files in public/hero-frames>
+3. Extract the **phone** sequence into `public/hero-frames-mobile/` — same cut,
+   every second frame, 640×360 (see §3b):
+   ```bash
+   rm -f public/hero-frames-mobile/*.webp
+   ffmpeg -y -i public/apex-hero-cinema.mp4 \
+     -vf "fps=7,scale=640:-1:flags=lanczos" \
+     -f image2 -c:v libwebp -quality 56 \
+     public/hero-frames-mobile/frame-%03d.webp
    ```
-4. Re-measure luma and re-time the `.cine-dim` cue (see §1).
-5. `npm run build` to verify, then commit `public/hero-frames/` + the component.
+4. Update **both** frame counts in `src/components/ScrollCinemaHero.tsx` —
+   `DESKTOP.frameCount` and `MOBILE.frameCount`.
+5. Re-measure luma and re-time the `.cine-dim` cue (see §1).
+6. `npm run build` to verify, then commit both frame directories + the component.
+
+### 3b. The phone sequence
+Phones run the same four acts off their own sequence: **159 frames at 640×360,
+2.8 MB**, with `readyFrames: 24` (~430 KB) gating the start. That is not a
+downgrade of the mobile hero — it *replaced* a 13 MB looping banner video that
+was being loaded through two stacked `<video preload="auto">` elements, so the
+phone gained the film and got several times lighter at once.
+
+Act boundaries are expressed as **ratios** of the sequence (`ACT_OPEN_END` and
+friends), not frame indices, so half the frames still land every cut on the same
+moment of the film. Keep that property if you re-cut.
+
+The framing could not carry across unchanged. The footage is 16:9 and a phone is
+about 9:19.5, so cover-fitting shows a ~26 % wide slice of every shot — the
+fly-through and the sprint both lose their subject. Mobile therefore uses
+`fit: 'width'` and plays the film as a **band across the middle of a black
+screen**, which is exactly where the headline splits apart: the type parts and
+the band opens in the seam. `baseScale: 1.35` sizes that band; above ~1.5 the
+sprint starts cropping the athlete. The band's top and bottom edges are faded
+**in the canvas itself** (see `draw()`), not with an overlay, so the fade tracks
+the camera push — a fixed CSS gradient cannot.
+
+Resolution follows from that: the band draws at ~526 CSS px wide, so at
+`maxDpr: 1.25` a 640-wide source is already a mild upscale. Going wider only
+burns fill rate on a phone GPU.
 
 ### Sizing the sequence — the real trade-off
 Frame **count** sells smoothness far more than frame **resolution**: the scrub
@@ -219,25 +251,70 @@ smaller *and* sharper. It was **not** adopted because AVIF decodes considerably
 slower than WebP, and a decode stall during a scrub costs smoothness, which is
 the more valuable of the two. Revisit if the weight ever has to come down.
 
-That weight is desktop-only (phones get `<Hero />` and never fetch a frame) and
-loads progressively — only `READY_FRAMES` (36) gate the start of scrubbing, and
-a frame that hasn't decoded holds the previous one rather than flashing black.
-Keep the total under ~10 MB.
+That weight is desktop-only (phones fetch the 2.8 MB sequence in §3b instead)
+and loads progressively — only `readyFrames` (36) gate the start of scrubbing,
+and a frame that hasn't decoded holds the previous one rather than flashing
+black.
 
-### Optional tuning knobs (top of `ScrollCinemaHero.tsx`)
-- `PIN_DISTANCE` — `'+=3000'` px of scroll = how long the hero stays pinned.
-  Keep it at roughly **15 px of scroll per frame** or the scrub changes feel.
+**Re-measured on the shipped 318-frame sequence, and the answer is: leave it.**
+Sampling 24 frames across the whole cut and re-encoding through Chromium's WebP
+encoder:
+
+| | full sequence | vs now |
+|---|---|---|
+| as shipped (1600×900) | 24.2 MB | — |
+| 1600×900 q0.80 | 26.6 MB | **+10 %** |
+| 1600×900 q0.72 | 23.5 MB | −3 % |
+| 1440×810 q0.78 | 22.0 MB | −9 % |
+| 1280×720 q0.80 | 20.5 MB | −15 % |
+| 1280×720 q0.72 | 16.8 MB | −31 % |
+
+Quality alone buys nothing — the frames are already encoded near the knee, and
+re-encoding at a *higher* quality setting than they were made at makes them
+bigger. Only a resolution cut moves the number, and it costs visible sharpness
+on a large display *plus* generation loss from re-compressing already-lossy
+source. Meanwhile 24 MB is not the number that decides how the page feels:
+36 frames (~2.7 MB) gate the start and the rest streams in behind Act 0's black
+hold, so time-to-interactive is better than the 15 MB video the hero used to
+run, which had to buffer contiguously.
+
+If the weight ever genuinely has to come down, take **frames out of the slow
+acts** before you take pixels out of every frame — the opening act spends 34 %
+of the scroll on 19 % of the sequence and can afford it.
+
+### Load ordering
+The opening frames are fetched at `fetchPriority: 'high'` and the rest at
+`'low'`, so frame 4 doesn't queue behind frame 200 — which nobody sees for
+another four thousand pixels of scroll. The ready gate counts the **first** N
+frames specifically, not any N completions; counting completions let a scattered
+set of late arrivals satisfy it while the opening was still in flight.
+
+### Optional tuning knobs (the `DESKTOP` / `MOBILE` configs in `ScrollCinemaHero.tsx`)
+- `pinDistance` — px of scroll the hero stays pinned (`'+=4800'` desktop,
+  `'+=3200'` phone). Keep it near **15–20 px of scroll per frame** or the scrub
+  changes feel. Phones get less because a thumb covers ground far faster than a
+  wheel, and a 4800px pin on a phone reads as the page having stopped.
 - `ZOOM_START` / `ZOOM_END` — extra push-in (`1.0 → 1.1`). Keep this small when
   the footage already flies; the two motions fight otherwise.
-- `SPLIT_TRAVEL` — how far the headline halves part (`0.34` of viewport height).
+- `splitTravel` — how far the headline halves part, as a fraction of viewport
+  height (`0.34` desktop, `0.21` phone — enough to clear the film band without
+  throwing the type off the top of a short phone).
+- `fit` / `baseScale` / `maxDpr` — see §3b.
 - Beat timings — the position values in the timeline map to scroll progress
   (0–1); shift them to re-choreograph when copy appears.
 
 ---
 
 ## 4. Fallbacks (already handled)
-- **Phones (< 1024px)** and **`prefers-reduced-motion`** users get the classic
-  `<Hero />` — no pin, no scrub — so the site stays fast and accessible.
+- **Phones (< 1024px)** run the same scroll-cinema off the mobile sequence
+  (§3b). **`prefers-reduced-motion`** and **Data Saver / 2G-class connections**
+  get the classic `<Hero />` — no pin, no scrub — with the banner rendered as a
+  still (`<Hero still />`), because a three-hundred-image preload is exactly
+  what those settings ask you not to do.
+- The same `still` flag covers the moment before the hero has decided which mode
+  it's in. That first paint is what the static export ships, so without it every
+  visitor on every device kicked off the 13 MB banner video for a hero that was
+  replaced milliseconds later.
 - Frames **preload** in the background; Act 0 is black-and-type by design, so it
   covers the load. Scrubbing arms at `READY_FRAMES` (40) and a frame that hasn't
   decoded yet holds the previous one rather than flashing black.
