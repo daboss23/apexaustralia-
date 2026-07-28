@@ -129,14 +129,20 @@ function FloatingUnit({ active }: { active: boolean }) {
         >
           <video
             ref={unitRef}
-            src="/product-rotation.mp4"
-            poster="/product-rotation-poster.jpg"
+            src="/product-rotation-v2.mp4"
+            poster="/product-rotation-v2-poster.jpg"
             autoPlay
             muted
             loop
             playsInline
             aria-label="T-Apex adaptive resistance unit turning in space"
             className="absolute inset-0 w-full h-full object-contain"
+            // 'screen' is what makes the unit float: black composites to exactly
+            // the page background, so there is no video rectangle to see. It only
+            // holds if the plate is *true* black — the source graded out at ~2.5,
+            // which would have read as a faint lighter box, so its blacks are
+            // crushed below 0.03 at encode. Keep that step if this is ever
+            // re-cut (see docs/motion-scroll-brief.md).
             style={{ mixBlendMode: 'screen' }}
           />
 
