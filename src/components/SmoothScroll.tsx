@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import Lenis from 'lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { setLenis, scrollToTarget } from '@/lib/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -24,31 +25,71 @@ gsap.registerPlugin(ScrollTrigger)
 //
 // Disabled entirely for `prefers-reduced-motion` — hijacking scroll is exactly
 // what that setting asks you not to do.
+//
+// This component also owns every *programmatic* jump on the page. `html {
+// scroll-behavior: smooth }` used to handle anchor clicks, but the browser's
+// smooth scroll and Lenis both write window.scrollY every frame and the result
+// is a fight you can feel. Instead one delegated listener catches same-page hash
+// clicks and routes them through `scrollToTarget()`, which uses Lenis when it's
+// running and the native scroll when it isn't — and offsets for the fixed navbar
+// either way, so a section never lands underneath it.
 export default function SmoothScroll() {
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    const lenis = new Lenis({
-      // Time-based easing; `duration` is how long it takes to converge on the
-      // target. ~1.1s is long enough to erase wheel steps without feeling laggy.
-      duration: 1.1,
-      easing: (t: number) => 1 - Math.pow(1 - t, 3), // easeOutCubic
-      // Leave touch alone: mobile already scrolls smoothly and momentum
-      // scrolling fights any JS smoothing we add on top.
-      smoothWheel: true,
-      touchMultiplier: 1,
-    })
+    let lenis: Lenis | null = null
+    let raf: ((time: number) => void) | null = null
 
-    lenis.on('scroll', ScrollTrigger.update)
+    if (!reduced) {
+      lenis = new Lenis({
+        // Time-based easing; `duration` is how long it takes to converge on the
+        // target. ~1.1s is long enough to erase wheel steps without feeling laggy.
+        duration: 1.1,
+        easing: (t: number) => 1 - Math.pow(1 - t, 3), // easeOutCubic
+        // Leave touch alone: mobile already scrolls smoothly and momentum
+        // scrolling fights any JS smoothing we add on top.
+        smoothWheel: true,
+        touchMultiplier: 1,
+      })
 
-    const raf = (time: number) => lenis.raf(time * 1000)
-    gsap.ticker.add(raf)
-    gsap.ticker.lagSmoothing(0)
+      lenis.on('scroll', ScrollTrigger.update)
+
+      raf = (time: number) => lenis!.raf(time * 1000)
+      gsap.ticker.add(raf)
+      gsap.ticker.lagSmoothing(0)
+      setLenis(lenis)
+    }
+
+    // ── Delegated same-page anchor handling ─────────────────────────────────
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return
+      const anchor = (e.target as HTMLElement | null)?.closest?.('a[href^="#"]')
+      if (!anchor) return
+      const hash = anchor.getAttribute('href') || ''
+      if (hash.length < 2) return
+      if (scrollToTarget(hash)) {
+        e.preventDefault()
+        // Keep the URL honest without letting the browser also jump.
+        history.replaceState(null, '', hash)
+      }
+    }
+    document.addEventListener('click', onClick)
+
+    // Deep link on first load: the target has to clear the navbar too, and the
+    // frame sequence / images above it may still be settling, so do it once the
+    // page has actually laid out.
+    const hash = window.location.hash
+    const deepLink = hash.length > 1 ? window.setTimeout(() => scrollToTarget(hash), 300) : 0
 
     return () => {
-      gsap.ticker.remove(raf)
-      gsap.ticker.lagSmoothing(500, 33)
-      lenis.destroy()
+      document.removeEventListener('click', onClick)
+      if (deepLink) clearTimeout(deepLink)
+      if (raf) {
+        gsap.ticker.remove(raf)
+        gsap.ticker.lagSmoothing(500, 33)
+      }
+      setLenis(null)
+      lenis?.destroy()
     }
   }, [])
 

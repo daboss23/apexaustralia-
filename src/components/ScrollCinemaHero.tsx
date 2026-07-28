@@ -22,22 +22,90 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 //
 // Frames are a pre-extracted WebP sequence (buttery, no <video> stutter). Swap
 // the footage by dropping a new numbered sequence into /public/hero-frames and
-// updating FRAME_COUNT below (see docs/motion-scroll-brief.md).
+// updating the desktop `frameCount` below (see docs/motion-scroll-brief.md).
 //
-// Gracefully degrades: phones and `prefers-reduced-motion` users get the classic
-// <Hero /> (no pin, no scrub) instead of this.
+// ── Phones get the same film ─────────────────────────────────────────────────
+// The cut used to be desktop-only, and phones fell back to <Hero/> over a 13 MB
+// looping banner video — the single heaviest thing on the mobile site, loaded
+// through two stacked <video> elements. The scroll-cinema now runs there too,
+// off a separate sequence (/hero-frames-mobile) that is half the frames at
+// 640×360 — 2.8 MB all in, and only the first two dozen frames gate the start.
+// So mobile gained the motion AND got several times lighter.
+//
+// The one thing that could NOT come across is the framing. The footage is 16:9
+// and a phone is roughly 9:19.5, so cover-fitting it would show a ~26 % wide
+// slice of every shot — the fly-through and the sprint would both be cropped to
+// nothing. Mobile therefore fits the film to the *width* (see FIT below) and
+// plays it as a band across the middle of a black screen, which is where the
+// headline splits apart anyway: the type parts, the band opens in the seam. Same
+// four acts, same beats, framed for the device instead of cropped for it.
+//
+// Still falls back to the classic <Hero /> under `prefers-reduced-motion` or
+// Data Saver — a 300-frame preload is exactly what those settings ask you not
+// to do.
 
-const FRAME_COUNT = 318
-const FRAME_PATH = (i: number) =>
-  `/hero-frames/frame-${String(i).padStart(3, '0')}.webp`
+type CinemaConfig = {
+  frameCount: number
+  framePath: (i: number) => string
+  /** Frames that must decode before scrubbing may begin. Act 0 is black + type,
+   *  so it doubles as the loader. */
+  readyFrames: number
+  /** How far (in px of scroll) the hero stays pinned. */
+  pinDistance: string
+  /** 'cover' crops the film to fill the screen; 'width' fits it across the
+   *  screen as a band, letterboxed into black. */
+  fit: 'cover' | 'width'
+  /** Multiplier on the fitted size before the camera push is applied. Lets the
+   *  phone's band read bigger than a strict fit-width without cropping the
+   *  subject out of frame. */
+  baseScale: number
+  /** How far the two headline halves travel apart, as a fraction of viewport
+   *  height. Resolved at refresh so it survives rotation. */
+  splitTravel: number
+  /** Cap on the canvas backing-store DPR. */
+  maxDpr: number
+}
 
-// Scrubbing may begin once this many frames are decoded; the rest keep loading
-// in the background. Act 0 is pure black + type, so it doubles as the loader.
-const READY_FRAMES = 36
+const DESKTOP: CinemaConfig = {
+  frameCount: 318,
+  framePath: (i) => `/hero-frames/frame-${String(i).padStart(3, '0')}.webp`,
+  readyFrames: 36,
+  // ~15px of scroll per frame on average, but that budget is spent unevenly —
+  // see ACT SCRUB below.
+  pinDistance: '+=4800',
+  fit: 'cover',
+  baseScale: 1,
+  splitTravel: 0.34,
+  // Capped at 1.5 rather than 2. Frames are 1600×900, so on a standard 1080p
+  // desktop (DPR 1) the canvas is already pixel-for-pixel with the source. Above
+  // that we're upscaling regardless — and a 2× backing store on a large retina
+  // display pushes 4× the pixels to show detail the frame doesn't have. That
+  // fill rate is better spent on framerate, which is smoothness.
+  maxDpr: 1.5,
+}
 
-// How far (in px of scroll) the hero stays pinned. ~15px of scroll per frame on
-// average, but that budget is spent unevenly — see ACT SCRUB below.
-const PIN_DISTANCE = '+=4800'
+const MOBILE: CinemaConfig = {
+  // Every second frame of the desktop cut. Over a 3200px pin that is ~20px of
+  // scroll per frame against the desktop's ~15 — and a phone's viewport is small
+  // enough that the per-frame movement still reads as continuous.
+  frameCount: 159,
+  framePath: (i) => `/hero-frames-mobile/frame-${String(i).padStart(3, '0')}.webp`,
+  // ~430 KB before the film can start moving.
+  readyFrames: 24,
+  // Shorter than desktop: a thumb covers ground far faster than a wheel, and a
+  // 4800px pin on a phone feels like the page has stopped responding.
+  pinDistance: '+=3200',
+  fit: 'width',
+  // 1.35× fit-width — the band fills a good third of the screen and the machine
+  // stays whole. Above ~1.5 the sprint shot starts losing the athlete.
+  baseScale: 1.35,
+  // Enough to clear the film band (≈296px tall at rest) without throwing the
+  // type off the top of a short phone.
+  splitTravel: 0.21,
+  // The source is 640 wide and the band draws at ~526 CSS px, so 1.25 is already
+  // a mild upscale; going higher only burns fill rate on a phone GPU.
+  maxDpr: 1.25,
+}
 
 // Camera push. The film opens on the machine sitting a long way back down the
 // lens — the plate behind it is pure black, so drawing the frame under 1.0 puts
@@ -48,23 +116,22 @@ const ZOOM_OPEN = 1.0
 const ZOOM_END = 1.1
 
 // ── ACT SCRUB — where the scroll budget is spent ─────────────────────────────
-// Frame indices into the sequence, and the share of the pinned scroll each act
-// gets. The opening is deliberately the slowest: it's the hero shot, and at a
-// flat rate it flashed past in a fifth of the scroll. Now it takes a third, so
-// the machine has room to travel in, turn, and open.
+// Fractions of the sequence, and the share of the pinned scroll each act gets.
+// The opening is deliberately the slowest: it's the hero shot, and at a flat
+// rate it flashed past in a fifth of the scroll. Now it takes a third, so the
+// machine has room to travel in, turn, and open.
 //
 //   act        frames     scroll     px/frame
-//   opening      0– 59      34%        ~24   ← the hero shot, given room
-//   internals   59–185      26%        ~10
-//   tunnel     185–227      10%        ~11
-//   sprint     227–end      30%        ~13
-const ACT_OPEN_END = 59
-const ACT_INNER_END = 185
-const ACT_TUNNEL_END = 227
-
-// How far the two headline halves travel apart, as a fraction of viewport
-// height. Resolved at refresh so it survives resize.
-const SPLIT_TRAVEL = 0.34
+//   opening      0– 19%     34%        ~24   ← the hero shot, given room
+//   internals   19– 58%     26%        ~10
+//   tunnel      58– 71%     10%        ~11
+//   sprint      71–end      30%        ~13
+//
+// Expressed as ratios so the mobile sequence — half the frames, same cut — lands
+// its act boundaries on exactly the same moments of the film.
+const ACT_OPEN_END = 59 / 318
+const ACT_INNER_END = 185 / 318
+const ACT_TUNNEL_END = 227 / 318
 
 // ── Where the cut's content sits, as scroll progress ─────────────────────────
 // The film scrubs 0.03 → 0.97, act by act (see ACT SCRUB above):
@@ -101,30 +168,42 @@ const STATS = [
   { k: 'Control', v: '100', u: '%' },
 ]
 
-function Stat({ k, v, u, align }: { k: string; v: string; u: string; align: 'left' | 'right' }) {
+function Stat({
+  k,
+  v,
+  u,
+  align,
+}: {
+  k: string
+  v: string
+  u: string
+  align: 'left' | 'right' | 'center'
+}) {
   return (
-    <div>
+    <div className={align === 'center' ? 'text-center' : undefined}>
       <div className="font-mono text-[8px] tracking-[0.3em] uppercase text-apex-grey-dim mb-2">
         {k}
       </div>
-      <div className="font-display font-black text-apex-white leading-none text-4xl xl:text-5xl">
+      <div className="font-display font-black text-apex-white leading-none text-3xl sm:text-4xl xl:text-5xl">
         {v}
-        <span className="text-apex-blue text-base xl:text-lg ml-1 align-top">{u}</span>
+        <span className="text-apex-blue text-sm xl:text-lg ml-1 align-top">{u}</span>
       </div>
       <div
-        className={`mt-3 h-px w-12 ${align === 'right' ? 'ml-auto' : ''}`}
+        className={`mt-3 h-px w-12 ${
+          align === 'right' ? 'ml-auto' : align === 'center' ? 'mx-auto' : ''
+        }`}
         style={{
           background:
-            align === 'right'
-              ? 'linear-gradient(90deg,transparent,rgba(0,174,239,0.7))'
-              : 'linear-gradient(270deg,transparent,rgba(0,174,239,0.7))',
+            align === 'left'
+              ? 'linear-gradient(270deg,transparent,rgba(0,174,239,0.7))'
+              : 'linear-gradient(90deg,transparent,rgba(0,174,239,0.7))',
         }}
       />
     </div>
   )
 }
 
-function CinemaImpl() {
+function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imagesRef = useRef<HTMLImageElement[]>([])
@@ -136,20 +215,24 @@ function CinemaImpl() {
   // ── Preload the sequence so scrubbing never waits on I/O ────────────────────
   useEffect(() => {
     let loaded = 0
+    let cancelled = false
     const imgs: HTMLImageElement[] = []
-    for (let i = 1; i <= FRAME_COUNT; i++) {
+    for (let i = 1; i <= cfg.frameCount; i++) {
       const img = new Image()
-      img.src = FRAME_PATH(i)
+      img.src = cfg.framePath(i)
       img.onload = img.onerror = () => {
         loaded++
-        if (loaded >= READY_FRAMES) setReady(true)
+        if (!cancelled && loaded >= cfg.readyFrames) setReady(true)
       }
       imgs.push(img)
     }
     imagesRef.current = imgs
-  }, [])
+    return () => {
+      cancelled = true
+    }
+  }, [cfg])
 
-  // ── Canvas draw — cover-fit the active frame, scaled for the push-in ─────────
+  // ── Canvas draw — fit the active frame, scaled for the push-in ──────────────
   const draw = () => {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
@@ -158,8 +241,8 @@ function CinemaImpl() {
     // Frame still decoding — hold the previous one rather than flashing black.
     if (!img || !img.complete || !img.naturalWidth) return
 
-    // The frames are upscaled 720p, so resampling quality is doing real work
-    // here — the cheap default sampler is a visible part of the softness.
+    // The frames are upscaled, so resampling quality is doing real work here —
+    // the cheap default sampler is a visible part of the softness.
     ctx.imageSmoothingEnabled = true
     ctx.imageSmoothingQuality = 'high'
 
@@ -169,31 +252,57 @@ function CinemaImpl() {
     const cr = cw / ch
     let dw: number
     let dh: number
-    if (ir > cr) {
-      dh = ch
-      dw = ch * ir
-    } else {
+    if (cfg.fit === 'width' || ir <= cr) {
+      // Fit across the canvas width. On a portrait phone this is what keeps the
+      // whole composition on screen instead of showing a narrow centre slice.
       dw = cw
       dh = cw / ir
+    } else {
+      dh = ch
+      dw = ch * ir
     }
-    dw *= render.scale
-    dh *= render.scale
+    const s = render.scale * cfg.baseScale
+    dw *= s
+    dh *= s
     const dx = (cw - dw) / 2
     const dy = (ch - dh) / 2
     ctx.clearRect(0, 0, cw, ch)
     ctx.drawImage(img, dx, dy, dw, dh)
+
+    // Melt the band's horizontal edges into the page.
+    //
+    // Desktop fills the screen so it has no edges to worry about. The phone
+    // plays the film as a band with black above and below, and a hard cut at
+    // each edge reads as a video rectangle pasted onto the page — the one thing
+    // that gave the mobile cut away. Fading in the canvas (rather than with an
+    // overlay element) means the fade tracks the band as the camera pushes in,
+    // which no fixed CSS gradient could do.
+    if (dh < ch - 1) {
+      const fade = Math.max(18, dh * 0.09)
+      ctx.save()
+      ctx.globalCompositeOperation = 'destination-out'
+
+      const top = ctx.createLinearGradient(0, dy, 0, dy + fade)
+      top.addColorStop(0, 'rgba(0,0,0,1)')
+      top.addColorStop(1, 'rgba(0,0,0,0)')
+      ctx.fillStyle = top
+      ctx.fillRect(0, dy, cw, fade)
+
+      const bot = ctx.createLinearGradient(0, dy + dh - fade, 0, dy + dh)
+      bot.addColorStop(0, 'rgba(0,0,0,0)')
+      bot.addColorStop(1, 'rgba(0,0,0,1)')
+      ctx.fillStyle = bot
+      ctx.fillRect(0, dy + dh - fade, cw, fade)
+
+      ctx.restore()
+    }
   }
 
   // ── Size the canvas backing store to the element (dpr-aware) ─────────────────
   const sizeCanvas = () => {
     const canvas = canvasRef.current
     if (!canvas) return
-    // Capped at 1.5 rather than 2. Frames are 1920×1080, so on a standard 1080p
-    // desktop (DPR 1) the canvas is already pixel-for-pixel with the source.
-    // Above that we're upscaling regardless — and a 2× backing store on a large
-    // retina display pushes 4× the pixels to show detail the frame doesn't have.
-    // That fill rate is better spent on framerate, which is smoothness.
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
+    const dpr = Math.min(window.devicePixelRatio || 1, cfg.maxDpr)
     const w = canvas.clientWidth
     const h = canvas.clientHeight
     canvas.width = Math.round(w * dpr)
@@ -204,7 +313,15 @@ function CinemaImpl() {
   useEffect(() => {
     if (!ready) return
     sizeCanvas()
-    const onResize = () => sizeCanvas()
+    // Phones fire `resize` every time the URL bar slides away, which would
+    // otherwise re-size the canvas mid-scroll. Only react to a real change of
+    // width (rotation, or a desktop window drag).
+    let lastW = window.innerWidth
+    const onResize = () => {
+      if (phone && window.innerWidth === lastW) return
+      lastW = window.innerWidth
+      sizeCanvas()
+    }
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -215,14 +332,16 @@ function CinemaImpl() {
     () => {
       if (!ready) return
 
-      const travel = () => window.innerHeight * SPLIT_TRAVEL
+      const travel = () => window.innerHeight * cfg.splitTravel
+      const last = cfg.frameCount - 1
+      const f = (ratio: number) => Math.round(ratio * last)
 
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
           trigger: rootRef.current,
           start: 'top top',
-          end: PIN_DISTANCE,
+          end: cfg.pinDistance,
           pin: true,
           // Tight, because <SmoothScroll/> (Lenis) already interpolates the
           // scroll position itself. A big scrub value on top of that stacks two
@@ -238,10 +357,10 @@ function CinemaImpl() {
       // shot gets a third of the scroll instead of a fifth. Each leg is still
       // linear (ease 'none' from defaults) — the rate changes only at the act
       // boundaries, which fall on cuts, so no leg visibly speeds up mid-shot.
-      tl.to(render, { frame: ACT_OPEN_END, duration: 0.37 }, 0.03)
-      tl.to(render, { frame: ACT_INNER_END, duration: 0.23 }, 0.4)
-      tl.to(render, { frame: ACT_TUNNEL_END, duration: 0.09 }, 0.63)
-      tl.to(render, { frame: FRAME_COUNT - 1, duration: 0.25 }, 0.72)
+      tl.to(render, { frame: f(ACT_OPEN_END), duration: 0.37 }, 0.03)
+      tl.to(render, { frame: f(ACT_INNER_END), duration: 0.23 }, 0.4)
+      tl.to(render, { frame: f(ACT_TUNNEL_END), duration: 0.09 }, 0.63)
+      tl.to(render, { frame: last, duration: 0.25 }, 0.72)
 
       // The machine flies in from deep in the lens and lands at full frame just
       // as the panels open; the rest is the slow push across the travel.
@@ -398,72 +517,94 @@ function CinemaImpl() {
         {/* ACT 0/1 — the promise, which becomes the split */}
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
           <div className="w-full max-w-[1000px]">
-          <div className="cine-eyebrow mb-7 flex items-center justify-center gap-3">
-            <div className="w-8 h-px bg-apex-blue" />
-            <span className="text-apex-blue font-mono text-[9px] font-medium tracking-[0.34em] uppercase">
-              Elite Sports Performance Technology
-            </span>
-            <div className="w-8 h-px bg-apex-blue" />
-          </div>
-
-          <h1
-            className="relative h-luxia leading-[0.94]"
-            style={{ fontSize: 'clamp(2.4rem, 6vw, 5.4rem)', letterSpacing: '0.045em' }}
-          >
-            <div className="split-top will-change-transform">
-              <span className="t-silver">TRAIN&nbsp;BEYOND</span>
+            <div className="cine-eyebrow mb-6 sm:mb-7 flex items-center justify-center gap-2 sm:gap-3">
+              <div className="w-5 sm:w-8 h-px bg-apex-blue" />
+              <span className="text-apex-blue font-mono text-[8px] sm:text-[9px] font-medium tracking-[0.24em] sm:tracking-[0.34em] uppercase">
+                Elite Sports Performance Technology
+              </span>
+              <div className="w-5 sm:w-8 h-px bg-apex-blue" />
             </div>
 
-            {/* The seam the film opens out of, pinned to the split line */}
-            <div
-              className="cine-seam absolute left-1/2 top-1/2 h-px w-[46vw] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-              style={{
-                opacity: 0,
-                background:
-                  'linear-gradient(90deg,transparent,rgba(0,174,239,0.75),rgba(214,31,38,0.55),transparent)',
-              }}
-              aria-hidden="true"
-            />
+            <h1
+              className="relative h-luxia leading-[0.94]"
+              style={{ fontSize: 'clamp(2.1rem, 6vw, 5.4rem)', letterSpacing: '0.045em' }}
+            >
+              <div className="split-top will-change-transform">
+                <span className="t-silver">TRAIN&nbsp;BEYOND</span>
+              </div>
 
-            <div className="split-bot will-change-transform">
-              <span className="t-red">HUMAN&nbsp;LIMITS</span>
-            </div>
-          </h1>
+              {/* The seam the film opens out of, pinned to the split line */}
+              <div
+                className="cine-seam absolute left-1/2 top-1/2 h-px w-[72vw] sm:w-[46vw] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                style={{
+                  opacity: 0,
+                  background:
+                    'linear-gradient(90deg,transparent,rgba(0,174,239,0.75),rgba(214,31,38,0.55),transparent)',
+                }}
+                aria-hidden="true"
+              />
+
+              <div className="split-bot will-change-transform">
+                <span className="t-red">HUMAN&nbsp;LIMITS</span>
+              </div>
+            </h1>
           </div>
         </div>
 
         {/* ACT 2 — telemetry HUD mid-travel.
-            Flanked left/right rather than centred: the machine holds the middle
-            of frame for the whole clip, so the instrument readout lives in the
-            dark margins either side of it — and reads as an overlay ON the
-            machine rather than copy fighting it. */}
+            Desktop flanks the film left/right: the machine holds the middle of
+            frame for the whole clip, so the instrument readout lives in the dark
+            margins either side of it. A phone has no such margins — the film is
+            a band across the middle — so the readout becomes a 2×2 block sitting
+            in the black beneath it. */}
         <div className="beat-2 absolute inset-0 opacity-0">
-          <div className="absolute left-[11%] xl:left-[13%] top-1/2 -translate-y-1/2 flex flex-col items-end gap-9 text-right">
-            <div className="flex items-center gap-2">
-              <span
-                className="h-1.5 w-1.5 bg-apex-red"
-                style={{ animation: 'cta-glow-pulse 1.6s ease-in-out infinite' }}
-              />
-              <span className="font-mono text-[8px] tracking-[0.3em] uppercase text-apex-blue">
-                ARI · Live
-              </span>
+          {phone ? (
+            <div className="absolute inset-x-0 bottom-[8%] px-8">
+              <div className="mb-5 flex items-center justify-center gap-2">
+                <span
+                  className="h-1.5 w-1.5 bg-apex-red"
+                  style={{ animation: 'cta-glow-pulse 1.6s ease-in-out infinite' }}
+                />
+                <span className="font-mono text-[8px] tracking-[0.3em] uppercase text-apex-blue">
+                  ARI · Live
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-x-6 gap-y-6">
+                {STATS.map((s) => (
+                  <Stat key={s.k} {...s} align="center" />
+                ))}
+              </div>
             </div>
-            {STATS.slice(0, 2).map((s) => (
-              <Stat key={s.k} {...s} align="right" />
-            ))}
-          </div>
-          <div className="absolute right-[11%] xl:right-[13%] top-1/2 -translate-y-1/2 flex flex-col items-start gap-9 text-left">
-            {STATS.slice(2).map((s) => (
-              <Stat key={s.k} {...s} align="left" />
-            ))}
-          </div>
+          ) : (
+            <>
+              <div className="absolute left-[11%] xl:left-[13%] top-1/2 -translate-y-1/2 flex flex-col items-end gap-9 text-right">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="h-1.5 w-1.5 bg-apex-red"
+                    style={{ animation: 'cta-glow-pulse 1.6s ease-in-out infinite' }}
+                  />
+                  <span className="font-mono text-[8px] tracking-[0.3em] uppercase text-apex-blue">
+                    ARI · Live
+                  </span>
+                </div>
+                {STATS.slice(0, 2).map((s) => (
+                  <Stat key={s.k} {...s} align="right" />
+                ))}
+              </div>
+              <div className="absolute right-[11%] xl:right-[13%] top-1/2 -translate-y-1/2 flex flex-col items-start gap-9 text-left">
+                {STATS.slice(2).map((s) => (
+                  <Stat key={s.k} {...s} align="left" />
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         {/* ACT 3a — the promise, centred over the sprint, then gone */}
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
           <h2
-            className="beat-sprint h-luxia leading-[0.96] max-w-[900px] opacity-0"
-            style={{ fontSize: 'clamp(1.9rem, 4.4vw, 4rem)', letterSpacing: '0.04em' }}
+            className="beat-sprint h-luxia leading-[1.04] sm:leading-[0.96] max-w-[900px] opacity-0"
+            style={{ fontSize: 'clamp(1.6rem, 4.4vw, 4rem)', letterSpacing: '0.04em' }}
           >
             <span className="t-silver">DEVELOPED&nbsp;FOR&nbsp;THE</span>
             <br />
@@ -473,35 +614,38 @@ function CinemaImpl() {
 
         {/* ACT 3b — the resolve + CTA */}
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
-        <div className="beat-3 max-w-[900px] opacity-0 pointer-events-auto">
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <a
-              href="#checkout"
-              className="group inline-flex items-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-8 py-4 tracking-[0.14em] uppercase transition-all duration-300 hover:-translate-y-0.5"
-              style={{ borderRadius: 0 }}
-            >
-              Book Your Free Demo
-              <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </a>
-            <a
-              href="#how-it-works"
-              className="group inline-flex items-center gap-2.5 bg-transparent border border-apex-line hover:border-apex-grey-dim text-apex-grey hover:text-apex-white font-display font-semibold text-[11px] px-8 py-4 tracking-[0.14em] uppercase transition-all duration-300 hover:-translate-y-0.5"
-              style={{ borderRadius: 0 }}
-            >
-              See T-Apex In Action
-              <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-              </svg>
-            </a>
+          <div className="beat-3 w-full max-w-[900px] opacity-0 pointer-events-auto">
+            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-3 sm:gap-4">
+              <a
+                href="#order"
+                className="group inline-flex items-center justify-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-8 py-4 tracking-[0.14em] uppercase transition-all duration-300 hover:-translate-y-0.5"
+                style={{ borderRadius: 0 }}
+              >
+                Book Your Free Demo
+                <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </a>
+              <a
+                href="#how"
+                className="group inline-flex items-center justify-center gap-2.5 bg-transparent border border-apex-line hover:border-apex-grey-dim text-apex-grey hover:text-apex-white font-display font-semibold text-[11px] px-8 py-4 tracking-[0.14em] uppercase transition-all duration-300 hover:-translate-y-0.5"
+                style={{ borderRadius: 0 }}
+              >
+                See T-Apex In Action
+                <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </a>
+            </div>
           </div>
-        </div>
         </div>
       </div>
 
       {/* Scroll cue */}
-      <div className="cine-cue absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-none">
+      <div
+        className="cine-cue absolute left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-none"
+        style={{ bottom: 'calc(env(safe-area-inset-bottom) + 24px)' }}
+      >
         <span className="text-apex-grey-dim font-mono text-[8px] tracking-[0.4em] uppercase">
           Scroll to enter
         </span>
@@ -520,15 +664,28 @@ function CinemaImpl() {
 }
 
 export default function ScrollCinemaHero() {
-  const [mode, setMode] = useState<'pending' | 'cinema' | 'fallback'>('pending')
+  const [mode, setMode] = useState<'pending' | 'desktop' | 'phone' | 'fallback'>('pending')
 
   useEffect(() => {
-    const bigEnough = window.matchMedia('(min-width: 1024px)').matches
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    setMode(bigEnough && !reduced ? 'cinema' : 'fallback')
+    // Data Saver / a metered 2G-class connection: a few hundred images is the
+    // wrong thing to do to someone who has explicitly asked you not to.
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } })
+      .connection
+    const frugal = Boolean(conn?.saveData) || /^(slow-)?2g$/.test(conn?.effectiveType || '')
+
+    if (reduced || frugal) {
+      setMode('fallback')
+      return
+    }
+    setMode(window.matchMedia('(min-width: 1024px)').matches ? 'desktop' : 'phone')
   }, [])
 
-  // SSR / first paint: render the classic hero so there's never a blank frame.
-  if (mode === 'cinema') return <CinemaImpl />
-  return <Hero />
+  // SSR / first paint: render the classic hero so there's never a blank frame —
+  // as a still, so the 13 MB banner film isn't fetched for a hero that is about
+  // to be replaced a few milliseconds later. The fallback keeps the still too:
+  // reduced-motion and Data Saver are both requests not to autoplay a loop.
+  if (mode === 'desktop') return <CinemaImpl cfg={DESKTOP} phone={false} />
+  if (mode === 'phone') return <CinemaImpl cfg={MOBILE} phone />
+  return <Hero still />
 }

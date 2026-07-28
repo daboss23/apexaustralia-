@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
-import Link from 'next/link'
+import { lockScroll, unlockScroll, scrollToTarget } from '@/lib/scroll'
 
 const NAV_LINKS = [
   { label: 'How It Works', href: '#how' },
@@ -26,6 +26,30 @@ export default function Navbar() {
     return unsub
   }, [scrollYProgress])
 
+  // The menu is a full-screen sheet, so the page behind it must be frozen —
+  // otherwise a swipe on the sheet scrolls the site underneath and you close it
+  // somewhere you never chose to be. Escape closes it, as any overlay should.
+  useEffect(() => {
+    if (!mobileOpen) return
+    lockScroll()
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMobileOpen(false)
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      unlockScroll()
+    }
+  }, [mobileOpen])
+
+  // Closing the sheet releases the scroll lock, which restores the position the
+  // page was frozen at — so jumping straight to the anchor would be undone a
+  // beat later. Close first, scroll once the lock is off; the sheet is still
+  // fading out over the top, so the move is never seen.
+  const goFromMenu = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault()
+    setMobileOpen(false)
+    window.setTimeout(() => scrollToTarget(href), 120)
+  }
+
   return (
     <>
       {/* Scroll progress rail */}
@@ -38,59 +62,75 @@ export default function Navbar() {
 
       <motion.nav
         className={`fixed top-0 left-0 right-0 md:top-4 md:left-4 md:right-4 z-[150] flex items-center justify-between px-5 py-3 md:py-3 border transition-colors duration-500 ${
-          scrolled
+          scrolled || mobileOpen
             ? 'bg-[rgba(8,8,10,0.98)] border-apex-line/70 backdrop-blur-xl'
             : 'bg-transparent border-transparent'
         }`}
-        style={{ borderRadius: 0, borderLeft: scrolled ? '2px solid rgba(214,31,38,0.5)' : 'none' }}
+        style={{
+          borderRadius: 0,
+          borderLeft: scrolled || mobileOpen ? '2px solid rgba(214,31,38,0.5)' : 'none',
+        }}
         initial={{ y: -90, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
       >
         {/* Logo — hidden at the top (the hero carries the big brand mark),
             fades into the corner once you scroll past the hero */}
-        <Link
-          href="/"
+        <a
+          href="#hero"
           className="flex-shrink-0 transition-opacity duration-500"
-          style={{ opacity: scrolled ? 1 : 0, pointerEvents: scrolled ? 'auto' : 'none' }}
-          aria-hidden={!scrolled}
+          style={{
+            opacity: scrolled || mobileOpen ? 1 : 0,
+            pointerEvents: scrolled || mobileOpen ? 'auto' : 'none',
+          }}
+          aria-hidden={!scrolled && !mobileOpen}
+          tabIndex={scrolled || mobileOpen ? 0 : -1}
+          onClick={(e) => {
+            if (mobileOpen) goFromMenu(e, '#hero')
+          }}
         >
           <Image
             src="/apexaustralialogo.webp"
             alt="T-APEX Australia"
             width={140}
             height={46}
-            className="h-9 w-auto object-contain"
+            className="h-8 md:h-9 w-auto object-contain"
             priority
           />
-        </Link>
+        </a>
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-7">
           {NAV_LINKS.map(({ label, href }) => (
-            <Link
+            <a
               key={label}
               href={href}
               className="text-[11px] font-display font-semibold text-apex-grey hover:text-apex-white transition-colors duration-200 tracking-[0.18em] uppercase cursor-pointer"
             >
               {label}
-            </Link>
+            </a>
           ))}
         </div>
 
         {/* Desktop CTA */}
-        <button className="hidden md:inline-flex items-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-5 py-2.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_8px_28px_-6px_rgba(214,31,38,0.55)] hover:-translate-y-px active:translate-y-0" style={{ borderRadius: 0 }}>
+        <a
+          href="#order"
+          className="hidden md:inline-flex items-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-5 py-2.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_8px_28px_-6px_rgba(214,31,38,0.55)] hover:-translate-y-px active:translate-y-0"
+          style={{ borderRadius: 0 }}
+        >
           Book Demo
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
-        </button>
+        </a>
 
-        {/* Mobile menu button */}
+        {/* Mobile menu button — 44px square so it's a real thumb target */}
         <button
-          className="md:hidden flex flex-col gap-1.5 cursor-pointer p-1"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
+          className="md:hidden relative z-[1] -mr-2 flex h-11 w-11 flex-col items-center justify-center gap-1.5 cursor-pointer"
+          onClick={() => setMobileOpen((v) => !v)}
+          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-menu"
         >
           <motion.span
             className="block w-5 h-px bg-apex-white"
@@ -107,39 +147,58 @@ export default function Navbar() {
         </button>
       </motion.nav>
 
-      {/* Mobile menu */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 bottom-0 z-[140] flex flex-col items-center justify-center bg-apex-black md:hidden"
-        initial={false}
-        animate={{ opacity: mobileOpen ? 1 : 0, pointerEvents: mobileOpen ? 'auto' : 'none' }}
-        transition={{ duration: 0.3 }}
-      >
-        {NAV_LINKS.map(({ label, href }, i) => (
+      {/* ─── Mobile menu ───────────────────────────────────────────────────────
+          Mounted only while open. It used to sit in the DOM permanently at
+          opacity 0 — invisible, but its seven links stayed in the tab order and
+          were read out by screen readers on every page.
+
+          It scrolls internally and pads for the notch + home indicator, so the
+          list still reaches on a short phone instead of running off the screen. */}
+      <AnimatePresence>
+        {mobileOpen && (
           <motion.div
-            key={label}
-            initial={false}
-            animate={{ y: mobileOpen ? 0 : 20, opacity: mobileOpen ? 1 : 0 }}
-            transition={{ delay: 0.05 * i, duration: 0.4 }}
+            id="mobile-menu"
+            className="fixed inset-0 z-[140] overflow-y-auto overscroll-contain bg-apex-black md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
           >
-            <Link
-              href={href}
-              className="block h-luxia t-silver text-4xl leading-[1.1] py-3 cursor-pointer"
-              onClick={() => setMobileOpen(false)}
+            <div
+              className="flex min-h-full flex-col items-center justify-center gap-1 px-6"
+              style={{
+                paddingTop: 'calc(var(--nav-h) + env(safe-area-inset-top) + 24px)',
+                paddingBottom: 'calc(env(safe-area-inset-bottom) + 32px)',
+              }}
             >
-              {label.toUpperCase()}
-            </Link>
+              {NAV_LINKS.map(({ label, href }, i) => (
+                <motion.a
+                  key={label}
+                  href={href}
+                  className="block h-luxia t-silver text-[clamp(1.75rem,8vw,2.25rem)] leading-[1.1] py-2.5 cursor-pointer"
+                  onClick={(e) => goFromMenu(e, href)}
+                  initial={{ y: 18, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.04 * i, duration: 0.35 }}
+                >
+                  {label.toUpperCase()}
+                </motion.a>
+              ))}
+              <motion.a
+                href="#order"
+                className="mt-7 cta-glow text-white font-display font-bold text-sm px-8 py-4 tracking-widest uppercase cursor-pointer"
+                style={{ borderRadius: 0 }}
+                onClick={(e) => goFromMenu(e, '#order')}
+                initial={{ y: 18, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.35 }}
+              >
+                Book Demo
+              </motion.a>
+            </div>
           </motion.div>
-        ))}
-        <motion.button
-          className="mt-8 cta-glow text-white font-display font-bold text-sm px-8 py-4 tracking-widest uppercase cursor-pointer"
-          style={{ borderRadius: 0 }}
-          initial={false}
-          animate={{ y: mobileOpen ? 0 : 20, opacity: mobileOpen ? 1 : 0 }}
-          transition={{ delay: 0.2, duration: 0.4 }}
-        >
-          Book Demo
-        </motion.button>
-      </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

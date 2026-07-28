@@ -3,8 +3,28 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Height the fixed navbar occupies. Read by src/lib/scroll.ts so anchored
+       sections land below the bar instead of underneath it, and used by the
+       scroll-margin rule beneath. Keep in sync with <Navbar/>'s padding. */
+    --nav-h: 58px;
+    /* Height of the mobile CTA bar, so the last section can reserve room for it
+       instead of being covered by it. */
+    --mobile-cta-h: 72px;
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --nav-h: 76px;
+      --mobile-cta-h: 0px;
+    }
+  }
+
   html {
-    scroll-behavior: smooth;
+    /* NOT `scroll-behavior: smooth` — Lenis (see SmoothScroll.tsx) writes the
+       scroll position every frame, and a native smooth scroll writing it at the
+       same time is a visible fight. Anchor clicks are routed through Lenis
+       instead; the native path is only used when Lenis is off. */
     -webkit-text-size-adjust: 100%;
   }
 
@@ -14,6 +34,22 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+  }
+
+  /* Anything that can be jumped to clears the fixed navbar. Belt-and-braces with
+     the JS offset: this covers browser-driven jumps (back/forward, deep links
+     restored before hydration) that never pass through our click handler. */
+  [id] {
+    scroll-margin-top: calc(var(--nav-h) + 12px);
+  }
+
+  /* Keep tapping responsive on touch: without this iOS waits ~300ms on every
+     tap to see whether it was a double-tap zoom. */
+  a,
+  button,
+  [role='button'],
+  summary {
+    touch-action: manipulation;
   }
 
   ::selection {

@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
+import LazyVideo from './LazyVideo'
 
 // Photo-finish counter — spins through random values, then locks onto the real
 // figure with a camera-strobe flash + scale pop (matches the Results counters).
@@ -261,16 +262,10 @@ export default function PerformanceSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
         >
-          <video
+          <LazyVideo
             className="absolute inset-0 w-full h-full object-cover"
             src="/athlete-holograms.mp4"
             poster="/athlete-holograms-poster.jpg"
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-            aria-hidden="true"
           />
           {/* Cinematic vignette */}
           <div className="absolute inset-0 pointer-events-none" style={{

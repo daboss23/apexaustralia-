@@ -102,19 +102,19 @@ function HeroCopy({ showLogo = false }: { showLogo?: boolean }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65, delay: 1.15 }}
       >
-        <button className="group inline-flex items-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(214,31,38,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
+        <a href="#order" className="group inline-flex items-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(214,31,38,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
           Book Your Free Demo
           <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
-        </button>
+        </a>
 
-        <button className="group inline-flex items-center gap-2.5 bg-transparent border border-apex-line hover:border-apex-grey-dim text-apex-grey hover:text-apex-white font-display font-semibold text-[11px] px-7 py-3.5 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5" style={{ borderRadius: 0 }}>
+        <a href="#how" className="group inline-flex items-center gap-2.5 bg-transparent border border-apex-line hover:border-apex-grey-dim text-apex-grey hover:text-apex-white font-display font-semibold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5" style={{ borderRadius: 0 }}>
           See T-Apex In Action
           <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
           </svg>
-        </button>
+        </a>
       </motion.div>
 
       {/* Reassurance microcopy — lowers the cost of clicking */}
@@ -132,13 +132,22 @@ function HeroCopy({ showLogo = false }: { showLogo?: boolean }) {
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
-export default function Hero() {
+/**
+ * The classic hero.
+ *
+ * `still` renders the banner as a poster image instead of the looping film. It's
+ * set while <ScrollCinemaHero/> is still deciding which mode to run (this markup
+ * is what the static export ships, so it's what every visitor paints first) and
+ * for the reduced-motion / Data Saver fallback — neither of whom should be
+ * paying 13 MB for a hero they're not going to watch.
+ */
+export default function Hero({ still = false }: { still?: boolean }) {
   return (
     <section id="hero" className="relative">
       {/* lg+: the full hero artwork as an animated stage, live copy in the
           cleaned left column where the baked text used to be */}
       <div className="hidden lg:block">
-        <HeroScene>
+        <HeroScene still={still}>
           <HeroCopy showLogo />
         </HeroScene>
       </div>
@@ -148,7 +157,13 @@ export default function Hero() {
       <div className="lg:hidden relative min-h-[100svh] flex flex-col justify-start overflow-hidden">
         <div className="absolute inset-0 z-[1] pointer-events-none">
           {/* Seamless crossfade-looping film — the mobile hero banner */}
-          <SeamlessVideo src="/hero-banner.mp4" objectPosition="50% 45%" fade={0.9} />
+          <SeamlessVideo
+            src="/hero-banner.mp4"
+            poster="/hero.webp"
+            still={still}
+            objectPosition="50% 45%"
+            fade={0.9}
+          />
 
           {/* Overall darkening scrim — drops the whole clip for headline contrast */}
           <div className="absolute inset-0" style={{ background: 'rgba(5,5,8,0.45)' }} />
@@ -170,31 +185,37 @@ export default function Hero() {
           style={{ background: 'linear-gradient(90deg, transparent 0%, #D61F26 18%, #D61F26 82%, transparent 100%)' }}
         />
 
-        <div className="relative z-10 w-full px-6 md:px-10 pt-[4rem] pb-14 md:pb-24">
+        <div
+          className="relative z-10 w-full px-6 md:px-10 pb-16 md:pb-24"
+          style={{ paddingTop: 'calc(var(--nav-h) + 20px)' }}
+        >
           <HeroCopy showLogo />
-
-          {/* Scroll cue */}
-          <motion.div
-            className="absolute bottom-8 left-6 flex flex-col items-center gap-2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.8 }}
-            aria-hidden="true"
-          >
-            <motion.div
-              className="w-px h-10"
-              style={{ background: 'linear-gradient(to bottom, #6E7783, transparent)' }}
-              animate={{ scaleY: [1, 0.3, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            <span
-              className="text-apex-grey-dim font-mono text-[8px] tracking-[0.35em] uppercase"
-              style={{ writingMode: 'vertical-lr' }}
-            >
-              Scroll
-            </span>
-          </motion.div>
         </div>
+
+        {/* Scroll cue — a child of the full-height stage, not of the copy block.
+            Nested inside the copy it was positioned against the *text's* height,
+            which put it straight on top of the reassurance line. */}
+        <motion.div
+          className="absolute right-6 flex flex-col items-center gap-2 z-10 pointer-events-none"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom) + 24px)' }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 1.8 }}
+          aria-hidden="true"
+        >
+          <motion.div
+            className="w-px h-10"
+            style={{ background: 'linear-gradient(to bottom, #6E7783, transparent)' }}
+            animate={{ scaleY: [1, 0.3, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <span
+            className="text-apex-grey-dim font-mono text-[8px] tracking-[0.35em] uppercase"
+            style={{ writingMode: 'vertical-lr' }}
+          >
+            Scroll
+          </span>
+        </motion.div>
       </div>
     </section>
   )

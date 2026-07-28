@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
+import LazyVideo from './LazyVideo'
 
 // ─── Capability callouts that flank the video (claim-safe, descriptive) ────────
 // Each callout locks onto a real component in the exploded-view render:
@@ -178,19 +179,11 @@ export default function ProductShowcase() {
   const inView = useInView(sectionRef, { once: true, margin: '-15% 0px' })
   const titleRef = useRef<HTMLDivElement>(null)
   const titleInView = useInView(titleRef, { once: true, margin: '-10% 0px' })
-  const videoRef = useRef<HTMLVideoElement>(null)
-
   // Lock-on sequence fires once the video frame itself is half on screen —
   // keyed to the section it would play out below the fold. Re-arms when the
   // frame leaves view so the sequence replays on every scroll-in.
   const stageRef = useRef<HTMLDivElement>(null)
   const locked = useInView(stageRef, { amount: 0.5 })
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 0.75
-    }
-  }, [])
 
   return (
     <section ref={sectionRef} id="product" className="relative bg-apex-black-2 overflow-hidden py-28 md:py-40">
@@ -247,13 +240,9 @@ export default function ProductShowcase() {
                 className="relative w-full overflow-hidden"
                 style={{ aspectRatio: '4 / 3', background: '#07070a' }}
               >
-                <video
-                  ref={videoRef}
+                <LazyVideo
                   src="/product-video.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
+                  playbackRate={0.75}
                   className="absolute inset-0 w-full h-full object-contain"
                   style={{ filter: 'brightness(0.97) contrast(1.04)' }}
                 />

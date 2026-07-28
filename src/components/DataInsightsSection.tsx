@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import Image from 'next/image'
 import { useIsMobile } from './useIsMobile'
+import LazyVideo from './LazyVideo'
 
 // Small inline glyphs for the report tabs.
 const ICONS: Record<string, React.ReactNode> = {
@@ -201,12 +202,10 @@ export default function DataInsightsSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <video
+          {/* 6.9 MB and two-thirds of the way down the page — lazy, or it eats
+              the mobile connection before anyone has seen the hero. */}
+          <LazyVideo
             src="/data-report.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
             className="block w-full h-auto origin-center scale-[1.02]"
           />
 

@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { lockScroll, unlockScroll } from '@/lib/scroll'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import CheckoutFlow, { HighlightBullets } from './CheckoutFlow'
 
@@ -185,11 +186,10 @@ function Gallery({ variant }: { variant: Variant }) {
       else if (e.key === 'ArrowRight') go(1)
     }
     document.addEventListener('keydown', onKey)
-    const prevOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    lockScroll()
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prevOverflow
+      unlockScroll()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lightbox, count])
@@ -415,19 +415,20 @@ export default function CheckoutSection() {
   // The checkout popup is its own entity: while it is open the page beneath is
   // frozen so only the popup scrolls, Esc closes it, and the exact scroll
   // position is restored on close so the page never jumps.
+  //
+  // Via the shared lock rather than `body { overflow: hidden }`: that alone does
+  // not hold iOS Safari (the page keeps scrolling under the sheet) and it leaves
+  // Lenis running, which is still writing scroll positions the whole time.
   useEffect(() => {
     if (!cartOpen) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setCartOpen(false)
     }
     document.addEventListener('keydown', onKey)
-    const scrollY = window.scrollY
-    const prevOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    lockScroll()
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prevOverflow
-      window.scrollTo(0, scrollY)
+      unlockScroll()
     }
   }, [cartOpen])
 

@@ -11,7 +11,7 @@ import SeamlessVideo from './SeamlessVideo'
 // them legible across any frame of the footage. A slow scroll parallax adds
 // depth; the loop itself is handled by <SeamlessVideo> (no visible seam).
 
-export default function HeroScene({ children }: { children: ReactNode }) {
+export default function HeroScene({ children, still }: { children: ReactNode; still?: boolean }) {
   const { scrollY } = useScroll()
   const sceneY = useTransform(scrollY, [0, 700], [0, -45])
 
@@ -19,7 +19,13 @@ export default function HeroScene({ children }: { children: ReactNode }) {
     <div className="relative w-full overflow-hidden bg-apex-black" style={{ aspectRatio: '1537 / 1023' }}>
       {/* The film, with a slow cinematic parallax on scroll */}
       <motion.div className="absolute inset-0" style={{ y: sceneY, willChange: 'transform' }}>
-        <SeamlessVideo src="/hero-banner.mp4" objectPosition="50% 45%" fade={0.9} />
+        <SeamlessVideo
+          src="/hero-banner.mp4"
+          poster="/hero.webp"
+          still={still}
+          objectPosition="50% 45%"
+          fade={0.9}
+        />
 
         {/* Speed streaks — ambient light passing the athlete */}
         <div

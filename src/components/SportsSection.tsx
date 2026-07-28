@@ -129,20 +129,30 @@ export default function SportsSection() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-15% 0px' })
 
+  // A second, *live* visibility check — deliberately not `once`. The reveal
+  // animations want a latching "has been seen" flag; the auto-cycle needs to
+  // know whether the stage is on screen right now. Sharing the latching one
+  // meant the carousel kept rotating for the rest of the session after a single
+  // glance — and each rotation pulls the next code's clip. That is 23 MB of
+  // sport footage (swimming alone is 10 MB) downloading on a phone, in the
+  // background, for a section the visitor scrolled past minutes ago.
+  const stageRef = useRef<HTMLDivElement>(null)
+  const stageVisible = useInView(stageRef, { margin: '0px' })
+
   const sport = SPORTS.find(s => s.id === activeSport) ?? SPORTS[0]
 
   // Auto-cycle through codes to showcase breadth — but only once the section is
   // in view, so the stage always *starts* on Sprinting when the visitor reaches
   // it (rather than mid-rotation). Each code lingers for its own dwell time.
   useEffect(() => {
-    if (userPicked || !inView) return
+    if (userPicked || !inView || !stageVisible) return
     const ids = SPORTS.map(s => s.id)
     // Every code lingers for the same 9s before the stage slides to the next.
     const t = setTimeout(() => {
       setActiveSport(ids[(ids.indexOf(activeSport) + 1) % ids.length])
     }, 9000)
     return () => clearTimeout(t)
-  }, [userPicked, inView, activeSport])
+  }, [userPicked, inView, stageVisible, activeSport])
 
   // Manual pick pauses the auto-cycle, which resumes after a spell of no
   // interaction so the stage is always "moving across the codes" on its own.
@@ -218,6 +228,7 @@ export default function SportsSection() {
 
         {/* Multi-sport transition stage — "one system, every code" */}
         <motion.div
+          ref={stageRef}
           className="mb-10"
           initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -246,7 +257,9 @@ export default function SportsSection() {
             <button
               key={s.id}
               onClick={() => pickSport(s.id)}
-              className={`relative text-[11px] font-display font-bold tracking-[0.12em] uppercase px-4 py-2 border transition-all duration-300 cursor-pointer ${
+              /* min-h-11 — these were 35px tall, under every thumb-target
+                 guideline, and they are the primary control of this section. */
+              className={`relative min-h-11 inline-flex items-center text-[11px] font-display font-bold tracking-[0.12em] uppercase px-4 py-2 border transition-all duration-300 cursor-pointer ${
                 activeSport === s.id
                   ? 'text-white border-transparent'
                   : 'text-apex-grey border-apex-line hover:border-apex-grey/40 hover:text-apex-white'

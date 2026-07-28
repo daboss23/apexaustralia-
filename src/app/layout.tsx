@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Marcellus, Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import MotionProvider from '@/components/MotionProvider'
@@ -45,6 +45,16 @@ export const metadata: Metadata = {
     description: 'An intelligent resistance training system for elite performance facilities — speed, force, control, athlete progress, and return-to-play.',
     type: 'website',
   },
+}
+
+// `viewportFit: 'cover'` is what makes `env(safe-area-inset-*)` resolve to real
+// numbers on notched phones — without it the mobile CTA bar's bottom padding is
+// silently zero and the bar sits under the home indicator.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#050505',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

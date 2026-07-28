@@ -13,6 +13,18 @@ type Props = {
   objectPosition?: string
   /** Playback speed (1 = native). */
   playbackRate?: number
+  /** Still shown in place of the film. */
+  poster?: string
+  /**
+   * Render the poster only and never touch the video.
+   *
+   * Not a nicety: /hero-banner.mp4 is 13 MB and this component stacks *two*
+   * <video preload="auto"> elements on it. Before the scroll-cinema hero decides
+   * which mode it's in, it renders <Hero/> — so every visitor, on every device,
+   * was kicking off that download for a hero they were about to replace. `still`
+   * is how the caller says "this is a placeholder, don't spend the bandwidth".
+   */
+  still?: boolean
 }
 
 /**
@@ -36,11 +48,14 @@ export default function SeamlessVideo({
   fade = 0.8,
   objectPosition = '50% 50%',
   playbackRate = 1,
+  poster,
+  still = false,
 }: Props) {
   const aRef = useRef<HTMLVideoElement>(null)
   const bRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
+    if (still) return
     const a = aRef.current
     const b = bRef.current
     if (!a || !b) return
@@ -103,15 +118,27 @@ export default function SeamlessVideo({
     raf = requestAnimationFrame(tick)
 
     return () => cancelAnimationFrame(raf)
-  }, [src, fade, playbackRate])
+  }, [src, fade, playbackRate, still])
 
   const layer = `absolute inset-0 w-full h-full object-cover ${className}`
+
+  if (still) {
+    return (
+      <div className="absolute inset-0 overflow-hidden" style={{ isolation: 'isolate' }} aria-hidden="true">
+        {poster && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={poster} alt="" className={layer} style={{ objectPosition }} />
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="absolute inset-0 overflow-hidden" style={{ isolation: 'isolate' }} aria-hidden="true">
       <video
         ref={aRef}
         src={src}
+        poster={poster}
         muted
         playsInline
         preload="auto"
@@ -122,6 +149,7 @@ export default function SeamlessVideo({
       <video
         ref={bRef}
         src={src}
+        poster={poster}
         muted
         playsInline
         preload="auto"

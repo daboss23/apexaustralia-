@@ -14,7 +14,14 @@ export default function MobileCTABar() {
     const update = () => {
       frame = 0
       const order = document.getElementById('order')
-      const pastHero = window.scrollY > window.innerHeight * 0.85
+      // Keyed off the section *after* the hero, not off a raw scroll distance:
+      // the hero is pinned for thousands of pixels of scroll-cinema, so
+      // `scrollY > innerHeight` fires while you are still inside the film and
+      // the bar slides up over the middle of the shot.
+      const next = document.getElementById('performance')
+      const pastHero = next
+        ? next.getBoundingClientRect().top < window.innerHeight * 0.75
+        : window.scrollY > window.innerHeight * 0.85
       // Once the order section's top enters the lower viewport, hide the bar —
       // and keep it hidden for the checkout + final CTA below it.
       const orderReached = order

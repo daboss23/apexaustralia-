@@ -43,9 +43,31 @@ function SportClip({
   freeze?: { fraction?: number; afterMs?: number; ms: number }
 }) {
   const ref = useRef<HTMLVideoElement>(null)
+
+  // The stage sits two-thirds down the page but is mounted from the start, so a
+  // plain `<video src autoPlay>` pulled the first code's clip (1.6 MB) during
+  // the initial load. Nothing is fetched until the frame is near the viewport.
+  const [near, setNear] = useState(false)
   useEffect(() => {
     const v = ref.current
-    if (!v) return
+    if (!v || typeof IntersectionObserver === 'undefined') {
+      setNear(true)
+      return
+    }
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) setNear(true)
+        else v.pause()
+      },
+      { rootMargin: '300px' },
+    )
+    io.observe(v)
+    return () => io.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const v = ref.current
+    if (!v || !near) return
     const applyRate = () => { v.playbackRate = playbackRate }
     if (v.readyState >= 1) applyRate()
     v.addEventListener('loadedmetadata', applyRate)
@@ -87,17 +109,18 @@ function SportClip({
       v.removeEventListener('play', onPlay)
       if (timer) clearTimeout(timer)
     }
-  }, [src, playbackRate, freeze])
+  }, [src, playbackRate, freeze, near])
 
   return (
     <video
       ref={ref}
       className="absolute inset-0 w-full h-full object-cover"
-      src={src}
+      {...(near ? { src } : {})}
       autoPlay
       loop={!freeze}
       muted
       playsInline
+      preload="none"
       aria-hidden="true"
     />
   )
@@ -182,18 +205,6 @@ export default function SportTransitionStage({
   // Phones: hold the ambient streak field static (perpetual loops = battery).
   const isMobile = useIsMobile()
 
-  // Show the morph video only once it actually has frames — a missing asset
-  // stays invisible and the designed fallback shows through instead.
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [videoReady, setVideoReady] = useState(false)
-  useEffect(() => {
-    const v = videoRef.current
-    if (!v) return
-    const onData = () => v.readyState >= 2 && setVideoReady(true)
-    v.addEventListener('loadeddata', onData)
-    return () => v.removeEventListener('loadeddata', onData)
-  }, [])
-
   // Deterministic motion streaks (no Math.random → no hydration mismatch).
   const streaks = [12, 28, 44, 58, 71, 84]
 
@@ -227,32 +238,13 @@ export default function SportTransitionStage({
         ))}
       </div>
 
-      {/* ── Layer 2: per-code athlete still (drop /sports/{id}.jpg later) ── */}
-      <AnimatePresence mode="sync">
-        <motion.div
-          key={`img-${activeId}`}
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(/sports/${activeId}.jpg)` }}
-          initial={{ opacity: 0, scale: 1.06 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        />
-      </AnimatePresence>
-
-      {/* ── Layer 3: premium athlete-morph video (drop /sports-transition.mp4) */}
-      <video
-        ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ opacity: videoReady ? 1 : 0, transition: 'opacity 0.6s ease' }}
-        src="/sports-transition.mp4"
-        poster="/sports-transition-poster.jpg"
-        autoPlay
-        loop
-        muted
-        playsInline
-        aria-hidden="true"
-      />
+      {/* ── Layers 2 & 3 — the optional "someday" assets ────────────────────
+          A per-code athlete still (/sports/{id}.jpg) and a premium morph video
+          (/sports-transition.mp4). Neither has ever been supplied, and they were
+          being requested unconditionally: three guaranteed 404s on every load,
+          plus one more per code as the stage cycled. The designed fallback below
+          is what actually shows, so nothing is requested until the files exist —
+          add them to /public and flip these flags on. */}
 
       {/* ── Layer 4: legibility vignette ─────────────────────────────────── */}
       <div

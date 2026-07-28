@@ -187,21 +187,24 @@ export default function FinalCTA() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.65 }}
           >
-            <button className="group inline-flex items-center gap-3 cta-glow text-white font-display font-bold px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(214,31,38,0.7)] hover:-translate-y-0.5 active:translate-y-0"
+            <a href="#order" className="group inline-flex items-center justify-center gap-3 cta-glow text-white font-display font-bold px-8 sm:px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(214,31,38,0.7)] hover:-translate-y-0.5 active:translate-y-0"
               style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', borderRadius: 0 }}>
               Book Your Free Demo
               <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
-            </button>
+            </a>
 
-            <button className="group inline-flex items-center gap-3 border border-apex-line hover:border-apex-grey/50 text-apex-grey hover:text-apex-white font-display font-bold px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
+            {/* No contact form exists yet, so the secondary action goes to the
+                FAQ — the one place on the page that actually answers a question
+                before someone commits. Repoint it the moment there's a form. */}
+            <a href="#faq" className="group inline-flex items-center justify-center gap-3 border border-apex-line hover:border-apex-grey/50 text-apex-grey hover:text-apex-white font-display font-bold px-8 sm:px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
               style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', borderRadius: 0 }}>
-              Enquire Now
+              Read The FAQ
               <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
               </svg>
-            </button>
+            </a>
           </motion.div>
 
           {/* Risk reversal — removes the last reason not to act */}
@@ -238,11 +241,14 @@ export default function FinalCTA() {
       {/* Footer bar */}
       <div className="relative border-t border-apex-line/40 px-6 md:px-16 py-8 flex flex-col items-center gap-4">
         {/* Nav links — centred */}
-        <div className="flex items-center gap-6">
+        {/* These have no destination yet — there is no privacy or terms page in
+            the export. Kept as buttons (not dead links) and padded to a real
+            touch size so they at least don't read as broken taps. */}
+        <div className="flex items-center gap-2">
           {['Privacy', 'Terms', 'Contact'].map(label => (
             <button
               key={label}
-              className="text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider cursor-pointer uppercase"
+              className="px-3 py-2.5 text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider cursor-pointer uppercase"
             >
               {label}
             </button>

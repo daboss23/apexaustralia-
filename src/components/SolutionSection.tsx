@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import ElectricAura from './ElectricAura'
 import { useIsMobile } from './useIsMobile'
+import LazyVideo from './LazyVideo'
 
 const SOLUTION_PILLARS = [
   {
@@ -50,15 +51,8 @@ function FloatingUnit({ active }: { active: boolean }) {
   // and composited onto pure black, so `mix-blend-mode: screen` drops the black
   // and leaves the unit floating in the section's energy field (the same
   // treatment the static art used). Held on its first frame under reduced motion.
-  const unitRef = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    const v = unitRef.current
-    if (v && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      v.removeAttribute('autoplay')
-      v.pause()
-    }
-  }, [])
+  // (The reduced-motion hold and the load-when-near-viewport behaviour both live
+  // in <LazyVideo/> now.)
 
   useEffect(() => {
     // Off under reduced-motion and on phones (perpetual particles = mobile heat).
@@ -127,14 +121,9 @@ function FloatingUnit({ active }: { active: boolean }) {
           }
           transition={{ duration: 9, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
         >
-          <video
-            ref={unitRef}
+          <LazyVideo
             src="/product-rotation-v4.mp4"
             poster="/product-rotation-v4-poster.jpg"
-            autoPlay
-            muted
-            loop
-            playsInline
             aria-label="T-Apex adaptive resistance unit turning in space"
             className="absolute inset-0 w-full h-full object-contain"
             // 'screen' is what makes the unit float: black composites to exactly
