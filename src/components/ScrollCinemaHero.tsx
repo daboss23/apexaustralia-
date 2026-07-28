@@ -65,6 +65,14 @@ type CinemaConfig = {
   splitTravel: number
   /** Cap on the canvas backing-store DPR. */
   maxDpr: number
+  /**
+   * ScrollTrigger scrub — seconds the film takes to catch up with the scroll.
+   * Higher is smoother but trails your finger, so it is set per device rather
+   * than shared: Lenis smooths the wheel on desktop but deliberately leaves
+   * touch to the platform, so the phone has no interpolation upstream and wants
+   * more of it here.
+   */
+  scrub: number
 }
 
 const DESKTOP: CinemaConfig = {
@@ -86,6 +94,9 @@ const DESKTOP: CinemaConfig = {
   // display pushes 4× the pixels to show detail the frame doesn't have. That
   // fill rate is better spent on framerate, which is smoothness.
   maxDpr: 1.5,
+  // Tight, because <SmoothScroll/> (Lenis) already interpolates the wheel. A big
+  // scrub on top of that stacks two lags and the film trails the page.
+  scrub: 0.35,
 }
 
 const MOBILE: CinemaConfig = {
@@ -110,6 +121,12 @@ const MOBILE: CinemaConfig = {
   // The source is 640 wide and the band draws at ~526 CSS px, so 1.25 is already
   // a mild upscale; going higher only burns fill rate on a phone GPU.
   maxDpr: 1.25,
+  // Higher than desktop on purpose. Lenis leaves touch alone — momentum
+  // scrolling fights any JS smoothing layered on top of it — so nothing
+  // upstream is interpolating a finger drag, and the scrub is the only place
+  // that can soften the platform's own scroll cadence. 0.5 is about as far as
+  // it goes before the film visibly trails your thumb.
+  scrub: 0.5,
 }
 
 // Camera push. The film opens on the machine sitting a long way back down the
@@ -383,14 +400,38 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
     }
   }, [cfg])
 
+  /** Nearest decoded frame at or before `i`, so a gap never blanks the canvas. */
+  const decoded = (i: number) => {
+    const imgs = imagesRef.current
+    if (i < 0 || i >= imgs.length) return null
+    const img = imgs[i]
+    return img && img.complete && img.naturalWidth ? img : null
+  }
+
   // ── Canvas draw — fit the active frame, scaled for the push-in ──────────────
   const draw = () => {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
-    const img = imagesRef.current[Math.round(render.frame)]
-    // Frame still decoding — hold the previous one rather than flashing black.
-    if (!img || !img.complete || !img.naturalWidth) return
+
+    // ── Sub-frame blending ────────────────────────────────────────────────────
+    // The scrub gives a fractional frame position; this used to Math.round() it,
+    // so the film advanced in hard steps and all the precision in between was
+    // thrown away. Now the two adjacent frames are cross-dissolved by that
+    // fraction, which reads as motion blur and makes a sparse sequence look
+    // continuous. It matters most on phones, where the sequence is every second
+    // frame of the cut and each step is therefore twice the movement.
+    //
+    // Costs one extra drawImage and adds no latency — it is showing you a
+    // position the scrub had already computed.
+    const f = Math.min(Math.max(render.frame, 0), cfg.frameCount - 1)
+    const i0 = Math.floor(f)
+    const frac = f - i0
+    const a = decoded(i0)
+    const b = frac > 0.004 ? decoded(i0 + 1) : null
+    const ref = a || b
+    // Nothing decoded yet — hold whatever is on the canvas rather than flashing.
+    if (!ref) return
 
     // The frames are upscaled, so resampling quality is doing real work here —
     // the cheap default sampler is a visible part of the softness.
@@ -399,7 +440,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
 
     const cw = canvas.width
     const ch = canvas.height
-    const ir = img.naturalWidth / img.naturalHeight
+    const ir = ref.naturalWidth / ref.naturalHeight
     const cr = cw / ch
     let dw: number
     let dh: number
@@ -418,7 +459,12 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
     const dx = (cw - dw) / 2
     const dy = (ch - dh) / 2
     ctx.clearRect(0, 0, cw, ch)
-    ctx.drawImage(img, dx, dy, dw, dh)
+    if (a) ctx.drawImage(a, dx, dy, dw, dh)
+    if (b) {
+      ctx.globalAlpha = a ? frac : 1
+      ctx.drawImage(b, dx, dy, dw, dh)
+      ctx.globalAlpha = 1
+    }
 
     // Melt the band's horizontal edges into the page.
     //
@@ -487,6 +533,26 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       const last = cfg.frameCount - 1
       const f = (ratio: number) => Math.round(ratio * last)
 
+      // ── Render on the ticker, not on scroll events ───────────────────────────
+      // `scrub` animates render.frame on GSAP's ticker, but draw() was only
+      // called from ScrollTrigger's onUpdate, which fires on *scroll events*. So
+      // the moment you lifted your finger the value carried on easing while the
+      // canvas stopped redrawing — the film froze and then jumped on the next
+      // event. Drawing from the ticker puts the canvas on the same clock as the
+      // value driving it (and as Lenis — see SmoothScroll.tsx), so the easing
+      // tail plays out at display refresh rate instead of being skipped.
+      //
+      // Guarded so an idle hero isn't repainting sixty times a second.
+      let lastFrame = -1
+      let lastScale = -1
+      const tick = () => {
+        if (render.frame === lastFrame && render.scale === lastScale) return
+        lastFrame = render.frame
+        lastScale = render.scale
+        draw()
+      }
+      gsap.ticker.add(tick)
+
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
@@ -494,11 +560,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
           start: 'top top',
           end: cfg.pinDistance,
           pin: true,
-          // Tight, because <SmoothScroll/> (Lenis) already interpolates the
-          // scroll position itself. A big scrub value on top of that stacks two
-          // lags and the film starts trailing the page.
-          scrub: 0.35,
-          onUpdate: draw,
+          scrub: cfg.scrub,
           invalidateOnRefresh: true,
         },
       })
@@ -619,6 +681,11 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       tl.to('.cine-dim', { opacity: 0.58, ease: 'power1.inOut', duration: 0.06 }, 0.74) // sprint headline
       tl.to('.cine-dim', { opacity: 0.14, ease: 'power1.inOut', duration: 0.06 }, 0.87) // machine hero — clear
       tl.to('.cine-dim', { opacity: 0.62, ease: 'power1.inOut', duration: 0.06 }, 0.92) // resolve + CTAs
+
+      // useGSAP reverts the context for us; the ticker callback is ours to undo.
+      return () => {
+        gsap.ticker.remove(tick)
+      }
     },
     { scope: rootRef, dependencies: [ready] },
   )
