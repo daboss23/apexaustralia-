@@ -5,33 +5,37 @@ This is the production brief for the **pinned, scroll-scrubbed hero** built in
 generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
 > **Current footage:** `public/apex-hero-cinema.mp4` (22.7s, 30fps) — a single
-> continuous Seedance 2.0 generation delivered at 2560×1440, stabilised (below),
-> tail-trimmed at 22.7s, extracted at `fps=14`, `scale=1600` (lanczos, no
+> continuous Seedance 2.0 generation delivered at 2560×1440, unmodified, tail-trimmed at 22.7s, extracted at `fps=14`, `scale=1600` (lanczos, no
 > unsharp) → **318 frames at 1600×900, 22 MB**.
 >
 > The spine is deliberately simple: **the black-plate scene plays out, then that
 > same box opens.** Then fly-through the internals → red tunnel → the sprint.
 > See §6 for how the one-flow read is bought and §7 for the resolution ceiling.
 >
-> **The device is post-stabilised.** As generated, the sprint read as though the
-> athlete were towing the machine. Tracking the track surface (optical flow +
-> RANSAC ground-plane homography) showed the machine was in fact already welded
-> to the tarmac — the towed read came from the camera dollying toward it while
-> the athlete ran toward camera, so the two never separated on screen. The fix
-> locks the machine's *screen position* across the sprint so the athlete and
-> track move around it. Two things matter if this is ever redone:
+> **⚠ Do not try to stabilise the machine with a whole-frame transform.** As
+> generated, the sprint reads as though the athlete were towing the machine, and
+> the obvious fix — track the machine and warp each frame so it holds a fixed
+> screen position — was tried and **made it dramatically worse**. It was shipped
+> briefly and reverted.
 >
-> - Anchor the lock to the device's **mean** tracked position, not the frame
->   centre. Anchoring to centre shoves the picture up by the device's offset
->   (~278px here) against a much smaller zoom margin, and `BORDER_REPLICATE`
->   smears a band into the bottom of frame.
-> - Size the zoom from the device's **excursion**: `Z = max(W/(W-rangeX),
->   H/(H-rangeY))`. Here that is 1.254×, which reads 2041px of real detail from
->   a 2560px source — lossless for 1600px frames. Ease the lock in over ~24
->   frames or it visibly snaps where it engages.
+> The reason is geometric, so no amount of tuning rescues it. The camera dollies
+> down the track, so a *planted* object must travel across the frame. Pinning it
+> to the frame therefore forces it to slide across the tarmac. Measured as the
+> distance between where the machine actually sits and where the ground plane
+> says it should (per-frame RANSAC homography on the tarmac, machine and athlete
+> masked out of the fit):
 >
-> Scripts live in the session scratch, not the repo; the recipe above is enough
-> to rebuild them.
+> | | slip vs tarmac, mean | slip, final frame |
+> |---|---|---|
+> | generation as delivered | 92 px | 219 px |
+> | whole-frame "lock" | 276 px | **1605 px** |
+>
+> A whole-frame warp moves the ground and the machine *together*, so it can
+> never change their relative motion — it only adds its own. The delivered
+> footage does have a real, modest drag (219px over ~6.5s on a 2560px frame).
+> Fixing that properly means matting the machine out, re-compositing it at the
+> homography-predicted transform, and inpainting the vacated tarmac — or, far
+> cheaper, re-generating the shot. Reach for one of those, not a stabiliser.
 
 > **Floating product films** (`SolutionSection`'s turntable, and anything else
 > using `mix-blend-mode: screen` on the black page): the blend composites black
@@ -62,49 +66,48 @@ generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
 ## 1. What the scroll experience does
 
-As the visitor scrolls the hero (~3.7 viewport-heights ≈ **~17 seconds**
-unhurried), in four acts:
+As the visitor scrolls the hero (**4800px pinned, ~4 viewport-heights**), in
+four acts. Percentages below are timeline progress, which is also scroll
+progress across the pin.
 
-- **ACT 0 — HOLD (0–12%).** Pure black. *TRAIN BEYOND HUMAN LIMITS* alone on the
-  plate, no film, no motion. (This doubles as the loading state: scrubbing is
-  armed once the first 40 frames decode, the rest stream in behind.)
-- **ACT 1 — SPLIT (12–40%).** The headline parts — `TRAIN BEYOND` rises, `HUMAN
-  LIMITS` drops — tracking wider as it goes, and a blue seam opens across the
-  gap. The film is revealed *by* the split: a `clip-path` aperture unclips
-  vertically from that seam while fading up, so the video appears to be let
-  through by the type rather than cross-faded under it.
-- **ACT 2 — TRAVEL (10–97%).** Frames scrub to scroll while the camera adds a
-  whisper of push (`1.0 → 1.1` — the film does its own flying now) and a tunnel
-  vignette breathes in. The halves clear at 33% so nothing sits on the
-  box-opening reveal. The telemetry HUD (Force / Velocity / Response / Control)
-  fades in over the fly-through, **flanked left and right**, not centred.
-- **ACT 3 — RESOLVE (88–100%).** A scrim dims the machine so *ENGINEERED FOR THE
-  NEXT TENTH OF A SECOND* + CTAs read cleanly over the trackside hero shot.
+- **ACT 0 — HOLD (0–3%).** Pure black, *TRAIN BEYOND HUMAN LIMITS* alone. Kept
+  deliberately short: at 10% the headline took five wheel notches to budge and
+  read as broken. (It doubles as the loading state — scrubbing arms once the
+  first 36 frames decode, the rest stream in behind.)
+- **ACT 1 — SPLIT (3–26%).** The headline parts — `TRAIN BEYOND` rises, `HUMAN
+  LIMITS` drops — on a `power2.out` ease so they break apart on contact rather
+  than creeping. A blue seam opens across the gap and the film is revealed *by*
+  the split: a `clip-path` aperture unclips vertically from that seam.
+- **ACT 2 — TRAVEL (3–97%).** Frames scrub to scroll, act by act rather than at
+  one flat rate (see `ACT SCRUB` in the component). The machine starts at 0.34
+  scale — deep down the lens against its own black plate — and flies in to full
+  frame as the panels open. The telemetry HUD lands over the fly-through,
+  flanked left and right at 11–13% inset, not centred.
+- **ACT 3 — RESOLVE (74–100%).** *DEVELOPED FOR THE NEXT TENTH OF A SECOND*
+  lands centre-frame as the sprinter appears and clears at 87% so the machine
+  alone closes the shot; CTAs resolve at 92%.
 
 ### Where the content sits (scroll progress → shot)
 
-The film scrubs across `0.10 → 0.97`, so `frame ≈ (p − 0.10) / 0.87 × 241`:
+318 frames, scrubbed across `0.03 → 0.97`:
 
-| Progress | On screen |
-|---|---|
-| 0.10–0.38 | the **black plate** — device on pure black, holographic athletes running through it. The scene "plays out". |
-| 0.38–0.50 | ✦ **that same box opens** — panels split along the seams, internals lit |
-| 0.53–0.81 | fly-through: circuit macro, copper traces, cable spool + gears |
-| 0.81–0.89 | HUD panels of athletes wrapped in red/blue energy |
-| 0.89–0.97 | out to the hero device, trackside, T-APEX branding |
+| Progress | Frames | On screen |
+|---|---|---|
+| 0.03–0.40 | 0–59 | the machine on pure black — travelling in, turning, then ✦ **the panels open**, internals lit |
+| 0.40–0.63 | 59–185 | fly-through: cable spool, motor, gears, circuit macro, chip |
+| 0.63–0.72 | 185–227 | the red grid tunnel, opening onto the track |
+| 0.72–0.97 | 227–317 | the sprint, resolving on the machine trackside |
 
 **Two layout rules this footage forces:**
 
-1. **Nothing goes on screen between 38% and 50%.** The box opening is the
-   centrepiece; the headline halves are timed to clear just before it starts.
-2. **Copy can't just sit on the film any more.** Unlike the old black plate,
-   this cut has a mean luma of 43–85. `.cine-dim` is therefore scheduled like a
-   lighting cue — it lifts under every copy beat (0.16 / 0.46 / 0.66) and drops
-   between them (0.05 / 0.12) so the film plays at full strength exactly when
-   nothing is written over it. The **black plate leads deliberately** — it's the
-   only near-black footage available, so it's the only thing the Act-1 aperture
-   can open onto without the type fighting a lit background. If you recut,
-   **re-measure the luma and re-time that cue** — it's the difference between premium and mush:
+1. **Nothing goes on screen during the box opening.** It is the centrepiece; the
+   headline halves are timed to clear at 26%, just before it starts.
+2. **Copy can't just sit on the film.** Only the opening is near-black; the rest
+   is lit. `.cine-dim` is therefore scheduled like a lighting cue — it lifts
+   under every copy beat (0.46 telemetry, 0.58 sprint headline, 0.62 CTAs) and
+   drops between them (0.04 at the box opening, 0.10 at the tunnel, 0.14 on the
+   closing hero shot) so the film plays at full strength exactly when nothing is
+   written over it. If you recut, **re-measure the luma and re-time that cue**:
    ```bash
    ffmpeg -v error -i master.mp4 -vf "fps=14,signalstats,\
      metadata=print:key=lavfi.signalstats.YAVG:file=-" -an -f null -

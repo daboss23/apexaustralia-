@@ -129,8 +129,8 @@ function FloatingUnit({ active }: { active: boolean }) {
         >
           <video
             ref={unitRef}
-            src="/product-rotation-v3.mp4"
-            poster="/product-rotation-v3-poster.jpg"
+            src="/product-rotation-v4.mp4"
+            poster="/product-rotation-v4-poster.jpg"
             autoPlay
             muted
             loop
@@ -140,11 +140,12 @@ function FloatingUnit({ active }: { active: boolean }) {
             // 'screen' is what makes the unit float: black composites to exactly
             // the page background, so there is no video rectangle to see. It only
             // holds if the plate is *true* black, so the source is keyed onto
-            // black and its blacks crushed below 0.03 at encode — the border now
-            // reads 5.16 against a page background of 5.00. A background-removed
-            // source is NOT a shortcut here: alpha does not survive mp4, so it
-            // arrives on white and would render as a white square under screen.
-            // Key it back onto black first (see docs/motion-scroll-brief.md).
+            // black, with its blacks crushed at encode — the border reads 5.10
+            // against a page background of 5.00. Supply this as a normal render
+            // ON BLACK. A background-removed source is worse, not better: alpha
+            // survives neither mp4 nor (as delivered) VP9/webm, so it arrives on
+            // white, and keying it back eats the product's own highlights.
+            // See docs/motion-scroll-brief.md.
             style={{ mixBlendMode: 'screen' }}
           />
 

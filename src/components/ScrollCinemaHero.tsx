@@ -90,8 +90,9 @@ const SPLIT_TRAVEL = 0.34
 // between them, letting the film play at full strength exactly when nothing is
 // written over it.
 //
-// The device is locked to the track across the sprint (the generated footage
-// read as though the sprinter were towing it); see docs/motion-scroll-brief.md.
+// The sprint footage is the generation as delivered — do NOT try to "fix" the
+// machine's apparent drag with a whole-frame stabilise. It cannot work, and it
+// makes things much worse; the measurement is in docs/motion-scroll-brief.md.
 
 const STATS = [
   { k: 'Force', v: '412', u: 'N' },
@@ -464,7 +465,7 @@ function CinemaImpl() {
             className="beat-sprint h-luxia leading-[0.96] max-w-[900px] opacity-0"
             style={{ fontSize: 'clamp(1.9rem, 4.4vw, 4rem)', letterSpacing: '0.04em' }}
           >
-            <span className="t-silver">ENGINEERED&nbsp;FOR&nbsp;THE</span>
+            <span className="t-silver">DEVELOPED&nbsp;FOR&nbsp;THE</span>
             <br />
             <span className="t-blue">NEXT&nbsp;TENTH&nbsp;OF&nbsp;A&nbsp;SECOND</span>
           </h2>
