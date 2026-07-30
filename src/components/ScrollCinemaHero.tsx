@@ -90,13 +90,15 @@ function apertureSlit(copyShift: number) {
 }
 
 const DESKTOP: CinemaConfig = {
-  frameCount: 318,
+  frameCount: 317,
   framePath: (i) => `/hero-frames/frame-${String(i).padStart(3, '0')}.webp`,
   // The gate is deliberately low. A frame that hasn't decoded holds the previous
   // one rather than flashing black, so arming early costs nothing visually — and
-  // the alternative is a hero that ignores your scroll while 2.7 MB lands.
+  // the alternative is a hero that ignores your scroll while the whole 19 MB
+  // sequence lands. These 18 frames are ~456 KB: Act 0 is a near-black plate, so
+  // the frames that gate the start are also the cheapest ones in the film.
   readyFrames: 18,
-  // ~15px of scroll per frame on average, but that budget is spent unevenly —
+  // ~16px of scroll per frame on average, but that budget is spent unevenly —
   // see ACT SCRUB below.
   pinDistance: '+=4800',
   fit: 'cover',
@@ -116,12 +118,12 @@ const DESKTOP: CinemaConfig = {
 }
 
 const MOBILE: CinemaConfig = {
-  // Every second frame of the desktop cut. Over a 3200px pin that is ~20px of
-  // scroll per frame against the desktop's ~15 — and a phone's viewport is small
+  // Every second frame of the desktop cut. Over a 3200px pin that is ~22px of
+  // scroll per frame against the desktop's ~16 — and a phone's viewport is small
   // enough that the per-frame movement still reads as continuous.
-  frameCount: 159,
+  frameCount: 158,
   framePath: (i) => `/hero-frames-mobile/frame-${String(i).padStart(3, '0')}.webp`,
-  // ~200 KB before the film can start moving, and the first six of those are
+  // ~96 KB before the film can start moving, and the first six of those are
   // already in flight from the HTML preloads (see layout.tsx).
   readyFrames: 12,
   // Shorter than desktop: a thumb covers ground far faster than a wheel, and a
@@ -162,16 +164,23 @@ const ZOOM_END = 1.1
 // machine has room to travel in, turn, and open.
 //
 //   act        frames     scroll     px/frame
-//   opening      0– 19%     34%        ~24   ← the hero shot, given room
-//   internals   19– 58%     26%        ~10
-//   tunnel      58– 71%     10%        ~11
-//   sprint      71–end      30%        ~13
+//   opening      0– 19%     34%        ~28   ← the hero shot, given room
+//   internals   19– 63%     23%        ~8
+//   tunnel      63– 73%     13%        ~21   ← the red grid tunnel, given room
+//   sprint      73–end      24%        ~14
+//
+// The tunnel gets 13% of the scroll for 9% of the frames. Those 30 frames are
+// real, not repeats: the source tunnel runs only 0.7s, so it was slowed 3x with
+// motion interpolation (see the recipe in docs/motion-scroll-brief.md §6), which
+// *synthesises* intermediate frames. Plain time-stretching would have duplicated
+// frames instead, and a duplicate under a scrub is a visible step where a genuine
+// in-between is smooth — the whole reason this scrubs a sequence, not a video.
 //
 // Expressed as ratios so the mobile sequence — half the frames, same cut — lands
 // its act boundaries on exactly the same moments of the film.
-const ACT_OPEN_END = 59 / 318
-const ACT_INNER_END = 185 / 318
-const ACT_TUNNEL_END = 227 / 318
+const ACT_OPEN_END = 59 / 317
+const ACT_INNER_END = 201 / 317
+const ACT_TUNNEL_END = 231 / 317
 
 // ── Where the cut's content sits, as scroll progress ─────────────────────────
 // The film scrubs 0.03 → 0.97, act by act (see ACT SCRUB above):
@@ -184,22 +193,34 @@ const ACT_TUNNEL_END = 227 / 318
 //              turning, then ✦ THE PANELS OPEN and the internals light. This is
 //              the hero shot and it owns a third of the scroll; the headline
 //              halves clear at 0.26 so nothing sits on top of the opening.
-//   0.40–0.63  fly-through: cable spool, motor, gears, circuit macro, chip
-//   0.63–0.72  the red grid tunnel, which opens onto the track
-//   0.72–0.97  the sprint — the promise lands centre-frame at 0.74 and clears at
-//              0.87 so the machine alone closes the shot, CTAs at 0.92
+//   0.37–0.60  fly-through: cable spool, motor, gears, circuit macro, chip
+//   0.60–0.73  the red grid tunnel, which opens onto the performance hall
+//   0.73–0.97  the sprint — the promise lands centre-frame at 0.75 and clears at
+//              0.87 so the run owns the frame, CTAs at 0.92 over the dispersal
 //
 // The read we're protecting is ONE continuous shot: you watch the box, then that
-// box opens, then you fly through the thing you just watched open.
+// box opens, then you fly through the thing you just watched open, then you come
+// out of it into the hall where the thing is used.
 //
 // The opening is near-black; everything after it is bright, so `.cine-dim` is
 // scheduled like a lighting cue — it lifts under every copy beat and drops away
 // between them, letting the film play at full strength exactly when nothing is
 // written over it.
 //
-// The sprint footage is the generation as delivered — do NOT try to "fix" the
-// machine's apparent drag with a whole-frame stabilise. It cannot work, and it
-// makes things much worse; the measurement is in docs/motion-scroll-brief.md.
+// ── The sprint is a locked-off shot, and that is load-bearing ────────────────
+// The previous sprint was a dolly: the camera tracked down the lane while the
+// athlete ran at it. Measured on that footage, the machine slid 120px across the
+// tarmac over the shot (mean 54px), which read exactly as though the athlete
+// were towing it. It cannot be stabilised out — a whole-frame transform moves the
+// ground and the machine together, so it can never change their relative motion,
+// and a local warp large enough to plant the machine ripples the tarmac and bends
+// the lane lines. Both were built and rejected; see docs/motion-scroll-brief.md.
+//
+// It was fixed by replacement, not repair. The sprint is now a fixed-camera shot
+// in the T-APEX hall: the wall, the branding and the lighting hold still, so the
+// unit sits planted on the track for the whole run and there is no relative
+// motion left to correct. If this segment is ever re-generated, a locked-off
+// camera is the requirement, not a preference.
 
 const STATS = [
   { k: 'Force', v: '412', u: 'N' },
@@ -414,7 +435,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
   // Two details that decide how a cold load *feels*:
   //
   // 1. The opening frames are fetched at high priority and everything after
-  //    them at low. All 318 used to go out as one undifferentiated burst, so
+  //    them at low. All 317 used to go out as one undifferentiated burst, so
   //    frame 4 queued behind frame 200 — which nobody sees for another four
   //    thousand pixels of scroll. The tail still streams in during Act 0's
   //    black hold; it just stops competing with the frames that gate the start.
@@ -642,10 +663,10 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // shot gets a third of the scroll instead of a fifth. Each leg is still
       // linear (ease 'none' from defaults) — the rate changes only at the act
       // boundaries, which fall on cuts, so no leg visibly speeds up mid-shot.
-      tl.to(render, { frame: f(ACT_OPEN_END), duration: 0.37 }, 0.03)
-      tl.to(render, { frame: f(ACT_INNER_END), duration: 0.23 }, 0.4)
-      tl.to(render, { frame: f(ACT_TUNNEL_END), duration: 0.09 }, 0.63)
-      tl.to(render, { frame: last, duration: 0.25 }, 0.72)
+      tl.to(render, { frame: f(ACT_OPEN_END), duration: 0.34 }, 0.03)
+      tl.to(render, { frame: f(ACT_INNER_END), duration: 0.23 }, 0.37)
+      tl.to(render, { frame: f(ACT_TUNNEL_END), duration: 0.13 }, 0.6)
+      tl.to(render, { frame: last, duration: 0.24 }, 0.73)
 
       // The machine flies in from deep in the lens and lands at full frame just
       // as the panels open; the rest is the slow push across the travel.
@@ -654,6 +675,12 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // 'out' ease front-loads the travel and it arrives on top of the type.
       tl.to(render, { scale: ZOOM_OPEN, ease: 'power2.in', duration: 0.37 }, 0.03)
       tl.to(render, { scale: ZOOM_END, duration: 0.57 }, 0.4)
+
+      // The sprint is a locked-off camera, so the canvas push is the only camera
+      // move in it. Held to the tail end of ZOOM_END's drift on purpose: a push
+      // over a fixed shot reads as intent, but push *plus* a moving camera is the
+      // two-motions-fighting problem the brief warns about, which is why the
+      // earlier acts get the travel and this one gets almost none.
 
       // ── ACT 1 — the split ────────────────────────────────────────────────────
       // Logo and eyebrow clear first so the words are alone as they part.
@@ -706,8 +733,8 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // ── ACT 2 — travel ───────────────────────────────────────────────────────
       // Tunnel vignette breathes in over the fly-through, then eases back for the
       // resolve so the closing hero shot isn't crushed at the edges.
-      tl.fromTo('.cine-tunnel', { opacity: 0 }, { opacity: 0.8, duration: 0.22 }, 0.4)
-      tl.to('.cine-tunnel', { opacity: 0.4, duration: 0.1 }, 0.72)
+      tl.fromTo('.cine-tunnel', { opacity: 0 }, { opacity: 0.8, duration: 0.2 }, 0.37)
+      tl.to('.cine-tunnel', { opacity: 0.4, duration: 0.1 }, 0.73)
 
       // The split halves clear BEFORE the panels-open reveal — that shot is the
       // centrepiece and nothing sits on top of it.
@@ -720,18 +747,20 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
         '.beat-2',
         { opacity: 0, scale: 0.94, filter: 'blur(6px)' },
         { opacity: 1, scale: 1, filter: 'blur(0px)', ease: 'power2.out', duration: 0.09 },
-        0.46,
+        0.42,
       )
-      tl.to('.beat-2', { opacity: 0, scale: 1.05, filter: 'blur(6px)', duration: 0.07 }, 0.6)
+      tl.to('.beat-2', { opacity: 0, scale: 1.05, filter: 'blur(6px)', duration: 0.06 }, 0.55)
 
       // ── ACT 3a — the promise, over the sprint ────────────────────────────────
-      // Lands as the sprinter comes into frame, holds while he runs, then clears
-      // so the machine alone closes the shot.
+      // Lands just after the tunnel resolves into the hall — 0.75 rather than
+      // 0.73, so the reveal itself plays clean for a beat before anything is
+      // written over it — holds while he runs, then clears so the run and the
+      // dispersal close the shot on their own.
       tl.fromTo(
         '.beat-sprint',
         { opacity: 0, y: 34, filter: 'blur(8px)' },
         { opacity: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.05 },
-        0.74,
+        0.75,
       )
       tl.to('.beat-sprint', { opacity: 0, y: -22, filter: 'blur(6px)', duration: 0.05 }, 0.87)
 
@@ -746,12 +775,15 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // ── The lighting cue ─────────────────────────────────────────────────────
       // `.cine-dim` lifts under each copy beat and drops between them, so the
       // film plays at full strength exactly when nothing is written over it.
+      // Values re-measured on this cut (mean frame luma per act: opening 47,
+      // internals 77, tunnel 37, sprint 56) — re-run the signalstats command in
+      // docs/motion-scroll-brief.md §1 and re-time these if the footage changes.
       tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.1 }, 0.03) // machine far back — barely needed
       tl.to('.cine-dim', { opacity: 0.04, ease: 'power1.inOut', duration: 0.07 }, 0.28) // ✦ the box opens — clear
-      tl.to('.cine-dim', { opacity: 0.46, ease: 'power1.inOut', duration: 0.07 }, 0.46) // telemetry
-      tl.to('.cine-dim', { opacity: 0.1, ease: 'power1.inOut', duration: 0.07 }, 0.62) // tunnel — clear
-      tl.to('.cine-dim', { opacity: 0.58, ease: 'power1.inOut', duration: 0.06 }, 0.74) // sprint headline
-      tl.to('.cine-dim', { opacity: 0.14, ease: 'power1.inOut', duration: 0.06 }, 0.87) // machine hero — clear
+      tl.to('.cine-dim', { opacity: 0.48, ease: 'power1.inOut', duration: 0.07 }, 0.42) // telemetry, over the brightest act
+      tl.to('.cine-dim', { opacity: 0.06, ease: 'power1.inOut', duration: 0.07 }, 0.6) // tunnel — clear, it is the darkest act (luma 37)
+      tl.to('.cine-dim', { opacity: 0.55, ease: 'power1.inOut', duration: 0.06 }, 0.75) // sprint headline
+      tl.to('.cine-dim', { opacity: 0.14, ease: 'power1.inOut', duration: 0.06 }, 0.87) // the run — clear
       tl.to('.cine-dim', { opacity: 0.62, ease: 'power1.inOut', duration: 0.06 }, 0.92) // resolve + CTAs
 
       // useGSAP reverts the context for us; the ticker callback is ours to undo.

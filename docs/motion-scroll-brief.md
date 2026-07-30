@@ -4,38 +4,61 @@ This is the production brief for the **pinned, scroll-scrubbed hero** built in
 `src/components/ScrollCinemaHero.tsx`. It tells you exactly what footage to
 generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
-> **Current footage:** `public/apex-hero-cinema.mp4` (22.7s, 30fps) — a single
-> continuous Seedance 2.0 generation delivered at 2560×1440, unmodified, tail-trimmed at 22.7s, extracted at `fps=14`, `scale=1600` (lanczos, no
-> unsharp) → **318 frames at 1600×900, 22 MB**.
+> **Current footage:** `public/apex-hero-cinema.mp4` (22.6s, 24fps, 1600×900) —
+> two sources joined by one dissolve, extracted at `fps=14` (no rescale, the
+> master is already 1600×900) → **317 frames at 1600×900, 19 MB**; the phone
+> sequence is **158 frames at 640×360, 2.9 MB**. See §6 for the recipe.
 >
 > The spine is deliberately simple: **the black-plate scene plays out, then that
-> same box opens.** Then fly-through the internals → red tunnel → the sprint.
-> See §6 for how the one-flow read is bought and §7 for the resolution ceiling.
+> same box opens.** Then fly-through the internals → red grid tunnel → out into
+> the T-APEX hall for the sprint. See §6 for how the one-flow read is bought and
+> §7 for the resolution ceiling.
 >
-> **⚠ Do not try to stabilise the machine with a whole-frame transform.** As
-> generated, the sprint reads as though the athlete were towing the machine, and
-> the obvious fix — track the machine and warp each frame so it holds a fixed
-> screen position — was tried and **made it dramatically worse**. It was shipped
-> briefly and reverted.
+> **⚠ The sprint must be a locked-off shot. This is a hard requirement.**
 >
-> The reason is geometric, so no amount of tuning rescues it. The camera dollies
-> down the track, so a *planted* object must travel across the frame. Pinning it
-> to the frame therefore forces it to slide across the tarmac. Measured as the
-> distance between where the machine actually sits and where the ground plane
-> says it should (per-frame RANSAC homography on the tarmac, machine and athlete
-> masked out of the fit):
+> The previous sprint was a dolly — the camera tracked down the lane while the
+> athlete ran at it — and in it the machine read as though it were being towed.
+> That was real and it was measured. Per-frame RANSAC homography on the tarmac
+> (machine masked out of the fit, athlete rejected as outliers), accumulated
+> across the shot, against the machine's own contact patch tracked by
+> Lucas-Kanade, at the master's 1600×900:
 >
 > | | slip vs tarmac, mean | slip, final frame |
 > |---|---|---|
-> | generation as delivered | 92 px | 219 px |
-> | whole-frame "lock" | 276 px | **1605 px** |
+> | machine's own screen travel | — | 263 px |
+> | a planted object would travel | — | 221 px |
+> | **slip** | **54 px** | **120 px** |
 >
-> A whole-frame warp moves the ground and the machine *together*, so it can
-> never change their relative motion — it only adds its own. The delivered
-> footage does have a real, modest drag (219px over ~6.5s on a 2560px frame).
-> Fixing that properly means matting the machine out, re-compositing it at the
-> homography-predicted transform, and inpainting the vacated tarmac — or, far
-> cheaper, re-generating the shot. Reach for one of those, not a stabiliser.
+> The chain was verified rather than trusted: warping the last sprint frame back
+> into the first frame's coordinates registers the tarmac, lane lines, hedge and
+> skyline continuously, while the machine and its starting blocks appear *twice*,
+> plainly offset. The machine also grew **1.44× faster than the ground it stood
+> on**, which is exactly what sliding that far toward the lens predicts (1.425×)
+> — so it was a rigid object on a consistent ground plane that genuinely moved.
+>
+> **Three fixes were built and all three were rejected:**
+>
+> 1. **Whole-frame stabilise** — cannot work at any tuning. It moves the ground
+>    and the machine together, so it can never change their relative motion; it
+>    only adds its own. Shipped briefly once, reverted.
+> 2. **Local mesh warp** — displace only the machine's neighbourhood onto the
+>    ground's prediction, decaying to identity. Correct in principle, but 109 px
+>    of displacement ripples the tarmac and visibly bends the lane lines, and the
+>    machine's blocks sit ~120 px off the bottom of frame so the band beneath them
+>    has to stretch ~1.9×. Rendered, inspected, rejected.
+> 3. **Matte, re-composite, fill** — the only one that looked right on a still,
+>    and the one to reach for if this ever has to be done in post. Key the
+>    *tarmac* rather than the machine (a luminance key finds the chassis and drops
+>    the mid-brown blocks and white frame, leaving them behind on the track), lift
+>    clean tarmac from below to fill, tone-match on a ring outside the patch. What
+>    it needs and did not get is a robust matte across all 196 frames — the
+>    athlete's black tights cross the dark chassis for the first third of the
+>    shot, which wants a segmentation model or hand roto, not a colour key.
+>
+> **It was fixed by replacement, not repair** — a fixed-camera shot in the T-APEX
+> hall, where the wall, branding and lighting hold still and the unit is planted
+> for the whole run. If you re-generate this segment, specify a locked-off camera.
+> A dolly puts the drag straight back, and none of the above will get it out.
 
 > **Floating product films** (`SolutionSection`'s turntable, and anything else
 > using `mix-blend-mode: screen` on the black page): the blend composites black
@@ -73,7 +96,7 @@ progress across the pin.
 - **ACT 0 — HOLD (0–3%).** Pure black, *TRAIN BEYOND HUMAN LIMITS* alone. Kept
   deliberately short: at 10% the headline took five wheel notches to budge and
   read as broken. (It doubles as the loading state — scrubbing arms once the
-  first 36 frames decode, the rest stream in behind.)
+  first 18 frames decode, the rest stream in behind.)
 - **ACT 1 — SPLIT (3–26%).** The headline parts — `TRAIN BEYOND` rises, `HUMAN
   LIMITS` drops — on a `power2.out` ease so they break apart on contact rather
   than creeping. A blue seam opens across the gap and the film is revealed *by*
@@ -83,20 +106,29 @@ progress across the pin.
   scale — deep down the lens against its own black plate — and flies in to full
   frame as the panels open. The telemetry HUD lands over the fly-through,
   flanked left and right at 11–13% inset, not centred.
-- **ACT 3 — RESOLVE (74–100%).** *DEVELOPED FOR THE NEXT TENTH OF A SECOND*
-  lands centre-frame as the sprinter appears and clears at 87% so the machine
-  alone closes the shot; CTAs resolve at 92%.
+- **ACT 3 — RESOLVE (73–100%).** *DEVELOPED FOR THE NEXT TENTH OF A SECOND*
+  lands centre-frame at 75%, just after the tunnel resolves into the hall, and
+  clears at 87% so the run and the dispersal close the shot alone; CTAs resolve
+  at 92%.
 
 ### Where the content sits (scroll progress → shot)
 
-318 frames, scrubbed across `0.03 → 0.97`:
+317 frames, scrubbed across `0.03 → 0.97`:
 
 | Progress | Frames | On screen |
 |---|---|---|
-| 0.03–0.40 | 0–59 | the machine on pure black — travelling in, turning, then ✦ **the panels open**, internals lit |
-| 0.40–0.63 | 59–185 | fly-through: cable spool, motor, gears, circuit macro, chip |
-| 0.63–0.72 | 185–227 | the red grid tunnel, opening onto the track |
-| 0.72–0.97 | 227–317 | the sprint, resolving on the machine trackside |
+| 0.03–0.37 | 0–59 | the machine on pure black — travelling in, turning, then ✦ **the panels open**, internals lit |
+| 0.37–0.60 | 59–201 | fly-through: cable spool, motor, gears, circuit macro, chip |
+| 0.60–0.73 | 201–231 | the red grid tunnel, dissolving out into the T-APEX hall |
+| 0.73–0.97 | 231–316 | the sprint on a locked-off camera, resolving as the athlete disperses |
+
+**The tunnel gets 13% of the scroll for 9% of the frames**, and those 30 frames
+are real rather than repeats. The source tunnel runs only 0.7s, so it is slowed
+3× with motion interpolation in the §6 recipe, which *synthesises* in-betweens.
+Plain time-stretching would have duplicated frames instead — and a duplicate
+under a scrub is a visible step where a genuine in-between is smooth. That is
+the whole reason this hero scrubs a sequence rather than a video: every frame
+you spend scroll on has to be a distinct picture.
 
 **Two layout rules this footage forces:**
 
@@ -177,13 +209,16 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
    ```bash
    rm -f public/hero-frames/*.webp
    ffmpeg -y -i public/apex-hero-cinema.mp4 \
-     -vf "fps=14,scale=1920:-1:flags=lanczos,unsharp=5:5:0.7:3:3:0.35" \
+     -vf "fps=14" \
      -f image2 -c:v libwebp -quality 70 \
      public/hero-frames/frame-%03d.webp
    ```
-   `lanczos` + a light `unsharp` matter: the source is 720p, so these frames are
-   upscaled. A good resampler and a touch of sharpening is the difference
-   between "soft" and "blurry" — never let the browser do that upscale for you.
+   No `scale` and no `unsharp`: the master is cut at 1600×900, which is the size
+   the sequence ships at, so there is nothing to resample. Do the upscaling in
+   the *master* (`scale=…:flags=lanczos` in the §6 recipe) where it happens once,
+   not here where it would happen again on every frame. `unsharp` was dropped
+   because the sources are already-sharpened upscales and it cost 12 KB/frame for
+   a worse picture — see §3's weight table.
 3. Extract the **phone** sequence into `public/hero-frames-mobile/` — same cut,
    every second frame, 640×360 (see §3b):
    ```bash
@@ -199,8 +234,8 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
 6. `npm run build` to verify, then commit both frame directories + the component.
 
 ### 3b. The phone sequence
-Phones run the same four acts off their own sequence: **159 frames at 640×360,
-2.8 MB**, with `readyFrames: 24` (~430 KB) gating the start. That is not a
+Phones run the same four acts off their own sequence: **158 frames at 640×360,
+2.9 MB**, with `readyFrames: 12` (~96 KB) gating the start. That is not a
 downgrade of the mobile hero — it *replaced* a 13 MB looping banner video that
 was being loaded through two stacked `<video preload="auto">` elements, so the
 phone gained the film and got several times lighter at once.
@@ -237,9 +272,15 @@ the picture is dense enough (circuit macros, cable texture, upscaler grain) that
 neither lever buys much: `1600 q70` → 64 KB/frame, `1600 q52` → 63, `1280 q68`
 → 57, and denoising first saved ~2 KB. Dropping `unsharp` was the only real win
 (76 → 64 KB) and it looks better anyway, the source being a 2K upscale that has
-already been sharpened once. So 318 frames land at 22 MB and there is no cheap
-way down — the weight is the picture. Kept whole rather than traded away, since
-frame count is what sells the scrub.
+already been sharpened once. So the sequence lands at ~61 KB/frame and there is
+no cheap way down — the weight is the picture. Kept whole rather than traded
+away, since frame count is what sells the scrub.
+
+**Current: 317 frames at 1600×900 / q70 = 19 MB** (phones: 158 frames, 2.9 MB).
+That is *down* from the previous cut's 318 frames / 24 MB at the same frame
+count, and not by trading quality — the new sprint replaced 90 frames of bright,
+detailed outdoor tarmac with a darker hall, and dark frames are cheap to encode.
+The 30 interpolated tunnel frames are cheaper still (mean luma 37).
 
 Note the shape of the older table: **going from 1440 to 1920 cost only ~2 MB**, because
 dropping quality 74 → 70 pays for most of the extra pixels. On this footage that
@@ -251,12 +292,12 @@ smaller *and* sharper. It was **not** adopted because AVIF decodes considerably
 slower than WebP, and a decode stall during a scrub costs smoothness, which is
 the more valuable of the two. Revisit if the weight ever has to come down.
 
-That weight is desktop-only (phones fetch the 2.8 MB sequence in §3b instead)
-and loads progressively — only `readyFrames` (36) gate the start of scrubbing,
-and a frame that hasn't decoded holds the previous one rather than flashing
-black.
+That weight is desktop-only (phones fetch the 2.9 MB sequence in §3b instead)
+and loads progressively — only `readyFrames` (18, ~456 KB) gate the start of
+scrubbing, and a frame that hasn't decoded holds the previous one rather than
+flashing black.
 
-**Re-measured on the shipped 318-frame sequence, and the answer is: leave it.**
+**Re-measured on the earlier 318-frame sequence, and the answer was: leave it.**
 Sampling 24 frames across the whole cut and re-encoding through Chromium's WebP
 encoder:
 
@@ -329,7 +370,7 @@ set of late arrivals satisfy it while the opening was still in flight.
 | 2 | Panels split and open along the seams, glowing internals revealed | ✅ covered (source **A**) |
 | 3 | Fly-through of the interior — cable spool, machined gears meshing, taut red cable, circuit-lined walls | ✅ covered (source **C**) |
 | 4 | Bank up, burst out the top into black space, dissolve to a scanning-grid HUD tunnel | ⚠️ **not used.** Source A has a light-tunnel and a warp streak, but placing them mid-fly-through costs two more joins for a beat the cut doesn't need — the circuit→gears run already carries that stretch |
-| 5 | Performance centre — sprinter at camera, follow the electric rope, settle on the device trackside | ⚠️ **partly.** The film still ends trackside on the hero device, but the sprinter-charging-camera shot was cut — it sat between the plate and the box opening and broke the one-flow read (§6). Source C 0.3–3.6s if you want it back. |
+| 5 | Performance centre — sprinter at camera, follow the electric rope, settle on the device trackside | ✅ **covered** by the new sprint (`apexscroll.mp4`): the T-APEX hall, the athlete running at a fixed camera with the rope trailing back to the unit, which stays planted by the wall for the whole run. Closes on him dispersing into red/blue energy with the unit still on the track. |
 
 **The deliberate departure from the storyboard:** the film opens on the product
 rather than an athlete, because the priority is that the box you watch is
@@ -341,31 +382,102 @@ hero device with the T-APEX branding.
 
 ## 6. How the master is cut
 
-Three sources, two dissolves. Both joins were chosen where the outgoing and
-incoming frames already rhyme, so the blend reads as one continuous camera move
-rather than an edit:
+Two sources, one dissolve — chosen where the outgoing and incoming frames
+already rhyme, so the blend reads as one continuous camera move rather than an
+edit. (Segment 1 is itself the older three-source cut, whose recipe and reasoning
+are kept below under *How the front section was built*.)
+
+The master is now **two** sources and **one** dissolve. Everything up to the
+tunnel is the previous master untouched; the sprint is a new locked-off clip.
 
 | Segment | Source | In–out | What it gives |
 |---|---|---|---|
-| 1 | **V1** (`Apex_Vid_1`) | 0.30–6.60 | the black plate — device + holographic athletes, playing out |
-| 2 | **A** (`hf_20260722_125532…`) | 1.85–4.75 | **the same box opens** — graded to black, see below |
-| 3 | **C** (`…101435_Lumina_1`) | 5.40–14.60 | circuit macro → spool + gears → HUD athletes → hero device |
+| 1 | the previous master | 0–14.35 | black plate → **the same box opens** → fly-through → the tunnel mouth approaching |
+| 1b | the previous master, slowed 3× | 14.35–15.05 → 2.125s | the **red grid tunnel**, full frame |
+| 2 | `apexscroll.mp4` (1280×720, 24fps) | 4.00–10.75 | the sprint in the T-APEX hall, fixed camera, then the dispersal |
+
+Two passes, because segment 1b has to be interpolated before it can be cut in:
+
+**Yes, this uses `minterpolate`, which the turntable note at the top of this file
+tells you not to use.** That warning stands — for a *turntable*. There it has to
+invent the far side of a rotating object as new surface swings into view, and it
+smears. Here the tunnel is a synthetic grid on a dead-straight constant-velocity
+push: every feature in frame N+1 is visibly present in frame N, just larger, so
+the motion estimate is trivially correct and the in-betweens are clean. Check any
+interpolated frame before trusting this on new footage — the test is whether the
+shot contains motion the estimator can actually see through.
 
 ```bash
-ffmpeg -y -i V1.mp4 -i A.mp4 -i C.mp4 -filter_complex "\
-[0:v]trim=0.30:6.60,setpts=PTS-STARTPTS,fps=24[v0];\
-[1:v]trim=1.85:4.75,setpts=PTS-STARTPTS,fps=24,\
-scale=1600:900:flags=lanczos,crop=1280:720:160:120,\
-curves=all='0/0 0.20/0.015 0.45/0.42 0.75/0.82 1/1',\
-vignette=angle=PI/2.9:x0=w/2:y0=h/1.9,vignette=angle=PI/3.6:x0=w/2:y0=h/1.9[v1];\
-[2:v]trim=5.40:14.60,setpts=PTS-STARTPTS,fps=24[v2];\
-[v0][v1]xfade=transition=fade:duration=0.7:offset=5.6[x1];\
-[x1][v2]xfade=transition=fade:duration=0.5:offset=8.0[x2]" \
--map "[x2]" -an -c:v libx264 -crf 14 -preset slow -pix_fmt yuv420p master.mp4
+# 1. slow the tunnel 3x — synthesising in-betweens, not repeating frames
+ffmpeg -y -ss 14.35 -t 0.70 -i prev-master.mp4 \
+  -vf "minterpolate=fps=72:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1,\
+setpts=3*PTS,fps=24" \
+  -c:v libx264 -crf 14 -preset medium -pix_fmt yuv420p tunnel_slow.mp4
+
+# 2. assemble
+ffmpeg -y -i prev-master.mp4 -i tunnel_slow.mp4 -i apexscroll.mp4 -filter_complex "\
+[0:v]trim=0:14.35,setpts=PTS-STARTPTS,fps=24,scale=1600:900:flags=lanczos,\
+format=yuv420p,settb=1/24[a];\
+[1:v]setpts=PTS-STARTPTS,fps=24,scale=1600:900:flags=lanczos,\
+format=yuv420p,settb=1/24[b];\
+[a][b]concat=n=2:v=1:a=0,settb=1/24[ab];\
+[2:v]trim=4.0:10.75,setpts=PTS-STARTPTS,fps=24,scale=1600:900:flags=lanczos,\
+format=yuv420p,settb=1/24[c];\
+[ab][c]xfade=transition=fade:duration=0.6:offset=15.875[vx]" \
+-map "[vx]" -an -c:v libx264 -crf 18 -preset slow -pix_fmt yuv420p \
+public/apex-hero-cinema.mp4
 ```
 
-`xfade`'s `offset` is measured on the *incoming* chain, so each one is
-`(length so far) − (dissolve duration)`.
+`xfade`'s `offset` is measured on the *incoming* chain, so it is
+`(length so far) − (dissolve duration)` = `(14.35 + 2.125) − 0.6`.
+
+**`settb=1/24` on every branch is not optional.** `concat` hands on a
+microsecond timebase while the trimmed branch keeps 1/24, and `xfade` refuses to
+configure when its two inputs disagree — it fails with *"First input link main
+timebase do not match"* and writes a zero-byte file.
+
+**Why those numbers:**
+
+- **`trim=0:14.35`, then the slowed tunnel.** 14.35s is where the grid opens out
+  to full frame. Everything before it is the tunnel *mouth* approaching through
+  black, which is already paced well; only the wide-grid part needed lengthening.
+- **The tunnel had to be interpolated, not just given more scroll.** At the
+  original speed the whole full-frame grid is 0.7s ≈ 10 frames at 14fps, and the
+  0.6s dissolve would have eaten most of them. Slowing it 3× turns those 10 into
+  30, so the grid gets a real push of its own *before* the hall arrives.
+- **The old portal is gone.** The tunnel used to open onto an inset of the old
+  track shot, which first shows content at 15.07s. Cutting the source at 15.05
+  takes none of it, so nothing of the dragging machine survives anywhere.
+- **`trim=4.0` on segment 2.** The clip opens on the athlete far down the hall
+  barely changing size — weak under a scrub, and the tunnel already supplies the
+  sense of distance. Starting at 4.0s brings him in mid-hall and already moving.
+- **`10.75`, not the full 11.04.** The last ~0.3s is a frozen near-black hold
+  (luma flat at 16.0). A frozen tail is dead scroll: you keep scrolling and
+  nothing moves.
+- **`fps=24`, not 30.** The new clip is natively 24fps and carries the fastest
+  motion in the film. Conforming *it* to 30 would duplicate one frame in five
+  and the duplicates survive into the 14fps extraction as judder; conforming the
+  slow front section down to 24 costs nothing visible.
+
+### ⭐ Why this dissolve works
+
+The tunnel ends on a red grid corridor receding to a dark centre; the new clip
+opens on a dark hall whose blue lane lines recede to a lit far wall. **The two
+vanishing points coincide and the grid lines run parallel to the lane lines**, so
+across the 0.7s the red grid reads as a HUD laid over the hall rather than as one
+video replacing another — the tunnel appears to *open onto* the hall. That is the
+same principle as the older joins: dissolve between frames that already share
+structure. Here the palettes differ (red grid vs blue track) and it still holds,
+because the shared perspective is doing more work than shared colour would.
+
+## 6b. How the front section was built
+
+Segment 1 above is the previous master, kept whole. It was itself cut from three
+sources with two dissolves — `V1` (`Apex_Vid_1`, 0.30–6.60, the black plate),
+`A` (`hf_20260722_125532…`, 1.85–4.75, **the same box opens**, graded to black)
+and `C` (`…101435_Lumina_1`, 5.40–14.60, circuit macro → spool + gears → the red
+tunnel). Its reasoning is kept here because it still governs everything before
+the sprint, and because re-cutting the front means re-deriving all of it.
 
 ### ⭐ How the "one flow" read is bought
 
@@ -388,12 +500,14 @@ The track-hall segment that used to sit between them was **removed**: cutting
 black void → lit hall → different lit hall was exactly what broke the illusion.
 The hall returns later, after the fly-through, where the journey justifies it.
 
-**The other two joins:**
-- **Join 2** cuts interior→interior. Both sides are blue-lit macro circuitry, so
-  it reads as the camera diving deeper into the board. Essentially invisible.
-- The rule: **dissolve between frames that already share subject, scale and
-  palette.** A dissolve between mismatched frames is just a slow cut, and a
-  scrub makes that worse than a hard one, not better.
+**The front section's second join** cuts interior→interior. Both sides are
+blue-lit macro circuitry, so it reads as the camera diving deeper into the board.
+Essentially invisible.
+
+The rule behind all three joins in the film: **dissolve between frames that
+already share structure — subject, scale, perspective, and where you can get it,
+palette.** A dissolve between mismatched frames is just a slow cut, and a scrub
+makes that worse than a hard one, not better.
 
 ### Checking a source before you cut it
 Scene-detect first — a hard cut mid-segment will wreck the scrub:
