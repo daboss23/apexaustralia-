@@ -30,7 +30,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 // looping banner video — the single heaviest thing on the mobile site, loaded
 // through two stacked <video> elements. The scroll-cinema now runs there too,
 // off a separate sequence (/hero-frames-mobile) that is half the frames at
-// 640×360 — 2.8 MB all in, and only the first two dozen frames gate the start.
+// 960×540 — 7.2 MB all in, and only the first dozen frames gate the start.
 // So mobile gained the motion AND got several times lighter.
 //
 // The one thing that could NOT come across is the framing. The footage is 16:9
@@ -121,7 +121,7 @@ const MOBILE: CinemaConfig = {
   // enough that the per-frame movement still reads as continuous.
   frameCount: 159,
   framePath: (i) => `/hero-frames-mobile/frame-${String(i).padStart(3, '0')}.webp`,
-  // ~200 KB before the film can start moving, and the first six of those are
+  // ~540 KB before the film can start moving, and the first six of those are
   // already in flight from the HTML preloads (see layout.tsx).
   readyFrames: 12,
   // Shorter than desktop: a thumb covers ground far faster than a wheel, and a
@@ -134,9 +134,11 @@ const MOBILE: CinemaConfig = {
   // Enough to clear the film band (≈296px tall at rest) without throwing the
   // type off the top of a short phone.
   splitTravel: 0.21,
-  // The source is 640 wide and the band draws at ~526 CSS px, so 1.25 is already
-  // a mild upscale; going higher only burns fill rate on a phone GPU.
-  maxDpr: 1.25,
+  // The source is now 960 wide and the band draws at ~526 CSS px, so there is
+  // real detail to spend a backing store on: 1.8 keeps the band at or under
+  // pixel-for-pixel with the frame on a DPR-3 phone instead of throwing most of
+  // it away, which is what made the film read soft next to the crisp type.
+  maxDpr: 1.8,
   // Higher than desktop on purpose. Lenis leaves touch alone — momentum
   // scrolling fights any JS smoothing layered on top of it — so nothing
   // upstream is interpolating a finger drag, and the scrub is the only place

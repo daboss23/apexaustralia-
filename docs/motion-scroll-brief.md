@@ -6,7 +6,18 @@ generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
 > **Current footage:** `public/apex-hero-cinema.mp4` (22.7s, 30fps) — a single
 > continuous Seedance 2.0 generation delivered at 2560×1440, unmodified, tail-trimmed at 22.7s, extracted at `fps=14`, `scale=1600` (lanczos, no
-> unsharp) → **318 frames at 1600×900, 22 MB**.
+> unsharp) → **318 frames at 1600×900, 36 MB**.
+>
+> **⚠ The master in this repo is 1600×900, not 2K.** The 2560×1440 delivery was
+> downscaled on the way in and the original was never committed, so 1600 is the
+> hard detail ceiling for anything re-extracted here. If the film ever looks soft
+> and someone asks for "the 2K back", the answer is to re-import the original
+> generation as the master — re-encoding cannot invent detail the master lacks.
+> What re-encoding *can* fix is quantisation, and it did: the sequence used to be
+> WebP q70 (~69 KB/frame) and is now **q88 (~113 KB/frame)**, which is where the
+> mush on the panel gradients and the red/blue edge glows came from. Phones went
+> 640×360 q56 → **960×540 q80** (3.1 → 7.2 MB) with `MOBILE.maxDpr` 1.25 → 1.8,
+> since the band was previously softer than the type sitting next to it.
 >
 > The spine is deliberately simple: **the black-plate scene plays out, then that
 > same box opens.** Then fly-through the internals → red tunnel → the sprint.
@@ -177,20 +188,20 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
    ```bash
    rm -f public/hero-frames/*.webp
    ffmpeg -y -i public/apex-hero-cinema.mp4 \
-     -vf "fps=14,scale=1920:-1:flags=lanczos,unsharp=5:5:0.7:3:3:0.35" \
-     -f image2 -c:v libwebp -quality 70 \
+     -vf "fps=14,scale=1600:-1:flags=lanczos" \
+     -f image2 -c:v libwebp -quality 88 -compression_level 6 \
      public/hero-frames/frame-%03d.webp
    ```
    `lanczos` + a light `unsharp` matter: the source is 720p, so these frames are
    upscaled. A good resampler and a touch of sharpening is the difference
    between "soft" and "blurry" — never let the browser do that upscale for you.
 3. Extract the **phone** sequence into `public/hero-frames-mobile/` — same cut,
-   every second frame, 640×360 (see §3b):
+   every second frame, 960×540 (see §3b):
    ```bash
    rm -f public/hero-frames-mobile/*.webp
    ffmpeg -y -i public/apex-hero-cinema.mp4 \
-     -vf "fps=7,scale=640:-1:flags=lanczos" \
-     -f image2 -c:v libwebp -quality 56 \
+     -vf "fps=7,scale=960:-1:flags=lanczos" \
+     -f image2 -c:v libwebp -quality 80 -compression_level 6 \
      public/hero-frames-mobile/frame-%03d.webp
    ```
 4. Update **both** frame counts in `src/components/ScrollCinemaHero.tsx` —
@@ -199,8 +210,8 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
 6. `npm run build` to verify, then commit both frame directories + the component.
 
 ### 3b. The phone sequence
-Phones run the same four acts off their own sequence: **159 frames at 640×360,
-2.8 MB**, with `readyFrames: 24` (~430 KB) gating the start. That is not a
+Phones run the same four acts off their own sequence: **159 frames at 960×540,
+7.2 MB**, with `readyFrames: 12` (~540 KB) gating the start. That is not a
 downgrade of the mobile hero — it *replaced* a 13 MB looping banner video that
 was being loaded through two stacked `<video preload="auto">` elements, so the
 phone gained the film and got several times lighter at once.
@@ -219,9 +230,10 @@ sprint starts cropping the athlete. The band's top and bottom edges are faded
 **in the canvas itself** (see `draw()`), not with an overlay, so the fade tracks
 the camera push — a fixed CSS gradient cannot.
 
-Resolution follows from that: the band draws at ~526 CSS px wide, so at
-`maxDpr: 1.25` a 640-wide source is already a mild upscale. Going wider only
-burns fill rate on a phone GPU.
+Resolution follows from that: the band draws at ~526 CSS px wide against a
+960-wide source, so `maxDpr: 1.8` is the point where a DPR-3 phone still has
+frame detail left to draw. Below that the band read soft next to the type; above
+it there is nothing left in the source to show, only fill rate to burn.
 
 ### Sizing the sequence — the real trade-off
 Frame **count** sells smoothness far more than frame **resolution**: the scrub
@@ -237,7 +249,7 @@ the picture is dense enough (circuit macros, cable texture, upscaler grain) that
 neither lever buys much: `1600 q70` → 64 KB/frame, `1600 q52` → 63, `1280 q68`
 → 57, and denoising first saved ~2 KB. Dropping `unsharp` was the only real win
 (76 → 64 KB) and it looks better anyway, the source being a 2K upscale that has
-already been sharpened once. So 318 frames land at 22 MB and there is no cheap
+already been sharpened once. So at q70 the 318 frames landed at 22 MB and there was no cheap
 way down — the weight is the picture. Kept whole rather than traded away, since
 frame count is what sells the scrub.
 
@@ -251,7 +263,7 @@ smaller *and* sharper. It was **not** adopted because AVIF decodes considerably
 slower than WebP, and a decode stall during a scrub costs smoothness, which is
 the more valuable of the two. Revisit if the weight ever has to come down.
 
-That weight is desktop-only (phones fetch the 2.8 MB sequence in §3b instead)
+That weight is desktop-only (phones fetch the 7.2 MB sequence in §3b instead)
 and loads progressively — only `readyFrames` (36) gate the start of scrubbing,
 and a frame that hasn't decoded holds the previous one rather than flashing
 black.
