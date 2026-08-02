@@ -726,7 +726,7 @@ export default function CheckoutSection() {
             <img
               src="/apex guarantee.png"
               alt="Customer Satisfaction — 2 Year Warranty Guaranteed"
-              className="w-40 md:w-52 h-auto mx-auto mb-5"
+              className="w-64 sm:w-80 md:w-[28rem] h-auto mx-auto mb-6"
             />
             <p className="font-display font-black text-apex-white leading-tight max-w-2xl mx-auto mb-2" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.6rem)' }}>
               Try it with your athletes. See the data before you commit.
