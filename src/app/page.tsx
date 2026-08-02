@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar'
 import SmoothScroll from '@/components/SmoothScroll'
 import TelemetryLine from '@/components/TelemetryLine'
 import ScrollCinemaHero from '@/components/ScrollCinemaHero'
+import ScrollExpandVideo from '@/components/ScrollExpandVideo'
 import PerformanceSection from '@/components/PerformanceSection'
 import ProblemSection from '@/components/ProblemSection'
 import SolutionSection from '@/components/SolutionSection'
@@ -37,6 +38,10 @@ export default function Home() {
       {/* 01 — HERO / BIG PROMISE — scroll-cinema (frame-scrub travel-through);
             falls back to the classic <Hero/> on phones + reduced-motion */}
       <ScrollCinemaHero />
+
+      {/* 01b — FEATURE FILM — opens out of the hero's last frame; the plate
+            expands as you scroll (scroll-linked, never scroll-jacked) */}
+      <ScrollExpandVideo />
 
       {/* 02 — PERFORMANCE IN MOTION */}
       <PerformanceSection />
