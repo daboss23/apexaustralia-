@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { lockScroll, unlockScroll } from '@/lib/scroll'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import CheckoutFlow, { HighlightBullets } from './CheckoutFlow'
+import MovingTestimonials from './MovingTestimonials'
 
 /* ────────────────────────────────────────────────────────────────────────────
    ORDER / CHECKOUT SECTION — inline, ecom-style product + buy experience.
@@ -54,6 +55,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     modes: 'Resisted · Change-of-direction · Isotonic · Overload',
     gallery: [
       { type: 'image', src: '/checkout/core-hero.webp', alt: 'Core T-APEX system — the portable Adaptive Resistance Intelligence unit' },
+      { type: 'video', src: '/checkout/tapex-sprint.mp4', alt: 'T-APEX in action — resisted sprint on the track' },
       { type: 'image', src: '/t-apex product 4.webp', alt: 'T-APEX unit wheeled trackside by an athlete — portable Adaptive Resistance Intelligence' },
       { type: 'image', src: '/t-apex product 0.webp', alt: 'T-APEX system — Core configuration on the training floor' },
       { type: 'image', src: '/t-apex product 3.webp', alt: 'T-APEX unit with sprint shoe' },
@@ -87,6 +89,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     modes: 'Resisted · CoD · Isotonic · Overload · Assisted Overspeed',
     gallery: [
       { type: 'image', src: '/t-apex product 2.webp', alt: 'T-APEX with the full Overspeed Module on the field — tether reel, pulley, weight anchor & fast-release strap' },
+      { type: 'video', src: '/checkout/tapex-sprint.mp4', alt: 'T-APEX in action — resisted sprint on the track' },
       { type: 'image', src: '/t-apex product 4.webp', alt: 'T-APEX Overspeed unit wheeled trackside by an athlete — portable, stadium-ready' },
       { type: 'image', src: '/t-apex product 0.webp', alt: 'T-APEX Overspeed system — full configuration' },
       { type: 'image', src: '/t-apex product 3.webp', alt: 'T-APEX Overspeed system — full configuration' },
@@ -99,17 +102,10 @@ const GOLD = 'rgba(180,140,60,1)'
 
 const TRUST_BADGES = [
   {
-    label: '12-Month Warranty',
+    label: '2-Year Warranty',
     sub: 'Full manufacturer cover',
     icon: (
       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
-    ),
-  },
-  {
-    label: 'Australian Support',
-    sub: 'Local team, real coaches',
-    icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
     ),
   },
   {
@@ -612,26 +608,29 @@ export default function CheckoutSection() {
 
             {/* Reassurance line */}
             <p className="font-mono text-[9px] tracking-[0.12em] uppercase text-apex-grey-dim text-center mt-4 leading-relaxed">
-              12-month warranty · free insured shipping · secure checkout
+              2-year warranty · free insured shipping · secure checkout
             </p>
           </div>
         </div>
 
+        {/* ── Moving testimonials wall (under the Add to Cart CTA) ── */}
+        <MovingTestimonials />
+
         {/* ── Trust badge strip ── */}
         <motion.div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-apex-line/40 border border-apex-line/40 mt-10 md:mt-16"
+          className="trust-glow grid grid-cols-1 sm:grid-cols-3 gap-px bg-apex-line/40 mt-10 md:mt-16 mx-auto w-full max-w-4xl"
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
         >
           {TRUST_BADGES.map((b) => (
-            <div key={b.label} className="flex items-center gap-3.5 bg-apex-black px-5 py-6">
-              <svg className="w-8 h-8 text-apex-red flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.4} stroke="currentColor">
+            <div key={b.label} className="flex items-center justify-center gap-4 bg-apex-black px-6 py-9 md:py-10 text-center sm:text-left">
+              <svg className="w-10 h-10 md:w-11 md:h-11 text-apex-red flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.4} stroke="currentColor">
                 {b.icon}
               </svg>
               <div className="flex flex-col">
-                <span className="font-display font-bold text-apex-white text-[13px] leading-tight">{b.label}</span>
-                <span className="font-body text-apex-grey-dim text-[11px] leading-tight">{b.sub}</span>
+                <span className="font-display font-bold text-apex-white text-[15px] md:text-[16px] leading-tight">{b.label}</span>
+                <span className="font-body text-apex-grey-dim text-[12px] md:text-[13px] leading-tight mt-0.5">{b.sub}</span>
               </div>
             </div>
           ))}
@@ -727,14 +726,17 @@ export default function CheckoutSection() {
             aria-hidden="true"
           />
           <div className="relative">
-            <svg className="w-10 h-10 text-apex-red mx-auto mb-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.4} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
-            </svg>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/apex guarantee.png"
+              alt="Customer Satisfaction — 2 Year Warranty Guaranteed"
+              className="w-64 sm:w-80 md:w-[28rem] h-auto mx-auto mb-6"
+            />
             <p className="font-display font-black text-apex-white leading-tight max-w-2xl mx-auto mb-2" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.6rem)' }}>
               Try it with your athletes. See the data before you commit.
             </p>
             <p className="text-apex-grey font-body max-w-xl mx-auto" style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
-              Every system is backed by a <span className="text-apex-blue font-semibold">12-month warranty</span> and
+              Every system is backed by a <span className="text-apex-blue font-semibold">2-year warranty</span> and
               hands-on support from the Australian team. On-site or virtual demo — no obligation.
             </p>
           </div>
