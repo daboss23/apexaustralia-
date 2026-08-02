@@ -577,16 +577,39 @@
 .tele-ghost { animation: tele-drift 34s ease-in-out infinite alternate; }
 
 /* ── Overspeed gating note (WhatsIncludedSection) ────────────────────────────
-   Subtle "live circuit" treatment: a slow breathing glow on the red border,
-   one thin charge tracing the top edge, and a few faint particles rising off
-   the accent bar. All decoration, all aria-hidden, all killed by the global
-   prefers-reduced-motion rule above. */
+   "Live circuit" treatment: a pulsating glow on the red border, one thin
+   charge tracing the top edge, and a few particles rising off the accent bar.
+   The border lives here rather than inline on the element so the pulse can
+   drive border-colour as well as the halo. All decoration, all aria-hidden,
+   all killed by the global prefers-reduced-motion rule above. */
 
 @keyframes note-glow {
-  0%, 100% { box-shadow: 0 0 14px rgba(214, 31, 38, 0.10), inset 0 0 18px rgba(214, 31, 38, 0.03); }
-  50% { box-shadow: 0 0 26px rgba(214, 31, 38, 0.22), inset 0 0 24px rgba(214, 31, 38, 0.06); }
+  0%, 100% {
+    border-top-color: rgba(214, 31, 38, 0.30);
+    border-right-color: rgba(214, 31, 38, 0.30);
+    border-bottom-color: rgba(214, 31, 38, 0.30);
+    border-left-color: #A8161B;
+    box-shadow:
+      0 0 16px rgba(214, 31, 38, 0.16),
+      0 0 4px rgba(214, 31, 38, 0.22),
+      inset 0 0 20px rgba(214, 31, 38, 0.04);
+  }
+  50% {
+    border-top-color: rgba(255, 62, 68, 0.85);
+    border-right-color: rgba(255, 62, 68, 0.85);
+    border-bottom-color: rgba(255, 62, 68, 0.85);
+    border-left-color: #FF3B42;
+    box-shadow:
+      0 0 44px rgba(214, 31, 38, 0.48),
+      0 0 12px rgba(255, 62, 68, 0.42),
+      inset 0 0 32px rgba(214, 31, 38, 0.11);
+  }
 }
-.note-glow { animation: note-glow 4.5s ease-in-out infinite; }
+.note-glow {
+  border: 1px solid rgba(214, 31, 38, 0.3);
+  border-left: 4px solid #D61F26;
+  animation: note-glow 2.6s ease-in-out infinite;
+}
 
 /* Thin charge sweeping along the top border */
 @keyframes note-trace {
@@ -602,7 +625,7 @@
   height: 1px;
   width: 90px;
   background: linear-gradient(90deg, transparent, rgba(255, 90, 90, 0.9), transparent);
-  animation: note-trace 6s ease-in-out infinite;
+  animation: note-trace 4.5s ease-in-out infinite;
 }
 
 /* Frequency particles drifting up off the left accent bar */

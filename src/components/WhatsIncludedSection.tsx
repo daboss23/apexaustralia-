@@ -123,8 +123,6 @@ export default function WhatsIncludedSection() {
           className="note-glow relative p-7 md:p-8"
           style={{
             background: 'linear-gradient(135deg, rgba(20,20,24,1) 0%, rgba(10,13,16,1) 55%, rgba(214,31,38,0.08) 100%)',
-            border: '1px solid rgba(214,31,38,0.3)',
-            borderLeft: '4px solid #D61F26',
           }}
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -133,9 +131,10 @@ export default function WhatsIncludedSection() {
           {/* Electric trace + frequency particles (decoration only) */}
           <div className="absolute inset-0 overflow-visible pointer-events-none" aria-hidden="true">
             <span className="note-trace" />
-            <span className="note-particle" style={{ left: '-2px', '--p-dur': '5.2s', '--p-delay': '0s', '--p-x': '7px', '--p-peak': 0.5 } as React.CSSProperties} />
-            <span className="note-particle" style={{ left: '0px', '--p-dur': '6.4s', '--p-delay': '2.1s', '--p-x': '-5px', '--p-peak': 0.4 } as React.CSSProperties} />
-            <span className="note-particle" style={{ left: '-3px', '--p-dur': '7.1s', '--p-delay': '3.8s', '--p-x': '10px', '--p-peak': 0.35 } as React.CSSProperties} />
+            <span className="note-particle" style={{ left: '-2px', '--p-dur': '4.4s', '--p-delay': '0s', '--p-x': '7px', '--p-peak': 0.85 } as React.CSSProperties} />
+            <span className="note-particle" style={{ left: '0px', '--p-dur': '5.3s', '--p-delay': '1.4s', '--p-x': '-5px', '--p-peak': 0.7 } as React.CSSProperties} />
+            <span className="note-particle" style={{ left: '-3px', '--p-dur': '6.0s', '--p-delay': '2.6s', '--p-x': '10px', '--p-peak': 0.6 } as React.CSSProperties} />
+            <span className="note-particle" style={{ left: '1px', '--p-dur': '5.7s', '--p-delay': '3.9s', '--p-x': '-8px', '--p-peak': 0.65 } as React.CSSProperties} />
           </div>
           <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-3" style={{ color: 'rgba(214,31,38,0.9)' }}>
             Please Note
@@ -144,8 +143,7 @@ export default function WhatsIncludedSection() {
             Without the <span className="text-apex-white font-display font-bold">Overspeed Module</span>, you
             won&apos;t receive the five overspeed accessories above — and won&apos;t unlock the{' '}
             <span className="text-apex-white font-display font-bold">assisted overspeed training mode</span> and its
-            related software features. Resisted sprinting, change-of-direction, isotonic and overload
-            modes are all included with the core system.
+            related software features.
           </p>
         </motion.div>
       </div>
