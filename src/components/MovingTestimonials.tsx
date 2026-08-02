@@ -142,14 +142,26 @@ const DIRECTIONS: [string, string][] = [
   ['0%', '-50%'],
 ]
 
-export default function MovingTestimonials() {
+export default function MovingTestimonials({
+  className = 'mt-16 md:mt-24',
+  showHeader = true,
+  fadeColor = '#050505',
+  heightClass = 'h-[520px] md:h-[560px]',
+}: {
+  className?: string
+  showHeader?: boolean
+  /** Solid colour for the top/bottom fade masks — match the surrounding surface. */
+  fadeColor?: string
+  heightClass?: string
+} = {}) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-10% 0px' })
   const reduce = useReducedMotion()
 
   return (
-    <section ref={ref} className="relative mt-16 md:mt-24">
+    <section ref={ref} className={`relative ${className}`}>
       {/* Header + real rating summary */}
+      {showHeader && (
       <div className="flex flex-col items-center text-center mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-8 h-px bg-apex-red" />
@@ -175,6 +187,7 @@ export default function MovingTestimonials() {
           </span>
         </div>
       </div>
+      )}
 
       {/* Reduced motion: a plain, static grid — no marquee */}
       {reduce ? (
@@ -185,7 +198,7 @@ export default function MovingTestimonials() {
         </div>
       ) : (
         <motion.div
-          className="relative h-[520px] md:h-[560px] overflow-hidden"
+          className={`relative ${heightClass} overflow-hidden`}
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ duration: 0.7 }}
@@ -193,12 +206,12 @@ export default function MovingTestimonials() {
           {/* Fade masks top & bottom */}
           <div
             className="absolute inset-x-0 top-0 h-24 z-20 pointer-events-none"
-            style={{ background: 'linear-gradient(to bottom, #050505, transparent)' }}
+            style={{ background: `linear-gradient(to bottom, ${fadeColor}, transparent)` }}
             aria-hidden="true"
           />
           <div
             className="absolute inset-x-0 bottom-0 h-24 z-20 pointer-events-none"
-            style={{ background: 'linear-gradient(to top, #050505, transparent)' }}
+            style={{ background: `linear-gradient(to top, ${fadeColor}, transparent)` }}
             aria-hidden="true"
           />
 

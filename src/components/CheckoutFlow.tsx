@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import MovingTestimonials from './MovingTestimonials'
 
 /* ────────────────────────────────────────────────────────────────────────────
    TWO-STEP CHECKOUT FLOW — direct-response ("ClickFunnels") order form, built
@@ -529,10 +530,15 @@ export default function CheckoutFlow({
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-14 items-start"
           >
-            {/* LEFT — product gallery (owned by the section) + feature bullets */}
+            {/* LEFT — product gallery (owned by the section) + moving reviews */}
             <div className="order-2 lg:order-1">
               {gallery}
-              <HighlightBullets highlights={product.highlights} className="mt-6" />
+              <MovingTestimonials
+                className="mt-8"
+                showHeader={false}
+                fadeColor="#0D1117"
+                heightClass="h-[380px]"
+              />
             </div>
 
             {/* RIGHT — product identity + the two-step form */}
