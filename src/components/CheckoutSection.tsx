@@ -99,17 +99,10 @@ const GOLD = 'rgba(180,140,60,1)'
 
 const TRUST_BADGES = [
   {
-    label: '12-Month Warranty',
+    label: '2-Year Warranty',
     sub: 'Full manufacturer cover',
     icon: (
       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
-    ),
-  },
-  {
-    label: 'Australian Support',
-    sub: 'Local team, real coaches',
-    icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
     ),
   },
   {
@@ -619,19 +612,19 @@ export default function CheckoutSection() {
 
         {/* ── Trust badge strip ── */}
         <motion.div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-apex-line/40 border border-apex-line/40 mt-10 md:mt-16"
+          className="trust-glow grid grid-cols-1 sm:grid-cols-3 gap-px bg-apex-line/40 mt-10 md:mt-16 mx-auto w-full max-w-4xl"
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
         >
           {TRUST_BADGES.map((b) => (
-            <div key={b.label} className="flex items-center gap-3.5 bg-apex-black px-5 py-6">
-              <svg className="w-8 h-8 text-apex-red flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.4} stroke="currentColor">
+            <div key={b.label} className="flex items-center justify-center gap-4 bg-apex-black px-6 py-9 md:py-10 text-center sm:text-left">
+              <svg className="w-10 h-10 md:w-11 md:h-11 text-apex-red flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.4} stroke="currentColor">
                 {b.icon}
               </svg>
               <div className="flex flex-col">
-                <span className="font-display font-bold text-apex-white text-[13px] leading-tight">{b.label}</span>
-                <span className="font-body text-apex-grey-dim text-[11px] leading-tight">{b.sub}</span>
+                <span className="font-display font-bold text-apex-white text-[15px] md:text-[16px] leading-tight">{b.label}</span>
+                <span className="font-body text-apex-grey-dim text-[12px] md:text-[13px] leading-tight mt-0.5">{b.sub}</span>
               </div>
             </div>
           ))}

@@ -646,3 +646,25 @@
   animation: note-particle var(--p-dur, 5s) linear infinite;
   animation-delay: var(--p-delay, 0s);
 }
+
+/* ── Trust badge strip (CheckoutSection) ─────────────────────────────────────
+   The gating note's treatment dialled well down: same red pulse language, a
+   fraction of the amplitude, and a slower cycle, so a reassurance strip never
+   competes with the warning panel above it. Border lives here, not in a
+   Tailwind class, so the keyframes can reach it. Neutralised by the global
+   prefers-reduced-motion rule. */
+
+@keyframes trust-glow {
+  0%, 100% {
+    border-color: rgba(42, 48, 56, 0.55);
+    box-shadow: 0 0 12px rgba(214, 31, 38, 0.05);
+  }
+  50% {
+    border-color: rgba(214, 31, 38, 0.4);
+    box-shadow: 0 0 26px rgba(214, 31, 38, 0.17), inset 0 0 20px rgba(214, 31, 38, 0.03);
+  }
+}
+.trust-glow {
+  border: 1px solid rgba(42, 48, 56, 0.55);
+  animation: trust-glow 5.5s ease-in-out infinite;
+}
