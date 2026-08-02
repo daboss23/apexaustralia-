@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { lockScroll, unlockScroll } from '@/lib/scroll'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import CheckoutFlow, { HighlightBullets } from './CheckoutFlow'
+import MovingTestimonials from './MovingTestimonials'
 
 /* ────────────────────────────────────────────────────────────────────────────
    ORDER / CHECKOUT SECTION — inline, ecom-style product + buy experience.
@@ -611,6 +612,9 @@ export default function CheckoutSection() {
             </p>
           </div>
         </div>
+
+        {/* ── Moving testimonials wall (under the Add to Cart CTA) ── */}
+        <MovingTestimonials />
 
         {/* ── Trust badge strip ── */}
         <motion.div
