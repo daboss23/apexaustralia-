@@ -605,7 +605,7 @@ export default function CheckoutSection() {
 
             {/* Reassurance line */}
             <p className="font-mono text-[9px] tracking-[0.12em] uppercase text-apex-grey-dim text-center mt-4 leading-relaxed">
-              12-month warranty · free insured shipping · secure checkout
+              2-year warranty · free insured shipping · secure checkout
             </p>
           </div>
         </div>
@@ -727,7 +727,7 @@ export default function CheckoutSection() {
               Try it with your athletes. See the data before you commit.
             </p>
             <p className="text-apex-grey font-body max-w-xl mx-auto" style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
-              Every system is backed by a <span className="text-apex-blue font-semibold">12-month warranty</span> and
+              Every system is backed by a <span className="text-apex-blue font-semibold">2-year warranty</span> and
               hands-on support from the Australian team. On-site or virtual demo — no obligation.
             </p>
           </div>

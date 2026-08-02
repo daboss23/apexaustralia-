@@ -27,7 +27,7 @@ const FAQS = [
   },
   {
     q: 'What warranty and support do I get?',
-    a: 'Every system carries a 12-month manufacturer warranty and is backed by the Australian team — real coaches, led by Olympic-level sprint coach Piero Sacchetta, who help you onboard the system into your program.',
+    a: 'Every system carries a 2-year manufacturer warranty and is backed by the Australian team — real coaches, led by Olympic-level sprint coach Piero Sacchetta, who help you onboard the system into your program.',
   },
   {
     q: 'How long does delivery take?',
