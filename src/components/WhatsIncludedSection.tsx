@@ -120,7 +120,7 @@ export default function WhatsIncludedSection() {
 
         {/* Overspeed gating note */}
         <motion.div
-          className="relative p-7 md:p-8"
+          className="note-glow relative p-7 md:p-8"
           style={{
             background: 'linear-gradient(135deg, rgba(20,20,24,1) 0%, rgba(10,13,16,1) 55%, rgba(214,31,38,0.08) 100%)',
             border: '1px solid rgba(214,31,38,0.3)',
@@ -130,12 +130,19 @@ export default function WhatsIncludedSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.45 }}
         >
+          {/* Electric trace + frequency particles (decoration only) */}
+          <div className="absolute inset-0 overflow-visible pointer-events-none" aria-hidden="true">
+            <span className="note-trace" />
+            <span className="note-particle" style={{ left: '-2px', '--p-dur': '5.2s', '--p-delay': '0s', '--p-x': '7px', '--p-peak': 0.5 } as React.CSSProperties} />
+            <span className="note-particle" style={{ left: '0px', '--p-dur': '6.4s', '--p-delay': '2.1s', '--p-x': '-5px', '--p-peak': 0.4 } as React.CSSProperties} />
+            <span className="note-particle" style={{ left: '-3px', '--p-dur': '7.1s', '--p-delay': '3.8s', '--p-x': '10px', '--p-peak': 0.35 } as React.CSSProperties} />
+          </div>
           <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-3" style={{ color: 'rgba(214,31,38,0.9)' }}>
             Please Note
           </div>
           <p className="text-apex-grey font-body leading-relaxed" style={{ fontSize: 'clamp(0.92rem, 1.3vw, 1.05rem)' }}>
-            Without the <span className="text-apex-white font-display font-bold">Overspeed Module</span>, you don&apos;t
-            get the five overspeed accessories above — and you don&apos;t unlock the{' '}
+            Without the <span className="text-apex-white font-display font-bold">Overspeed Module</span>, you
+            won&apos;t receive the five overspeed accessories above — and won&apos;t unlock the{' '}
             <span className="text-apex-white font-display font-bold">assisted overspeed training mode</span> and its
             related software features. Resisted sprinting, change-of-direction, isotonic and overload
             modes are all included with the core system.
