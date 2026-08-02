@@ -42,7 +42,7 @@ const FAQS = [
 export default function FAQSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
-  const [openIdx, setOpenIdx] = useState<number | null>(0)
+  const [openIdx, setOpenIdx] = useState<number | null>(null)
 
   return (
     <section id="faq" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
