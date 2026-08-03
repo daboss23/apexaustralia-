@@ -186,15 +186,13 @@ export default function MovingTestimonials({
           <div className="w-8 h-px bg-apex-red" />
         </div>
         <h3
-          className="h-luxia leading-[0.95] mb-4"
-          style={{ fontSize: 'clamp(1.6rem, 3.4vw, 2.6rem)' }}
+          className="h-luxia leading-[0.95] mb-4 whitespace-nowrap"
+          style={{ fontSize: 'clamp(0.95rem, 4.4vw, 2.2rem)' }}
         >
-          {/* Hard break: the wall sits in the checkout's buy column, so this
-              headline always wraps — pinning the break keeps the red word on
-              its own line (the site's headline convention) instead of leaving
-              it to the container width and the webfont's load state. */}
-          <span className="t-silver">WHAT OUR CUSTOMERS</span>
-          <br />
+          {/* One line: the wall sits in the checkout's narrow buy column, so
+              the size is driven by container-ish vw units and nowrap pins the
+              whole headline to a single line regardless of webfont load. */}
+          <span className="t-silver">WHAT OUR CUSTOMERS</span>{' '}
           <span className="t-red">SAY.</span>
         </h3>
         <div className="flex items-center gap-3">
