@@ -378,26 +378,27 @@
   50% { background-position: 100% 50%; }
 }
 
-/* ── "ADD TO CART" CTA — red plate, gold rail, product chevron ─────────────
-   Built to the supplied reference: a deep red lacquered body ringed in gold,
-   with a black chevron plate on the left carrying the unit itself. Two lights
-   sit on it — a filament that breathes along the top and bottom gold rails
-   (the glow), and a diagonal sheen that sweeps across on a loop, and again
-   faster on hover (the shine). Corners are rounded rather than square: the
-   reference's soft corners are what make the gold read as an extruded rail
-   instead of a hairline box. */
+/* ── "ADD TO CART" CTA — red plate, glossy red rim, gold cart chevron ──────
+   Built to the supplied reference: a deep red lacquered body inside a bright
+   glossy red rim, with a gold chevron plate on the left carrying the cart, and
+   white lettering. Two lights sit on it — a filament that breathes along the
+   inside of the rim (the glow), and a diagonal sheen that sweeps across on a
+   loop, and again faster on hover (the shine). Corners are rounded rather than
+   square: the reference's soft corners are what make the rim read as an
+   extruded lip instead of a hairline box. */
 .cta-cart {
   position: relative;
   overflow: hidden;
   isolation: isolate;
   border-radius: 14px;
-  background: linear-gradient(100deg, #5e0a0c 0%, #961116 26%, #cf1b21 52%, #941015 80%, #5a090b 100%);
+  background: linear-gradient(100deg, #8d0f13 0%, #b91419 26%, #e4232a 52%, #b31318 80%, #870d11 100%);
   background-size: 170% 170%;
   box-shadow:
-    inset 0 0 0 2px #c9a24a,
-    inset 0 0 0 3px rgba(255, 232, 170, 0.35),
-    inset 0 14px 26px -18px rgba(255, 255, 255, 0.5),
-    inset 0 -18px 30px -20px rgba(0, 0, 0, 0.7),
+    /* glossy red rim + its highlight lip */
+    inset 0 0 0 3px #e8262d,
+    inset 0 0 0 4px rgba(255, 150, 150, 0.5),
+    inset 0 14px 26px -18px rgba(255, 255, 255, 0.55),
+    inset 0 -18px 30px -20px rgba(0, 0, 0, 0.65),
     0 12px 36px -14px rgba(214, 31, 38, 0.6);
   animation: cta-cart-gradient 9s ease infinite, cta-cart-halo 4.2s ease-in-out infinite;
   transition: transform 0.25s ease, box-shadow 0.3s ease;
@@ -405,18 +406,18 @@
 .cta-cart:hover { transform: translateY(-2px); }
 .cta-cart:active { transform: translateY(0); }
 
-/* THE GLOW — a bright filament pooled against the inside of the top and bottom
-   gold rails, brightest at centre. This is the lit edge in the reference. */
+/* THE GLOW — a bright filament pooled against the inside of the rim, brightest
+   at centre. This is the lit edge in the reference. */
 .cta-cart::after {
   content: '';
   position: absolute;
-  inset: 2px;
-  border-radius: 12px;
+  inset: 3px;
+  border-radius: 11px;
   pointer-events: none;
   z-index: 2;
   background:
-    radial-gradient(60% 3px at 50% 0%, rgba(255, 240, 190, 0.95), rgba(255, 210, 120, 0) 70%),
-    radial-gradient(60% 3px at 50% 100%, rgba(255, 226, 160, 0.8), rgba(255, 190, 100, 0) 70%);
+    radial-gradient(60% 3px at 50% 0%, rgba(255, 224, 224, 0.95), rgba(255, 120, 120, 0) 70%),
+    radial-gradient(60% 3px at 50% 100%, rgba(255, 208, 208, 0.75), rgba(255, 100, 100, 0) 70%);
   animation: cta-cart-filament 4.2s ease-in-out infinite;
 }
 
@@ -427,7 +428,7 @@
   inset: 0;
   z-index: 3;
   pointer-events: none;
-  background: linear-gradient(105deg, transparent 34%, rgba(255, 246, 214, 0.34) 50%, transparent 64%);
+  background: linear-gradient(105deg, transparent 34%, rgba(255, 246, 230, 0.34) 50%, transparent 64%);
   transform: translateX(-130%);
   animation: cta-shine 5.5s ease-in-out infinite;
 }
@@ -438,42 +439,29 @@
   50% { background-position: 100% 50%; }
 }
 @keyframes cta-cart-halo {
-  0%, 100% { box-shadow: inset 0 0 0 2px #c9a24a, inset 0 0 0 3px rgba(255, 232, 170, 0.35), inset 0 14px 26px -18px rgba(255, 255, 255, 0.5), inset 0 -18px 30px -20px rgba(0, 0, 0, 0.7), 0 12px 36px -14px rgba(214, 31, 38, 0.55); }
-  50% { box-shadow: inset 0 0 0 2px #e0bd68, inset 0 0 0 3px rgba(255, 244, 200, 0.5), inset 0 14px 26px -18px rgba(255, 255, 255, 0.6), inset 0 -18px 30px -20px rgba(0, 0, 0, 0.7), 0 16px 48px -12px rgba(224, 41, 48, 0.75), 0 0 34px -10px rgba(224, 180, 88, 0.5); }
+  0%, 100% { box-shadow: inset 0 0 0 3px #e8262d, inset 0 0 0 4px rgba(255, 150, 150, 0.45), inset 0 14px 26px -18px rgba(255, 255, 255, 0.55), inset 0 -18px 30px -20px rgba(0, 0, 0, 0.65), 0 12px 36px -14px rgba(214, 31, 38, 0.55); }
+  50% { box-shadow: inset 0 0 0 3px #ff3b41, inset 0 0 0 4px rgba(255, 185, 185, 0.6), inset 0 14px 26px -18px rgba(255, 255, 255, 0.65), inset 0 -18px 30px -20px rgba(0, 0, 0, 0.65), 0 16px 48px -12px rgba(230, 45, 52, 0.8), 0 0 34px -10px rgba(255, 90, 95, 0.45); }
 }
 @keyframes cta-cart-filament {
   0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
 }
 
-/* The black chevron plate carrying the product shot, pointing into the words.
-   The gold edge is drawn as a second, slightly larger clipped layer behind it
-   so the diagonal gets a rail too — a border can't follow a clip-path. */
+/* The gold chevron plate carrying the cart, pointing into the words. */
 .cta-cart-plate {
   position: relative;
-  clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 50%, calc(100% - 30px) 100%, 0 100%);
-  background: #000;
-}
-.cta-cart-plate::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(180deg, #f6e3a6, #c9a24a 45%, #8a6a1e);
-  clip-path: polygon(
-    0 0, calc(100% - 30px) 0, 100% 50%, calc(100% - 30px) 100%, 0 100%,
-    0 calc(100% - 2px), calc(100% - 31px) calc(100% - 2px), calc(100% - 3px) 50%,
-    calc(100% - 31px) 2px, 0 2px
-  );
+  clip-path: polygon(0 0, calc(100% - 34px) 0, 100% 50%, calc(100% - 34px) 100%, 0 100%);
+  background: linear-gradient(160deg, #fff4c8 0%, #f0d98c 18%, #cfa63f 46%, #f7e6a4 66%, #b98e2b 88%, #8a6a1e 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
-/* Gold metallic lettering — the type equivalent of the rail. */
-.t-gold-cta {
-  background: linear-gradient(180deg, #fff6d4 0%, #f0d68d 28%, #d8b256 52%, #f7e7ab 70%, #c19836 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+/* White lettering, lifted off the red the way the reference does. */
+.t-white-cta {
+  color: #fff;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.5),
+    0 3px 6px rgba(0, 0, 0, 0.45),
+    0 0 18px rgba(255, 255, 255, 0.25);
 }
 
 /* HUD scan-line overlay utility */

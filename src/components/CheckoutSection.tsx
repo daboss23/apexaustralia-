@@ -614,28 +614,26 @@ export default function CheckoutSection() {
               onClick={() => setCartOpen(true)}
               className="group cta-cart flex items-stretch w-full cursor-pointer h-[74px] sm:h-[88px]"
             >
-              {/* Black chevron plate carrying the unit */}
-              <span className="cta-cart-plate w-[34%] max-w-[190px] flex-shrink-0" aria-hidden="true">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/tapex-unit.png"
-                  alt=""
-                  className="w-full h-full object-contain object-left scale-[0.92] transition-transform duration-500 group-hover:scale-[0.98]"
-                />
+              {/* Gold chevron plate carrying the cart */}
+              <span className="cta-cart-plate w-[30%] max-w-[170px] flex-shrink-0 flex items-center justify-start pl-5 sm:pl-7" aria-hidden="true">
+                <svg
+                  className="w-9 h-9 sm:w-11 sm:h-11 text-[#3a2b06] transition-transform duration-300 group-hover:scale-105"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                </svg>
               </span>
 
               {/* Wordmark */}
               <span className="flex-1 flex items-center justify-center px-3">
-                <span className="t-gold-cta font-display font-black tracking-[0.08em] uppercase text-[20px] sm:text-[28px] leading-none whitespace-nowrap">
+                <span className="t-white-cta font-display font-black tracking-[0.06em] uppercase text-[20px] sm:text-[28px] leading-none whitespace-nowrap">
                   Add to Cart
                 </span>
               </span>
             </button>
-
-            {/* Microcopy that used to live inside the button */}
-            <p className="font-mono text-[10px] sm:text-[11px] tracking-[0.16em] uppercase text-apex-grey-dim text-center mt-3 leading-snug">
-              Two steps away from owning your T-APEX machine
-            </p>
 
             {/* Reassurance line */}
             <p className="font-mono text-[9px] tracking-[0.12em] uppercase text-apex-grey-dim text-center mt-4 leading-relaxed">
