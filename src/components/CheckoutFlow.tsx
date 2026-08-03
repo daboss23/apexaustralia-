@@ -625,18 +625,13 @@ export default function CheckoutFlow({
 
                         <button
                           type="submit"
-                          className="group inline-flex flex-col items-center justify-center gap-0.5 cta-glow text-white font-display font-black px-6 py-4 tracking-[0.1em] uppercase w-full mt-7 cursor-pointer"
-                          style={{ borderRadius: 0 }}
+                          aria-label="Continue to step 2 — payment details on the next step"
+                          className="group cta-cart cta-continue mt-7 cursor-pointer"
                         >
-                          <span className="inline-flex items-center gap-2.5 text-[16px] sm:text-[18px]">
-                            Continue to Step 2
-                            <svg className="w-[18px] h-[18px] transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                            </svg>
-                          </span>
-                          <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-white/80 font-normal">
-                            Payment details on the next step
-                          </span>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="/checkout/continue-step-2.png" alt="" />
+                          <span className="cta-cart-shine" aria-hidden="true" />
+                          <span className="sr-only">Continue to Step 2 — payment details on the next step</span>
                         </button>
 
                         <TrustBadges />

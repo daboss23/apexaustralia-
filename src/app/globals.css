@@ -438,6 +438,13 @@
 }
 .cta-cart:hover .cta-cart-shine::before { animation: cta-shine 1.1s ease-in-out; }
 
+/* Same treatment for the shipping step's CONTINUE button — only the mask
+   source changes, since the shine has to follow that artwork's silhouette. */
+.cta-continue .cta-cart-shine {
+  -webkit-mask-image: url('/checkout/continue-step-2.png');
+  mask-image: url('/checkout/continue-step-2.png');
+}
+
 /* HUD scan-line overlay utility */
 .hud-scanlines::after {
   content: '';
