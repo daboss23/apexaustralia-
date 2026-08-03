@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion'
 import HeroScene from './HeroScene'
 import SeamlessVideo from './SeamlessVideo'
-import { DEMO_HREF } from '@/lib/site'
 
 // ─── Headline — clean staggered reveal (no telemetry lines / electricity) ─────
 
@@ -96,25 +95,23 @@ function HeroCopy({ showLogo = false }: { showLogo?: boolean }) {
         Intelligent resistance, assisted overspeed, and real-time data in one portable system — measurable speed, force, and control on every rep. Built for coaches chasing the next tenth of a second.
       </motion.p>
 
-      {/* CTAs */}
+      {/* CTA — the supplied artwork, matching the scroll-cinema hero's single
+          CTA so the two heroes stay congruent (this one is the reduced-motion /
+          Data Saver fallback). The demo enquiry button is gone from both. */}
+      {/* Wrapper matches .cta-machine's own caps, so its auto side-margins
+          collapse to zero and the button sits flush with this hero's
+          left-aligned copy column rather than centred against it. */}
       <motion.div
-        className="flex flex-wrap items-center gap-4 mt-9"
+        className="mt-9 w-full max-w-[340px] sm:max-w-[400px] lg:max-w-[460px]"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65, delay: 1.15 }}
       >
-        <a href="#order" className="group inline-flex items-center gap-2.5 cta-glow text-white font-display font-semibold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_10px_36px_-8px_rgba(214,31,38,0.6)] hover:-translate-y-0.5 active:translate-y-0" style={{ borderRadius: 0 }}>
-          Order Your System
-          <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-          </svg>
-        </a>
-
-        <a href={DEMO_HREF} className="group inline-flex items-center gap-2.5 bg-transparent border border-apex-line hover:border-apex-grey-dim text-apex-grey hover:text-apex-white font-display font-semibold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5" style={{ borderRadius: 0 }}>
-          Book Your Free Demo
-          <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-          </svg>
+        <a href="#order" aria-label="Order your T-APEX machine" className="group cta-cart cta-machine">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/checkout/order-machine.png" alt="" width={1596} height={274} />
+          <span className="cta-cart-shine" aria-hidden="true" />
+          <span className="sr-only">Order your T-APEX machine</span>
         </a>
       </motion.div>
 

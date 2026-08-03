@@ -523,6 +523,33 @@
   .cta-order { width: 166px; }
 }
 
+/* Hero ORDER YOUR T-APEX MACHINE artwork — the page's primary CTA, same
+   shine/glow family, its own mask.
+
+   Unlike the other CTA artwork this one sits over the film rather than over the
+   near-black page, so the source PNG is alpha-keyed (public/checkout/
+   order-machine.png, cropped from public/APEC HEADER BUTTON.png): black is
+   transparent, the button body is opaque and the rim keeps its glow. Dropping
+   the raw artwork straight in would have put a black rectangle over the video.
+
+   Medium, centred, and capped so it never spans the full hero. */
+.cta-machine .cta-cart-shine {
+  -webkit-mask-image: url('/checkout/order-machine.png');
+  mask-image: url('/checkout/order-machine.png');
+}
+.cta-machine {
+  width: 100%;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+}
+@media (min-width: 640px) {
+  .cta-machine { max-width: 400px; }
+}
+@media (min-width: 1024px) {
+  .cta-machine { max-width: 460px; }
+}
+
 /* HUD scan-line overlay utility */
 .hud-scanlines::after {
   content: '';
