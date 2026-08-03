@@ -32,8 +32,8 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 // looping banner video — the single heaviest thing on the mobile site, loaded
 // through two stacked <video> elements. The scroll-cinema now runs there too,
 // off a separate sequence (/hero-frames-mobile) that is half the frames at
-// 960×540 — 6 MB all in, and only the first dozen frames gate the start.
-// So mobile gained the motion and still weighs less than half the video.
+// 640×360 — 2.8 MB all in, and only the first dozen frames gate the start.
+// So mobile gained the motion AND got several times lighter.
 //
 // The one thing that could NOT come across is the framing. The footage is 16:9
 // and a phone is roughly 9:19.5, so cover-fitting it would show a ~26 % wide
@@ -123,7 +123,7 @@ const MOBILE: CinemaConfig = {
   // enough that the per-frame movement still reads as continuous.
   frameCount: 159,
   framePath: (i) => `/hero-frames-mobile/frame-${String(i).padStart(3, '0')}.webp`,
-  // ~450 KB before the film can start moving, and the first six of those are
+  // ~200 KB before the film can start moving, and the first six of those are
   // already in flight from the HTML preloads (see layout.tsx).
   readyFrames: 12,
   // Shorter than desktop: a thumb covers ground far faster than a wheel, and a
@@ -136,15 +136,12 @@ const MOBILE: CinemaConfig = {
   // Enough to clear the film band (≈296px tall at rest) without throwing the
   // type off the top of a short phone.
   splitTravel: 0.21,
-  // The phone sequence is 960 wide (it was 640, and looked it — see below), and
-  // the band draws at ~526 CSS px, so there is real detail to spend on a dense
-  // screen. 1.25 was capping the canvas at 488px on a 390pt phone, which the
-  // browser then stretched 2.4x to fill the box — the film was being resampled
-  // twice and arrived soft on exactly the devices that could show it sharp. At 2
-  // the backing store is 780px and the band draws ~1150px from a 960px source:
-  // a mild upscale, drawn once. Not 3 — that is 2.25x the fill rate for detail
-  // the source does not have.
-  maxDpr: 2,
+  // The source is 640 wide and the band draws at ~526 CSS px, so 1.25 is already
+  // a mild upscale; going higher only burns fill rate on a phone GPU for detail
+  // the source does not have. (A 960-wide sequence would earn a cap of 2 — that
+  // pairing lives on claude/tapex-motion-scroll-fix-izg5x9; both halves have to
+  // land together or the canvas upscales twice.)
+  maxDpr: 1.25,
   // Higher than desktop on purpose. Lenis leaves touch alone — momentum
   // scrolling fights any JS smoothing layered on top of it — so nothing
   // upstream is interpolating a finger drag, and the scrub is the only place
@@ -306,11 +303,11 @@ function ActZero() {
 
           <div className="cine-eyebrow mb-5 sm:mb-6 flex items-center justify-center gap-2 sm:gap-3">
             {/* Wider than the old w-5 so the scanning pulse has room to read */}
-            <div className="cine-tele-line w-7 sm:w-10 h-px" />
-            <span className="text-apex-blue font-mono text-[8px] sm:text-[9px] font-medium tracking-[0.24em] sm:tracking-[0.34em] uppercase">
+            <div className="cine-tele-line w-5 sm:w-10 h-px" />
+            <span className="text-apex-blue font-mono text-[9px] sm:text-[11px] font-medium tracking-[0.17em] sm:tracking-[0.34em] uppercase">
               Elite Sports Performance Technology
             </span>
-            <div className="cine-tele-line w-7 sm:w-10 h-px" />
+            <div className="cine-tele-line w-5 sm:w-10 h-px" />
           </div>
 
           {/* Sized from the viewport, and deliberately NOT from rem.
@@ -383,7 +380,7 @@ function ScrollCue() {
       className="cine-cue absolute left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2.5 pointer-events-none"
       style={{ bottom: 'calc(env(safe-area-inset-bottom) + 72px)' }}
     >
-      <span className="text-apex-grey-dim font-mono text-[11px] sm:text-[10px] tracking-[0.36em] uppercase">
+      <span className="text-apex-grey-dim font-mono text-[12px] sm:text-[12px] tracking-[0.36em] uppercase">
         Scroll to enter
       </span>
       <div className="w-px h-8 overflow-hidden">
