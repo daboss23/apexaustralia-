@@ -185,20 +185,22 @@
       0 1px 0 rgba(0, 24, 38, 0.6),
       0 2px 4px rgba(0, 14, 24, 0.4);
   }
-  /* Performance red — bright scarlet that stays HOT across the whole letter (no
-     darkening toward the base, which is what made earlier reds read dull), with
-     a slight scarlet lean: the only way red gains real brightness without washing
-     to pink. Bright and clear. */
+  /* Performance red — the brand red of the CTA buttons and the logo, run as a
+     metallic face. The stops are the CTA's own gradient family (#ff3b30 crown →
+     #D61F26 base) rather than the orange-leaning scarlet this used to carry: at
+     display size that top stop washed the whole word to salmon, because a
+     clipped gradient averages its stops and a pale peachy highlight sits on top
+     of the average. Saturated the whole way down, no darkening toward the base. */
   .t-red {
     background-image:
       linear-gradient(180deg,
-        #FF6A4A 0%,
-        #FF4026 28%,
-        #FF2E18 56%,
-        #F92810 80%,
-        #EE2410 100%);
+        #FF4438 0%,
+        #FF2418 24%,
+        #FA0A12 52%,
+        #EE0812 80%,
+        #DC0F1A 100%);
     text-shadow:
-      0 -1px 0 rgba(255, 195, 178, 0.55),
+      0 -1px 0 rgba(255, 120, 110, 0.34),
       0 1px 0 rgba(50, 4, 0, 0.62),
       0 2px 4px rgba(30, 2, 0, 0.4);
   }
