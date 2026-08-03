@@ -58,7 +58,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     gallery: [
       { type: 'image', src: '/checkout/core-hero.webp', alt: 'Core T-APEX system — the portable Adaptive Resistance Intelligence unit' },
       { type: 'video', src: '/checkout/tapex-sprint.mp4', alt: 'T-APEX in action — resisted sprint on the track' },
-      { type: 'video', src: '/checkout/tapex-overview.mp4', startAt: 14, alt: 'T-APEX Core — full system overview' },
+      { type: 'video', src: '/checkout/tapex-overview.mp4', alt: 'T-APEX Core — full system overview' },
       { type: 'image', src: '/track-faq.jpg', alt: 'T-APEX unit anchored by a weight plate in the blocks — athlete set for a resisted start' },
       { type: 'image', src: '/t-apex product 4.webp', alt: 'T-APEX unit wheeled trackside by an athlete — portable Adaptive Resistance Intelligence' },
       { type: 'image', src: '/t-apex product 3.webp', alt: 'T-APEX unit with sprint shoe' },
@@ -92,7 +92,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     gallery: [
       { type: 'image', src: '/t-apex product 2.webp', alt: 'T-APEX with the full Overspeed Module on the field — tether reel, pulley, weight anchor & fast-release strap' },
       { type: 'video', src: '/checkout/tapex-sprint.mp4', alt: 'T-APEX in action — resisted sprint on the track' },
-      { type: 'video', src: '/checkout/tapex-overview.mp4', startAt: 14, alt: 'T-APEX Overspeed — full system overview' },
+      { type: 'video', src: '/checkout/tapex-overview.mp4', alt: 'T-APEX Overspeed — full system overview' },
       { type: 'image', src: '/t-apex product 4.webp', alt: 'T-APEX Overspeed unit wheeled trackside by an athlete — portable, stadium-ready' },
       { type: 'image', src: '/t-apex product 3.webp', alt: 'T-APEX Overspeed system — full configuration' },
       { type: 'image', src: '/t-apex product 1.webp', alt: 'T-APEX Overspeed unit with weight plate anchor' },
