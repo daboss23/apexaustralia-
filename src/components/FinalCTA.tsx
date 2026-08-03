@@ -3,8 +3,8 @@
 import { useRef } from 'react'
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
-import { DEMO_HREF, ENQUIRY_HREF, CONTACT_EMAIL } from '@/lib/site'
-import { POLICIES } from '@/components/policies/PolicyPage'
+import { DEMO_HREF } from '@/lib/site'
+import SiteFooter from './SiteFooter'
 
 export default function FinalCTA() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -216,77 +216,21 @@ export default function FinalCTA() {
             On-site or virtual · No obligation · Direct from the Australian team
           </motion.p>
 
-          {/* Logo + tagline */}
-          <motion.div
-            className="flex flex-col items-center gap-4"
+          {/* Closing tagline — the brand lockup itself now lives in the footer
+              directly below, so this is just the line, not a second logo. */}
+          <motion.span
+            className="block text-apex-grey-dim font-mono text-[10px] tracking-[0.4em] uppercase"
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.8, delay: 0.9 }}
           >
-            <Image
-              src="/apexaustralialogo.webp"
-              alt="T-APEX Australia"
-              width={280}
-              height={90}
-              className="h-20 w-auto object-contain opacity-70"
-            />
-            <span className="text-apex-grey-dim font-mono text-[10px] tracking-[0.4em] uppercase">
-              Performance Without Limits
-            </span>
-          </motion.div>
+            Performance Without Limits
+          </motion.span>
         </div>
       </motion.div>
 
-      {/* Footer bar */}
-      <div className="relative border-t border-apex-line/40 px-6 md:px-16 py-8 flex flex-col items-center gap-4">
-        {/* Nav links — centred */}
-        {/* Real destinations — these used to be three dead <button>s labelled
-            Privacy / Terms / Contact with no pages behind them. Padded to a
-            proper touch size rather than a 15px-tall line of type. */}
-        <div className="flex items-center gap-2">
-          <a
-            href="#order"
-            className="px-3 py-3.5 text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider cursor-pointer uppercase"
-          >
-            Order
-          </a>
-          <a
-            href="#faq"
-            className="px-3 py-3.5 text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider cursor-pointer uppercase"
-          >
-            FAQ
-          </a>
-          <a
-            href={ENQUIRY_HREF}
-            className="px-3 py-3.5 text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider cursor-pointer uppercase"
-          >
-            Contact
-          </a>
-        </div>
-        {/* Policy links — real pages under /policies (plain <a>: these are
-            cross-page navigations, not hash links, so they bypass the
-            SmoothScroll delegated listener entirely). */}
-        <div className="flex items-center justify-center flex-wrap gap-x-2 gap-y-0">
-          {POLICIES.map((p) => (
-            <a
-              key={p.slug}
-              href={`/policies/${p.slug}/`}
-              className="px-3 py-3.5 text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider cursor-pointer uppercase"
-            >
-              {p.name}
-            </a>
-          ))}
-        </div>
-        {/* Bottom row — copyright + contact */}
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6">
-          <span className="text-apex-grey-dim font-mono text-[10px] tracking-wide">
-            © 2026 T-APEX Australia. All rights reserved.
-          </span>
-          <a href={`mailto:${CONTACT_EMAIL}`} className="text-apex-grey-dim hover:text-apex-grey font-mono text-[10px] tracking-wide transition-colors">
-            {CONTACT_EMAIL}
-          </a>
-        </div>
-      </div>
+      {/* Full site footer — brand lockup, sitemap, socials, policies */}
+      <SiteFooter />
     </section>
   )
 }
