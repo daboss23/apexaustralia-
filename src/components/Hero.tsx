@@ -1,69 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import HeadlineEnergy from './HeadlineEnergy'
 import HeroScene from './HeroScene'
 import SeamlessVideo from './SeamlessVideo'
 import { DEMO_HREF } from '@/lib/site'
 
-// ─── Animated Headline — energy in the air condenses into the words ──────────
-// The charge rushes in as the words materialise, an arc snaps across them, then
-// HeadlineEnergy keeps engineered telemetry moving through the finished line.
-
-type Spark = {
-  left: number
-  top: number
-  ox: number
-  oy: number
-  color: string
-  size: number
-  delay: number
-}
-
-type Streak = Spark & { len: number; angle: number }
+// ─── Headline — clean staggered reveal (no telemetry lines / electricity) ─────
 
 function Headline() {
-  // Sparks are generated client-side only (random values would break SSR
-  // hydration) and skipped entirely under prefers-reduced-motion.
-  const [sparks, setSparks] = useState<Spark[]>([])
-  const [streaks, setStreaks] = useState<Streak[]>([])
-
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const r = (a: number, b: number) => a + Math.random() * (b - a)
-    const colors = ['#00AEEF', '#00AEEF', '#7fd8ff', '#ff3b30', '#ff6b61']
-    const pick = () => colors[Math.floor(Math.random() * colors.length)]
-    setSparks(
-      Array.from({ length: 64 }, (_, i) => ({
-        left: r(2, 94),
-        top: (i % 2 === 0 ? 20 : 70) + r(-11, 11),
-        ox: r(-560, 560),
-        oy: r(-420, 420),
-        color: pick(),
-        size: r(1.5, 4.5),
-        delay: r(0, 0.9),
-      }))
-    )
-    setStreaks(
-      Array.from({ length: 12 }, (_, i) => {
-        const ox = r(-520, 520)
-        const oy = r(-380, 380)
-        return {
-          left: r(4, 92),
-          top: (i % 2 === 0 ? 20 : 70) + r(-10, 10),
-          ox,
-          oy,
-          color: pick(),
-          size: 1.5,
-          delay: r(0, 0.8),
-          len: r(16, 40),
-          angle: (Math.atan2(oy, ox) * 180) / Math.PI,
-        }
-      })
-    )
-  }, [])
-
   const container = {
     hidden: {},
     show: { transition: { staggerChildren: 0.14, delayChildren: 0.35 } },
@@ -79,79 +23,18 @@ function Headline() {
 
   return (
     <div className="relative">
-      {/* Ambient charge behind the words */}
+      {/* Subtle static depth behind the words — no moving lines */}
       <div
         className="absolute -inset-x-10 -inset-y-6 pointer-events-none"
         style={{
           background:
-            'radial-gradient(ellipse 70% 60% at 30% 50%, rgba(0,174,239,0.08), rgba(214,31,38,0.04) 55%, transparent 78%)',
-          animation: 'energy-breathe 6s ease-in-out infinite',
+            'radial-gradient(ellipse 70% 60% at 30% 50%, rgba(0,174,239,0.05), rgba(214,31,38,0.03) 55%, transparent 78%)',
         }}
         aria-hidden="true"
       />
 
-      {/* Floating energy condensing into the headline */}
-      <div className="absolute -inset-x-16 -inset-y-10 pointer-events-none" aria-hidden="true">
-        {sparks.map((s, i) => (
-          <motion.span
-            key={`p${i}`}
-            className="absolute rounded-full"
-            style={{
-              left: `${s.left}%`,
-              top: `${s.top}%`,
-              width: s.size,
-              height: s.size,
-              background: s.color,
-              boxShadow: `0 0 ${s.size * 3}px ${s.color}`,
-            }}
-            initial={{ x: s.ox, y: s.oy, opacity: 0, scale: 0.5 }}
-            animate={{ x: 0, y: 0, opacity: [0, 1, 1, 0], scale: [0.5, 1, 1, 0.4] }}
-            transition={{ duration: 1.7, delay: s.delay, ease: [0.22, 1, 0.36, 1], times: [0, 0.3, 0.85, 1] }}
-          />
-        ))}
-
-        {/* Energy streaks rushing in along their own trajectory */}
-        {streaks.map((s, i) => (
-          <motion.span
-            key={`t${i}`}
-            className="absolute"
-            style={{
-              left: `${s.left}%`,
-              top: `${s.top}%`,
-              width: s.len,
-              height: 1.5,
-              background: `linear-gradient(90deg, transparent, ${s.color})`,
-              boxShadow: `0 0 6px ${s.color}60`,
-              rotate: s.angle,
-            }}
-            initial={{ x: s.ox, y: s.oy, opacity: 0 }}
-            animate={{ x: 0, y: 0, opacity: [0, 0.9, 0] }}
-            transition={{ duration: 1.5, delay: s.delay, ease: [0.22, 1, 0.36, 1], times: [0, 0.55, 1] }}
-          />
-        ))}
-
-        {/* Lightning arc snapping across the words as they materialize */}
-        <motion.svg
-          className="absolute left-0 right-0 top-1/2 w-full"
-          height="20"
-          viewBox="0 0 400 20"
-          preserveAspectRatio="none"
-          fill="none"
-          style={{ filter: 'drop-shadow(0 0 6px #00AEEF)' }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 1, 0.25, 0.85, 0] }}
-          transition={{ duration: 0.55, delay: 1.15, times: [0, 0.15, 0.4, 0.6, 1] }}
-        >
-          <polyline
-            points="0,10 40,8 70,14 110,4 150,12 190,6 230,15 270,7 310,12 350,8 400,10"
-            stroke="#7fd8ff"
-            strokeWidth="1.2"
-          />
-        </motion.svg>
-      </div>
-
       <motion.div
-        className="relative z-[1] h-luxia leading-[0.94] overflow-hidden"
+        className="relative z-[1] h-luxia leading-[0.94]"
         style={{ fontSize: 'clamp(2.1rem, 5vw, 4.4rem)', letterSpacing: '0.04em' }}
         variants={container}
         initial="hidden"
@@ -166,10 +49,6 @@ function Headline() {
           <motion.span variants={word} className="inline-block t-red">LIMITS</motion.span>
         </div>
       </motion.div>
-
-      {/* Once formed, engineered telemetry keeps moving through the words —
-          field behind the letters (z-0), interactions above them (z-[2]) */}
-      <HeadlineEnergy appearDelay={1.7} />
     </div>
   )
 }
