@@ -451,6 +451,31 @@
   mask-image: url('/checkout/complete-order.png');
 }
 
+/* Gold price treatment — the checkout total. A clipped gold gradient with a
+   bright band that drifts slowly across it, so the figure catches light
+   without the loop reading as an animation. */
+.t-gold-price {
+  background: linear-gradient(
+    100deg,
+    #b8912f 0%,
+    #e8cd7e 22%,
+    #fff6d8 34%,
+    #e2c471 46%,
+    #b8912f 60%,
+    #d9b45f 80%,
+    #b8912f 100%
+  );
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gold-price-shine 7s ease-in-out infinite;
+}
+@keyframes gold-price-shine {
+  0%, 100% { background-position: 100% 50%; }
+  50% { background-position: 0% 50%; }
+}
+
 /* HUD scan-line overlay utility */
 .hud-scanlines::after {
   content: '';

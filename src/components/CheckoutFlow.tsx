@@ -771,8 +771,8 @@ export default function CheckoutFlow({
 
                         {/* Total */}
                         <div className="flex items-baseline justify-between gap-4 mt-6 pt-4 border-t border-apex-line/50">
-                          <span className="font-display font-black text-apex-white text-[13px] tracking-[0.1em] uppercase">Total today</span>
-                          <span className="font-luxia t-silver leading-none metric-value" style={{ fontSize: '2rem' }}>
+                          <span className="font-display font-black text-apex-white text-[13px] tracking-[0.1em] uppercase">Total today:</span>
+                          <span className="font-luxia t-gold-price leading-none metric-value" style={{ fontSize: '2rem' }}>
                             {fmt(total)}
                           </span>
                         </div>
