@@ -268,6 +268,14 @@ function Stat({
 }
 
 /**
+ * The size of Act 0's two small labels — the eyebrow above the headline and the
+ * scroll cue at the foot of the screen. One constant because they are a matched
+ * pair and must never drift apart; see the note at the eyebrow for why it is a
+ * clamp rather than a breakpoint pair.
+ */
+const CINE_LABEL_SIZE = 'clamp(9.5px, 3vw, 14px)'
+
+/**
  * ACT 0 — black plate, eyebrow, split headline, scroll cue.
  *
  * Shared by the live cinema and by the pre-hydration still below, so the two are
@@ -301,13 +309,22 @@ function ActZero() {
             decoding="async"
           />
 
-          <div className="cine-eyebrow mb-5 sm:mb-6 flex items-center justify-center gap-2 sm:gap-3">
+          <div className="cine-eyebrow mb-5 sm:mb-6 flex items-center justify-center gap-1 sm:gap-3">
             {/* Wider than the old w-5 so the scanning pulse has room to read */}
-            <div className="cine-tele-line w-5 sm:w-10 h-px" />
-            <span className="text-apex-blue font-mono text-[9px] sm:text-[11px] font-medium tracking-[0.17em] sm:tracking-[0.34em] uppercase">
+            <div className="cine-tele-line w-3 sm:w-10 h-px" />
+            {/* CINE_LABEL_SIZE — shared with the scroll cue below so the hero's
+                two small labels always read at exactly the same size. It is a
+                clamp rather than a breakpoint pair because the eyebrow is 35
+                characters of tracked mono between two rules: on a 320px screen
+                anything above ~10px wraps. vw-bound, it fills the line at every
+                width and tops out at 14px. */}
+            <span
+              className="text-apex-blue font-mono font-medium tracking-[0.08em] sm:tracking-[0.34em] uppercase whitespace-nowrap"
+              style={{ fontSize: CINE_LABEL_SIZE }}
+            >
               Elite Sports Performance Technology
             </span>
-            <div className="cine-tele-line w-5 sm:w-10 h-px" />
+            <div className="cine-tele-line w-3 sm:w-10 h-px" />
           </div>
 
           {/* Sized from the viewport, and deliberately NOT from rem.
@@ -377,20 +394,54 @@ function ActZero() {
 function ScrollCue() {
   return (
     <div
-      className="cine-cue absolute left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2.5 pointer-events-none"
+      className="cine-cue absolute left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-3 pointer-events-none"
       style={{ bottom: 'calc(env(safe-area-inset-bottom) + 72px)' }}
     >
-      <span className="text-apex-grey-dim font-mono text-[12px] sm:text-[12px] tracking-[0.36em] uppercase">
+      <span
+        className="text-apex-grey-dim font-mono tracking-[0.36em] uppercase"
+        style={{ fontSize: CINE_LABEL_SIZE }}
+      >
         Scroll to enter
       </span>
-      <div className="w-px h-8 overflow-hidden">
+
+      {/* The pointer: a blue rail with a chevron tip, and a bright charge that
+          runs down it and out through the tip. Two elements rather than one so
+          the rail can hold a steady gradient while only the charge travels —
+          a 1px bar being transformed (what this used to be) reads as nothing at
+          all at this size. */}
+      <div className="cine-cue-arrow relative w-3 h-11" aria-hidden="true">
+        {/* Rail */}
         <div
-          className="cine-cue-pulse w-px h-full"
-          style={{
-            background: 'linear-gradient(to bottom,#00AEEF,transparent)',
-            animation: 'slow-sprint 1.8s ease-in-out infinite',
-          }}
+          className="absolute left-1/2 top-0 -translate-x-1/2 w-px h-8"
+          style={{ background: 'linear-gradient(to bottom, rgba(0,174,239,0), rgba(0,174,239,0.75))' }}
         />
+        {/* Travelling charge */}
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 w-px h-8 overflow-hidden">
+          <div
+            className="cine-cue-pulse absolute inset-x-0 h-3"
+            style={{
+              background: 'linear-gradient(to bottom, rgba(0,174,239,0), #7fe4ff)',
+              boxShadow: '0 0 6px rgba(0,174,239,0.9)',
+            }}
+          />
+        </div>
+        {/* Chevron tip */}
+        <svg
+          className="cine-cue-tip absolute left-1/2 bottom-0 -translate-x-1/2"
+          width="12"
+          height="8"
+          viewBox="0 0 12 8"
+          fill="none"
+        >
+          <path
+            d="M1 1L6 6.5L11 1"
+            stroke="#00AEEF"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ filter: 'drop-shadow(0 0 4px rgba(0,174,239,0.7))' }}
+          />
+        </svg>
       </div>
     </div>
   )
@@ -895,9 +946,13 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
           hue={196}
           xOffset={0}
           speed={phone ? 0.9 : 1.1}
-          intensity={0.55}
+          /* With `storm` this is the ceiling a strike reaches rather than a
+             level that is held, so it is lifted: the bolt now spends most of
+             its time near-dark and the strikes have to carry. */
+          intensity={0.95}
           size={phone ? 1.7 : 2.2}
           paused={!boltLive}
+          storm
           resolutionCap={phone ? 460 : 700}
           className="h-full w-full"
         />

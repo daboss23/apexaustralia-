@@ -44,6 +44,13 @@ export type LightningProps = {
   paused?: boolean
   /** Cap on the backing store's longest side, in device pixels. */
   resolutionCap?: number
+  /**
+   * Strike like real weather instead of glowing at a constant level: random
+   * quiet spells, then a strike that flashes and decays, sometimes a double or
+   * triple hit, each from a slightly different position. `intensity` becomes
+   * the ceiling a strike reaches rather than a level that is always held.
+   */
+  storm?: boolean
   className?: string
 }
 
@@ -140,6 +147,31 @@ function compile(gl: WebGLRenderingContext, src: string, type: number) {
   return shader
 }
 
+/**
+ * The storm scheduler.
+ *
+ * A strike is an envelope — a near-instant rise, a short hold, an exponential
+ * decay — followed by a randomised dark spell. Roughly a third of strikes are
+ * followed immediately by an aftershock (the flicker real lightning has), and
+ * every strike picks a new horizontal position, so the bolt never lands twice
+ * in the same place. All of it lives inside the render loop's closure: no React
+ * state, no re-renders, and nothing that can differ between server and client.
+ */
+type Strike = { at: number; peak: number; hold: number; decay: number; x: number; after: boolean }
+
+function nextStrike(now: number, gap: number, x?: number): Strike {
+  const rand = (a: number, b: number) => a + Math.random() * (b - a)
+  return {
+    at: now + gap,
+    // Not every strike is a full one — some are distant, half-lit flickers.
+    peak: rand(0.45, 1),
+    hold: rand(40, 140),
+    decay: rand(180, 620),
+    x: x ?? rand(-0.55, 0.55),
+    after: Math.random() < 0.34,
+  }
+}
+
 export default function Lightning({
   hue = 196,
   xOffset = 0,
@@ -148,13 +180,14 @@ export default function Lightning({
   size = 1,
   paused = false,
   resolutionCap = 700,
+  storm = false,
   className,
 }: LightningProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   // Live values the render loop reads, so changing a prop retunes the running
   // loop instead of tearing down the GL context and building a new one.
-  const uniforms = useRef({ hue, xOffset, speed, intensity, size })
-  uniforms.current = { hue, xOffset, speed, intensity, size }
+  const uniforms = useRef({ hue, xOffset, speed, intensity, size, storm })
+  uniforms.current = { hue, xOffset, speed, intensity, size, storm }
   const pausedRef = useRef(paused)
   pausedRef.current = paused
 
@@ -232,16 +265,51 @@ export default function Lightning({
 
     const start = performance.now()
     let raf = 0
+
+    // Storm state. The first strike lands almost immediately so the opening is
+    // never a dead black screen; the gaps stretch out after that.
+    let strike = nextStrike(start, 220)
+
     const render = () => {
       raf = requestAnimationFrame(render)
       if (pausedRef.current || !canvas.width) return
       const u = uniforms.current
+      const now = performance.now()
+
+      let level = u.intensity
+      let x = u.xOffset
+
+      if (u.storm) {
+        const t = now - strike.at
+        if (t < 0) {
+          // Dark spell — a trace of charge in the air, not nothing. Act 0 holds
+          // on a black screen for two wheel notches and this is its only motion,
+          // so the bolt never goes fully out and the gaps stay under ~3s.
+          level = u.intensity * 0.08
+          x = u.xOffset + strike.x
+        } else {
+          const env =
+            t < strike.hold
+              ? 1 // flash
+              : Math.exp(-(t - strike.hold) / strike.decay) // decay
+          level = u.intensity * (0.08 + strike.peak * env)
+          x = u.xOffset + strike.x
+          // Spent: schedule the next one. An aftershock re-fires in the same
+          // place after a beat; otherwise it's a fresh bolt after a long gap.
+          if (env < 0.02) {
+            strike = strike.after
+              ? { ...nextStrike(now, 60 + Math.random() * 180, strike.x), after: false }
+              : nextStrike(now, 650 + Math.random() * 2300)
+          }
+        }
+      }
+
       gl.uniform2f(uRes, canvas.width, canvas.height)
-      gl.uniform1f(uTime, (performance.now() - start) / 1000)
+      gl.uniform1f(uTime, (now - start) / 1000)
       gl.uniform1f(uHue, u.hue)
-      gl.uniform1f(uX, u.xOffset)
+      gl.uniform1f(uX, x)
       gl.uniform1f(uSpeed, u.speed)
-      gl.uniform1f(uIntensity, u.intensity)
+      gl.uniform1f(uIntensity, level)
       gl.uniform1f(uSize, u.size)
       gl.drawArrays(gl.TRIANGLES, 0, 6)
     }

@@ -299,9 +299,35 @@
    these win regardless of order. Reduced-motion still overrides everything. */
 @media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
   .cine-tele-line,
-  .cine-cue-pulse {
+  .cine-cue-pulse,
+  .cine-cue-tip {
     animation-iteration-count: infinite !important;
   }
+}
+
+/* ── Hero scroll cue — the blue pointer under "SCROLL TO ENTER" ─────────────
+   A charge runs down the rail and out through the chevron, and the chevron
+   answers a beat later. Offsetting the two (the tip's delay lands as the charge
+   arrives) is what makes it read as one gesture pointing down the page rather
+   than two things blinking. */
+@keyframes cine-cue-charge {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  22%  { opacity: 1; }
+  78%  { opacity: 1; }
+  100% { transform: translateY(320%); opacity: 0; }
+}
+
+@keyframes cine-cue-tip {
+  0%, 100% { opacity: 0.45; transform: translate(-50%, 0); }
+  55%      { opacity: 1;    transform: translate(-50%, 2px); }
+}
+
+.cine-cue-pulse {
+  animation: cine-cue-charge 2.1s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.cine-cue-tip {
+  animation: cine-cue-tip 2.1s ease-in-out 0.55s infinite;
 }
 
 /* ── Hero eyebrow hairlines — a signal running through them ─────────────────
