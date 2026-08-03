@@ -1,8 +1,7 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
-import { motion, useInView, AnimatePresence } from 'framer-motion'
-import { useIsMobile } from './useIsMobile'
+import { motion, useInView, useReducedMotion, AnimatePresence } from 'framer-motion'
 
 // ─── Shared rep cycle ─────────────────────────────────────────────────────────
 // Every instrument on the dashboard samples the SAME 8-second rep clock —
@@ -257,13 +256,16 @@ export default function DashboardSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const titleInView = useInView(titleRef, { once: true, margin: '-10% 0px' })
 
-  // On phones the live rep clock is frozen: its 250ms setInterval re-rendered
-  // (and reflowed) this full-height panel four times a second forever once the
-  // section had been seen — that continuous reflow fought iOS scroll-anchoring
-  // (the page "jumping" up and down) and cooked the battery. Desktop keeps the
-  // live session; mobile shows a stable, representative snapshot instead.
-  const isMobile = useIsMobile()
-  const clock = useRepClock(inView && !isMobile)
+  // The rep clock runs only while the panel is actually on screen — on every
+  // device. (It used to run forever after first view via the once:true inView,
+  // which is why phones froze it entirely: the endless 250ms re-render fought
+  // iOS scroll-anchoring and cooked the battery. Gating on visibility fixes the
+  // cause, so mobile gets the live telemetry back.) All changing readouts are
+  // tabular-nums (.metric-value), so ticks never shift layout, and the section
+  // opts out of scroll anchoring below as a belt-and-braces guard.
+  const onScreen = useInView(sectionRef, { margin: '-10% 0px -10% 0px' })
+  const prefersReducedMotion = useReducedMotion()
+  const clock = useRepClock(onScreen && !prefersReducedMotion)
   const phaseInfo = phaseOf(clock.phase)
 
   // Gauge needles read the live waveforms directly (lightly damped — no noise)
@@ -275,7 +277,12 @@ export default function DashboardSection() {
   }
 
   return (
-    <section ref={sectionRef} id="dashboard" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
+    <section
+      ref={sectionRef}
+      id="dashboard"
+      className="relative bg-apex-black py-16 md:py-36 overflow-hidden"
+      style={{ overflowAnchor: 'none' }}
+    >
       {/* Background accent */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute inset-0 opacity-30" style={{
@@ -325,19 +332,19 @@ export default function DashboardSection() {
           transition={{ duration: 0.8, delay: 0.1 }}
         >
           {/* Dashboard header bar */}
-          <div className="flex items-center justify-between px-6 py-3 border-b border-apex-line bg-apex-black/60">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-apex-blue" />
-                <span className="text-[10px] font-mono text-apex-grey tracking-[0.22em] uppercase">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 sm:px-6 py-3 border-b border-apex-line bg-apex-black/60">
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-2 h-2 shrink-0 bg-apex-blue" />
+                <span className="text-[10px] font-mono text-apex-grey tracking-[0.22em] uppercase truncate">
                   T-APEX Performance Monitor
                 </span>
               </div>
-              <span className="text-[8px] font-mono text-apex-grey-dim border border-apex-line/60 px-1.5 py-0.5 tracking-wider">
+              <span className="hidden sm:inline text-[8px] font-mono text-apex-grey-dim border border-apex-line/60 px-1.5 py-0.5 tracking-wider">
                 v2.4
               </span>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
               <div className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-[9px] font-mono text-emerald-400 tracking-wider">LIVE SESSION</span>
@@ -345,13 +352,13 @@ export default function DashboardSection() {
               <span className="text-[9px] font-mono text-apex-blue border border-apex-line px-2 py-0.5 tracking-wider metric-value">
                 REP {String(clock.rep).padStart(2, '0')}
               </span>
-              <span className="text-[9px] font-mono text-apex-grey-dim border border-apex-line px-2 py-0.5 tracking-wider">
+              <span className="hidden sm:inline text-[9px] font-mono text-apex-grey-dim border border-apex-line px-2 py-0.5 tracking-wider">
                 ATHLETE_01
               </span>
             </div>
           </div>
 
-          <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left column: Gauges */}
             <div className="flex flex-col gap-6">
               <div className="text-[9px] font-mono tracking-[0.2em] text-apex-grey-dim uppercase mb-2">
@@ -445,7 +452,7 @@ export default function DashboardSection() {
               </div>
 
               {/* Bottom status row */}
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
                   { label: 'Session Time', value: fmtTime(clock.sessionSec) },
                   { label: 'Resistance Mode', value: 'ADAPTIVE' },

@@ -142,6 +142,12 @@ export default function SportsSection() {
 
   const sport = SPORTS.find(s => s.id === activeSport) ?? SPORTS[0]
 
+  // Warm the NEXT code's media while the current one plays. Each clip used to
+  // start downloading only at the moment its code went active — a 9s dwell then
+  // an empty frame while multi-MB footage arrived. One clip ahead (never the
+  // whole 20 MB set), and only while the stage is actually on screen.
+  const next = SPORTS[(SPORTS.findIndex(s => s.id === activeSport) + 1) % SPORTS.length]
+
   // Auto-cycle through codes to showcase breadth — but only once the section is
   // in view, so the stage always *starts* on Sprinting when the visitor reaches
   // it (rather than mid-rotation). Each code lingers for its own dwell time.
@@ -236,6 +242,24 @@ export default function SportsSection() {
           transition={{ duration: 0.75, delay: 0.32 }}
         >
           <SportTransitionStage sports={SPORTS} sport={sport} activeId={activeSport} />
+
+          {/* Hidden pre-loader for the upcoming code (see comment above) */}
+          {stageVisible && next.video && (
+            <video
+              key={next.video}
+              src={next.video}
+              preload="auto"
+              muted
+              playsInline
+              className="hidden"
+              aria-hidden="true"
+              tabIndex={-1}
+            />
+          )}
+          {stageVisible && next.image && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={next.image} alt="" className="hidden" aria-hidden="true" />
+          )}
         </motion.div>
 
         <motion.p
