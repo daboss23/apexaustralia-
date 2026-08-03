@@ -612,26 +612,30 @@ export default function CheckoutSection() {
             {/* ADD TO CART — opens the two-step checkout popup */}
             <button
               onClick={() => setCartOpen(true)}
-              className="group cta-gold flex items-stretch w-full cursor-pointer text-left"
-              style={{ borderRadius: 0 }}
+              className="group cta-cart flex items-stretch w-full cursor-pointer h-[74px] sm:h-[88px]"
             >
-              {/* Gold chevron plate + cart */}
-              <span className="cta-gold-chevron flex items-center justify-center pl-5 pr-7 my-1 ml-1 flex-shrink-0" aria-hidden="true">
-                <svg className="w-7 h-7 sm:w-8 sm:h-8 text-[#2a1f05] transition-transform duration-300 group-hover:scale-105" fill="none" viewBox="0 0 24 24" strokeWidth={1.7} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                </svg>
+              {/* Black chevron plate carrying the unit */}
+              <span className="cta-cart-plate w-[34%] max-w-[190px] flex-shrink-0" aria-hidden="true">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/tapex-unit.png"
+                  alt=""
+                  className="w-full h-full object-contain object-left scale-[0.92] transition-transform duration-500 group-hover:scale-[0.98]"
+                />
               </span>
 
-              {/* Wordmark + sub-line */}
-              <span className="flex flex-col items-center justify-center gap-1 flex-1 px-4 py-4 sm:py-5">
-                <span className="t-gold-cta font-display font-black tracking-[0.1em] uppercase text-[19px] sm:text-[23px] leading-none">
+              {/* Wordmark */}
+              <span className="flex-1 flex items-center justify-center px-3">
+                <span className="t-gold-cta font-display font-black tracking-[0.08em] uppercase text-[20px] sm:text-[28px] leading-none whitespace-nowrap">
                   Add to Cart
-                </span>
-                <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.16em] uppercase text-[#c9ad6a] font-normal text-center leading-snug">
-                  Two steps away from owning your T-APEX machine
                 </span>
               </span>
             </button>
+
+            {/* Microcopy that used to live inside the button */}
+            <p className="font-mono text-[10px] sm:text-[11px] tracking-[0.16em] uppercase text-apex-grey-dim text-center mt-3 leading-snug">
+              Two steps away from owning your T-APEX machine
+            </p>
 
             {/* Reassurance line */}
             <p className="font-mono text-[9px] tracking-[0.12em] uppercase text-apex-grey-dim text-center mt-4 leading-relaxed">

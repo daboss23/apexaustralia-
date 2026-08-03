@@ -378,77 +378,102 @@
   50% { background-position: 100% 50%; }
 }
 
-/* ── Gold "ADD TO CART" CTA ────────────────────────────────────────────────
-   The premium-storefront variant of .cta-glow: a lacquered black body inside a
-   machined gold bevel, with a gold chevron plate carrying the cart icon. Same
-   sheen sweep and lift-on-hover as the red CTA so the two feel like one family.
-   Square corners, per the rest of the site. */
-.cta-gold {
+/* ── "ADD TO CART" CTA — red plate, gold rail, product chevron ─────────────
+   Built to the supplied reference: a deep red lacquered body ringed in gold,
+   with a black chevron plate on the left carrying the unit itself. Two lights
+   sit on it — a filament that breathes along the top and bottom gold rails
+   (the glow), and a diagonal sheen that sweeps across on a loop, and again
+   faster on hover (the shine). Corners are rounded rather than square: the
+   reference's soft corners are what make the gold read as an extruded rail
+   instead of a hairline box. */
+.cta-cart {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background: linear-gradient(180deg, #1c1c1e 0%, #0a0a0b 45%, #000 55%, #16161a 100%);
-  /* The bevel: a gold gradient border painted as a ring of box-shadows so it
-     keeps its metallic top-lit → bottom-dark falloff on a square corner. */
+  border-radius: 14px;
+  background: linear-gradient(100deg, #5e0a0c 0%, #961116 26%, #cf1b21 52%, #941015 80%, #5a090b 100%);
+  background-size: 170% 170%;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 236, 168, 0.55),
-    inset 0 0 0 4px #8a6a1e,
-    inset 0 1px 0 4px rgba(255, 245, 200, 0.5),
-    inset 0 -1px 0 4px rgba(90, 62, 10, 0.9),
-    inset 0 8px 18px -10px rgba(255, 232, 160, 0.28),
-    0 8px 28px -12px rgba(198, 158, 70, 0.55);
+    inset 0 0 0 2px #c9a24a,
+    inset 0 0 0 3px rgba(255, 232, 170, 0.35),
+    inset 0 14px 26px -18px rgba(255, 255, 255, 0.5),
+    inset 0 -18px 30px -20px rgba(0, 0, 0, 0.7),
+    0 12px 36px -14px rgba(214, 31, 38, 0.6);
+  animation: cta-cart-gradient 9s ease infinite, cta-cart-halo 4.2s ease-in-out infinite;
   transition: transform 0.25s ease, box-shadow 0.3s ease;
 }
-.cta-gold:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 244, 190, 0.7),
-    inset 0 0 0 4px #a5811f,
-    inset 0 1px 0 4px rgba(255, 250, 220, 0.65),
-    inset 0 -1px 0 4px rgba(105, 74, 14, 0.9),
-    inset 0 8px 18px -10px rgba(255, 232, 160, 0.36),
-    0 16px 44px -12px rgba(210, 170, 80, 0.7);
-}
-.cta-gold:active { transform: translateY(0); }
+.cta-cart:hover { transform: translateY(-2px); }
+.cta-cart:active { transform: translateY(0); }
 
-/* Gloss: a highlight sitting over the top half of the lacquer. */
-.cta-gold::after {
+/* THE GLOW — a bright filament pooled against the inside of the top and bottom
+   gold rails, brightest at centre. This is the lit edge in the reference. */
+.cta-cart::after {
   content: '';
   position: absolute;
-  inset: 4px 4px 50% 4px;
+  inset: 2px;
+  border-radius: 12px;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.02) 100%);
+  z-index: 2;
+  background:
+    radial-gradient(60% 3px at 50% 0%, rgba(255, 240, 190, 0.95), rgba(255, 210, 120, 0) 70%),
+    radial-gradient(60% 3px at 50% 100%, rgba(255, 226, 160, 0.8), rgba(255, 190, 100, 0) 70%);
+  animation: cta-cart-filament 4.2s ease-in-out infinite;
 }
 
-/* Sheen sweep — same timing language as .cta-glow. */
-.cta-gold::before {
+/* THE SHINE — diagonal sweep across the whole face. */
+.cta-cart::before {
   content: '';
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 3;
   pointer-events: none;
-  background: linear-gradient(105deg, transparent 34%, rgba(255, 240, 190, 0.3) 50%, transparent 64%);
+  background: linear-gradient(105deg, transparent 34%, rgba(255, 246, 214, 0.34) 50%, transparent 64%);
   transform: translateX(-130%);
   animation: cta-shine 5.5s ease-in-out infinite;
 }
-.cta-gold:hover::before { animation: cta-shine 1.1s ease-in-out; }
-.cta-gold > * { position: relative; z-index: 1; }
+.cta-cart:hover::before { animation: cta-shine 1.1s ease-in-out; }
 
-/* The chevron plate on the left that holds the cart. Clipped to a point so it
-   reads as an arrow driving toward the words, like the reference. */
-.cta-gold-chevron {
-  background: linear-gradient(180deg, #fdf0c0 0%, #d8b155 22%, #a87f22 52%, #f2dc96 74%, #8a6a1e 100%);
-  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+@keyframes cta-cart-gradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes cta-cart-halo {
+  0%, 100% { box-shadow: inset 0 0 0 2px #c9a24a, inset 0 0 0 3px rgba(255, 232, 170, 0.35), inset 0 14px 26px -18px rgba(255, 255, 255, 0.5), inset 0 -18px 30px -20px rgba(0, 0, 0, 0.7), 0 12px 36px -14px rgba(214, 31, 38, 0.55); }
+  50% { box-shadow: inset 0 0 0 2px #e0bd68, inset 0 0 0 3px rgba(255, 244, 200, 0.5), inset 0 14px 26px -18px rgba(255, 255, 255, 0.6), inset 0 -18px 30px -20px rgba(0, 0, 0, 0.7), 0 16px 48px -12px rgba(224, 41, 48, 0.75), 0 0 34px -10px rgba(224, 180, 88, 0.5); }
+}
+@keyframes cta-cart-filament {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
-/* Gold metallic lettering — the type equivalent of the bevel above. */
+/* The black chevron plate carrying the product shot, pointing into the words.
+   The gold edge is drawn as a second, slightly larger clipped layer behind it
+   so the diagonal gets a rail too — a border can't follow a clip-path. */
+.cta-cart-plate {
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 50%, calc(100% - 30px) 100%, 0 100%);
+  background: #000;
+}
+.cta-cart-plate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, #f6e3a6, #c9a24a 45%, #8a6a1e);
+  clip-path: polygon(
+    0 0, calc(100% - 30px) 0, 100% 50%, calc(100% - 30px) 100%, 0 100%,
+    0 calc(100% - 2px), calc(100% - 31px) calc(100% - 2px), calc(100% - 3px) 50%,
+    calc(100% - 31px) 2px, 0 2px
+  );
+}
+
+/* Gold metallic lettering — the type equivalent of the rail. */
 .t-gold-cta {
-  background: linear-gradient(180deg, #fff6d4 0%, #e6c56b 26%, #b98f2c 50%, #f5e29a 68%, #a87f22 100%);
+  background: linear-gradient(180deg, #fff6d4 0%, #f0d68d 28%, #d8b256 52%, #f7e7ab 70%, #c19836 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.55);
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
 }
 
 /* HUD scan-line overlay utility */
