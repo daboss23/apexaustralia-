@@ -189,7 +189,12 @@ export default function MovingTestimonials({
           className="h-luxia leading-[0.95] mb-4"
           style={{ fontSize: 'clamp(1.6rem, 3.4vw, 2.6rem)' }}
         >
-          <span className="t-silver">WHAT ATHLETES</span>{' '}
+          {/* Hard break: the wall sits in the checkout's buy column, so this
+              headline always wraps — pinning the break keeps the red word on
+              its own line (the site's headline convention) instead of leaving
+              it to the container width and the webfont's load state. */}
+          <span className="t-silver">WHAT OUR CUSTOMERS</span>
+          <br />
           <span className="t-red">SAY.</span>
         </h3>
         <div className="flex items-center gap-3">
