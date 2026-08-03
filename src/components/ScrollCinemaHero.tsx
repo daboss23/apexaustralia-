@@ -1048,16 +1048,25 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
 
         {/* ACT 3a — the promise, centred over the sprint, then gone */}
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
-          {/* px bounds for the same reason as the h1 above — "NEXT TENTH OF A
-              SECOND" is a 22-character non-breaking string, so it is the most
-              overflow-prone line on the page. */}
+          {/* px bounds for the same reason as the h1 above.
+              Unlike the line this replaced, the words here are NOT &nbsp;-joined:
+              at 35 and 30 characters they are far too long to hold on one line on
+              a phone, and a non-breaking string that cannot fit does not shrink,
+              it overflows the screen. The <br/> keeps the two halves apart, and
+              each half is then free to wrap within itself on narrow screens. */}
           <h2
-            className="beat-sprint h-luxia leading-[1.04] sm:leading-[0.96] max-w-[900px] opacity-0"
-            style={{ fontSize: 'clamp(26px, 4.4vw, 64px)', letterSpacing: '0.04em' }}
+            className="beat-sprint h-luxia leading-[1.06] sm:leading-[0.98] max-w-[1120px] opacity-0"
+            style={{ fontSize: 'clamp(22px, 3.5vw, 50px)', letterSpacing: '0.04em' }}
           >
-            <span className="t-silver">DEVELOPED&nbsp;FOR&nbsp;THE</span>
+            {/* Each phrase is nowrap so that when the line does break on a
+                phone it breaks *between* the phrases, never through the red
+                one — "MEETS / INTELLIGENCE" split across two lines reads as a
+                mistake. The clause itself is still free to wrap. */}
+            <span className="t-silver whitespace-nowrap">WHEN PERFORMANCE</span>{' '}
+            <span className="t-red whitespace-nowrap">MEETS INTELLIGENCE</span>
             <br />
-            <span className="t-blue">NEXT&nbsp;TENTH&nbsp;OF&nbsp;A&nbsp;SECOND</span>
+            <span className="t-silver whitespace-nowrap">PERFORMANCE BECOMES</span>{' '}
+            <span className="t-silver whitespace-nowrap">INEVITABLE</span>
           </h2>
         </div>
 

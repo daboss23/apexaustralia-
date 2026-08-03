@@ -51,8 +51,14 @@ export default function ScrollExpandVideo() {
   const radius = useTransform(scrollYProgress, [0, 0.75], ['2px', '0px'])
   const veil = useTransform(scrollYProgress, [0, 0.7], [0.55, 0])
   // Title halves part around the growing plate.
-  const shiftL = useTransform(scrollYProgress, [0, 0.75], ['0vw', isMobile ? '-24vw' : '-32vw'])
-  const shiftR = useTransform(scrollYProgress, [0, 0.75], ['0vw', isMobile ? '24vw' : '32vw'])
+  //
+  // These distances are a function of how wide the words are: the parting ends
+  // with the left half's edge at the edge of the screen, so a longer first half
+  // needs a shorter travel or it slides straight off. They were tuned for
+  // "EVERY FEATURE" (13 characters) and this half is now 19, hence 18/8vw
+  // rather than 32/24vw — measured to leave clearance from 390px to 1920px.
+  const shiftL = useTransform(scrollYProgress, [0, 0.75], ['0vw', isMobile ? '-8vw' : '-18vw'])
+  const shiftR = useTransform(scrollYProgress, [0, 0.75], ['0vw', isMobile ? '8vw' : '18vw'])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
 
   function play() {
@@ -95,15 +101,15 @@ export default function ScrollExpandVideo() {
         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 pointer-events-none flex flex-col items-center gap-2 px-4">
           <motion.h2
             className="h-luxia leading-[0.92] text-center"
-            style={{ x: shiftL, fontSize: 'clamp(1.6rem, 5vw, 4rem)' }}
+            style={{ x: shiftL, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
           >
-            <span className="t-silver">EVERY FEATURE</span>
+            <span className="t-silver">PERFORMANCE BECOMES</span>
           </motion.h2>
           <motion.h2
             className="h-luxia leading-[0.92] text-center"
-            style={{ x: shiftR, fontSize: 'clamp(1.6rem, 5vw, 4rem)' }}
+            style={{ x: shiftR, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
           >
-            <span className="t-red">EXPLAINED.</span>
+            <span className="t-red">INEVITABLE.</span>
           </motion.h2>
         </div>
 
@@ -150,7 +156,7 @@ function SectionTitle() {
         <div className="w-8 h-px bg-apex-red" />
       </div>
       <h2 className="h-luxia leading-[0.92]" style={{ fontSize: 'clamp(1.6rem, 4vw, 3rem)' }}>
-        <span className="t-silver">EVERY FEATURE</span> <span className="t-red">EXPLAINED.</span>
+        <span className="t-silver">PERFORMANCE BECOMES</span> <span className="t-red">INEVITABLE.</span>
       </h2>
     </div>
   )
