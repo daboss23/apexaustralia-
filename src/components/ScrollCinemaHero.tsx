@@ -5,6 +5,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import Hero from './Hero'
+import HeadlineEnergy from './HeadlineEnergy'
 import { DEMO_HREF } from '@/lib/site'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
@@ -328,6 +329,13 @@ function ActZero() {
 
             <div className="split-bot will-change-transform">
               <span className="t-red">HUMAN&nbsp;LIMITS</span>
+            </div>
+
+            {/* Engineered telemetry energy running through the opening words.
+                Clears with the logo and eyebrow the instant the split starts —
+                the halves part on their own from there. */}
+            <div className="cine-energy absolute inset-0 pointer-events-none opacity-60 sm:opacity-100">
+              <HeadlineEnergy appearDelay={1.2} />
             </div>
           </h1>
         </div>
@@ -658,6 +666,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // ── ACT 1 — the split ────────────────────────────────────────────────────
       // Logo and eyebrow clear first so the words are alone as they part.
       tl.to('.cine-logo, .cine-eyebrow', { opacity: 0, y: -18, duration: 0.04 }, 0.01)
+      tl.to('.cine-energy', { opacity: 0, duration: 0.05 }, 0.01)
 
       // The two halves travel apart, tracking wider as they go — the type reads
       // as being pulled open rather than simply moved.

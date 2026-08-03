@@ -522,8 +522,10 @@ export default function CheckoutSection() {
 
         {/* ── Product showcase + ADD TO CART (opens the two-step popup) ── */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-14 items-start">
-          {/* LEFT — gallery + feature bullets */}
-          <div className="order-2 lg:order-1">
+          {/* LEFT — gallery + feature bullets.
+              Stacked (mobile/tablet) this drops below the testimonials, so the
+              reviews sit directly under the Add to Cart button. */}
+          <div className="order-3 lg:order-1">
             <Gallery variant={variant} />
             <HighlightBullets highlights={variant.highlights} className="mt-6" />
           </div>
@@ -610,10 +612,13 @@ export default function CheckoutSection() {
               2-year warranty · free insured shipping · secure checkout
             </p>
           </div>
-        </div>
 
-        {/* ── Moving testimonials wall (under the Add to Cart CTA) ── */}
-        <MovingTestimonials />
+          {/* ── Moving testimonials wall — immediately under the Add to Cart
+              CTA when stacked; full-width row under both columns on desktop ── */}
+          <div className="order-2 lg:order-3 lg:col-span-2">
+            <MovingTestimonials className="mt-10 lg:mt-16" />
+          </div>
+        </div>
 
         {/* ── Trust badge strip ── */}
         <motion.div
