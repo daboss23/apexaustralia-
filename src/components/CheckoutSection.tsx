@@ -56,6 +56,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     gallery: [
       { type: 'image', src: '/checkout/core-hero.webp', alt: 'Core T-APEX system — the portable Adaptive Resistance Intelligence unit' },
       { type: 'video', src: '/checkout/tapex-sprint.mp4', alt: 'T-APEX in action — resisted sprint on the track' },
+      { type: 'video', src: '/checkout/tapex-overview.mp4', alt: 'T-APEX Core — full system overview' },
       { type: 'image', src: '/t-apex product 4.webp', alt: 'T-APEX unit wheeled trackside by an athlete — portable Adaptive Resistance Intelligence' },
       { type: 'image', src: '/t-apex product 0.webp', alt: 'T-APEX system — Core configuration on the training floor' },
       { type: 'image', src: '/t-apex product 3.webp', alt: 'T-APEX unit with sprint shoe' },
@@ -89,6 +90,7 @@ const VARIANTS: Record<VariantId, Variant> = {
     gallery: [
       { type: 'image', src: '/t-apex product 2.webp', alt: 'T-APEX with the full Overspeed Module on the field — tether reel, pulley, weight anchor & fast-release strap' },
       { type: 'video', src: '/checkout/tapex-sprint.mp4', alt: 'T-APEX in action — resisted sprint on the track' },
+      { type: 'video', src: '/checkout/tapex-overview.mp4', alt: 'T-APEX Overspeed — full system overview' },
       { type: 'image', src: '/t-apex product 4.webp', alt: 'T-APEX Overspeed unit wheeled trackside by an athlete — portable, stadium-ready' },
       { type: 'image', src: '/t-apex product 0.webp', alt: 'T-APEX Overspeed system — full configuration' },
       { type: 'image', src: '/t-apex product 3.webp', alt: 'T-APEX Overspeed system — full configuration' },
@@ -311,7 +313,7 @@ function Gallery({ variant }: { variant: Variant }) {
               <img src={s.src} alt="" className="absolute inset-0 w-full h-full object-contain p-1.5" loading="lazy" decoding="async" />
             ) : (
               <>
-                <video src={s.src} muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-80" />
+                <video src={s.src} muted playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover opacity-80" />
                 <span className="absolute inset-0 flex items-center justify-center">
                   <span className="w-7 h-7 rounded-full bg-black/55 border border-white/40 flex items-center justify-center">
                     <svg className="w-3 h-3 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
