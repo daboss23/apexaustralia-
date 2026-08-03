@@ -241,7 +241,10 @@ function Gallery({ variant }: { variant: Variant }) {
                   loop
                   muted
                   playsInline
-                  className="w-full h-full object-contain"
+                  /* object-cover, not contain: the clips are 16:9 and would
+                     letterbox inside the square frame. The lightbox still
+                     shows them uncropped. */
+                  className="w-full h-full object-cover"
                   {...startAtProps(active.startAt)}
                 />
               )}
