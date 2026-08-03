@@ -476,6 +476,27 @@
   50% { background-position: 0% 50%; }
 }
 
+/* Navbar ORDER NOW artwork — same shine/glow, its own mask. Sized to the
+   header slot (option 1: fit the existing bar, don't grow it). */
+.cta-order .cta-cart-shine {
+  -webkit-mask-image: url('/checkout/order-now.png');
+  mask-image: url('/checkout/order-now.png');
+}
+/* Desktop-only. This has to be done here, not with Tailwind's `hidden
+   md:block`: .cta-cart already sets display:block at the same specificity and
+   later in the cascade, so the utility loses and the button appears on phones
+   (where the mobile menu carries its own Order Now). */
+.cta-order {
+  display: none;
+  width: 148px;
+}
+@media (min-width: 768px) {
+  .cta-order { display: block; }
+}
+@media (min-width: 1024px) {
+  .cta-order { width: 166px; }
+}
+
 /* HUD scan-line overlay utility */
 .hud-scanlines::after {
   content: '';

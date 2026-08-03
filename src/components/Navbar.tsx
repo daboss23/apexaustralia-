@@ -126,13 +126,13 @@ export default function Navbar() {
         {/* Desktop CTA */}
         <a
           href="#order"
-          className="hidden md:inline-flex items-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-5 py-2.5 tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_8px_28px_-6px_rgba(214,31,38,0.55)] hover:-translate-y-px active:translate-y-0"
-          style={{ borderRadius: 0 }}
+          aria-label="Order now"
+          className="group cta-cart cta-order cursor-pointer"
         >
-          Order Now
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-          </svg>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/checkout/order-now.png" alt="" />
+          <span className="cta-cart-shine" aria-hidden="true" />
+          <span className="sr-only">Order Now</span>
         </a>
 
         {/* Mobile menu button — 44px square so it's a real thumb target */}
