@@ -777,21 +777,39 @@ export default function CheckoutFlow({
                           </span>
                         </div>
 
-                        <button
-                          type="submit"
-                          className="group inline-flex flex-col items-center justify-center gap-0.5 cta-glow text-white font-display font-black px-6 py-4 tracking-[0.1em] uppercase w-full mt-5 cursor-pointer"
-                          style={{ borderRadius: 0 }}
-                        >
-                          <span className="inline-flex items-center gap-2.5 text-[16px] sm:text-[18px]">
-                            {payMethod === 'card' ? 'Complete My Order' : 'Reserve & Send My Invoice'}
-                            <svg className="w-[18px] h-[18px] transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                            </svg>
-                          </span>
-                          <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-white/80 font-normal">
-                            {fmt(total)} · 2-year warranty · free insured shipping
-                          </span>
-                        </button>
+                        {/* Card pays with the supplied artwork; the invoice path keeps the
+                            text button, since its label and the total differ from the
+                            wording baked into the image. */}
+                        {payMethod === 'card' ? (
+                          <button
+                            type="submit"
+                            aria-label={`Complete my order — ${fmt(total)}, 2-year warranty, free insured shipping`}
+                            className="group cta-cart cta-complete mt-5 cursor-pointer"
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/checkout/complete-order.png" alt="" />
+                            <span className="cta-cart-shine" aria-hidden="true" />
+                            <span className="sr-only">
+                              Complete my order — {fmt(total)}, 2-year warranty, free insured shipping
+                            </span>
+                          </button>
+                        ) : (
+                          <button
+                            type="submit"
+                            className="group inline-flex flex-col items-center justify-center gap-0.5 cta-glow text-white font-display font-black px-6 py-4 tracking-[0.1em] uppercase w-full mt-5 cursor-pointer"
+                            style={{ borderRadius: 0 }}
+                          >
+                            <span className="inline-flex items-center gap-2.5 text-[16px] sm:text-[18px]">
+                              Reserve &amp; Send My Invoice
+                              <svg className="w-[18px] h-[18px] transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                              </svg>
+                            </span>
+                            <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-white/80 font-normal">
+                              {fmt(total)} · 2-year warranty · free insured shipping
+                            </span>
+                          </button>
+                        )}
 
                         <TrustBadges />
 

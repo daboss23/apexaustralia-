@@ -445,6 +445,12 @@
   mask-image: url('/checkout/continue-step-2.png');
 }
 
+/* Same again for the payment step's COMPLETE MY ORDER artwork. */
+.cta-complete .cta-cart-shine {
+  -webkit-mask-image: url('/checkout/complete-order.png');
+  mask-image: url('/checkout/complete-order.png');
+}
+
 /* HUD scan-line overlay utility */
 .hud-scanlines::after {
   content: '';
