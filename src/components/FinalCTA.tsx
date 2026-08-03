@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
 import { DEMO_HREF, ENQUIRY_HREF, CONTACT_EMAIL } from '@/lib/site'
+import { POLICIES } from '@/components/policies/PolicyPage'
 
 export default function FinalCTA() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -261,6 +262,20 @@ export default function FinalCTA() {
           >
             Contact
           </a>
+        </div>
+        {/* Policy links — real pages under /policies (plain <a>: these are
+            cross-page navigations, not hash links, so they bypass the
+            SmoothScroll delegated listener entirely). */}
+        <div className="flex items-center justify-center flex-wrap gap-x-2 gap-y-0">
+          {POLICIES.map((p) => (
+            <a
+              key={p.slug}
+              href={`/policies/${p.slug}/`}
+              className="px-3 py-3.5 text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider cursor-pointer uppercase"
+            >
+              {p.name}
+            </a>
+          ))}
         </div>
         {/* Bottom row — copyright + contact */}
         <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6">

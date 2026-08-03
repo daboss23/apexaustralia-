@@ -131,10 +131,13 @@ function Card({ r }: { r: Review }) {
   )
 }
 
-/* Split reviews across three columns, round-robin, so each column has a
+/* Split reviews across the columns, round-robin, so each column has a
    distinct set and the wall reads as one large body of proof. */
-const COLS: Review[][] = [[], [], []]
-REVIEWS.forEach((r, i) => COLS[i % 3].push(r))
+function splitCols(count: number): Review[][] {
+  const cols: Review[][] = Array.from({ length: count }, () => [])
+  REVIEWS.forEach((r, i) => cols[i % count].push(r))
+  return cols
+}
 const DURATIONS = [38, 46, 42]
 const DIRECTIONS: [string, string][] = [
   ['0%', '-50%'],
@@ -147,16 +150,28 @@ export default function MovingTestimonials({
   showHeader = true,
   fadeColor = '#050505',
   heightClass = 'h-[520px] md:h-[560px]',
+  maxCols = 3,
 }: {
   className?: string
   showHeader?: boolean
   /** Solid colour for the top/bottom fade masks — match the surrounding surface. */
   fadeColor?: string
   heightClass?: string
+  /** Cap on the number of marquee columns. The internal grid is viewport-
+      responsive (Tailwind breakpoints know nothing about containers), so a
+      placement inside a narrow column — e.g. under the checkout's Add to Cart
+      button — must cap this at 2 or the desktop breakpoint will squeeze three
+      card columns into half the page. */
+  maxCols?: 2 | 3
 } = {}) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-10% 0px' })
   const reduce = useReducedMotion()
+  const cols = splitCols(maxCols)
+  const gridClass =
+    maxCols === 3
+      ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+      : 'grid-cols-1 sm:grid-cols-2'
 
   return (
     <section ref={ref} className={`relative ${className}`}>
@@ -191,7 +206,7 @@ export default function MovingTestimonials({
 
       {/* Reduced motion: a plain, static grid — no marquee */}
       {reduce ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className={`grid ${gridClass} gap-4`}>
           {REVIEWS.map((r) => (
             <Card key={r.name + r.title} r={r} />
           ))}
@@ -215,8 +230,8 @@ export default function MovingTestimonials({
             aria-hidden="true"
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 h-full">
-            {COLS.map((col, ci) => (
+          <div className={`grid ${gridClass} gap-4 h-full`}>
+            {cols.map((col, ci) => (
               <div
                 key={ci}
                 className={`overflow-hidden ${ci === 1 ? 'hidden sm:block' : ''} ${
