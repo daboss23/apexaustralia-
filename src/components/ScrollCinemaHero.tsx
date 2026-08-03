@@ -1047,25 +1047,19 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
 
         {/* ACT 3a — the promise, centred over the sprint, then gone */}
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
-          {/* px bounds for the same reason as the h1 above.
-              Unlike the line this replaced, the words here are NOT &nbsp;-joined:
-              at 35 and 30 characters they are far too long to hold on one line on
-              a phone, and a non-breaking string that cannot fit does not shrink,
-              it overflows the screen. The <br/> keeps the two halves apart, and
-              each half is then free to wrap within itself on narrow screens. */}
+          {/* px bounds for the same reason as the h1 above. Two lines, one
+              phrase each, both nowrap — the longest is 18 characters, which
+              holds on a single line at every width down to 320px, so the vw
+              term is sized to exactly that (18ch is the constraint, not the
+              box). The payoff line lives in the film section that follows;
+              this beat states the promise only. */}
           <h2
-            className="beat-sprint h-luxia leading-[1.06] sm:leading-[0.98] max-w-[1120px] opacity-0"
-            style={{ fontSize: 'clamp(22px, 3.5vw, 50px)', letterSpacing: '0.04em' }}
+            className="beat-sprint h-luxia leading-[1.06] sm:leading-[0.98] max-w-[900px] opacity-0"
+            style={{ fontSize: 'clamp(24px, 7.6vw, 66px)', letterSpacing: '0.04em' }}
           >
-            {/* Each phrase is nowrap so that when the line does break on a
-                phone it breaks *between* the phrases, never through the red
-                one — "MEETS / INTELLIGENCE" split across two lines reads as a
-                mistake. The clause itself is still free to wrap. */}
-            <span className="t-silver whitespace-nowrap">WHEN PERFORMANCE</span>{' '}
-            <span className="t-red whitespace-nowrap">MEETS INTELLIGENCE</span>
+            <span className="t-silver whitespace-nowrap">WHEN PERFORMANCE</span>
             <br />
-            <span className="t-silver whitespace-nowrap">PERFORMANCE BECOMES</span>{' '}
-            <span className="t-silver whitespace-nowrap">INEVITABLE</span>
+            <span className="t-blue whitespace-nowrap">MEETS INTELLIGENCE</span>
           </h2>
         </div>
 

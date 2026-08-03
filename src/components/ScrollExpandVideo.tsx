@@ -59,6 +59,10 @@ export default function ScrollExpandVideo() {
   // rather than 32/24vw — measured to leave clearance from 390px to 1920px.
   const shiftL = useTransform(scrollYProgress, [0, 0.75], ['0vw', isMobile ? '-8vw' : '-18vw'])
   const shiftR = useTransform(scrollYProgress, [0, 0.75], ['0vw', isMobile ? '8vw' : '18vw'])
+  // …and fade out as they go, so the quote hands the screen over to the film
+  // instead of sitting on top of it. Gone by the time the plate is two-thirds
+  // open; the parting continues underneath and is never seen finishing.
+  const titleOpacity = useTransform(scrollYProgress, [0.1, 0.45], [1, 0])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
 
   function play() {
@@ -97,21 +101,24 @@ export default function ScrollExpandVideo() {
       style={{ height: '230svh' }}
     >
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col items-center justify-center">
-        {/* Title halves — they part as the plate opens */}
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 pointer-events-none flex flex-col items-center gap-2 px-4">
+        {/* Title halves — they part, and fade, as the plate opens */}
+        <motion.div
+          className="absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 pointer-events-none flex flex-col items-center gap-2 px-4"
+          style={{ opacity: titleOpacity }}
+        >
           <motion.h2
             className="h-luxia leading-[0.92] text-center"
             style={{ x: shiftL, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
           >
-            <span className="t-silver">PERFORMANCE BECOMES</span>
+            <span className="t-silver">&ldquo;PERFORMANCE BECOMES</span>
           </motion.h2>
           <motion.h2
             className="h-luxia leading-[0.92] text-center"
             style={{ x: shiftR, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
           >
-            <span className="t-red">INEVITABLE.</span>
+            <span className="t-red">INEVITABLE.&rdquo;</span>
           </motion.h2>
-        </div>
+        </motion.div>
 
         {/* The growing video plate */}
         <motion.div
@@ -156,7 +163,7 @@ function SectionTitle() {
         <div className="w-8 h-px bg-apex-red" />
       </div>
       <h2 className="h-luxia leading-[0.92]" style={{ fontSize: 'clamp(1.6rem, 4vw, 3rem)' }}>
-        <span className="t-silver">PERFORMANCE BECOMES</span> <span className="t-red">INEVITABLE.</span>
+        <span className="t-silver">&ldquo;PERFORMANCE BECOMES</span> <span className="t-red">INEVITABLE.&rdquo;</span>
       </h2>
     </div>
   )
