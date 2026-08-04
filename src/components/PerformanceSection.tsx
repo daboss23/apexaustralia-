@@ -259,8 +259,14 @@ export default function PerformanceSection() {
             Full-bleed on a phone: the -mx-6 cancels the container's own px-6 so
             the plate spans the screen instead of sitting inside the text
             column, which is the only way to gain size on a 16:9 band that is
-            already width-limited. mt-2 drops it clear of the intro copy so the
-            gap above it matches the one below. Desktop keeps the column.
+            already width-limited. Desktop keeps the column.
+
+            Vertical margins are tuned so the gap ABOVE the film (the intro
+            paragraph's mb plus this mt) equals the gap BELOW it (this mb):
+            phone ≈ 5rem each (mb-10 2.5 + mt-10 2.5 above, mb-20 5 below),
+            desktop ≈ 6rem each (md:mb-16 4 + md:mt-8 2 above, md:mb-24 6
+            below). The phone gets the bigger lift so the film clears the copy
+            instead of crowding it.
 
             The phone also crops the frame to 16:10 rather than 16:9. The clip
             is composed for a wide plate — the machine sits in the upper middle
@@ -271,7 +277,7 @@ export default function PerformanceSection() {
             the 46% object-position keeps it optically centred in what is left
             instead of letting an even crop shave its wheels. */}
         <motion.div
-          className="relative -mx-6 md:mx-0 mt-2 md:mt-0 mb-12 md:mb-20 overflow-hidden aspect-[16/10] md:aspect-video"
+          className="relative -mx-6 md:mx-0 mt-10 md:mt-8 mb-20 md:mb-24 overflow-hidden aspect-[16/10] md:aspect-video"
           initial={{ opacity: 0, y: 26 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
