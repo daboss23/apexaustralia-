@@ -262,7 +262,7 @@ function Gallery({ variant }: { variant: Variant }) {
 
           {/* Variant chip overlay */}
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-            <span className="font-mono text-[9px] tracking-[0.26em] uppercase text-apex-white/90 bg-black/55 backdrop-blur-sm px-3 py-1.5 border border-apex-line/60">
+            <span className="font-mono text-[11px] tracking-[0.26em] uppercase text-apex-white/90 bg-black/55 backdrop-blur-sm px-3 py-1.5 border border-apex-line/60">
               {variant.chip}
             </span>
           </div>
@@ -557,7 +557,7 @@ export default function CheckoutSection() {
             {/* Chip + rating */}
             <div className="flex items-center gap-3 mb-3 flex-wrap">
               <span
-                className="font-mono text-[9px] tracking-[0.26em] uppercase px-2.5 py-1 border"
+                className="font-mono text-[11px] tracking-[0.26em] uppercase px-2.5 py-1 border"
                 style={
                   isOver
                     ? { color: GOLD, borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.1)' }
@@ -625,7 +625,7 @@ export default function CheckoutSection() {
             </button>
 
             {/* Reassurance line */}
-            <p className="font-mono text-[9px] tracking-[0.12em] uppercase text-apex-grey-dim text-center mt-4 leading-relaxed">
+            <p className="font-mono text-[11px] tracking-[0.12em] uppercase text-apex-grey text-center mt-4 leading-relaxed">
               2-year warranty · free insured shipping · secure checkout
             </p>
 
@@ -682,7 +682,7 @@ export default function CheckoutSection() {
 
           {/* Quick spec card */}
           <div className="border border-apex-line/60 bg-apex-panel/40 p-6" style={{ borderTop: '2px solid rgba(214,31,38,0.6)' }}>
-            <div className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-red mb-5">At a Glance</div>
+            <div className="font-mono text-[11px] tracking-[0.28em] uppercase text-apex-red mb-5">At a Glance</div>
             <dl className="flex flex-col divide-y divide-apex-line/40">
               {[
                 ['Category', 'Adaptive Resistance Intelligence'],
@@ -693,7 +693,7 @@ export default function CheckoutSection() {
                 ['Best for', 'Elite & high-performance programs'],
               ].map(([k, v]) => (
                 <div key={k} className="flex items-start justify-between gap-4 py-3">
-                  <dt className="font-mono text-[10px] tracking-[0.12em] uppercase text-apex-grey-dim flex-shrink-0">{k}</dt>
+                  <dt className="font-mono text-[10px] tracking-[0.12em] uppercase text-apex-grey flex-shrink-0">{k}</dt>
                   <dd className="text-apex-white font-body text-[13px] text-right leading-snug">{v}</dd>
                 </div>
               ))}
@@ -725,7 +725,7 @@ export default function CheckoutSection() {
                 </blockquote>
                 <figcaption className="border-t border-apex-line/40 pt-4">
                   <div className="font-display font-bold text-apex-white text-sm leading-tight">{t.name}</div>
-                  <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-apex-grey-dim mt-1">{t.role}</div>
+                  <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-apex-grey mt-1">{t.role}</div>
                 </figcaption>
               </motion.figure>
             ))}
@@ -798,7 +798,7 @@ export default function CheckoutSection() {
                 {/* Sticky header with close */}
                 <div className="sticky top-0 z-30 flex items-center justify-between gap-4 px-5 sm:px-8 py-4 bg-apex-black-2/95 backdrop-blur-sm border-b border-apex-line/60">
                   <div className="min-w-0">
-                    <div className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-red">Secure Checkout</div>
+                    <div className="font-mono text-[11px] tracking-[0.28em] uppercase text-apex-red">Secure Checkout</div>
                     <div className="font-display font-black text-apex-white text-[14px] sm:text-[15px] leading-tight truncate">
                       Two steps away
                     </div>

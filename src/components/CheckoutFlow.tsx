@@ -124,7 +124,7 @@ function Field({
     <div className={className}>
       <label
         htmlFor={name}
-        className="block font-mono text-[9px] tracking-[0.22em] uppercase text-apex-grey-dim mb-1.5"
+        className="block font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey mb-1.5"
       >
         {label}
       </label>
@@ -150,7 +150,7 @@ function Field({
         style={{ borderRadius: 0 }}
       />
       {error && (
-        <p id={`${name}-error`} className="mt-1 font-mono text-[10px] tracking-wide text-apex-red">
+        <p id={`${name}-error`} className="mt-1 font-mono text-[11.5px] tracking-wide text-apex-red">
           {error}
         </p>
       )}
@@ -179,7 +179,7 @@ function SelectField({
     <div className={className}>
       <label
         htmlFor={name}
-        className="block font-mono text-[9px] tracking-[0.22em] uppercase text-apex-grey-dim mb-1.5"
+        className="block font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey mb-1.5"
       >
         {label}
       </label>
@@ -201,7 +201,7 @@ function SelectField({
           </option>
         ))}
       </select>
-      {error && <p className="mt-1 font-mono text-[10px] tracking-wide text-apex-red">{error}</p>}
+      {error && <p className="mt-1 font-mono text-[11.5px] tracking-wide text-apex-red">{error}</p>}
     </div>
   )
 }
@@ -249,7 +249,7 @@ function StepTabs({ stage, onBack }: { stage: Stage; onBack: () => void }) {
             >
               {t.label}
             </span>
-            <span className="block font-mono text-[9px] tracking-[0.12em] uppercase text-apex-grey-dim/80 leading-tight mt-0.5 truncate">
+            <span className="block font-mono text-[11px] tracking-[0.12em] uppercase text-apex-grey leading-tight mt-0.5 truncate">
               {t.sub}
             </span>
           </span>
@@ -277,7 +277,7 @@ function HoldBar({ seconds }: { seconds: number }) {
         <p className="font-display font-black text-apex-white text-[12px] sm:text-[13px] leading-tight tracking-wide uppercase">
           Your configuration is held
         </p>
-        <p className="hidden sm:block font-mono text-[9px] tracking-[0.14em] uppercase text-apex-white/70 leading-tight mt-0.5">
+        <p className="hidden sm:block font-mono text-[11px] tracking-[0.14em] uppercase text-apex-white/70 leading-tight mt-0.5">
           Released back to the queue when the timer ends
         </p>
       </div>
@@ -290,7 +290,7 @@ function HoldBar({ seconds }: { seconds: number }) {
             >
               {String(p.v).padStart(2, '0')}
             </span>
-            <span className="font-mono text-[7px] tracking-[0.2em] uppercase text-apex-grey-dim mt-1">{p.l}</span>
+            <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-apex-grey mt-1">{p.l}</span>
           </div>
         ))}
       </div>
@@ -332,7 +332,7 @@ function TrustBadges() {
         <svg className="w-3.5 h-3.5 text-apex-blue flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
         </svg>
-        <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-apex-white">
+        <span className="font-mono text-[11.5px] tracking-[0.22em] uppercase text-apex-white">
           Guaranteed safe checkout
         </span>
       </div>
@@ -344,7 +344,7 @@ function TrustBadges() {
               {s.icon}
             </svg>
             <span className="font-display font-bold text-apex-white text-[11px] leading-tight">{s.label}</span>
-            <span className="font-mono text-[8px] tracking-[0.16em] uppercase text-apex-grey-dim leading-tight">{s.sub}</span>
+            <span className="font-mono text-[11.5px] tracking-[0.16em] uppercase text-apex-grey leading-tight">{s.sub}</span>
           </div>
         ))}
       </div>
@@ -537,7 +537,7 @@ export default function CheckoutFlow({
               {/* Chip + rating */}
               <div className="flex items-center gap-3 mb-3 flex-wrap">
                 <span
-                  className="font-mono text-[9px] tracking-[0.26em] uppercase px-2.5 py-1 border"
+                  className="font-mono text-[11px] tracking-[0.26em] uppercase px-2.5 py-1 border"
                   style={
                     product.isOverspeed
                       ? { color: GOLD, borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.1)' }
@@ -554,7 +554,7 @@ export default function CheckoutFlow({
                       </svg>
                     ))}
                   </div>
-                  <span className="font-mono text-[10px] tracking-wide text-apex-grey-dim">Trusted by elite programs</span>
+                  <span className="font-mono text-[11.5px] tracking-wide text-apex-grey">Trusted by elite programs</span>
                 </div>
               </div>
 
@@ -599,7 +599,7 @@ export default function CheckoutFlow({
                         <p className="font-display font-black text-apex-white text-[15px] leading-tight mb-1">
                           Where should we ship your system?
                         </p>
-                        <p className="font-mono text-[10px] tracking-[0.14em] uppercase text-apex-grey-dim mb-5">
+                        <p className="font-mono text-[11.5px] tracking-[0.14em] uppercase text-apex-grey mb-5">
                           Step 1 of 2 · no payment details yet
                         </p>
 
@@ -611,7 +611,7 @@ export default function CheckoutFlow({
                         </div>
 
                         <div className="flex items-center gap-3 mt-6 mb-4">
-                          <span className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-blue">Delivery Address</span>
+                          <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-apex-blue">Delivery Address</span>
                           <div className="flex-1 h-px bg-apex-line/60" />
                         </div>
 
@@ -636,7 +636,7 @@ export default function CheckoutFlow({
 
                         <TrustBadges />
 
-                        <p className="font-mono text-[9px] tracking-[0.12em] uppercase text-apex-grey-dim text-center mt-4 leading-relaxed">
+                        <p className="font-mono text-[11px] tracking-[0.12em] uppercase text-apex-grey text-center mt-4 leading-relaxed">
                           We respect your privacy · your details are never sold or shared
                         </p>
                       </motion.form>
@@ -658,14 +658,14 @@ export default function CheckoutFlow({
                             <p className="font-display font-black text-apex-white text-[15px] leading-tight mb-1">
                               Almost yours — how would you like to pay?
                             </p>
-                            <p className="font-mono text-[10px] tracking-[0.14em] uppercase text-apex-grey-dim">
+                            <p className="font-mono text-[11.5px] tracking-[0.14em] uppercase text-apex-grey">
                               Step 2 of 2 · shipping locked in
                             </p>
                           </div>
                           <button
                             type="button"
                             onClick={() => setStage('shipping')}
-                            className="font-mono text-[9px] tracking-[0.14em] uppercase text-apex-grey-dim hover:text-apex-white transition-colors cursor-pointer flex-shrink-0 pt-1"
+                            className="font-mono text-[11px] tracking-[0.14em] uppercase text-apex-grey hover:text-apex-white transition-colors cursor-pointer flex-shrink-0 pt-1"
                           >
                             ← Edit
                           </button>
@@ -673,7 +673,7 @@ export default function CheckoutFlow({
 
                         {/* Shipping recap */}
                         <div className="border border-apex-line/50 bg-apex-black/50 px-4 py-3 mb-6">
-                          <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-apex-blue mb-1.5">Shipping to</div>
+                          <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-apex-blue mb-1.5">Shipping to</div>
                           <p className="text-apex-grey font-body text-[12.5px] leading-snug">
                             <span className="text-apex-white">{form.name}</span>
                             {form.org && ` · ${form.org}`}
@@ -684,7 +684,7 @@ export default function CheckoutFlow({
 
                         {/* Order summary — the price reveal */}
                         <div className="border border-apex-line/60 bg-apex-panel/40 px-4 py-4 mb-6" style={{ borderTop: '2px solid rgba(214,31,38,0.6)' }}>
-                          <div className="font-mono text-[9px] tracking-[0.24em] uppercase text-apex-red mb-3">Your order</div>
+                          <div className="font-mono text-[11px] tracking-[0.24em] uppercase text-apex-red mb-3">Your order</div>
                           <dl className="flex flex-col gap-2.5">
                             <div className="flex items-baseline justify-between gap-4">
                               <dt className="text-apex-white font-body text-[13px]">{product.name}</dt>
@@ -701,7 +701,7 @@ export default function CheckoutFlow({
                               <dd className="font-mono text-apex-blue text-[13px] uppercase tracking-wide">Free</dd>
                             </div>
                           </dl>
-                          <p className="font-mono text-[9px] tracking-[0.16em] uppercase text-apex-grey-dim mt-3 pt-3 border-t border-apex-line/40">
+                          <p className="font-mono text-[11px] tracking-[0.16em] uppercase text-apex-grey mt-3 pt-3 border-t border-apex-line/40">
                             AUD · GST included · flexible payment plans available
                           </p>
                         </div>
@@ -723,7 +723,7 @@ export default function CheckoutFlow({
                               <span className={`block font-display font-bold text-[12px] tracking-[0.1em] uppercase ${payMethod === m.id ? 'text-apex-white' : 'text-apex-grey-dim'}`}>
                                 {m.label}
                               </span>
-                              <span className="block font-mono text-[9px] tracking-[0.12em] uppercase text-apex-grey-dim mt-0.5">{m.sub}</span>
+                              <span className="block font-mono text-[11px] tracking-[0.12em] uppercase text-apex-grey mt-0.5">{m.sub}</span>
                             </button>
                           ))}
                         </div>
@@ -805,7 +805,7 @@ export default function CheckoutFlow({
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                               </svg>
                             </span>
-                            <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-white/80 font-normal">
+                            <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-white/80 font-normal">
                               {fmt(total)} · 2-year warranty · free insured shipping
                             </span>
                           </button>
@@ -813,7 +813,7 @@ export default function CheckoutFlow({
 
                         <TrustBadges />
 
-                        <p className="font-mono text-[9px] tracking-[0.12em] uppercase text-apex-grey-dim text-center mt-4 leading-relaxed">
+                        <p className="font-mono text-[11px] tracking-[0.12em] uppercase text-apex-grey text-center mt-4 leading-relaxed">
                           Encrypted · your card details never touch our servers
                         </p>
                       </motion.form>
@@ -841,7 +841,7 @@ export default function CheckoutFlow({
                         <p className="font-display font-black text-apex-white text-[15px] tracking-[0.1em] uppercase mb-2">
                           Authorising your order
                         </p>
-                        <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-apex-grey-dim">
+                        <p className="font-mono text-[11.5px] tracking-[0.16em] uppercase text-apex-grey">
                           Securing allocation · do not leave this page
                         </p>
                       </motion.div>
@@ -852,7 +852,7 @@ export default function CheckoutFlow({
 
               {/* In the box */}
               <div className="border border-apex-line/60 bg-apex-panel/40 p-5 mt-6" style={{ borderTop: '2px solid rgba(0,174,239,0.5)' }}>
-                <div className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-blue mb-4">In the Box</div>
+                <div className="font-mono text-[11px] tracking-[0.28em] uppercase text-apex-blue mb-4">In the Box</div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
                   {product.inBox.map((item) => (
                     <div key={item} className="flex items-center gap-2.5">
@@ -882,13 +882,13 @@ export default function CheckoutFlow({
               <svg className="w-4 h-4 text-apex-blue" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
               </svg>
-              <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-apex-blue">
+              <span className="font-mono text-[11.5px] tracking-[0.24em] uppercase text-apex-blue">
                 Order {orderNo} confirmed — do not leave this page
               </span>
             </div>
 
             <span
-              className="inline-block font-mono text-[9px] tracking-[0.26em] uppercase px-3 py-1.5 border mb-6"
+              className="inline-block font-mono text-[11px] tracking-[0.26em] uppercase px-3 py-1.5 border mb-6"
               style={{ color: GOLD, borderColor: 'rgba(180,140,60,0.5)', background: 'rgba(180,140,60,0.08)' }}
             >
               {otoOffer.chip}
@@ -925,7 +925,7 @@ export default function CheckoutFlow({
                 </div>
               </div>
               <div className="flex items-end justify-between gap-4 pt-5 border-t border-apex-line/50">
-                <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-apex-grey-dim pb-2">
+                <span className="font-mono text-[11.5px] tracking-[0.18em] uppercase text-apex-grey pb-2">
                   Added to your order today
                 </span>
                 <span className="flex items-baseline gap-3">
@@ -948,14 +948,14 @@ export default function CheckoutFlow({
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
               </span>
-              <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-white/80 font-normal">
+              <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-white/80 font-normal">
                 One click · same card · ships in the same crate
               </span>
             </button>
 
             <button
               onClick={() => takeOto(false)}
-              className="block mx-auto mt-5 font-mono text-[10px] tracking-[0.14em] uppercase text-apex-grey-dim hover:text-apex-grey underline underline-offset-4 transition-colors cursor-pointer"
+              className="block mx-auto mt-5 font-mono text-[11.5px] tracking-[0.14em] uppercase text-apex-grey hover:text-apex-grey underline underline-offset-4 transition-colors cursor-pointer"
             >
               No thanks — I understand this offer will not be shown again
             </button>
@@ -997,14 +997,14 @@ export default function CheckoutFlow({
             {/* Receipt */}
             <div className="border border-apex-line/60 bg-apex-panel/40 mb-8" style={{ borderTop: '2px solid rgba(0,174,239,0.6)' }}>
               <div className="flex flex-wrap items-center justify-between gap-3 px-5 sm:px-7 py-4 border-b border-apex-line/50">
-                <span className="font-mono text-[9px] tracking-[0.28em] uppercase text-apex-blue">Your Receipt</span>
-                <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-apex-grey-dim">Order {orderNo}</span>
+                <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-apex-blue">Your Receipt</span>
+                <span className="font-mono text-[11.5px] tracking-[0.14em] uppercase text-apex-grey">Order {orderNo}</span>
               </div>
 
               <div className="px-5 sm:px-7 py-5">
                 <div className="flex items-center justify-between gap-4 pb-3 mb-3 border-b border-apex-line/40">
-                  <span className="font-mono text-[9px] tracking-[0.22em] uppercase text-apex-grey-dim">Item</span>
-                  <span className="font-mono text-[9px] tracking-[0.22em] uppercase text-apex-grey-dim">Price</span>
+                  <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey">Item</span>
+                  <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey">Price</span>
                 </div>
 
                 <dl className="flex flex-col">
@@ -1037,7 +1037,7 @@ export default function CheckoutFlow({
 
               <div className="px-5 sm:px-7 py-4 border-t border-apex-line/50 bg-apex-black/40 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-apex-grey-dim mb-1.5">Shipping to</div>
+                  <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-apex-grey mb-1.5">Shipping to</div>
                   <p className="text-apex-grey font-body text-[12.5px] leading-snug">
                     <span className="text-apex-white">{form.name}</span>
                     {form.org && ` · ${form.org}`}
@@ -1046,7 +1046,7 @@ export default function CheckoutFlow({
                   </p>
                 </div>
                 <div>
-                  <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-apex-grey-dim mb-1.5">Payment</div>
+                  <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-apex-grey mb-1.5">Payment</div>
                   <p className="text-apex-grey font-body text-[12.5px] leading-snug">
                     {payMethod === 'card'
                       ? `Card ending ${form.cardNumber.replace(/\s/g, '').slice(-4) || '••••'}`
@@ -1062,7 +1062,7 @@ export default function CheckoutFlow({
             <div className="mb-10">
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-8 h-px bg-apex-red" />
-                <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase">What Happens Next</span>
+                <span className="text-apex-red font-mono text-[11.5px] tracking-[0.3em] uppercase">What Happens Next</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-apex-line/40 border border-apex-line/40">
                 {[
@@ -1082,7 +1082,7 @@ export default function CheckoutFlow({
             {/* Offer wall */}
             <div className="flex items-center gap-3 mb-5">
               <div className="w-8 h-px bg-apex-blue" />
-              <span className="text-apex-blue font-mono text-[10px] tracking-[0.3em] uppercase">Recommended For Your Program</span>
+              <span className="text-apex-blue font-mono text-[11.5px] tracking-[0.3em] uppercase">Recommended For Your Program</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
