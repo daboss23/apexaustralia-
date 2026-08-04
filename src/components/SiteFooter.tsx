@@ -82,7 +82,7 @@ export default function SiteFooter() {
         aria-hidden="true"
       />
 
-      <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-20">
+      <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16 pt-10 md:pt-12 pb-16 md:pb-20">
         <div className="grid grid-cols-2 md:grid-cols-12 gap-y-10 gap-x-8 md:gap-x-6">
           {/* ── Brand column ─────────────────────────────────────────────── */}
           <div className="col-span-2 md:col-span-5 flex flex-col gap-6">
@@ -99,11 +99,6 @@ export default function SiteFooter() {
 
             <p className="font-mono text-[11px] tracking-[0.4em] uppercase text-apex-grey-dim">
               Performance Without Limits
-            </p>
-
-            <p className="text-apex-grey font-body text-[13.5px] leading-relaxed max-w-sm">
-              Intelligent resistance, assisted overspeed and real-time data in one
-              portable system — engineered in Australia for elite performance programs.
             </p>
 
             {/* Social row */}

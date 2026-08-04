@@ -159,7 +159,7 @@ export default function FinalCTA() {
               THE FUTURE OF HIGH PERFORMANCE
             </motion.h2>
           </div>
-          <div className="relative mb-10">
+          <div className="relative mb-5">
             <div className="overflow-hidden">
               <motion.h2
                 className="h-luxia t-red leading-[0.86]"
@@ -173,10 +173,10 @@ export default function FinalCTA() {
             </div>
           </div>
 
-          {/* Subtext */}
+          {/* Subtext — bold sign-off, sits right under the headline. */}
           <motion.p
-            className="text-apex-grey font-body max-w-2xl mx-auto mb-7 md:mb-12 leading-relaxed"
-            style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
+            className="font-display font-bold text-apex-white max-w-2xl mx-auto mb-7 md:mb-12 leading-snug"
+            style={{ fontSize: 'clamp(1.1rem, 1.9vw, 1.5rem)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.4 }}
@@ -199,17 +199,6 @@ export default function FinalCTA() {
               <span className="sr-only">Order your T-APEX machine</span>
             </a>
           </motion.div>
-
-          {/* Sign-off under the CTA — readable weight, not microcopy. */}
-          <motion.p
-            className="font-display font-bold text-apex-white tracking-[0.14em] uppercase mb-10 md:mb-16"
-            style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)' }}
-            initial={{ opacity: 0, y: 12 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.85 }}
-          >
-            Performance Without Limits
-          </motion.p>
         </div>
       </motion.div>
 
