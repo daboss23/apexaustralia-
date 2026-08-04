@@ -606,6 +606,17 @@
   to { background-position: 34px 0, 0 0; }
 }
 
+/* Run out to 100% on the receipt: same bar, brand blue instead of red — the
+   colour the site uses for "confirmed". */
+.upsell-progress-done {
+  background-image: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.16) 0 12px,
+    rgba(255, 255, 255, 0) 12px 24px
+  ),
+  linear-gradient(180deg, #33c8f5 0%, #00aeef 55%, #0077a3 100%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cta-yes { animation: none; }
   .cta-yes-shine::before { animation: none; opacity: 0; }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -1047,6 +1047,18 @@ export default function CheckoutFlow({
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="max-w-4xl mx-auto"
           >
+            {/* Order progress — the upsell's bar, run out to 100%. */}
+            <div className="max-w-xl mx-auto mb-8">
+              <div className="relative h-8 border border-apex-line/70 bg-apex-black overflow-hidden">
+                <div className="upsell-progress-fill upsell-progress-done absolute inset-y-0 left-0 w-full" aria-hidden="true" />
+                <div className="relative h-full flex items-center justify-center">
+                  <span className="font-mono text-[11px] sm:text-[11.5px] tracking-[0.2em] uppercase text-white">
+                    Your order is 100% complete
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <div className="text-center mb-10">
               <motion.div
                 className="w-16 h-16 mx-auto mb-6 border-2 border-apex-blue/60 bg-apex-blue/10 flex items-center justify-center"
@@ -1075,88 +1087,85 @@ export default function CheckoutFlow({
                 <span className="font-mono text-[11.5px] tracking-[0.14em] uppercase text-apex-grey">Order {orderNo}</span>
               </div>
 
-              <div className="px-4 sm:px-7 py-5">
-                <div className="flex items-center justify-between gap-4 pb-3 mb-3 border-b border-apex-line/40">
-                  <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey">Item</span>
-                  <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey">Price</span>
-                </div>
+              {/* Line items. One shared two-column grid so the ITEM / PRICE
+                  headers, every row and the total all sit on the same rails. */}
+              <dl className="grid grid-cols-[1fr_auto] items-baseline gap-x-5 sm:gap-x-8 px-4 sm:px-7 py-5">
+                <dt className="font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey pb-3 border-b border-apex-line/40">
+                  Item
+                </dt>
+                <dd className="font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey text-right pb-3 border-b border-apex-line/40">
+                  Price
+                </dd>
 
-                <dl className="flex flex-col">
-                  {[
-                    { label: product.name, price: product.price, accent: false },
-                    ...(bump ? [{ label: BUMP.title.replace('Add ', ''), price: BUMP.price, accent: true }] : []),
-                    ...(oto ? [{ label: otoOffer.title.replace('Add the ', ''), price: otoOffer.price, accent: true }] : []),
-                  ].map((row) => (
-                    <div key={row.label} className="flex items-baseline justify-between gap-3 sm:gap-4 py-2.5 border-b border-apex-line/25">
-                      <dt className="font-body text-[13.5px] min-w-0 pr-1" style={row.accent ? { color: GOLD } : { color: '#F5F7FA' }}>{row.label}</dt>
-                      <dd className="font-mono text-[13.5px] metric-value" style={row.accent ? { color: GOLD } : { color: '#F5F7FA' }}>
-                        {fmt(row.price)}
-                      </dd>
-                    </div>
-                  ))}
-                  <div className="flex items-baseline justify-between gap-4 py-2.5 border-b border-apex-line/25">
-                    <dt className="text-apex-grey font-body text-[13.5px]">Free shipping · Australia-wide</dt>
-                    <dd className="font-mono text-apex-blue text-[13px] uppercase tracking-wide">Free</dd>
-                  </div>
-                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 pt-5">
-                    <dt className="font-display font-black text-apex-white text-[13px] tracking-[0.1em] uppercase">
-                      Total paid {payMethod === 'invoice' && '(invoice issued)'}
+                {[
+                  { label: product.name, sub: product.chip, price: fmt(product.price), accent: false },
+                  ...(bump ? [{ label: BUMP.title.replace('Add ', ''), sub: 'Add-on', price: fmt(BUMP.price), accent: true }] : []),
+                  ...(oto ? [{ label: otoOffer.title.replace('Add the ', ''), sub: 'One-time upgrade', price: fmt(otoOffer.price), accent: true }] : []),
+                  { label: 'Shipping', sub: 'Australia-wide', price: 'Free', accent: false, free: true },
+                ].map((row) => (
+                  <Fragment key={row.label}>
+                    <dt className="py-3.5 border-b border-apex-line/25 min-w-0">
+                      <span
+                        className="block font-body text-[13.5px] sm:text-[14px] leading-snug"
+                        style={row.accent ? { color: GOLD } : { color: '#F5F7FA' }}
+                      >
+                        {row.label}
+                      </span>
+                      <span className="block font-mono text-[10.5px] tracking-[0.16em] uppercase text-apex-grey-dim mt-1">
+                        {row.sub}
+                      </span>
                     </dt>
-                    <dd className="font-luxia t-silver leading-none metric-value" style={{ fontSize: 'clamp(1.8rem, 3.4vw, 2.4rem)' }}>
-                      {fmt(total)}
+                    <dd
+                      className="py-3.5 border-b border-apex-line/25 text-right font-mono text-[13.5px] sm:text-[14px] metric-value whitespace-nowrap"
+                      style={row.free ? { color: '#00AEEF' } : row.accent ? { color: GOLD } : { color: '#F5F7FA' }}
+                    >
+                      {row.price}
                     </dd>
-                  </div>
-                </dl>
-              </div>
+                  </Fragment>
+                ))}
 
-              <div className="px-4 sm:px-7 py-4 border-t border-apex-line/50 bg-apex-black/40 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <dt className="pt-5 font-display font-black text-apex-white text-[12px] sm:text-[13px] tracking-[0.1em] uppercase self-center">
+                  Total paid
+                </dt>
+                <dd className="pt-5 text-right font-luxia t-silver leading-none metric-value whitespace-nowrap" style={{ fontSize: 'clamp(1.6rem, 3.4vw, 2.4rem)' }}>
+                  {fmt(total)}
+                </dd>
+              </dl>
+
+              {/* Shipping left · payment right, on the same baseline. */}
+              <div className="px-4 sm:px-7 py-5 border-t border-apex-line/50 bg-apex-black/40 grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-apex-grey mb-1.5">Shipping to</div>
-                  <p className="text-apex-grey font-body text-[12.5px] leading-snug">
+                  <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-apex-blue mb-2">Shipping to</div>
+                  <p className="text-apex-grey font-body text-[12.5px] sm:text-[13px] leading-relaxed">
                     <span className="text-apex-white">{form.name}</span>
                     {form.org && ` · ${form.org}`}
                     <br />
-                    {form.address}, {form.city} {form.state} {form.postcode}
-                  </p>
-                </div>
-                <div>
-                  <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-apex-grey mb-1.5">Payment</div>
-                  <p className="text-apex-grey font-body text-[12.5px] leading-snug">
-                    {payMethod === 'card'
-                      ? `Card ending ${form.cardNumber.replace(/\s/g, '').slice(-4) || '••••'}`
-                      : `Invoice / EFT${form.po ? ` · ${form.po}` : ''}`}
+                    {form.address}
                     <br />
-                    GST included · AUD
+                    {form.city} {form.state} {form.postcode}, {form.country}
                   </p>
                 </div>
-              </div>
-            </div>
-
-            {/* What happens next */}
-            <div className="mb-10">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-8 h-px bg-apex-red" />
-                <span className="text-apex-red font-mono text-[11.5px] tracking-[0.3em] uppercase">What Happens Next</span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-apex-line/40 border border-apex-line/40">
-                {[
-                  { n: '01', t: 'Confirmation email', d: 'Your receipt and order reference land in your inbox within minutes.' },
-                  { n: '02', t: 'Build & calibration', d: 'Your unit is assembled, the tablet is preloaded and every mode is calibrated.' },
-                  { n: '03', t: 'Dispatch & onboarding', d: 'Free delivery Australia-wide, then a walkthrough with the AU team.' },
-                ].map((s) => (
-                  <div key={s.n} className="bg-apex-black px-5 py-6">
-                    <span className="font-mono text-[11px] tracking-[0.2em] text-apex-blue">{s.n}</span>
-                    <h4 className="font-display font-black text-apex-white text-[14px] leading-tight mt-2 mb-1.5">{s.t}</h4>
-                    <p className="text-apex-grey font-body text-[12.5px] leading-relaxed">{s.d}</p>
-                  </div>
-                ))}
+                <div className="sm:text-right">
+                  <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-apex-blue mb-2">Payment</div>
+                  <p className="text-apex-grey font-body text-[12.5px] sm:text-[13px] leading-relaxed">
+                    <span className="text-apex-white">
+                      {payMethod === 'card'
+                        ? `Card ending ${form.cardNumber.replace(/\s/g, '').slice(-4) || '••••'}`
+                        : `Invoice / EFT${form.po ? ` · ${form.po}` : ''}`}
+                    </span>
+                    <br />
+                    Paid in full · GST included
+                    <br />
+                    All figures in AUD
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* Offer wall */}
             <div className="flex items-center gap-3 mb-5">
               <div className="w-8 h-px bg-apex-blue" />
-              <span className="text-apex-blue font-mono text-[11.5px] tracking-[0.3em] uppercase">Recommended For Your Program</span>
+              <span className="text-apex-blue font-mono text-[11.5px] tracking-[0.3em] uppercase">Recommended Products</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
