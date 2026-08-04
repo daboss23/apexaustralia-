@@ -180,7 +180,7 @@ export default function MovingTestimonials({
       <div className="flex flex-col items-center text-center mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-8 h-px bg-apex-red" />
-          <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase">
+          <span className="text-apex-red font-mono text-[12px] tracking-[0.3em] uppercase">
             Verified Reviews
           </span>
           <div className="w-8 h-px bg-apex-red" />

@@ -68,7 +68,7 @@ export default function ComparisonSection() {
         {/* Eyebrow — technology-first, electric blue */}
         <div ref={titleRef} className="flex items-center gap-3 mb-7">
           <div className="w-8 h-px" style={{ background: C.blue }} />
-          <span className="font-mono text-[10px] tracking-[0.3em] uppercase font-medium" style={{ color: C.blue }}>
+          <span className="font-mono text-[12px] tracking-[0.3em] uppercase font-medium" style={{ color: C.blue }}>
             The Difference
           </span>
         </div>

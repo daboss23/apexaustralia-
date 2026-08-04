@@ -500,7 +500,7 @@ export default function CheckoutSection() {
         {/* Eyebrow */}
         <div ref={titleRef} className="flex items-center gap-3 mb-6 justify-center">
           <div className="w-8 h-px bg-apex-red" />
-          <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase font-medium">
+          <span className="text-apex-red font-mono text-[12px] tracking-[0.3em] uppercase font-medium">
             Secure Your System
           </span>
           <div className="w-8 h-px bg-apex-red" />
@@ -677,7 +677,7 @@ export default function CheckoutSection() {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-8 h-px bg-apex-blue" />
-              <span className="text-apex-blue font-mono text-[10px] tracking-[0.3em] uppercase">The Product</span>
+              <span className="text-apex-blue font-mono text-[12px] tracking-[0.3em] uppercase">The Product</span>
             </div>
             <h3 className="font-display font-black t-feature leading-tight mb-5" style={{ fontSize: 'clamp(1.4rem, 2.6vw, 2.1rem)' }}>
               Not another sprint tool. An intelligence system.
@@ -721,7 +721,7 @@ export default function CheckoutSection() {
         <div className="mt-24">
           <div className="flex items-center gap-3 mb-8 justify-center">
             <div className="w-8 h-px bg-apex-red" />
-            <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase">What Coaches Say</span>
+            <span className="text-apex-red font-mono text-[12px] tracking-[0.3em] uppercase">What Coaches Say</span>
             <div className="w-8 h-px bg-apex-red" />
           </div>
 

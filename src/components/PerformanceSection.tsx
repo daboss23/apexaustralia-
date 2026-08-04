@@ -229,7 +229,7 @@ export default function PerformanceSection() {
           transition={{ duration: 0.5 }}
         >
           <div className="w-8 h-px bg-apex-blue" />
-          <span className="text-apex-blue font-mono text-[10px] tracking-[0.3em] uppercase font-medium">What T-APEX Does</span>
+          <span className="text-apex-blue font-mono text-[12px] tracking-[0.3em] uppercase font-medium">What T-APEX Does</span>
           <div className="w-8 h-px bg-apex-blue" />
         </motion.div>
 

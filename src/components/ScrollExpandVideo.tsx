@@ -170,7 +170,7 @@ function SectionTitle() {
     <div className="text-center">
       <div className="flex items-center gap-3 justify-center mb-4">
         <div className="w-8 h-px bg-apex-red" />
-        <span className="text-apex-red font-mono text-[10px] tracking-[0.3em] uppercase">The Full Walkthrough</span>
+        <span className="text-apex-red font-mono text-[12px] tracking-[0.3em] uppercase">The Full Walkthrough</span>
         <div className="w-8 h-px bg-apex-red" />
       </div>
       <h2 className="h-luxia leading-[0.92]" style={{ fontSize: 'clamp(1.6rem, 4vw, 3rem)' }}>
