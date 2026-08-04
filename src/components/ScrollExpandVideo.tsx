@@ -97,10 +97,21 @@ export default function ScrollExpandVideo() {
       ref={sectionRef}
       className="relative bg-apex-black"
       /* Tall enough to give the expansion room to read; the stage inside is
-         sticky, so this height is the "scroll budget" for the growth. */
-      style={{ height: '230svh' }}
+         sticky, so this height is the "scroll budget" for the growth.
+         Shorter on a phone: the budget is spent at the same rate but there is
+         less of it left doing nothing once the plate is open. */
+      style={{ height: isMobile ? '185svh' : '230svh' }}
     >
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col items-center justify-center">
+      {/* The stage is only as tall as it needs to be on a phone. At a full
+          100svh the 16:9 plate (95vw ≈ 53svh) left ~23svh of dead black above
+          AND below it, and the lower band read as a long break between this
+          section and the next — the plate is centred, so the emptiness is
+          symmetrical and unavoidable at that height. 68svh brackets the plate
+          evenly and hands over to the next section's own padding. */}
+      <div
+        className="sticky top-0 w-full overflow-hidden flex flex-col items-center justify-center"
+        style={{ height: isMobile ? '68svh' : '100svh' }}
+      >
         {/* Title halves — they part, and fade, as the plate opens */}
         <motion.div
           className="absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 pointer-events-none flex flex-col items-center gap-2 px-4"
