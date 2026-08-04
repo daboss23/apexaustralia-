@@ -338,8 +338,10 @@ export default function TApexVs1080Section() {
           animate={tableInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <p className="font-display font-black text-apex-white leading-tight max-w-3xl mx-auto"
-            style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.7rem)', textAlign: 'justify', textAlignLast: 'center' }}>
+          {/* Centred on phones — justify spreads the short lines into ugly word
+              gaps at narrow widths; from md up it justifies as before. */}
+          <p className="font-display font-black text-apex-white leading-tight max-w-3xl mx-auto text-center md:text-justify"
+            style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.7rem)', textAlignLast: 'center' }}>
             This is not just another sprint tool. It is an{' '}
             <span className="text-apex-blue">Adaptive Resistance Intelligence system</span>{' '}
             for elite performance programs.
