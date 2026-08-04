@@ -536,8 +536,10 @@
   width: 100%;
   isolation: isolate;
   overflow: hidden;
-  border: 2px solid rgba(255, 90, 90, 0.85);
-  background: linear-gradient(180deg, #b3161c 0%, #8c0f14 46%, #5e0a0d 100%);
+  border: 3px solid;
+  border-image: linear-gradient(180deg, #ff8a8a 0%, #e02a30 40%, #7d0c10 100%) 1;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #a81319 0%, #8c0f14 40%, #5e0a0d 78%, #7c0e12 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
     inset 0 -2px 6px rgba(0, 0, 0, 0.55),
@@ -564,6 +566,7 @@
   background: linear-gradient(160deg, #f6e7a8 0%, #d9b455 32%, #b98f2f 62%, #f0dc9b 100%);
   color: #6b4d0d;
   clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%);
+  border-radius: 9px 0 0 9px;
 }
 
 /* Phones: the chevron plate eats the bar's width, so tighten it there. */
@@ -571,6 +574,7 @@
   .cta-yes-plate {
     padding: 0 1rem 0 0.65rem;
     clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
+    border-radius: 8px 0 0 8px;
   }
 }
 

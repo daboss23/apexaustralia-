@@ -1000,8 +1000,8 @@ export default function CheckoutFlow({
 
             <button
               onClick={() => takeOto(true)}
-              className="cta-yes my-5 cursor-pointer"
-              aria-label={`Yes — add the ${otoOffer.title.replace('Add the ', '')} to my order`}
+              className="group cta-yes my-5 cursor-pointer"
+              aria-label={`Yes — upgrade my order with the ${otoOffer.title.replace('Add the ', '')}`}
             >
               <span className="cta-yes-plate" aria-hidden="true">
                 <svg className="w-8 h-8 sm:w-10 sm:h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}>
@@ -1010,13 +1010,13 @@ export default function CheckoutFlow({
               </span>
               <span className="flex-1 flex flex-col items-center justify-center gap-1 px-4 py-4 sm:py-5">
                 <span className="inline-flex items-center gap-2.5 font-display font-black text-white uppercase tracking-[0.08em] text-[15px] sm:text-[20px] leading-none text-center">
-                  Yes — add it to my order
+                  Yes - upgrade my order
                   <svg className="w-5 h-5 flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                   </svg>
                 </span>
                 <span className="font-mono text-[10px] sm:text-[11.5px] tracking-[0.16em] sm:tracking-[0.22em] uppercase text-white/85 text-center leading-tight">
-                  One click · same card · ships in the same crate
+                  One click · same card
                 </span>
               </span>
               <span className="cta-yes-shine" aria-hidden="true" />
@@ -1038,7 +1038,7 @@ export default function CheckoutFlow({
 
             <button
               onClick={() => takeOto(false)}
-              className="block mx-auto mt-6 font-mono text-[11.5px] tracking-[0.14em] uppercase text-apex-grey hover:text-apex-white underline underline-offset-4 transition-colors cursor-pointer"
+              className="block mx-auto mt-5 px-4 py-3 font-mono text-[11.5px] tracking-[0.14em] uppercase text-apex-grey hover:text-apex-white underline underline-offset-4 transition-colors cursor-pointer"
             >
               No thanks — I understand this offer will not be shown again
             </button>
@@ -1243,14 +1243,14 @@ export default function CheckoutFlow({
                   <a
                     key={p.slug}
                     href={`/policies/${p.slug}/`}
-                    className="font-mono text-[11px] tracking-[0.16em] uppercase text-apex-grey hover:text-apex-white transition-colors duration-300 py-1"
+                    className="font-mono text-[11px] tracking-[0.16em] uppercase text-apex-grey hover:text-apex-white transition-colors duration-300 px-1 py-2.5"
                   >
                     {p.name}
                   </a>
                 ))}
                 <a
                   href={ENQUIRY_HREF}
-                  className="font-mono text-[11px] tracking-[0.16em] uppercase text-apex-grey hover:text-apex-white transition-colors duration-300 py-1"
+                  className="font-mono text-[11px] tracking-[0.16em] uppercase text-apex-grey hover:text-apex-white transition-colors duration-300 px-1 py-2.5"
                 >
                   Contact Us
                 </a>
