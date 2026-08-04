@@ -82,6 +82,20 @@ type CinemaConfig = {
    * screen the headline has left.
    */
   copyShift: number
+  /**
+   * Scale the camera push reaches by the end of the opening act (ZOOM_OPEN is
+   * the desktop value). The phone runs hotter: its film is a letterboxed band
+   * rather than a full-bleed frame, so at the desktop's 1.0 the machine was
+   * still visibly down the lens when its panels opened.
+   */
+  zoomOpen: number
+  /**
+   * Extra scroll, as a fraction of the pin, that the flight-in gets BEFORE the
+   * frames start advancing. The camera push and the frame scrub share the
+   * opening act; delaying only the frames means the machine travels toward the
+   * lens while it is still shut, and the panels open once it has arrived.
+   */
+  frameLeadIn: number
 }
 
 /** The closed aperture — a zero-height slit sitting on the headline's seam. */
@@ -114,6 +128,8 @@ const DESKTOP: CinemaConfig = {
   scrub: 0.35,
   // Desktop has the width to carry an honestly-centred block.
   copyShift: 0,
+  zoomOpen: 1.0,
+  frameLeadIn: 0,
 }
 
 const MOBILE: CinemaConfig = {
@@ -149,6 +165,11 @@ const MOBILE: CinemaConfig = {
   scrub: 0.5,
   // Keep in step with `--cine-copy-shift` in globals.css.
   copyShift: 0.1,
+  // Closer than desktop, and it arrives before the panels move: the phone's
+  // band is small, so the machine has to be most of the way in for the open to
+  // land as a reveal rather than as something happening in the distance.
+  zoomOpen: 1.06,
+  frameLeadIn: 0.08,
 }
 
 // Camera push. The film opens on the machine sitting a long way back down the
@@ -769,7 +790,12 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // shot gets a third of the scroll instead of a fifth. Each leg is still
       // linear (ease 'none' from defaults) — the rate changes only at the act
       // boundaries, which fall on cuts, so no leg visibly speeds up mid-shot.
-      tl.to(render, { frame: f(ACT_OPEN_END), duration: 0.3 + (0.1 - HOLD) }, HOLD)
+      // `frameLeadIn` holds the footage still for a beat after the hold while
+      // the camera push (below) is already running, so the machine closes the
+      // distance before its panels move. The leg still ends at 0.4, so every
+      // later act boundary lands on exactly the same scroll position.
+      const openStart = HOLD + cfg.frameLeadIn
+      tl.to(render, { frame: f(ACT_OPEN_END), duration: 0.4 - openStart }, openStart)
       tl.to(render, { frame: f(ACT_INNER_END), duration: 0.23 }, 0.4)
       tl.to(render, { frame: f(ACT_TUNNEL_END), duration: 0.09 }, 0.63)
       // Runs to 1.0, not to 0.97. The footage ends with the athlete still
@@ -786,7 +812,19 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // 'in', not 'out' — the machine must HOLD its distance while the headline
       // is still on screen and only close the gap at the end of the act. An
       // 'out' ease front-loads the travel and it arrives on top of the type.
-      tl.to(render, { scale: ZOOM_OPEN, ease: 'power2.in', duration: 0.3 + (0.1 - HOLD) }, HOLD)
+      // On the phone this is re-timed rather than re-shaped: the push finishes
+      // as the frames start (`frameLeadIn`), with a front-loaded ease, so the
+      // machine has closed the distance before a panel moves. Desktop keeps the
+      // original back-loaded travel across the whole act.
+      tl.to(
+        render,
+        {
+          scale: cfg.zoomOpen,
+          ease: cfg.frameLeadIn ? 'power2.out' : 'power2.in',
+          duration: cfg.frameLeadIn ? cfg.frameLeadIn + 0.04 : 0.3 + (0.1 - HOLD),
+        },
+        HOLD,
+      )
       tl.to(render, { scale: ZOOM_END, duration: 0.57 }, 0.4)
       // A last whisper of push across the close, so the resolve keeps breathing
       // even on the frames where the footage itself has almost stopped moving.
