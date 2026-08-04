@@ -271,7 +271,7 @@ function HoldBar({ seconds }: { seconds: number }) {
   return (
     <div
       className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 border-b border-apex-red/30"
-      style={{ background: 'linear-gradient(90deg, rgba(156,15,13,0.35), rgba(214,31,38,0.22) 50%, rgba(156,15,13,0.35))' }}
+      style={{ background: 'linear-gradient(90deg, rgba(214,31,38,0.38), rgba(214,31,38,0.24) 50%, rgba(214,31,38,0.38))' }}
     >
       <div className="min-w-0">
         <p className="font-display font-black text-apex-white text-[12px] sm:text-[13px] leading-tight tracking-wide uppercase">
