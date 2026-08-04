@@ -1009,7 +1009,7 @@ export default function CheckoutFlow({
                 </svg>
               </span>
               <span className="flex-1 flex flex-col items-center justify-center gap-1 px-4 py-4 sm:py-5">
-                <span className="inline-flex items-center gap-2.5 font-display font-black text-white uppercase tracking-[0.08em] text-[15px] sm:text-[20px] leading-none text-center">
+                <span className="inline-flex items-center gap-2.5 font-display font-black text-white uppercase tracking-[0.08em] text-[13.5px] xs:text-[15px] sm:text-[20px] leading-none text-center">
                   Yes - upgrade my order
                   <svg className="w-5 h-5 flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
@@ -1103,11 +1103,11 @@ export default function CheckoutFlow({
 
               {/* Line items. One shared two-column grid so the ITEM / PRICE
                   headers, every row and the total all sit on the same rails. */}
-              <dl className="grid grid-cols-[1fr_auto] items-baseline gap-x-5 sm:gap-x-8 px-4 sm:px-7 py-5">
-                <dt className="font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey pb-3 border-b border-apex-line/40">
+              <dl className="grid grid-cols-[1fr_auto] items-baseline px-4 sm:px-7 py-5">
+                <dt className="font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey pb-3 pr-4 border-b border-apex-line/40">
                   Item
                 </dt>
-                <dd className="font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey text-right pb-3 border-b border-apex-line/40">
+                <dd className="font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey text-right pb-3 pl-4 border-b border-apex-line/40">
                   Price
                 </dd>
 
@@ -1118,7 +1118,7 @@ export default function CheckoutFlow({
                   { label: 'Shipping', sub: 'Australia-wide', price: 'Free', accent: false, free: true },
                 ].map((row) => (
                   <Fragment key={row.label}>
-                    <dt className="py-3.5 border-b border-apex-line/25 min-w-0">
+                    <dt className="py-3.5 pr-4 border-b border-apex-line/25 min-w-0">
                       <span
                         className="block font-body text-[13.5px] sm:text-[14px] leading-snug"
                         style={row.accent ? { color: GOLD } : { color: '#F5F7FA' }}
@@ -1130,7 +1130,7 @@ export default function CheckoutFlow({
                       </span>
                     </dt>
                     <dd
-                      className="py-3.5 border-b border-apex-line/25 text-right font-mono text-[13.5px] sm:text-[14px] metric-value whitespace-nowrap"
+                      className="py-3.5 pl-4 border-b border-apex-line/25 text-right font-mono text-[13.5px] sm:text-[14px] metric-value whitespace-nowrap"
                       style={row.free ? { color: '#00AEEF' } : row.accent ? { color: GOLD } : { color: '#F5F7FA' }}
                     >
                       {row.price}
@@ -1138,10 +1138,10 @@ export default function CheckoutFlow({
                   </Fragment>
                 ))}
 
-                <dt className="pt-5 font-display font-black text-apex-white text-[12px] sm:text-[13px] tracking-[0.1em] uppercase self-center">
+                <dt className="pt-5 pr-4 font-display font-black text-apex-white text-[12px] sm:text-[13px] tracking-[0.1em] uppercase self-center">
                   Total paid:
                 </dt>
-                <dd className="pt-5 text-right font-luxia t-gold-price leading-none metric-value whitespace-nowrap" style={{ fontSize: 'clamp(1.6rem, 3.4vw, 2.4rem)' }}>
+                <dd className="pt-5 pl-4 text-right font-luxia t-gold-price leading-none metric-value whitespace-nowrap" style={{ fontSize: 'clamp(1.6rem, 3.4vw, 2.4rem)' }}>
                   {fmt(total)}
                 </dd>
               </dl>
@@ -1233,7 +1233,7 @@ export default function CheckoutFlow({
                 className="font-cinzel font-bold text-apex-white leading-tight max-w-3xl mx-auto tracking-[0.04em]"
                 style={{ fontSize: 'clamp(1.45rem, 3.1vw, 2.1rem)' }}
               >
-                WELCOME TO THE <span className="text-apex-blue">T-APEX FAMILY</span>!
+                WELCOME TO THE <span className="text-apex-blue whitespace-nowrap">T-APEX FAMILY</span>!
               </p>
 
               {/* Policy / contact links + copyright — the same set as the

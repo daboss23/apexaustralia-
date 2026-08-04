@@ -33,6 +33,9 @@ const config: Config = {
           blue: '#00AEEF',
         },
       },
+      screens: {
+        xs: '400px',
+      },
       fontFamily: {
         luxia: ['var(--font-marcellus)', 'Georgia', 'serif'],
         cinzel: ['var(--font-cinzel)', 'Georgia', 'serif'],
