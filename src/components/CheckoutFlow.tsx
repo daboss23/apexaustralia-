@@ -1000,26 +1000,18 @@ export default function CheckoutFlow({
 
             <button
               onClick={() => takeOto(true)}
-              className="group cta-yes my-5 cursor-pointer"
               aria-label={`Yes — upgrade my order with the ${otoOffer.title.replace('Add the ', '')}`}
+              className="cta-upsell my-5 cursor-pointer"
             >
-              <span className="cta-yes-plate" aria-hidden="true">
-                <svg className="w-8 h-8 sm:w-10 sm:h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                </svg>
+              {/* The artwork ships on a black plate with a mirrored reflection
+                  beneath it; the wrapper crops to the button itself, and the
+                  screen blend drops what black is left into the panel. */}
+              <span className="cta-upsell-crop" aria-hidden="true">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/apex upsell cta button.png" alt="" />
               </span>
-              <span className="flex-1 flex flex-col items-center justify-center gap-1 px-4 py-4 sm:py-5">
-                <span className="inline-flex items-center gap-2.5 font-display font-black text-white uppercase tracking-[0.08em] text-[13.5px] xs:text-[15px] sm:text-[20px] leading-none text-center">
-                  Yes - upgrade my order
-                  <svg className="w-5 h-5 flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                  </svg>
-                </span>
-                <span className="font-mono text-[10px] sm:text-[11.5px] tracking-[0.16em] sm:tracking-[0.22em] uppercase text-white/85 text-center leading-tight">
-                  One click · same card
-                </span>
-              </span>
-              <span className="cta-yes-shine" aria-hidden="true" />
+              <span className="cta-upsell-shine" aria-hidden="true" />
+              <span className="sr-only">Yes — upgrade my order · one click, same card</span>
             </button>
 
             <div className="flex items-center gap-3 border border-apex-line/60 bg-apex-black/50 px-4 sm:px-5 py-4 text-left" style={{ borderColor: 'rgba(180,140,60,0.3)' }}>
