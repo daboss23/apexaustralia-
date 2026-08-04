@@ -615,14 +615,13 @@ export default function CheckoutSection() {
             {!isOver ? (
               <button
                 onClick={() => setVariantId('overspeed')}
-                className="group flex items-center justify-between gap-3 w-full text-left border border-dashed px-4 py-3 mb-6 transition-all duration-300 cursor-pointer"
-                style={{ borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.05)' }}
+                className="marching-border-gold group flex items-center justify-between gap-3 w-full text-left px-4 py-3.5 mb-6 transition-all duration-300 cursor-pointer"
               >
-                <span className="text-[13px] leading-snug">
-                  <span className="text-apex-white font-semibold">Add the full Overspeed Module</span>
+                <span className="text-[15px] leading-snug">
+                  <span className="text-apex-white font-semibold">Add the full overspeed accessories and its related software features</span>
                   <span className="text-apex-grey"> — unlock assisted overspeed training</span>
                 </span>
-                <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.16em] uppercase flex-shrink-0" style={{ color: GOLD }}>
+                <span className="flex items-center gap-1.5 font-mono text-[11px] tracking-[0.16em] uppercase flex-shrink-0" style={{ color: GOLD }}>
                   Upgrade
                   <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
@@ -851,14 +850,13 @@ export default function CheckoutSection() {
                       !isOver ? (
                         <button
                           onClick={() => setVariantId('overspeed')}
-                          className="group flex items-center justify-between gap-3 w-full text-left border border-dashed px-4 py-3 mb-6 transition-all duration-300 cursor-pointer"
-                          style={{ borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.05)' }}
+                          className="marching-border-gold group flex items-center justify-between gap-3 w-full text-left px-4 py-3.5 mb-6 transition-all duration-300 cursor-pointer"
                         >
-                          <span className="text-[13px] leading-snug">
-                            <span className="text-apex-white font-semibold">Add the full Overspeed Module</span>
+                          <span className="text-[15px] leading-snug">
+                            <span className="text-apex-white font-semibold">Add the full overspeed accessories and its related software features</span>
                             <span className="text-apex-grey"> — unlock assisted overspeed training</span>
                           </span>
-                          <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.16em] uppercase flex-shrink-0" style={{ color: GOLD }}>
+                          <span className="flex items-center gap-1.5 font-mono text-[11px] tracking-[0.16em] uppercase flex-shrink-0" style={{ color: GOLD }}>
                             Upgrade
                             <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
