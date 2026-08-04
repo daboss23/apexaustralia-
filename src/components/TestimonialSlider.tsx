@@ -105,8 +105,10 @@ export default function TestimonialSlider({ reviews = REVIEWS }: { reviews?: Rev
   return (
     <div className="relative w-full text-apex-white overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-        {/* Left — pagination, vertical label, thumbnails */}
-        <div className="md:col-span-3 flex flex-col justify-between order-2 md:order-1">
+        {/* Left — pagination, vertical label, thumbnails.
+            Mobile order: quote (order-1) → portrait (order-2) → this rail
+            (order-3), so the review reads first and the images sit below it. */}
+        <div className="md:col-span-3 flex flex-col justify-between order-3 md:order-1">
           <div className="flex flex-row md:flex-col items-center md:items-start justify-between md:justify-start gap-4">
             <span className="font-mono text-[13px] text-apex-grey-dim">
               {String(index + 1).padStart(2, '0')} <span className="text-apex-grey-dim/60">/ {String(count).padStart(2, '0')}</span>
@@ -137,7 +139,7 @@ export default function TestimonialSlider({ reviews = REVIEWS }: { reviews?: Rev
         </div>
 
         {/* Centre — portrait */}
-        <div className="md:col-span-4 relative min-h-[420px] md:min-h-[520px] order-1 md:order-2">
+        <div className="md:col-span-4 relative min-h-[420px] md:min-h-[520px] order-2 md:order-2">
           <AnimatePresence initial={false} custom={dir}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <motion.img
@@ -156,7 +158,7 @@ export default function TestimonialSlider({ reviews = REVIEWS }: { reviews?: Rev
         </div>
 
         {/* Right — quote + navigation */}
-        <div className="md:col-span-5 flex flex-col justify-between md:pl-8 order-3">
+        <div className="md:col-span-5 flex flex-col justify-between md:pl-8 order-1 md:order-3">
           <div className="relative overflow-hidden pt-2 md:pt-20 min-h-[220px]">
             <AnimatePresence initial={false} custom={dir} mode="wait">
               <motion.div

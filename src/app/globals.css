@@ -344,7 +344,17 @@
   .cine-cue-pulse,
   .cine-cue-tip,
   .pulse-glow-border,
-  .marching-border-gold {
+  .marching-border-gold,
+  /* Signature brand loops that must match desktop on phones too: the warranty
+     seal's gold shine, the "Please Note" border glow + charge trace + particles,
+     and the Overspeed down-cue. Each is a small, deliberate accent — kept
+     looping here rather than de-looped with the mass of decoration above. */
+  .badge-shine,
+  .note-glow,
+  .note-trace,
+  .note-particle,
+  .down-cue-line::after,
+  .down-cue-chevron {
     animation-iteration-count: infinite !important;
   }
 }
