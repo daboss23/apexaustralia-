@@ -268,36 +268,19 @@ export default function ResultsSection() {
               </footer>
             </blockquote>
 
-            {/* Verified customer review */}
-            <figure
-              className="mt-6 border border-apex-line/60 bg-apex-panel/40 p-5"
-              style={{ borderTop: '2px solid rgba(214,31,38,0.45)' }}
-            >
-              <div className="flex gap-0.5 mb-3" aria-label="5 out of 5 stars">
-                {[...Array(5)].map((_, i) => (
-                  <svg key={i} className="w-3.5 h-3.5 text-apex-red" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.958a1 1 0 0 0 .95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.367 2.446a1 1 0 0 0-.364 1.118l1.287 3.957c.3.922-.755 1.688-1.539 1.118l-3.366-2.446a1 1 0 0 0-1.176 0l-3.366 2.446c-.783.57-1.838-.196-1.539-1.118l1.287-3.957a1 1 0 0 0-.364-1.118L2.05 9.385c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 0 0 .95-.69l1.286-3.958Z" />
-                  </svg>
-                ))}
-              </div>
-              <figcaption className="font-display font-bold text-apex-white text-[14px] leading-snug mb-2">
-                Game Changer
-              </figcaption>
-              <blockquote className="text-apex-grey font-body text-[13px] leading-relaxed mb-4">
-                T-APEX will be a game changer for our athletes this coming year and year to
-                come. It&apos;s easy to use for all involved and the possibilities are limitless
-                when it comes to how to implement it into your training.
-              </blockquote>
-              <div className="flex items-center gap-3 pt-3 border-t border-apex-line/40">
-                <span className="w-9 h-9 flex-shrink-0 flex items-center justify-center bg-apex-carbon border border-apex-line/60 font-mono text-[11px] font-bold text-apex-grey">
-                  BF
-                </span>
-                <div className="min-w-0">
-                  <div className="font-display font-bold text-apex-white text-[12px] leading-tight truncate">Brad F</div>
-                  <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-apex-grey-dim mt-0.5">Verified Buyer</div>
-                </div>
-              </div>
-            </figure>
+            {/* Verified customer review — same italic style as the quote above,
+                borderless. */}
+            <blockquote className="mt-8">
+              <p className="text-apex-white font-body leading-relaxed mb-4 italic"
+                style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}>
+                &ldquo;T-APEX will be a game changer for our athletes this coming year and year
+                to come. It&apos;s easy to use for all involved and the possibilities are
+                limitless when it comes to how to implement it into your training.&rdquo;
+              </p>
+              <footer className="text-apex-grey-dim font-mono text-[11px] tracking-wide">
+                — Brad F · Verified Buyer
+              </footer>
+            </blockquote>
           </div>
         </motion.div>
       </div>
