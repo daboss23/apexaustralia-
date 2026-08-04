@@ -598,7 +598,7 @@ export default function CheckoutSection() {
                   <span className="text-apex-white font-semibold">Add the full overspeed accessories and its related software features</span>
                   <span className="text-apex-grey"> — unlock assisted overspeed training</span>
                 </span>
-                <span className="flex items-center gap-1.5 font-mono text-[11px] tracking-[0.16em] uppercase flex-shrink-0" style={{ color: GOLD }}>
+                <span className="flex items-center gap-1.5 font-mono font-bold text-[15px] tracking-[0.18em] uppercase flex-shrink-0" style={{ color: '#F5D77A', textShadow: '0 0 10px rgba(245,215,122,0.45)' }}>
                   Upgrade
                   <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
@@ -822,7 +822,7 @@ export default function CheckoutSection() {
                             <span className="text-apex-white font-semibold">Add the full overspeed accessories and its related software features</span>
                             <span className="text-apex-grey"> — unlock assisted overspeed training</span>
                           </span>
-                          <span className="flex items-center gap-1.5 font-mono text-[11px] tracking-[0.16em] uppercase flex-shrink-0" style={{ color: GOLD }}>
+                          <span className="flex items-center gap-1.5 font-mono font-bold text-[15px] tracking-[0.18em] uppercase flex-shrink-0" style={{ color: '#F5D77A', textShadow: '0 0 10px rgba(245,215,122,0.45)' }}>
                             Upgrade
                             <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />

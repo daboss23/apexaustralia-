@@ -164,10 +164,10 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
 
       {/* Sport label */}
       <div className="flex items-center justify-between mb-4">
-        <span className="text-[10px] font-mono font-semibold tracking-[0.25em] text-apex-grey uppercase">
+        <span className="text-[11px] font-mono font-semibold tracking-[0.25em] text-apex-grey uppercase">
           {card.sport}
         </span>
-        <span className="text-[10px] font-mono text-apex-grey-dim">#0{index + 1}</span>
+        <span className="text-[11px] font-mono text-apex-grey-dim">#0{index + 1}</span>
       </div>
 
       {/* Stat — same photo-finish move + flash as the headline metrics above */}
@@ -179,8 +179,10 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
           className="font-luxia font-black text-4xl t-blue leading-none"
         />
       </div>
-      <div className="text-sm font-display font-bold text-apex-white tracking-wide mb-0.5">{card.metric}</div>
-      <div className="text-[11px] font-body text-apex-grey mb-4">{card.detail}</div>
+      {/* Card title + body sized to match the Benefits cards so every card grid
+          on the site reads at the same scale (was text-sm / 11px — too small). */}
+      <div className="text-base font-display font-bold text-apex-white tracking-wide mb-1">{card.metric}</div>
+      <div className="text-[15px] font-body text-apex-grey leading-relaxed mb-4">{card.detail}</div>
 
       {/* Progress bar */}
       <div className="relative h-[3px] bg-apex-line rounded-full overflow-hidden">

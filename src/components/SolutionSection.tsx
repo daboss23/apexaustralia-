@@ -420,7 +420,7 @@ export default function SolutionSection() {
         </div>
 
         {/* ── The unit, floating in space — pillars materialize as it turns ── */}
-        <div ref={stageRef} className="relative mt-10 lg:mt-4 h-[400px] sm:h-[480px] lg:h-[640px]">
+        <div ref={stageRef} className="relative mt-16 lg:mt-24 h-[400px] sm:h-[480px] lg:h-[640px]">
           <FloatingUnit active={stageActive} />
 
           {/* Connector hairlines (lg+) — same structure as the "Engineered like

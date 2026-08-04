@@ -66,7 +66,7 @@ export default function ComparisonSection() {
 
       <div className="relative max-w-5xl mx-auto px-6 md:px-10">
         {/* Eyebrow — technology-first, electric blue */}
-        <div ref={titleRef} className="flex items-center gap-3 mb-7">
+        <div ref={titleRef} className="flex items-center justify-center gap-3 mb-7">
           <div className="w-8 h-px" style={{ background: C.blue }} />
           <span className="font-mono text-[12px] tracking-[0.3em] uppercase font-medium" style={{ color: C.blue }}>
             The Difference
@@ -75,7 +75,7 @@ export default function ComparisonSection() {
 
         {/* Machined-titanium headline */}
         <motion.h2
-          className="h-luxia leading-[0.95] mb-5"
+          className="h-luxia leading-[0.95] mb-5 text-center"
           style={{ fontSize: 'clamp(1.85rem, 4.4vw, 3.4rem)' }}
           initial={{ opacity: 0, y: 28 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -85,7 +85,7 @@ export default function ComparisonSection() {
           <span className="t-red">PLUS EVERYTHING THEY CAN&apos;T.</span>
         </motion.h2>
         <motion.p
-          className="font-body leading-relaxed max-w-2xl mb-8 md:mb-14"
+          className="font-body leading-relaxed max-w-2xl mx-auto text-center mb-8 md:mb-14"
           style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)', color: C.text }}
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -248,7 +248,7 @@ export default function ComparisonSection() {
             sits with even breathing room above and below rather than crowding
             the table above it. */}
         <motion.div
-          className="mt-16 md:mt-36"
+          className="mt-24 md:mt-48"
           initial={{ opacity: 0, y: 14 }}
           animate={tableInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.5 }}

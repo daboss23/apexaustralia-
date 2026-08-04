@@ -624,6 +624,39 @@
   .neon-play-ring { animation: none; }
 }
 
+/* ── Down-cue — a blue rail with a charge running down it and a bouncing
+   chevron, pointing the eye to what sits below. ───────────────────────────── */
+.down-cue-line {
+  position: relative;
+  width: 1px;
+  height: 40px;
+  overflow: hidden;
+  background: linear-gradient(to bottom, rgba(0, 174, 239, 0), rgba(0, 174, 239, 0.7));
+}
+.down-cue-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 12px;
+  background: linear-gradient(to bottom, rgba(0, 174, 239, 0), #7fe4ff);
+  box-shadow: 0 0 6px rgba(0, 174, 239, 0.9);
+  animation: down-cue-travel 1.8s ease-in-out infinite;
+}
+@keyframes down-cue-travel {
+  0% { transform: translateY(-14px); }
+  70%, 100% { transform: translateY(40px); }
+}
+.down-cue-chevron { animation: down-cue-bounce 1.8s ease-in-out infinite; }
+@keyframes down-cue-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .down-cue-line::after, .down-cue-chevron { animation: none; }
+}
+
 /* Navbar ORDER NOW artwork — same shine/glow, its own mask. Sized to the
    header slot (option 1: fit the existing bar, don't grow it). */
 .cta-order .cta-cart-shine {

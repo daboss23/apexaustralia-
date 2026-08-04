@@ -88,6 +88,25 @@ export default function WhatsIncludedSection() {
           </h3>
         </motion.div>
 
+        {/* Animated down-cue directly under the Overspeed Module heading — a
+            blue rail with a charge running down it and a bouncing chevron
+            (see .down-cue* in globals.css). */}
+        <div className="-mt-2 mb-8 flex justify-center" aria-hidden="true">
+          <div className="down-cue flex flex-col items-center gap-1.5">
+            <span className="down-cue-line" />
+            <svg className="down-cue-chevron" width="16" height="10" viewBox="0 0 16 10" fill="none">
+              <path
+                d="M1 1L8 8L15 1"
+                stroke="#00AEEF"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ filter: 'drop-shadow(0 0 4px rgba(0,174,239,0.7))' }}
+              />
+            </svg>
+          </div>
+        </div>
+
         {/* Overspeed kit hero — edges feathered into the section bg so it reads as part of the page.
             Full-bleed on mobile to match the box hero. */}
         <motion.div
@@ -136,10 +155,10 @@ export default function WhatsIncludedSection() {
             <span className="note-particle" style={{ left: '-3px', '--p-dur': '6.0s', '--p-delay': '2.6s', '--p-x': '10px', '--p-peak': 0.6 } as React.CSSProperties} />
             <span className="note-particle" style={{ left: '1px', '--p-dur': '5.7s', '--p-delay': '3.9s', '--p-x': '-8px', '--p-peak': 0.65 } as React.CSSProperties} />
           </div>
-          <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-3" style={{ color: 'rgba(214,31,38,0.9)' }}>
+          <div className="text-[13px] font-mono font-bold tracking-[0.3em] uppercase mb-3 text-center" style={{ color: 'rgba(214,31,38,1)' }}>
             Please Note
           </div>
-          <p className="text-apex-grey font-body leading-relaxed" style={{ fontSize: 'clamp(0.92rem, 1.3vw, 1.05rem)' }}>
+          <p className="text-apex-grey font-body leading-relaxed text-center" style={{ fontSize: 'clamp(1.05rem, 1.6vw, 1.25rem)' }}>
             Without the <span className="text-apex-white font-display font-bold">Overspeed Module</span>, you
             won&apos;t receive the five overspeed accessories above — and won&apos;t unlock the{' '}
             <span className="text-apex-white font-display font-bold">assisted overspeed training mode</span> and its
