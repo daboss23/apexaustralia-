@@ -207,20 +207,6 @@ export default function PerformanceSection() {
 
   return (
     <section id="performance" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
-      {/* Background diagonal accent lines */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        {[15, 35, 55, 75].map((pct) => (
-          <div
-            key={pct}
-            className="absolute h-px w-full"
-            style={{
-              top: `${pct}%`,
-              background: `linear-gradient(90deg, transparent 0%, rgba(38,38,46,0.5) 20%, rgba(38,38,46,0.5) 80%, transparent 100%)`,
-            }}
-          />
-        ))}
-      </div>
-
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         {/* Section label */}
         <motion.div

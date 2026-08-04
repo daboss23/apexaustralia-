@@ -60,11 +60,40 @@ function CountUp({ to, start, duration = 1.6 }: { to: number; start: boolean; du
   return <>{Math.round(val)}</>
 }
 
-function UpTick() {
+/* Bright-to-deep red gradient clipped to the figures — gives the numerals a
+   lit, machined-metal depth instead of a flat fill. */
+const NUM_STYLE: React.CSSProperties = {
+  backgroundImage: 'linear-gradient(180deg, #ff6a62 0%, #ea2731 50%, #c1141a 100%)',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  color: 'transparent',
+  WebkitTextFillColor: 'transparent',
+}
+
+function UpTick({ className = '' }: { className?: string }) {
   return (
-    <svg className="w-3 h-7 flex-shrink-0 text-apex-grey-dim/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21V4m0 0-4.5 5M12 4l4.5 5" />
+    <svg className={`w-2.5 h-8 flex-shrink-0 text-white/25 ${className}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.4} aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21V4m0 0-4.5 4.5M12 4l4.5 4.5" />
     </svg>
+  )
+}
+
+/* One machined panel — the "double bezel": an outer shell (hairline ring +
+   faint fill) cradling an inner core with its own top-edge highlight and a
+   mathematically smaller radius, so the curves stay concentric. */
+function Bezel({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div
+      className={`rounded-[1.4rem] p-1.5 border border-white/10 bg-white/[0.045] ${className}`}
+      style={{ boxShadow: '0 24px 70px -34px rgba(0,0,0,0.85)' }}
+    >
+      <div
+        className="h-full rounded-[1.05rem] bg-gradient-to-b from-white/[0.06] to-white/[0.01]"
+        style={{ boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.13), inset 0 0 0 1px rgba(255,255,255,0.02)' }}
+      >
+        {children}
+      </div>
+    </div>
   )
 }
 
@@ -72,30 +101,42 @@ function PowerStatsBar({ style }: { style?: { opacity?: MotionValue<number> } })
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-10% 0px' })
   return (
-    <motion.div ref={ref} style={style} className="w-full max-w-5xl mx-auto">
-      <div className="flex items-stretch gap-2.5 sm:gap-3">
+    <motion.div ref={ref} style={style} className="relative w-full max-w-[1500px] mx-auto">
+      {/* Soft ambient wash so the bar reads as lit glass, not a flat plate */}
+      <div
+        aria-hidden="true"
+        className="absolute -inset-x-8 -inset-y-6 -z-10 pointer-events-none"
+        style={{ background: 'radial-gradient(65% 130% at 50% 0%, rgba(214,31,38,0.10), transparent 72%)' }}
+      />
+
+      <div className="flex flex-col sm:flex-row items-stretch gap-2.5 sm:gap-3">
         {/* Side label */}
-        <div className="flex-shrink-0 flex flex-col justify-center px-3.5 sm:px-5 py-3 border border-apex-line/60 bg-apex-black/55 backdrop-blur-sm">
-          <span className="font-display font-black text-apex-white leading-tight text-base sm:text-xl xl:text-2xl">Power</span>
-          <span className="font-display font-black text-apex-red leading-tight text-base sm:text-xl xl:text-2xl">Redefined</span>
-        </div>
+        <Bezel className="sm:flex-shrink-0">
+          <div className="h-full px-5 sm:px-7 py-3.5 sm:py-4 flex flex-row sm:flex-col items-baseline sm:items-start justify-center gap-x-2.5">
+            <span className="font-display font-black text-apex-white leading-[1.02] tracking-tight text-xl sm:text-2xl xl:text-[1.8rem]">Power</span>
+            <span className="font-display font-black leading-[1.02] tracking-tight text-xl sm:text-2xl xl:text-[1.8rem]" style={NUM_STYLE}>Redefined</span>
+          </div>
+        </Bezel>
+
         {/* Stats */}
-        <div className="flex-1 flex items-center justify-around gap-1.5 sm:gap-3 px-3 sm:px-6 py-3 border border-apex-line/60 bg-apex-black/40 backdrop-blur-sm overflow-hidden">
-          {POWER_STATS.map((s, i) => (
-            <Fragment key={s.label}>
-              {i > 0 && <UpTick />}
-              <div className="flex items-baseline gap-1.5 min-w-0">
-                <span className="font-display font-black text-apex-red-bright leading-none text-2xl sm:text-4xl xl:text-5xl metric-value">
-                  <CountUp to={s.to} start={inView} />
-                  <span className="text-xs sm:text-base ml-0.5">{s.unit}</span>
-                </span>
-                <span className="font-mono text-[8px] sm:text-[9px] leading-tight uppercase tracking-wide text-apex-red/70 max-w-[54px] sm:max-w-[74px]">
-                  {s.label}
-                </span>
-              </div>
-            </Fragment>
-          ))}
-        </div>
+        <Bezel className="flex-1">
+          <div className="h-full px-4 sm:px-8 py-4 sm:py-5 grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-x-3 gap-y-5">
+            {POWER_STATS.map((s, i) => (
+              <Fragment key={s.label}>
+                {i > 0 && <UpTick className="hidden sm:block" />}
+                <div className="flex items-baseline gap-2 justify-center sm:justify-start">
+                  <span className="font-display font-black leading-none tracking-tight text-[2rem] sm:text-5xl xl:text-6xl metric-value" style={NUM_STYLE}>
+                    <CountUp to={s.to} start={inView} />
+                    <span className="text-base sm:text-2xl xl:text-3xl">{s.unit}</span>
+                  </span>
+                  <span className="font-mono text-[8px] sm:text-[9px] leading-[1.25] uppercase tracking-[0.08em] text-apex-red/60 text-left max-w-[54px] sm:max-w-[82px]">
+                    {s.label}
+                  </span>
+                </div>
+              </Fragment>
+            ))}
+          </div>
+        </Bezel>
       </div>
     </motion.div>
   )
