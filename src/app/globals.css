@@ -914,29 +914,29 @@
 
 @keyframes note-glow {
   0%, 100% {
-    border-top-color: rgba(214, 31, 38, 0.30);
-    border-right-color: rgba(214, 31, 38, 0.30);
-    border-bottom-color: rgba(214, 31, 38, 0.30);
-    border-left-color: #A8161B;
+    border-top-color: rgba(0, 174, 239, 0.30);
+    border-right-color: rgba(0, 174, 239, 0.30);
+    border-bottom-color: rgba(0, 174, 239, 0.30);
+    border-left-color: #0A7FB0;
     box-shadow:
-      0 0 16px rgba(214, 31, 38, 0.16),
-      0 0 4px rgba(214, 31, 38, 0.22),
-      inset 0 0 20px rgba(214, 31, 38, 0.04);
+      0 0 16px rgba(0, 174, 239, 0.16),
+      0 0 4px rgba(0, 174, 239, 0.22),
+      inset 0 0 20px rgba(0, 174, 239, 0.04);
   }
   50% {
-    border-top-color: rgba(255, 62, 68, 0.85);
-    border-right-color: rgba(255, 62, 68, 0.85);
-    border-bottom-color: rgba(255, 62, 68, 0.85);
-    border-left-color: #FF3B42;
+    border-top-color: rgba(90, 210, 255, 0.85);
+    border-right-color: rgba(90, 210, 255, 0.85);
+    border-bottom-color: rgba(90, 210, 255, 0.85);
+    border-left-color: #5AD2FF;
     box-shadow:
-      0 0 44px rgba(214, 31, 38, 0.48),
-      0 0 12px rgba(255, 62, 68, 0.42),
-      inset 0 0 32px rgba(214, 31, 38, 0.11);
+      0 0 44px rgba(0, 174, 239, 0.48),
+      0 0 12px rgba(90, 210, 255, 0.42),
+      inset 0 0 32px rgba(0, 174, 239, 0.11);
   }
 }
 .note-glow {
-  border: 1px solid rgba(214, 31, 38, 0.3);
-  border-left: 4px solid #D61F26;
+  border: 1px solid rgba(0, 174, 239, 0.3);
+  border-left: 4px solid #00AEEF;
   animation: note-glow 2.6s ease-in-out infinite;
 }
 
@@ -953,7 +953,7 @@
   left: 0;
   height: 1px;
   width: 90px;
-  background: linear-gradient(90deg, transparent, rgba(255, 90, 90, 0.9), transparent);
+  background: linear-gradient(90deg, transparent, rgba(120, 220, 255, 0.9), transparent);
   animation: note-trace 4.5s ease-in-out infinite;
 }
 
@@ -970,8 +970,8 @@
   width: 2px;
   height: 2px;
   border-radius: 9999px;
-  background: rgba(255, 99, 99, 0.9);
-  box-shadow: 0 0 5px rgba(214, 31, 38, 0.8);
+  background: rgba(120, 210, 255, 0.9);
+  box-shadow: 0 0 5px rgba(0, 174, 239, 0.8);
   animation: note-particle var(--p-dur, 5s) linear infinite;
   animation-delay: var(--p-delay, 0s);
 }

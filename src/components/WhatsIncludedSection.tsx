@@ -141,7 +141,7 @@ export default function WhatsIncludedSection() {
         <motion.div
           className="note-glow relative p-7 md:p-8"
           style={{
-            background: 'linear-gradient(135deg, rgba(20,20,24,1) 0%, rgba(10,13,16,1) 55%, rgba(214,31,38,0.08) 100%)',
+            background: 'linear-gradient(135deg, rgba(20,20,24,1) 0%, rgba(10,13,16,1) 55%, rgba(0,174,239,0.08) 100%)',
           }}
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -155,7 +155,7 @@ export default function WhatsIncludedSection() {
             <span className="note-particle" style={{ left: '-3px', '--p-dur': '6.0s', '--p-delay': '2.6s', '--p-x': '10px', '--p-peak': 0.6 } as React.CSSProperties} />
             <span className="note-particle" style={{ left: '1px', '--p-dur': '5.7s', '--p-delay': '3.9s', '--p-x': '-8px', '--p-peak': 0.65 } as React.CSSProperties} />
           </div>
-          <div className="text-[13px] font-mono font-bold tracking-[0.3em] uppercase mb-3 text-center" style={{ color: 'rgba(214,31,38,1)' }}>
+          <div className="text-[13px] font-mono font-bold tracking-[0.3em] uppercase mb-3 text-center" style={{ color: 'rgba(0,174,239,1)' }}>
             Please Note
           </div>
           <p className="text-apex-grey font-body leading-relaxed text-center" style={{ fontSize: 'clamp(1.05rem, 1.6vw, 1.25rem)' }}>
