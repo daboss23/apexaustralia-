@@ -66,16 +66,19 @@ export default function FinalCTA() {
             }}
           />
 
-          {/* Energy streaks sweeping through the frame */}
+          {/* Energy streaks sweeping through the frame. Desktop only: on a phone
+              the sweep sits parked at the left edge as stray blue/red segments
+              (they cross the narrow viewport too slowly to read as motion), so
+              the section stays as clean as the desktop version. */}
           <div
-            className="absolute left-0 w-[38vw] h-[2px] top-[30%]"
+            className="hidden md:block absolute left-0 w-[38vw] h-[2px] top-[30%]"
             style={{
               background: 'linear-gradient(90deg, transparent, rgba(0,174,239,0.5), transparent)',
               animation: 'energy-streak 9s linear infinite',
             }}
           />
           <div
-            className="absolute left-0 w-[46vw] h-[3px] top-[52%]"
+            className="hidden md:block absolute left-0 w-[46vw] h-[3px] top-[52%]"
             style={{
               background: 'linear-gradient(90deg, transparent, rgba(214,31,38,0.45), transparent)',
               animation: 'energy-streak 12s linear infinite',
@@ -83,7 +86,7 @@ export default function FinalCTA() {
             }}
           />
           <div
-            className="absolute left-0 w-[30vw] h-px top-[68%]"
+            className="hidden md:block absolute left-0 w-[30vw] h-px top-[68%]"
             style={{
               background: 'linear-gradient(90deg, transparent, rgba(255,59,48,0.35), transparent)',
               animation: 'energy-streak 10s linear infinite',
@@ -150,7 +153,7 @@ export default function FinalCTA() {
               With none, all three lines share the same leading-[0.86] rhythm. */}
           <div className="overflow-hidden">
             <motion.h2
-              className="h-luxia t-silver leading-[0.86]"
+              className="h-luxia t-silver leading-[1.04] md:leading-[0.86]"
               style={{ fontSize: 'clamp(2rem, 4.9vw, 4.3rem)' }}
               initial={{ y: 120, opacity: 0 }}
               animate={inView ? { y: 0, opacity: 1 } : {}}
@@ -162,7 +165,7 @@ export default function FinalCTA() {
           <div className="relative mb-5">
             <div className="overflow-hidden">
               <motion.h2
-                className="h-luxia t-red leading-[0.86]"
+                className="h-luxia t-red leading-[1.04] md:leading-[0.86]"
                 style={{ fontSize: 'clamp(2rem, 4.9vw, 4.3rem)' }}
                 initial={{ y: 120, opacity: 0 }}
                 animate={inView ? { y: 0, opacity: 1 } : {}}
