@@ -260,15 +260,24 @@ export default function PerformanceSection() {
             the plate spans the screen instead of sitting inside the text
             column, which is the only way to gain size on a 16:9 band that is
             already width-limited. mt-2 drops it clear of the intro copy so the
-            gap above it matches the one below. Desktop keeps the column. */}
+            gap above it matches the one below. Desktop keeps the column.
+
+            The phone also crops the frame to 16:10 rather than 16:9. The clip
+            is composed for a wide plate — the machine sits in the upper middle
+            with a lot of empty floor beneath it — so at a true 16:9 the bottom
+            third was black, which read as a gap between the film and the "14"
+            below rather than as part of the shot. `object-cover` turns that
+            crop into a zoom, so the machine gains size as the dead space goes;
+            the 46% object-position keeps it optically centred in what is left
+            instead of letting an even crop shave its wheels. */}
         <motion.div
-          className="relative -mx-6 md:mx-0 mt-2 md:mt-0 mb-12 md:mb-20 overflow-hidden aspect-video"
+          className="relative -mx-6 md:mx-0 mt-2 md:mt-0 mb-12 md:mb-20 overflow-hidden aspect-[16/10] md:aspect-video"
           initial={{ opacity: 0, y: 26 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
         >
           <LazyVideo
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover object-[50%_46%] md:object-center"
             src="/athlete-holograms.mp4"
             poster="/athlete-holograms-poster.jpg"
           />
