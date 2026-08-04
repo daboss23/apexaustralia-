@@ -34,8 +34,14 @@ const STAGE_CARDS = [
   { seq: 2, side: 'right' as const, pos: { right: '1%', bottom: '8%' } as const, anchor: { x: 82, y: 80 }, target: { x: 66, y: 62 } },
 ]
 
-const CARD_LINE_AT = (seq: number) => 0.45 + seq * 0.7
-const CARD_AT = (seq: number) => 0.75 + seq * 0.7
+// Timing mirrors the ProductShowcase ("Engineered like nothing else") callouts
+// so both sections' blue lines + labels appear with the identical sequence and
+// spacing: reticle snaps on → hairline draws out → label slides in from the
+// line. (Was a slower 0.7s step with a rise+scale label; now the 0.5s step and
+// horizontal slide of the reference.)
+const CARD_RETICLE_AT = (seq: number) => 0.45 + seq * 0.5
+const CARD_LINE_AT = (seq: number) => CARD_RETICLE_AT(seq) + 0.18
+const CARD_LABEL_AT = (seq: number) => CARD_RETICLE_AT(seq) + 0.3
 
 type Riser = { left: number; bottom: number; size: number; dur: number; delay: number; drift: number; color: string }
 
@@ -231,7 +237,7 @@ function LockReticle({ target, active, delay }: { target: { x: number; y: number
       }}
       initial={{ opacity: 0, scale: 2.6 }}
       animate={active ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 2.6 }}
-      transition={active ? { duration: 0.4, delay, ease: [0.2, 1.1, 0.3, 1] } : { duration: 0 }}
+      transition={active ? { duration: 0.38, delay, ease: [0.2, 1.1, 0.3, 1] } : { duration: 0 }}
       aria-hidden="true"
     >
       <svg viewBox="0 0 22 22" fill="none" className="w-full h-full">
@@ -439,7 +445,7 @@ export default function SolutionSection() {
                   animate={stageActive ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
                   transition={
                     stageActive
-                      ? { pathLength: { duration: 0.5, delay: CARD_LINE_AT(c.seq) + 0.15, ease: 'linear' }, opacity: { duration: 0.01, delay: CARD_LINE_AT(c.seq) + 0.15 } }
+                      ? { pathLength: { duration: 0.45, delay: CARD_LINE_AT(c.seq), ease: 'linear' }, opacity: { duration: 0.01, delay: CARD_LINE_AT(c.seq) } }
                       : { duration: 0 }
                   }
                 />
@@ -449,7 +455,7 @@ export default function SolutionSection() {
 
           {/* Lock-on reticles on the unit */}
           {STAGE_CARDS.map(c => (
-            <LockReticle key={c.seq} target={c.target} active={stageActive} delay={CARD_LINE_AT(c.seq)} />
+            <LockReticle key={c.seq} target={c.target} active={stageActive} delay={CARD_RETICLE_AT(c.seq)} />
           ))}
 
           {/* Pillars around the unit (lg+) */}
@@ -458,11 +464,11 @@ export default function SolutionSection() {
               key={seq}
               className="absolute hidden xl:block w-[210px] z-10"
               style={pos}
-              initial={{ opacity: 0, y: 18, scale: 0.96 }}
-              animate={stageActive ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 18, scale: 0.96 }}
+              initial={{ opacity: 0, x: side === 'left' ? -8 : 8 }}
+              animate={stageActive ? { opacity: 1, x: 0 } : { opacity: 0, x: side === 'left' ? -8 : 8 }}
               transition={
                 stageActive
-                  ? { duration: 0.55, delay: CARD_AT(seq), ease: [0.16, 1, 0.3, 1] }
+                  ? { duration: 0.4, delay: CARD_LABEL_AT(seq), ease: [0.16, 1, 0.3, 1] }
                   : { duration: 0 }
               }
             >
