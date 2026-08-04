@@ -153,19 +153,10 @@ export default function SiteFooter() {
 
       {/* ── Bottom bar ─────────────────────────────────────────────────────── */}
       <div className="relative border-t border-apex-line/40">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <span className="text-apex-grey-dim font-mono text-[10px] tracking-wide text-center">
+        <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 py-6 flex items-center justify-center">
+          <span className="text-apex-grey font-mono text-[12.5px] tracking-wide text-center">
             © 2026 T-APEX Australia. All rights reserved.
           </span>
-          <span className="text-apex-grey-dim font-mono text-[10px] tracking-[0.2em] uppercase">
-            Direct from the Australian team
-          </span>
-          <a
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="text-apex-grey-dim hover:text-apex-grey font-mono text-[10px] tracking-wide transition-colors"
-          >
-            {CONTACT_EMAIL}
-          </a>
         </div>
       </div>
     </footer>
