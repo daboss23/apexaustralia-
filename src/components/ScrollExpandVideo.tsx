@@ -226,9 +226,13 @@ function VideoPlate({
           aria-label="Play the T-APEX feature walkthrough"
           className="absolute inset-0 z-10 flex items-center justify-center group cursor-pointer"
         >
-          <span className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center bg-black/55 backdrop-blur-sm border border-apex-white/40 group-hover:border-apex-red transition-colors duration-300">
-            <svg className="w-6 h-6 md:w-7 md:h-7 text-apex-white ml-1" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M8 5v14l11-7z" />
+          {/* Neon play button — glossy dark disc, a glowing multicolour ring
+              and a neon-outlined triangle (see .neon-play* in globals.css). */}
+          <span className="neon-play relative w-20 h-20 md:w-24 md:h-24 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+            <span className="neon-play-ring" aria-hidden="true" />
+            <span className="neon-play-disc" aria-hidden="true" />
+            <svg className="neon-play-tri relative w-7 h-7 md:w-8 md:h-8 ml-1" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M8 5.5 L18.5 12 L8 18.5 Z" stroke="#d6a8ff" strokeWidth="1.4" strokeLinejoin="round" />
             </svg>
           </span>
         </button>
