@@ -173,6 +173,46 @@ function Stars({ className = '' }: { className?: string }) {
   )
 }
 
+/**
+ * Product identity — chip, rating, name, tagline.
+ *
+ * Its own component because it is rendered in two places and only one of them
+ * is ever visible: above the grid on mobile (photos follow the name), inside
+ * the buy column on desktop (name sits with the price). Same markup either way,
+ * so the two can never drift apart.
+ */
+function Identity({ variant, isOver }: { variant: Variant; isOver: boolean }) {
+  return (
+    <>
+      {/* Chip + rating */}
+      <div className="flex items-center gap-3 mb-3 flex-wrap">
+        <span
+          className="font-mono text-[11px] tracking-[0.26em] uppercase px-2.5 py-1 border"
+          style={
+            isOver
+              ? { color: GOLD, borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.1)' }
+              : { color: '#D61F26', borderColor: 'rgba(214,31,38,0.4)', background: 'rgba(214,31,38,0.1)' }
+          }
+        >
+          {variant.chip}
+        </span>
+        <div className="flex items-center gap-2">
+          <Stars />
+          <span className="font-mono text-[11.5px] tracking-wide text-apex-grey">Trusted by elite programs</span>
+        </div>
+      </div>
+
+      {/* Name + tagline */}
+      <h3 className="font-display font-black t-feature leading-none mb-2" style={{ fontSize: 'clamp(1.7rem, 3.4vw, 2.6rem)' }}>
+        {variant.name}
+      </h3>
+      <p className="text-apex-grey font-body" style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
+        {variant.tagline}
+      </p>
+    </>
+  )
+}
+
 /* ── Gallery ──────────────────────────────────────────────────────────────── */
 
 function Gallery({ variant }: { variant: Variant }) {
@@ -539,12 +579,22 @@ export default function CheckoutSection() {
           </div>
         </div>
 
+        {/* Identity — chip, rating, name, tagline.
+            Rendered HERE on mobile/tablet (and hidden inside the buy column
+            below), so the stacked order is: who this is → what it looks like →
+            what it costs. It used to sit at the top of the buy column, which on
+            a phone pushed the gallery under the whole price/CTA/review stack —
+            the product name introduced a block of copy rather than the photos.
+            Desktop is two columns, where the identity belongs with the price. */}
+        <div className="lg:hidden mb-6">
+          <Identity variant={variant} isOver={isOver} />
+        </div>
+
         {/* ── Product showcase + ADD TO CART (opens the two-step popup) ── */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-14 items-start">
-          {/* LEFT — gallery + feature bullets.
-              Stacked (mobile/tablet) this drops below the buy column, so the
-              reviews stay directly under the Add to Cart button there too. */}
-          <div className="order-2 lg:order-1">
+          {/* LEFT — gallery + feature bullets. Stacked, this now sits directly
+              under the identity block above and ahead of the buy column. */}
+          <div className="order-1 lg:order-1">
             <Gallery variant={variant} />
             <HighlightBullets highlights={variant.highlights} className="mt-6" />
           </div>
@@ -553,32 +603,11 @@ export default function CheckoutSection() {
               (No longer sticky: with the testimonials living under the CTA this
               column is the tall one, so there is nothing for it to stick
               against — the gallery column runs out first.) */}
-          <div className="order-1 lg:order-2 flex flex-col">
-            {/* Chip + rating */}
-            <div className="flex items-center gap-3 mb-3 flex-wrap">
-              <span
-                className="font-mono text-[11px] tracking-[0.26em] uppercase px-2.5 py-1 border"
-                style={
-                  isOver
-                    ? { color: GOLD, borderColor: 'rgba(180,140,60,0.45)', background: 'rgba(180,140,60,0.1)' }
-                    : { color: '#D61F26', borderColor: 'rgba(214,31,38,0.4)', background: 'rgba(214,31,38,0.1)' }
-                }
-              >
-                {variant.chip}
-              </span>
-              <div className="flex items-center gap-2">
-                <Stars />
-                <span className="font-mono text-[10px] tracking-wide text-apex-grey-dim">Trusted by elite programs</span>
-              </div>
+          <div className="order-2 lg:order-2 flex flex-col">
+            {/* Identity — desktop only here; on mobile it is above the grid. */}
+            <div className="hidden lg:block mb-6">
+              <Identity variant={variant} isOver={isOver} />
             </div>
-
-            {/* Name + tagline */}
-            <h3 className="font-display font-black t-feature leading-none mb-2" style={{ fontSize: 'clamp(1.7rem, 3.4vw, 2.6rem)' }}>
-              {variant.name}
-            </h3>
-            <p className="text-apex-grey font-body mb-6" style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
-              {variant.tagline}
-            </p>
 
             <div className="mb-6 pb-2 border-b border-apex-line/50" />
 
