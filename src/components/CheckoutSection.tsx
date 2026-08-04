@@ -547,8 +547,8 @@ export default function CheckoutSection() {
           animate={titleInView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7, delay: 0.15 }}
         >
-          Choose your configuration. Both ship ready to coach — preloaded, calibrated, and backed by
-          the Australian team.
+          Choose your configuration. Both ship ready to coach — preloaded, calibrated and ready to
+          perform.
         </motion.p>
 
         {/* Variant toggle */}

@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
+import TestimonialSlider from './TestimonialSlider'
 
 // Lead with what everyone does, then the things only T-Apex does — the
 // contrast (✓✓ → ✓✗) is what makes the table persuasive.
@@ -241,29 +242,15 @@ export default function ComparisonSection() {
           </div>
         </motion.div>
 
-        {/* Verdict + CTA — graphite glass with blue edge, red accent line */}
+        {/* Coach testimonials — replaced the verdict banner that closed this
+            section (see TestimonialSlider). */}
         <motion.div
-          className="mt-8 md:mt-14 p-8 md:p-9 relative overflow-hidden"
-          style={{
-            background: 'rgba(12,12,14,0.7)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: `1px solid ${C.border}`,
-            boxShadow: '0 30px 60px -30px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04)',
-          }}
+          className="mt-10 md:mt-16"
           initial={{ opacity: 0, y: 14 }}
           animate={tableInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          {/* Blue top edge */}
-          <div className="absolute top-0 left-8 right-8 h-px pointer-events-none" style={{ background: `linear-gradient(90deg, transparent, ${C.blue}, transparent)` }} />
-          {/* Red accent rule, left */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-12 pointer-events-none" style={{ background: C.red, boxShadow: `0 0 16px ${C.red}` }} />
-
-          <h3 className="font-display font-black text-apex-white leading-tight max-w-3xl mx-auto" style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.7rem)', textAlign: 'justify', textAlignLast: 'center' }}>
-            You&apos;re not choosing between products — you&apos;re choosing whether to{' '}
-            <span className="text-apex-blue">measure, or keep guessing.</span>
-          </h3>
+          <TestimonialSlider />
         </motion.div>
       </div>
     </section>
