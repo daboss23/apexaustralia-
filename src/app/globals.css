@@ -546,6 +546,37 @@
   50% { background-position: 0% 50%; }
 }
 
+/* Warranty seal — a bright gold band sweeps across the badge on a loop, then
+   rests off-frame before the next pass. Masked to the PNG's own shape so the
+   streak lights only the seal, not the rectangle around it. Overlaid with
+   `screen` so it adds light to the existing gold rather than painting over it. */
+.badge-shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 34%,
+    rgba(255, 238, 176, 0.5) 45%,
+    rgba(255, 251, 224, 0.95) 50%,
+    rgba(255, 238, 176, 0.5) 55%,
+    transparent 66%
+  );
+  background-size: 260% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  -webkit-mask: url('/apex guarantee.png') center / contain no-repeat;
+  mask: url('/apex guarantee.png') center / contain no-repeat;
+  animation: badge-shine-sweep 3.6s ease-in-out infinite;
+}
+@keyframes badge-shine-sweep {
+  0% { background-position: 180% 0; }
+  55%, 100% { background-position: -80% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .badge-shine { animation: none; opacity: 0; }
+}
+
 /* Navbar ORDER NOW artwork — same shine/glow, its own mask. Sized to the
    header slot (option 1: fit the existing bar, don't grow it). */
 .cta-order .cta-cart-shine {

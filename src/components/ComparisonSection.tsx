@@ -243,9 +243,12 @@ export default function ComparisonSection() {
         </motion.div>
 
         {/* Coach testimonials — replaced the verdict banner that closed this
-            section (see TestimonialSlider). */}
+            section (see TestimonialSlider). Top margin is matched to the
+            section's own bottom padding (py-16 / md:py-36) so the reviews block
+            sits with even breathing room above and below rather than crowding
+            the table above it. */}
         <motion.div
-          className="mt-10 md:mt-16"
+          className="mt-16 md:mt-36"
           initial={{ opacity: 0, y: 14 }}
           animate={tableInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.5 }}

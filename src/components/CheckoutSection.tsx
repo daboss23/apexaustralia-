@@ -656,12 +656,19 @@ export default function CheckoutSection() {
             aria-hidden="true"
           />
           <div className="relative">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/apex guarantee.png"
-              alt="Customer Satisfaction — 2 Year Warranty Guaranteed"
-              className="w-64 sm:w-80 md:w-[28rem] h-auto mx-auto mb-6"
-            />
+            {/* Warranty seal — the gold shine sweeps a bright band across the
+                badge on a loop. It is masked to the PNG's own shape (see
+                .badge-shine in globals.css) so the streak only lights the seal,
+                not the rectangle around it. */}
+            <div className="badge-shine-wrap relative w-72 sm:w-96 md:w-[34rem] h-auto mx-auto mb-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/apex guarantee.png"
+                alt="Customer Satisfaction — 2 Year Warranty Guaranteed"
+                className="w-full h-auto"
+              />
+              <span className="badge-shine" aria-hidden="true" />
+            </div>
             <p className="font-display font-black text-apex-white leading-tight max-w-2xl mx-auto mb-2" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.6rem)' }}>
               Try it with your athletes. See the data before you commit.
             </p>
