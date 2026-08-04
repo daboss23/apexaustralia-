@@ -122,7 +122,7 @@ function HeroCopy({ showLogo = false }: { showLogo?: boolean }) {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 1.4 }}
       >
-        From A$9,450 · Free insured shipping Australia-wide · 2-year warranty
+        From A$9,450 · Free shipping Australia-wide · 2-year warranty
       </motion.p>
     </div>
   )

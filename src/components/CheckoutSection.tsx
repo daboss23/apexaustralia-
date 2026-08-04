@@ -114,29 +114,6 @@ function startAtProps(startAt?: number) {
 
 const GOLD = 'rgba(180,140,60,1)'
 
-const TRUST_BADGES = [
-  {
-    label: '2-Year Warranty',
-    sub: 'Full manufacturer cover',
-    icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
-    ),
-  },
-  {
-    label: 'Free Insured Shipping',
-    sub: 'Australia-wide dispatch',
-    icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-5.25" />
-    ),
-  },
-  {
-    label: 'Secure Checkout',
-    sub: '256-bit encrypted',
-    icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-    ),
-  },
-]
 
 const PAY_METHODS = ['VISA', 'Mastercard', 'AMEX', 'PayPal', 'Afterpay', 'Apple Pay']
 
@@ -654,7 +631,7 @@ export default function CheckoutSection() {
 
             {/* Reassurance line */}
             <p className="font-mono text-[11px] tracking-[0.12em] uppercase text-apex-grey text-center mt-4 leading-relaxed">
-              2-year warranty · free insured shipping · secure checkout
+              2-year warranty · free shipping · secure checkout
             </p>
 
             {/* ── Moving testimonials wall — directly under the Add to Cart
@@ -664,24 +641,35 @@ export default function CheckoutSection() {
           </div>
         </div>
 
-        {/* ── Trust badge strip ── */}
+        {/* ── Guarantee / closing banner — sits where the trust-badge strip
+            used to (that strip was removed). ── */}
         <motion.div
-          className="trust-glow grid grid-cols-1 sm:grid-cols-3 gap-px bg-apex-line/40 mt-10 md:mt-16 mx-auto w-full max-w-4xl"
+          className="relative mt-10 md:mt-16 border border-apex-line/60 bg-apex-black-2/60 px-6 sm:px-10 py-10 text-center overflow-hidden"
+          style={{ borderTop: '2px solid rgba(214,31,38,0.6)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
         >
-          {TRUST_BADGES.map((b) => (
-            <div key={b.label} className="flex items-center justify-center gap-4 bg-apex-black px-6 py-9 md:py-10 text-center sm:text-left">
-              <svg className="w-10 h-10 md:w-11 md:h-11 text-apex-red flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.4} stroke="currentColor">
-                {b.icon}
-              </svg>
-              <div className="flex flex-col">
-                <span className="font-display font-bold text-apex-white text-[15px] md:text-[16px] leading-tight">{b.label}</span>
-                <span className="font-body text-apex-grey-dim text-[12px] md:text-[13px] leading-tight mt-0.5">{b.sub}</span>
-              </div>
-            </div>
-          ))}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse 70% 80% at 50% 0%, rgba(214,31,38,0.07), transparent 70%)' }}
+            aria-hidden="true"
+          />
+          <div className="relative">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/apex guarantee.png"
+              alt="Customer Satisfaction — 2 Year Warranty Guaranteed"
+              className="w-64 sm:w-80 md:w-[28rem] h-auto mx-auto mb-6"
+            />
+            <p className="font-display font-black text-apex-white leading-tight max-w-2xl mx-auto mb-2" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.6rem)' }}>
+              Try it with your athletes. See the data before you commit.
+            </p>
+            <p className="text-apex-grey font-body max-w-xl mx-auto" style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
+              Every system is backed by a <span className="text-apex-blue font-semibold">2-year warranty</span> and
+              hands-on support from the Australian team. On-site or virtual demo — no obligation.
+            </p>
+          </div>
         </motion.div>
 
         {/* ── Description ── */}
@@ -700,7 +688,7 @@ export default function CheckoutSection() {
             <p className="text-apex-grey font-body leading-[1.8] mb-4" style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.05rem)' }}>
               T-APEX applies intelligent resistance and assistance in motion, then measures the result in
               real time — so every session produces data you can coach from, not a workout you have to
-              guess at. And it travels with the team: case to first sprint in about five minutes.
+              guess at.
             </p>
             <p className="font-display font-black text-apex-white leading-tight" style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.35rem)' }}>
               One system for resistance, overspeed, and data —{' '}
@@ -760,35 +748,6 @@ export default function CheckoutSection() {
           </div>
         </div>
 
-        {/* ── Guarantee / closing banner ── */}
-        <motion.div
-          className="relative mt-12 md:mt-20 border border-apex-line/60 bg-apex-black-2/60 px-6 sm:px-10 py-10 text-center overflow-hidden"
-          style={{ borderTop: '2px solid rgba(214,31,38,0.6)' }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-        >
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ background: 'radial-gradient(ellipse 70% 80% at 50% 0%, rgba(214,31,38,0.07), transparent 70%)' }}
-            aria-hidden="true"
-          />
-          <div className="relative">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/apex guarantee.png"
-              alt="Customer Satisfaction — 2 Year Warranty Guaranteed"
-              className="w-64 sm:w-80 md:w-[28rem] h-auto mx-auto mb-6"
-            />
-            <p className="font-display font-black text-apex-white leading-tight max-w-2xl mx-auto mb-2" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.6rem)' }}>
-              Try it with your athletes. See the data before you commit.
-            </p>
-            <p className="text-apex-grey font-body max-w-xl mx-auto" style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
-              Every system is backed by a <span className="text-apex-blue font-semibold">2-year warranty</span> and
-              hands-on support from the Australian team. On-site or virtual demo — no obligation.
-            </p>
-          </div>
-        </motion.div>
       </div>
 
       {/* ══ CHECKOUT POPUP — its own entity: dark backdrop, only this scrolls ══ */}

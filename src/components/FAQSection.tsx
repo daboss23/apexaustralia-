@@ -7,7 +7,7 @@ import { DEMO_HREF, ENQUIRY_HREF } from '@/lib/site'
 const FAQS = [
   {
     q: 'How much does T-Apex cost?',
-    a: 'The Core T-APEX system is A$9,450 including GST. Adding the full five-piece Overspeed Module brings the complete system to A$9,990. Both include free insured shipping Australia-wide, and flexible payment plans are available — comparable systems cost around A$30,000 plus annual software fees.',
+    a: 'The Core T-APEX system is A$9,450 including GST. Adding the full five-piece Overspeed Module brings the complete system to A$9,990. Both include free shipping Australia-wide, and flexible payment plans are available — comparable systems cost around A$30,000 plus annual software fees.',
   },
   {
     q: 'Are there ongoing software fees or subscriptions?',
@@ -31,7 +31,7 @@ const FAQS = [
   },
   {
     q: 'How long does delivery take?',
-    a: 'Systems ship insured and free Australia-wide. Once dispatched, you are typically training within days — setup takes about five minutes from case to first sprint, and the tablet arrives preloaded and calibrated.',
+    a: 'Systems ship free Australia-wide. Once dispatched, you are typically training within days — setup takes about five minutes from case to first sprint, and the tablet arrives preloaded and calibrated.',
   },
   {
     q: 'Can I see T-Apex in action before buying?',

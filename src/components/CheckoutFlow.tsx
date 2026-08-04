@@ -318,7 +318,7 @@ function TrustBadges() {
       ),
     },
     {
-      label: 'Free Insured',
+      label: 'Free Shipping',
       sub: 'AU Shipping',
       icon: (
         <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-5.25" />
@@ -697,7 +697,7 @@ export default function CheckoutFlow({
                               </div>
                             )}
                             <div className="flex items-baseline justify-between gap-4">
-                              <dt className="text-apex-grey font-body text-[13px]">Insured shipping · Australia-wide</dt>
+                              <dt className="text-apex-grey font-body text-[13px]">Free shipping · Australia-wide</dt>
                               <dd className="font-mono text-apex-blue text-[13px] uppercase tracking-wide">Free</dd>
                             </div>
                           </dl>
@@ -783,14 +783,14 @@ export default function CheckoutFlow({
                         {payMethod === 'card' ? (
                           <button
                             type="submit"
-                            aria-label={`Complete my order — ${fmt(total)}, 2-year warranty, free insured shipping`}
+                            aria-label={`Complete my order — ${fmt(total)}, 2-year warranty, free shipping`}
                             className="group cta-cart cta-complete mt-5 cursor-pointer"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src="/checkout/complete-order.png" alt="" />
                             <span className="cta-cart-shine" aria-hidden="true" />
                             <span className="sr-only">
-                              Complete my order — {fmt(total)}, 2-year warranty, free insured shipping
+                              Complete my order — {fmt(total)}, 2-year warranty, free shipping
                             </span>
                           </button>
                         ) : (
@@ -806,7 +806,7 @@ export default function CheckoutFlow({
                               </svg>
                             </span>
                             <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-white/80 font-normal">
-                              {fmt(total)} · 2-year warranty · free insured shipping
+                              {fmt(total)} · 2-year warranty · free shipping
                             </span>
                           </button>
                         )}
@@ -1021,7 +1021,7 @@ export default function CheckoutFlow({
                     </div>
                   ))}
                   <div className="flex items-baseline justify-between gap-4 py-2.5 border-b border-apex-line/25">
-                    <dt className="text-apex-grey font-body text-[13.5px]">Insured shipping · Australia-wide</dt>
+                    <dt className="text-apex-grey font-body text-[13.5px]">Free shipping · Australia-wide</dt>
                     <dd className="font-mono text-apex-blue text-[13px] uppercase tracking-wide">Free</dd>
                   </div>
                   <div className="flex items-baseline justify-between gap-4 pt-5">
@@ -1068,7 +1068,7 @@ export default function CheckoutFlow({
                 {[
                   { n: '01', t: 'Confirmation email', d: 'Your receipt and order reference land in your inbox within minutes.' },
                   { n: '02', t: 'Build & calibration', d: 'Your unit is assembled, the tablet is preloaded and every mode is calibrated.' },
-                  { n: '03', t: 'Dispatch & onboarding', d: 'Insured delivery Australia-wide, then a walkthrough with the AU team.' },
+                  { n: '03', t: 'Dispatch & onboarding', d: 'Free delivery Australia-wide, then a walkthrough with the AU team.' },
                 ].map((s) => (
                   <div key={s.n} className="bg-apex-black px-5 py-6">
                     <span className="font-mono text-[11px] tracking-[0.2em] text-apex-blue">{s.n}</span>
