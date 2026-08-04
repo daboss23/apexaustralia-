@@ -1,7 +1,7 @@
 'use client'
 
-import { useRef, useState } from 'react'
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { Fragment, useEffect, useRef, useState } from 'react'
+import { motion, useScroll, useTransform, useReducedMotion, useInView, animate, type MotionValue } from 'framer-motion'
 import { useIsMobile } from './useIsMobile'
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -31,6 +31,75 @@ import { useIsMobile } from './useIsMobile'
 
 const SRC = '/checkout/tapex-features.mp4'
 const POSTER = '/checkout/tapex-features-poster.jpg'
+
+/* ── "POWER REDEFINED" spec bar ─────────────────────────────────────────────
+   Real T-APEX headline specs. Sits in the black gap as the film section opens;
+   the figures count up when the bar scrolls into view, then the whole bar fades
+   out as the video plate grows. */
+const POWER_STATS = [
+  { to: 120, unit: 'm', label: 'Cable Length' },
+  { to: 40, unit: 'kgf', label: 'Continuous Resistance' },
+  { to: 300, unit: 'kgf', label: 'Load Capacity' },
+  { to: 20, unit: 'kg', label: 'Machine Weight' },
+] as const
+
+/** A figure that eases from 0 to `to` once `start` flips true; honours
+    reduced-motion by rendering the final value immediately. */
+function CountUp({ to, start, duration = 1.6 }: { to: number; start: boolean; duration?: number }) {
+  const reduce = useReducedMotion()
+  const [val, setVal] = useState(reduce ? to : 0)
+  useEffect(() => {
+    if (reduce || !start) return
+    const controls = animate(0, to, {
+      duration,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (v) => setVal(v),
+    })
+    return () => controls.stop()
+  }, [start, to, duration, reduce])
+  return <>{Math.round(val)}</>
+}
+
+function UpTick() {
+  return (
+    <svg className="w-3 h-7 flex-shrink-0 text-apex-grey-dim/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21V4m0 0-4.5 5M12 4l4.5 5" />
+    </svg>
+  )
+}
+
+function PowerStatsBar({ style }: { style?: { opacity?: MotionValue<number> } }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-10% 0px' })
+  return (
+    <motion.div ref={ref} style={style} className="w-full max-w-5xl mx-auto">
+      <div className="flex items-stretch gap-2.5 sm:gap-3">
+        {/* Side label */}
+        <div className="flex-shrink-0 flex flex-col justify-center px-3.5 sm:px-5 py-3 border border-apex-line/60 bg-apex-black/55 backdrop-blur-sm">
+          <span className="font-display font-black text-apex-white leading-tight text-base sm:text-xl xl:text-2xl">Power</span>
+          <span className="font-display font-black text-apex-red leading-tight text-base sm:text-xl xl:text-2xl">Redefined</span>
+        </div>
+        {/* Stats */}
+        <div className="flex-1 flex items-center justify-around gap-1.5 sm:gap-3 px-3 sm:px-6 py-3 border border-apex-line/60 bg-apex-black/40 backdrop-blur-sm overflow-hidden">
+          {POWER_STATS.map((s, i) => (
+            <Fragment key={s.label}>
+              {i > 0 && <UpTick />}
+              <div className="flex items-baseline gap-1.5 min-w-0">
+                <span className="font-display font-black text-apex-red-bright leading-none text-2xl sm:text-4xl xl:text-5xl metric-value">
+                  <CountUp to={s.to} start={inView} />
+                  <span className="text-xs sm:text-base ml-0.5">{s.unit}</span>
+                </span>
+                <span className="font-mono text-[8px] sm:text-[9px] leading-tight uppercase tracking-wide text-apex-red/70 max-w-[54px] sm:max-w-[74px]">
+                  {s.label}
+                </span>
+              </div>
+            </Fragment>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  )
+}
 
 export default function ScrollExpandVideo() {
   const sectionRef = useRef<HTMLDivElement>(null)
@@ -64,6 +133,9 @@ export default function ScrollExpandVideo() {
   // open; the parting continues underneath and is never seen finishing.
   const titleOpacity = useTransform(scrollYProgress, [0.1, 0.45], [1, 0])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
+  // The spec bar holds in the gap while the numbers count, then fades as the
+  // plate starts to grow.
+  const statsOpacity = useTransform(scrollYProgress, [0, 0.1, 0.34], [1, 1, 0])
 
   function play() {
     setPlaying(true)
@@ -78,6 +150,9 @@ export default function ScrollExpandVideo() {
       <section id="film" className="relative bg-apex-black py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-6 md:px-10">
           <SectionTitle />
+          <div className="mt-8">
+            <PowerStatsBar />
+          </div>
           <div className="relative mt-8 border border-apex-line/60 bg-apex-black-2">
             <VideoPlate
               videoRef={videoRef}
@@ -113,6 +188,15 @@ export default function ScrollExpandVideo() {
         className="sticky top-0 w-full overflow-hidden flex flex-col items-center justify-center"
         style={{ height: isMobile ? '56svh' : '100svh' }}
       >
+        {/* POWER REDEFINED spec bar — sits in the gap at the top of the stage,
+            counts up on view, then fades out as the plate grows. */}
+        <motion.div
+          className="absolute top-[6%] sm:top-[9%] inset-x-0 z-30 px-4 flex justify-center pointer-events-none"
+          style={{ opacity: statsOpacity }}
+        >
+          <PowerStatsBar />
+        </motion.div>
+
         {/* Title halves — they part, and fade, as the plate opens */}
         <motion.div
           className="absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 pointer-events-none flex flex-col items-center gap-2 px-4"
