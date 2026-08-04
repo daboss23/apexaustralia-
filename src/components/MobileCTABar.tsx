@@ -68,23 +68,23 @@ export default function MobileCTABar() {
           aria-hidden="true"
         />
         <div className="flex-1 min-w-0">
-          <span className="block font-mono text-[9px] tracking-[0.22em] uppercase text-apex-blue">
-            T-APEX Australia
-          </span>
-          <span className="block font-display font-bold text-[13px] text-apex-white leading-tight truncate">
-            From A$9,450 · Ships free
+          <span className="block font-display font-bold text-apex-white leading-none truncate" style={{ fontSize: '20px' }}>
+            T-Apex
           </span>
         </div>
+        {/* The same ORDER NOW artwork the navbar uses top-right, reused here on
+            the phone bar via .cta-order-bar (the header's own .cta-order is
+            desktop-only). */}
         <a
           href="#order"
-          className="flex-shrink-0 inline-flex items-center gap-2 cta-glow text-white font-display font-bold text-[11px] px-5 py-3 tracking-[0.14em] uppercase cursor-pointer"
-          style={{ borderRadius: 0 }}
+          aria-label="Order now"
+          className="group cta-cart cta-order-bar flex-shrink-0 cursor-pointer"
           tabIndex={visible ? 0 : -1}
         >
-          Order Now
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-          </svg>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/checkout/order-now.png" alt="" />
+          <span className="cta-cart-shine" aria-hidden="true" />
+          <span className="sr-only">Order Now</span>
         </a>
       </div>
     </div>

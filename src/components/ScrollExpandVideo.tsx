@@ -1,7 +1,7 @@
 'use client'
 
-import { Fragment, useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform, useReducedMotion, useInView, animate, type MotionValue } from 'framer-motion'
+import { Fragment, useRef, useState } from 'react'
+import { motion, useScroll, useTransform, useReducedMotion, useMotionValue, useMotionValueEvent, type MotionValue } from 'framer-motion'
 import { useIsMobile } from './useIsMobile'
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -43,21 +43,16 @@ const POWER_STATS = [
   { to: 20, unit: 'kg', label: 'Machine Weight' },
 ] as const
 
-/** A figure that eases from 0 to `to` once `start` flips true; honours
-    reduced-motion by rendering the final value immediately. */
-function CountUp({ to, start, duration = 1.6 }: { to: number; start: boolean; duration?: number }) {
-  const reduce = useReducedMotion()
-  const [val, setVal] = useState(reduce ? to : 0)
-  useEffect(() => {
-    if (reduce || !start) return
-    const controls = animate(0, to, {
-      duration,
-      ease: [0.16, 1, 0.3, 1],
-      onUpdate: (v) => setVal(v),
-    })
-    return () => controls.stop()
-  }, [start, to, duration, reduce])
-  return <>{Math.round(val)}</>
+const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
+
+/** A figure driven by scroll: as `progress` moves 0→1 the value climbs 0→`to`,
+    so the numbers visibly move under the reader's scroll (and scrub back down
+    if they scroll up). The static / reduced-motion branch passes a constant 1,
+    so the final figure shows immediately. */
+function ScrollCount({ to, progress }: { to: number; progress: MotionValue<number> }) {
+  const [val, setVal] = useState(() => Math.round(to * clamp01(progress.get())))
+  useMotionValueEvent(progress, 'change', (v) => setVal(Math.round(to * clamp01(v))))
+  return <>{val}</>
 }
 
 /* Bright-to-deep red gradient clipped to the figures — gives the numerals a
@@ -97,11 +92,19 @@ function Bezel({ children, className = '' }: { children: React.ReactNode; classN
   )
 }
 
-function PowerStatsBar({ style }: { style?: { opacity?: MotionValue<number> } }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-10% 0px' })
+function PowerStatsBar({
+  style,
+  countProgress,
+}: {
+  style?: { opacity?: MotionValue<number> }
+  countProgress?: MotionValue<number>
+}) {
+  // A constant fallback so the static / reduced-motion branch shows the final
+  // figures immediately (progress pinned at 1).
+  const fallback = useMotionValue(1)
+  const progress = countProgress ?? fallback
   return (
-    <motion.div ref={ref} style={style} className="relative w-full max-w-[1500px] mx-auto">
+    <motion.div style={style} className="relative w-full max-w-[1500px] mx-auto">
       {/* Soft ambient wash so the bar reads as lit glass, not a flat plate */}
       <div
         aria-hidden="true"
@@ -120,13 +123,13 @@ function PowerStatsBar({ style }: { style?: { opacity?: MotionValue<number> } })
 
         {/* Stats */}
         <Bezel className="flex-1">
-          <div className="h-full px-4 sm:px-8 py-4 sm:py-5 grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-x-3 gap-y-5">
+          <div className="h-full px-4 sm:px-8 py-3.5 sm:py-5 grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-x-3 gap-y-3.5">
             {POWER_STATS.map((s, i) => (
               <Fragment key={s.label}>
                 {i > 0 && <UpTick className="hidden sm:block" />}
                 <div className="flex items-baseline gap-2 justify-center sm:justify-start">
-                  <span className="font-display font-black leading-none tracking-tight text-[2rem] sm:text-5xl xl:text-6xl metric-value" style={NUM_STYLE}>
-                    <CountUp to={s.to} start={inView} />
+                  <span className="font-display font-black leading-none tracking-tight text-[1.75rem] sm:text-5xl xl:text-6xl metric-value" style={NUM_STYLE}>
+                    <ScrollCount to={s.to} progress={progress} />
                     <span className="text-base sm:text-2xl xl:text-3xl">{s.unit}</span>
                   </span>
                   <span className="font-mono text-[8px] sm:text-[9px] leading-[1.25] uppercase tracking-[0.08em] text-apex-red/60 text-left max-w-[54px] sm:max-w-[82px]">
@@ -174,9 +177,17 @@ export default function ScrollExpandVideo() {
   // open; the parting continues underneath and is never seen finishing.
   const titleOpacity = useTransform(scrollYProgress, [0.1, 0.45], [1, 0])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
-  // The spec bar holds in the gap while the numbers count, then fades as the
-  // plate starts to grow.
-  const statsOpacity = useTransform(scrollYProgress, [0, 0.1, 0.34], [1, 1, 0])
+  // The spec bar fades IN as it arrives, holds while the figures climb, then
+  // fades OUT as the plate below begins to grow.
+  const statsOpacity = useTransform(scrollYProgress, [0, 0.12, 0.3, 0.44], [0, 1, 1, 0])
+  // The figures are scroll-linked: they climb 0→target across this range, so the
+  // numbers move under the reader's scroll instead of running on a timer.
+  const countProgress = useTransform(scrollYProgress, [0, 0.3], [0, 1])
+  // Video + its title ride lower in the stage early on — clearing the spec bar so
+  // it no longer squashes onto the plate on phones — then settle to centre as the
+  // plate expands toward full-bleed.
+  const plateShiftN = useTransform(scrollYProgress, [0, 0.5], isMobile ? [16, 0] : [10, 0])
+  const plateShift = useTransform(plateShiftN, (v) => `${v}svh`)
 
   function play() {
     setPlaying(true)
@@ -235,29 +246,33 @@ export default function ScrollExpandVideo() {
           className="absolute top-[6%] sm:top-[9%] inset-x-0 z-30 px-4 flex justify-center pointer-events-none"
           style={{ opacity: statsOpacity }}
         >
-          <PowerStatsBar />
+          <PowerStatsBar countProgress={countProgress} />
         </motion.div>
 
-        {/* Title halves — they part, and fade, as the plate opens */}
-        <motion.div
-          className="absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 pointer-events-none flex flex-col items-center gap-2 px-4"
-          style={{ opacity: titleOpacity }}
-        >
-          <motion.h2
-            className="h-luxia leading-[0.92] text-center"
-            style={{ x: shiftL, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
+        {/* Title halves — they part, and fade, as the plate opens. Wrapped so the
+            pair rides down with the plate (plateShift) and stays centred over it. */}
+        <motion.div className="absolute inset-0 z-20 pointer-events-none" style={{ y: plateShift }}>
+          <motion.div
+            className="absolute inset-x-0 top-1/2 -translate-y-1/2 pointer-events-none flex flex-col items-center gap-2 px-4"
+            style={{ opacity: titleOpacity }}
           >
-            <span className="t-silver">&ldquo;PERFORMANCE BECOMES</span>
-          </motion.h2>
-          <motion.h2
-            className="h-luxia leading-[0.92] text-center"
-            style={{ x: shiftR, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
-          >
-            <span className="t-red">INEVITABLE.&rdquo;</span>
-          </motion.h2>
+            <motion.h2
+              className="h-luxia leading-[0.92] text-center"
+              style={{ x: shiftL, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
+            >
+              <span className="t-silver">&ldquo;PERFORMANCE BECOMES</span>
+            </motion.h2>
+            <motion.h2
+              className="h-luxia leading-[0.92] text-center"
+              style={{ x: shiftR, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
+            >
+              <span className="t-red">INEVITABLE.&rdquo;</span>
+            </motion.h2>
+          </motion.div>
         </motion.div>
 
-        {/* The growing video plate */}
+        {/* The growing video plate — sits lower early (plateShift), centres as it
+            expands. */}
         <motion.div
           className="relative z-10 border border-apex-line/60 bg-apex-black-2 overflow-hidden"
           style={{
@@ -265,6 +280,7 @@ export default function ScrollExpandVideo() {
             aspectRatio: '16 / 9',
             maxHeight: '82svh',
             borderRadius: radius,
+            y: plateShift,
             boxShadow: '0 30px 90px -20px rgba(0,0,0,0.8)',
           }}
         >
@@ -353,10 +369,10 @@ function VideoPlate({
         >
           {/* Neon play button — glossy dark disc, a glowing multicolour ring
               and a neon-outlined triangle (see .neon-play* in globals.css). */}
-          <span className="neon-play relative w-20 h-20 md:w-24 md:h-24 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+          <span className="neon-play relative w-16 h-16 md:w-24 md:h-24 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
             <span className="neon-play-ring" aria-hidden="true" />
             <span className="neon-play-disc" aria-hidden="true" />
-            <svg className="neon-play-tri relative w-7 h-7 md:w-8 md:h-8 ml-1" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <svg className="neon-play-tri relative w-6 h-6 md:w-8 md:h-8 ml-1" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M8 5.5 L18.5 12 L8 18.5 Z" stroke="#d6a8ff" strokeWidth="1.4" strokeLinejoin="round" />
             </svg>
           </span>

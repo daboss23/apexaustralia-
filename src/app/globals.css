@@ -818,6 +818,18 @@
   .cta-order { width: 166px; }
 }
 
+/* Mobile sticky-bar ORDER NOW — the navbar's order-now artwork reused on the
+   phone CTA bar (the .cta-order variant above is desktop-only), sized to the
+   bar. Same halo/shine/glow family as the header button. */
+.cta-order-bar .cta-cart-shine {
+  -webkit-mask-image: url('/checkout/order-now.png');
+  mask-image: url('/checkout/order-now.png');
+}
+.cta-order-bar {
+  display: block;
+  width: 150px;
+}
+
 /* Hero ORDER YOUR T-APEX MACHINE artwork — the page's primary CTA, same
    shine/glow family, its own mask.
 
