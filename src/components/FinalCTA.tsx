@@ -3,7 +3,6 @@
 import { useRef } from 'react'
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
-import { DEMO_HREF } from '@/lib/site'
 import SiteFooter from './SiteFooter'
 
 export default function FinalCTA() {
@@ -154,7 +153,7 @@ export default function FinalCTA() {
               animate={inView ? { y: 0, opacity: 1 } : {}}
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             >
-              THE FUTURE OF PERFORMANCE
+              THE FUTURE OF HIGH PERFORMANCE
             </motion.h2>
           </div>
           <div className="relative mb-10">
@@ -166,7 +165,7 @@ export default function FinalCTA() {
                 animate={inView ? { y: 0, opacity: 1 } : {}}
                 transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
               >
-                IS ALREADY HERE.
+                HAS ARRIVED
               </motion.h2>
             </div>
           </div>
@@ -182,50 +181,21 @@ export default function FinalCTA() {
             Join the coaches, clubs, and athletes raising the standard. See T-Apex measure speed, force, and control in real time — then decide. We&apos;re placing units with select Australian programs now.
           </motion.p>
 
-          {/* CTA buttons */}
+          {/* CTA — the supplied artwork button, same one both heroes use, so the
+              page opens and closes on the identical primary CTA. */}
           <motion.div
-            className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-center gap-4 mb-10 max-w-md sm:max-w-none mx-auto"
+            className="flex justify-center mb-10 md:mb-16"
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.65 }}
           >
-            <a href="#order" className="group inline-flex items-center justify-center gap-3 cta-glow text-white font-display font-bold px-8 sm:px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:shadow-[0_16px_48px_-8px_rgba(214,31,38,0.7)] hover:-translate-y-0.5 active:translate-y-0"
-              style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', borderRadius: 0 }}>
-              Order Your T-APEX
-              <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </a>
-
-            <a href={DEMO_HREF} className="group inline-flex items-center justify-center gap-3 border border-apex-line hover:border-apex-grey/50 text-apex-grey hover:text-apex-white font-display font-bold px-8 sm:px-10 py-5 tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
-              style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', borderRadius: 0 }}>
-              Book a Free Demo
-              <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-              </svg>
+            <a href="#order" aria-label="Order your T-APEX machine" className="group cta-cart cta-machine">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/checkout/order-machine.png" alt="" width={1596} height={274} />
+              <span className="cta-cart-shine" aria-hidden="true" />
+              <span className="sr-only">Order your T-APEX machine</span>
             </a>
           </motion.div>
-
-          {/* Risk reversal — removes the last reason not to act */}
-          <motion.p
-            className="text-apex-grey-dim font-mono text-[10px] tracking-[0.18em] uppercase mb-10 md:mb-16"
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.85 }}
-          >
-            On-site or virtual · No obligation · Direct from the Australian team
-          </motion.p>
-
-          {/* Closing tagline — the brand lockup itself now lives in the footer
-              directly below, so this is just the line, not a second logo. */}
-          <motion.span
-            className="block text-apex-grey-dim font-mono text-[10px] tracking-[0.4em] uppercase"
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.8, delay: 0.9 }}
-          >
-            Performance Without Limits
-          </motion.span>
         </div>
       </motion.div>
 

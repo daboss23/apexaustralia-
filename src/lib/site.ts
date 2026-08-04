@@ -3,7 +3,7 @@
    set it in Vercel to route demo/enquiry links to the business inbox. */
 
 export const CONTACT_EMAIL =
-  process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'mindblastmarketing@gmail.com'
+  process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'support@tapexoz.com'
 
 export const DEMO_HREF = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
   'T-APEX Demo Request'
@@ -15,8 +15,5 @@ export const ENQUIRY_HREF = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponen
   'T-APEX Enquiry'
 )}`
 
-/* Social profiles surfaced in the footer.
-   TODO: point INSTAGRAM_URL at the real T-APEX Australia profile — until the
-   handle is known it lands on Instagram itself rather than a guessed (and
-   possibly someone else's) account, so the icon is never a dead link. */
-export const INSTAGRAM_URL = 'https://www.instagram.com/'
+/* Social profiles surfaced in the footer. */
+export const INSTAGRAM_URL = 'https://www.instagram.com/tapex_australia'

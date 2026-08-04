@@ -148,11 +148,11 @@ export function PolicyPage({
       <footer className="border-t border-apex-line/40 px-6 py-8 flex flex-col items-center gap-3">
         <a
           href="/"
-          className="px-3 py-2 text-[10px] font-mono text-apex-grey-dim hover:text-apex-grey transition-colors tracking-wider uppercase"
+          className="px-3 py-2 text-[13px] font-mono text-apex-grey hover:text-apex-white transition-colors tracking-wider uppercase"
         >
           ← Back to T-APEX Australia
         </a>
-        <span className="text-apex-grey-dim font-mono text-[10px] tracking-wide">
+        <span className="text-apex-grey font-mono text-[12.5px] tracking-wide">
           © 2026 T-APEX Australia. All rights reserved.
         </span>
       </footer>
