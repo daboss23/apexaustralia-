@@ -170,9 +170,9 @@ function SectionTitle() {
   return (
     <div className="text-center">
       <div className="flex items-center gap-3 justify-center mb-4">
-        <div className="w-8 h-px bg-apex-red" />
+        <div className="kicker-line kicker-line--l bg-apex-red" />
         <span className="text-apex-red font-mono text-[12px] tracking-[0.3em] uppercase">The Full Walkthrough</span>
-        <div className="w-8 h-px bg-apex-red" />
+        <div className="kicker-line kicker-line--r bg-apex-red" />
       </div>
       <h2 className="h-luxia leading-[0.92]" style={{ fontSize: 'clamp(1.6rem, 4vw, 3rem)' }}>
         <span className="t-silver">&ldquo;PERFORMANCE BECOMES</span> <span className="t-red">INEVITABLE.&rdquo;</span>

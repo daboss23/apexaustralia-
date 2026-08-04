@@ -230,9 +230,9 @@ export default function PerformanceSection() {
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.5 }}
         >
-          <div className="w-8 h-px bg-apex-blue" />
+          <div className="kicker-line kicker-line--l bg-apex-blue" />
           <span className="text-apex-blue font-mono text-[12px] tracking-[0.3em] uppercase font-medium">What T-APEX Does</span>
-          <div className="w-8 h-px bg-apex-blue" />
+          <div className="kicker-line kicker-line--r bg-apex-blue" />
         </motion.div>
 
         {/* Title */}

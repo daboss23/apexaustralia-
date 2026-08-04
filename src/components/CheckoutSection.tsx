@@ -499,11 +499,11 @@ export default function CheckoutSection() {
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         {/* Eyebrow */}
         <div ref={titleRef} className="flex items-center gap-3 mb-6 justify-center">
-          <div className="w-8 h-px bg-apex-red" />
+          <div className="kicker-line kicker-line--l bg-apex-red" />
           <span className="text-apex-red font-mono text-[12px] tracking-[0.3em] uppercase font-medium">
             Secure Your System
           </span>
-          <div className="w-8 h-px bg-apex-red" />
+          <div className="kicker-line kicker-line--r bg-apex-red" />
         </div>
 
         {/* Headline */}
@@ -683,8 +683,9 @@ export default function CheckoutSection() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mt-24">
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-px bg-apex-blue" />
+              <div className="kicker-line kicker-line--l bg-apex-blue" />
               <span className="text-apex-blue font-mono text-[12px] tracking-[0.3em] uppercase">The Product</span>
+              <div className="kicker-line kicker-line--r bg-apex-blue" />
             </div>
             <h3 className="font-display font-black t-feature leading-tight mb-5" style={{ fontSize: 'clamp(1.4rem, 2.6vw, 2.1rem)' }}>
               Not another sprint tool. An intelligence system.
@@ -727,9 +728,9 @@ export default function CheckoutSection() {
         {/* ── Testimonials ── */}
         <div className="mt-24">
           <div className="flex items-center gap-3 mb-8 justify-center">
-            <div className="w-8 h-px bg-apex-red" />
+            <div className="kicker-line kicker-line--l bg-apex-red" />
             <span className="text-apex-red font-mono text-[12px] tracking-[0.3em] uppercase">What Coaches Say</span>
-            <div className="w-8 h-px bg-apex-red" />
+            <div className="kicker-line kicker-line--r bg-apex-red" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">

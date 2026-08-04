@@ -177,6 +177,18 @@
     }
   }
 
+  /* Eyebrow / kicker tick — a thin, stretched-out triangle that tapers to a
+     sharp point at its outer end. One sits on each side of a small section
+     label. Colour comes from the element's background (bg-apex-blue etc.);
+     these classes only set the size and the tapered shape. */
+  .kicker-line {
+    width: 2.75rem;
+    height: 6px;
+    flex-shrink: 0;
+  }
+  .kicker-line--l { clip-path: polygon(100% 0, 100% 100%, 0 50%); }
+  .kicker-line--r { clip-path: polygon(0 0, 0 100%, 100% 50%); }
+
   /* ── Display headline font: Marcellus (elegant high-contrast Roman serif —
         luxury). Positive tracking so uppercase words breathe and never merge.
         The metallic finish is applied via .t-silver/.t-blue/.t-red below. ───── */

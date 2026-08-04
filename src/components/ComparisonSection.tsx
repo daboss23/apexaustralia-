@@ -67,10 +67,11 @@ export default function ComparisonSection() {
       <div className="relative max-w-5xl mx-auto px-6 md:px-10">
         {/* Eyebrow — technology-first, electric blue */}
         <div ref={titleRef} className="flex items-center justify-center gap-3 mb-7">
-          <div className="w-8 h-px" style={{ background: C.blue }} />
+          <div className="kicker-line kicker-line--l" style={{ background: C.blue }} />
           <span className="font-mono text-[12px] tracking-[0.3em] uppercase font-medium" style={{ color: C.blue }}>
             The Difference
           </span>
+          <div className="kicker-line kicker-line--r" style={{ background: C.blue }} />
         </div>
 
         {/* Machined-titanium headline */}

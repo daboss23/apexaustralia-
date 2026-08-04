@@ -75,10 +75,11 @@ function HeroCopy({ showLogo = false }: { showLogo?: boolean }) {
           />
         )}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-px bg-apex-blue" />
+          <div className="kicker-line kicker-line--l bg-apex-blue" />
           <span className="text-apex-blue font-mono text-[9px] font-medium tracking-[0.32em] uppercase">
             Elite Sports Performance Technology
           </span>
+          <div className="kicker-line kicker-line--r bg-apex-blue" />
         </div>
       </motion.div>
 

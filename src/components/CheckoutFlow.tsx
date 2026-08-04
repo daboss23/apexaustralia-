@@ -1171,8 +1171,9 @@ export default function CheckoutFlow({
 
             {/* Offer wall */}
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-px bg-apex-blue" />
+              <div className="kicker-line kicker-line--l bg-apex-blue" />
               <span className="text-apex-blue font-mono text-[11.5px] tracking-[0.3em] uppercase">Recommended Products</span>
+              <div className="kicker-line kicker-line--r bg-apex-blue" />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">

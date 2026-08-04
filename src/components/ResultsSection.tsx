@@ -176,10 +176,11 @@ export default function ResultsSection() {
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         {/* Section label */}
         <div ref={titleRef} className="flex items-center gap-3 mb-6">
-          <div className="w-8 h-px bg-apex-blue" />
+          <div className="kicker-line kicker-line--l bg-apex-blue" />
           <span className="text-apex-blue font-mono text-[12px] tracking-[0.3em] uppercase font-medium">
             Proof
           </span>
+          <div className="kicker-line kicker-line--r bg-apex-blue" />
         </div>
 
         {/* Section title */}
