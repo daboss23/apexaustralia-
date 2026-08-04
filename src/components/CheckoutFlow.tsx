@@ -122,22 +122,19 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <label
-        htmlFor={name}
-        className="block font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey mb-1.5"
-      >
-        {label}
-      </label>
-      {/* 16px on phones, 14px from sm up. Not a taste call: iOS Safari zooms the
-          whole page in whenever you focus a field under 16px, and it does not
-          zoom back out — so every checkout field left the visitor stranded at
-          1.4x with the form running off the side of the screen. */}
+      {/* The field name sits INSIDE the box as the placeholder (no label above),
+          with an aria-label so screen readers still announce it once the
+          placeholder is typed over. The example value rides along as the native
+          title tooltip. 16px on phones, 14px from sm up — under 16px iOS Safari
+          zooms the page in on focus and never zooms back out. */}
       <input
         id={name}
         name={name}
         type={type}
         value={value}
-        placeholder={placeholder}
+        placeholder={label}
+        aria-label={label}
+        title={placeholder}
         autoComplete={autoComplete}
         inputMode={inputMode}
         maxLength={maxLength}
@@ -177,24 +174,21 @@ function SelectField({
 }) {
   return (
     <div className={className}>
-      <label
-        htmlFor={name}
-        className="block font-mono text-[11px] tracking-[0.22em] uppercase text-apex-grey mb-1.5"
-      >
-        {label}
-      </label>
       <select
         id={name}
         name={name}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={!!error}
-        className={`w-full bg-apex-black-2/80 border px-3.5 py-3 font-body text-[16px] sm:text-[14px] text-apex-white outline-none transition-colors duration-200 focus:border-apex-blue cursor-pointer ${
+        aria-label={label}
+        className={`w-full bg-apex-black-2/80 border px-3.5 py-3 font-body text-[16px] sm:text-[14px] outline-none transition-colors duration-200 focus:border-apex-blue cursor-pointer ${
+          value ? 'text-apex-white' : 'text-apex-grey-dim/60'
+        } ${
           error ? 'border-apex-red' : 'border-apex-line/70 hover:border-apex-line'
         }`}
         style={{ borderRadius: 0 }}
       >
-        <option value="">Select…</option>
+        <option value="">{label}</option>
         {options.map((o) => (
           <option key={o} value={o}>
             {o}
@@ -605,8 +599,8 @@ export default function CheckoutFlow({
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <Field label="Full name" name="name" value={form.name} onChange={set('name')} error={errors.name} placeholder="Alex Marsh" autoComplete="name" className="sm:col-span-2" />
-                          <Field label="Email address" name="email" type="email" inputMode="email" value={form.email} onChange={set('email')} error={errors.email} placeholder="alex@club.com.au" autoComplete="email" />
-                          <Field label="Phone" name="phone" type="tel" inputMode="tel" value={form.phone} onChange={set('phone')} error={errors.phone} placeholder="0400 000 000" autoComplete="tel" />
+                          <Field label="Email address" name="email" type="email" inputMode="email" value={form.email} onChange={set('email')} error={errors.email} placeholder="alex@club.com.au" autoComplete="email" className="sm:col-span-2" />
+                          <Field label="Phone" name="phone" type="tel" inputMode="tel" value={form.phone} onChange={set('phone')} error={errors.phone} placeholder="0400 000 000" autoComplete="tel" className="sm:col-span-2" />
                           <Field label="Club / organisation (optional)" name="org" value={form.org} onChange={set('org')} placeholder="High Performance Unit" autoComplete="organization" className="sm:col-span-2" />
                         </div>
 
