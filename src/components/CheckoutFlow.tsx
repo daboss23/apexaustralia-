@@ -852,25 +852,33 @@ export default function CheckoutFlow({
               {otoOffer.chip}
             </span>
 
-            {/* ── ClickFunnels-style hero panel: WAIT · progress · headline · price ── */}
+            {/* ── ClickFunnels-style hero panel: WAIT · progress · headline · price.
+                Borderless: an elevated dark gradient + soft drop shadow define the
+                panel instead of a hard line, matching the clean reference layout. ── */}
             <div
-              className="border border-apex-line/60 bg-apex-black/60 px-4 sm:px-7 pt-5 pb-6 mb-6"
-              style={{ borderTop: '2px solid rgba(0,174,239,0.55)' }}
+              className="relative overflow-hidden px-5 sm:px-9 pt-7 pb-8 mb-6"
+              style={{
+                background: 'linear-gradient(180deg, #0D1117 0%, #060708 100%)',
+                boxShadow: '0 34px 80px -34px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.05)',
+              }}
             >
               <p
-                className="font-display font-black text-apex-white leading-tight flex items-center justify-center gap-2.5 flex-wrap"
+                className="font-display font-normal text-apex-white leading-tight flex items-center justify-center gap-2.5 flex-wrap"
                 style={{ fontSize: 'clamp(1.1rem, 2.4vw, 1.6rem)' }}
               >
                 <svg className="w-6 h-6 flex-shrink-0" viewBox="0 0 24 24" fill="#F2B41C" aria-hidden="true">
                   <path d="M12 2.5 22.5 20.5H1.5L12 2.5Zm0 5.6a1 1 0 0 0-1 1v4.6a1 1 0 1 0 2 0V9.1a1 1 0 0 0-1-1Zm0 8.1a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 0 0 0-2.3Z" />
                 </svg>
-                <span className="text-apex-red-bright">WAIT!</span>
-                <span>Your order is not yet complete</span>
+                <span className="font-black text-apex-red-bright">WAIT!</span>
+                <span className="text-apex-white/90">Your order is not yet complete</span>
               </p>
 
               {/* Order-progress bar — brand blue, with the label riding inside the fill. */}
               <div className="mt-4 max-w-md mx-auto">
-                <div className="relative h-8 border border-apex-blue/40 bg-apex-black overflow-hidden">
+                <div
+                  className="relative h-8 bg-apex-surface overflow-hidden"
+                  style={{ boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.7)' }}
+                >
                   <div className="upsell-progress-fill upsell-progress-done absolute inset-y-0 left-0 w-[58%] flex items-center justify-center">
                     <span className="font-mono text-[9.5px] sm:text-[11px] tracking-[0.16em] uppercase text-white whitespace-nowrap px-2">
                       Your order is 50% complete…
@@ -879,29 +887,32 @@ export default function CheckoutFlow({
                 </div>
               </div>
 
-              {/* Headline — bold white with the accent words in brand blue. */}
+              {/* Headline — the site's metallic Marcellus system (h-luxia): honed
+                  silver lead words with the accent set in electric blue, matching
+                  every headline on the main sales page. */}
               <h2
-                className="font-display font-black text-apex-white uppercase leading-[1.02] mt-6 mb-3"
-                style={{ fontSize: 'clamp(1.45rem, 3.6vw, 2.4rem)' }}
+                className="h-luxia t-silver uppercase leading-[1.0] mt-7 mb-3.5"
+                style={{ fontSize: 'clamp(1.7rem, 4.2vw, 2.9rem)', letterSpacing: '0.04em' }}
               >
                 {otoOffer.askLead}{' '}
-                <span className="text-apex-blue">{otoOffer.askAccent}</span>
+                <span className="t-blue">{otoOffer.askAccent}</span>
               </h2>
 
-              {/* Subheadline — all white. */}
+              {/* Subheadline — lighter weight so it reads as a supporting question. */}
               <p
-                className="font-display font-black text-apex-white leading-tight max-w-xl mx-auto mb-4"
-                style={{ fontSize: 'clamp(1rem, 1.8vw, 1.3rem)' }}
+                className="font-display font-normal text-apex-grey leading-snug max-w-xl mx-auto mb-4"
+                style={{ fontSize: 'clamp(1rem, 1.7vw, 1.2rem)' }}
               >
                 and unlock all of the T-Apex software features?
               </p>
 
-              {/* Price line — larger; old price struck through in red, new price in blue. */}
-              <p className="font-display font-bold text-apex-white leading-snug" style={{ fontSize: 'clamp(1.05rem, 2.2vw, 1.5rem)' }}>
+              {/* Price line — lighter connective copy; the prices carry the emphasis:
+                  old struck through in red, new in blue. */}
+              <p className="font-display font-normal text-apex-grey leading-snug" style={{ fontSize: 'clamp(1.05rem, 2.1vw, 1.45rem)' }}>
                 Regular price{' '}
-                <span className="line-through text-apex-red-bright">{fmt(otoOffer.was)}</span>{' '}
+                <span className="font-semibold line-through text-apex-red-bright">{fmt(otoOffer.was)}</span>{' '}
                 — add to your order today for just{' '}
-                <span className="text-apex-blue">{fmt(otoOffer.price)}!</span>
+                <span className="font-bold text-apex-blue">{fmt(otoOffer.price)}!</span>
               </p>
 
               {/* Save badge — bigger, brighter, matching pulse. */}
@@ -917,8 +928,8 @@ export default function CheckoutFlow({
 
             {/* Media card — the offer imagery, sized to the panel. */}
             <div
-              className="relative w-full border border-apex-line/60 bg-apex-black-2 overflow-hidden mb-6"
-              style={{ aspectRatio: '16 / 9', borderTop: `2px solid ${GOLD}` }}
+              className="relative w-full bg-apex-black-2 overflow-hidden mb-6"
+              style={{ aspectRatio: '16 / 9', boxShadow: '0 34px 70px -30px rgba(0,0,0,0.85)' }}
             >
               <div className="carbon-weave absolute inset-0 opacity-40" aria-hidden="true" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -961,8 +972,8 @@ export default function CheckoutFlow({
             {/* Trust row — the ClickFunnels two-box reassurance strip. */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left mb-6">
               <div
-                className="flex items-center gap-3 border border-apex-line/60 bg-apex-black/50 px-4 py-3.5"
-                style={{ borderColor: 'rgba(180,140,60,0.3)' }}
+                className="flex items-center gap-3 bg-apex-black/40 px-4 py-4"
+                style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 18px 44px -30px rgba(0,0,0,0.75)' }}
               >
                 <svg className="w-6 h-6 flex-shrink-0" style={{ color: GOLD }} fill="none" viewBox="0 0 24 24" strokeWidth={1.6} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
@@ -977,7 +988,10 @@ export default function CheckoutFlow({
                 </div>
               </div>
 
-              <div className="border border-apex-line/60 bg-apex-black/50 px-4 py-3.5">
+              <div
+                className="bg-apex-black/40 px-4 py-4"
+                style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 18px 44px -30px rgba(0,0,0,0.75)' }}
+              >
                 <div className="flex items-center gap-3">
                   <svg className="w-6 h-6 text-apex-blue flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.6} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
