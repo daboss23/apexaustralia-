@@ -139,9 +139,9 @@ function BenefitCard({ benefit, index }: { benefit: typeof BENEFITS[0]; index: n
 
       {/* Number + tag */}
       <div className="flex items-center justify-between mb-4">
-        <span className="font-mono font-bold text-apex-grey-dim text-[10px] tracking-[0.22em]">{benefit.num}</span>
+        <span className="font-mono font-bold text-apex-grey-dim text-[11px] tracking-[0.22em]">{benefit.num}</span>
         <span
-          className="text-[8px] font-mono font-semibold tracking-[0.18em] uppercase px-2 py-0.5 border"
+          className="text-[9px] font-mono font-semibold tracking-[0.18em] uppercase px-2 py-0.5 border"
           style={{ color: benefit.accent, borderColor: `${benefit.accent}35`, background: `${benefit.accent}10` }}
         >
           {benefit.tag}
@@ -150,12 +150,12 @@ function BenefitCard({ benefit, index }: { benefit: typeof BENEFITS[0]; index: n
 
       <h3
         className="font-display font-black t-feature mb-3 leading-tight"
-        style={{ fontSize: 'clamp(1rem, 1.6vw, 1.2rem)' }}
+        style={{ fontSize: 'clamp(1.15rem, 1.9vw, 1.4rem)' }}
       >
         {benefit.title}
       </h3>
 
-      <p className="text-apex-grey font-body text-sm leading-relaxed flex-1">{benefit.body}</p>
+      <p className="text-apex-grey font-body text-[15px] leading-relaxed flex-1">{benefit.body}</p>
     </motion.div>
   )
 }
