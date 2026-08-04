@@ -79,7 +79,7 @@ function FloatingUnit({ active }: { active: boolean }) {
         className="absolute inset-x-[10%] inset-y-[6%]"
         style={{
           background:
-            'radial-gradient(ellipse 55% 50% at 50% 55%, rgba(0,174,239,0.13), rgba(214,31,38,0.05) 55%, transparent 75%)',
+            'radial-gradient(ellipse 55% 50% at 50% 55%, rgba(0,174,239,0.09), transparent 68%)',
           animation: 'energy-breathe 6s ease-in-out infinite',
         }}
         aria-hidden="true"
@@ -94,7 +94,7 @@ function FloatingUnit({ active }: { active: boolean }) {
         aria-hidden="true"
       >
         <ellipse cx="200" cy="45" rx="190" ry="36" stroke="rgba(0,174,239,0.25)" strokeWidth="1" strokeDasharray="3 9" style={{ animation: 'freq-march 9s linear infinite' }} />
-        <ellipse cx="200" cy="45" rx="140" ry="25" stroke="rgba(214,31,38,0.22)" strokeWidth="1" strokeDasharray="2 8" style={{ animation: 'freq-march 7s linear infinite reverse' }} />
+        <ellipse cx="200" cy="45" rx="140" ry="25" stroke="rgba(0,174,239,0.16)" strokeWidth="1" strokeDasharray="2 8" style={{ animation: 'freq-march 7s linear infinite reverse' }} />
         <ellipse cx="200" cy="45" rx="95" ry="16" stroke="rgba(0,174,239,0.38)" strokeWidth="1.2" strokeDasharray="5 12" style={{ animation: 'freq-march 11s linear infinite' }} />
       </svg>
 
@@ -126,16 +126,16 @@ function FloatingUnit({ active }: { active: boolean }) {
             poster="/product-rotation-v4-poster.jpg"
             aria-label="T-Apex adaptive resistance unit turning in space"
             className="absolute inset-0 w-full h-full object-contain"
-            // 'screen' is what makes the unit float: black composites to exactly
-            // the page background, so there is no video rectangle to see. It only
-            // holds if the plate is *true* black, so the source is keyed onto
-            // black, with its blacks crushed at encode — the border reads 5.10
-            // against a page background of 5.00. Supply this as a normal render
-            // ON BLACK. A background-removed source is worse, not better: alpha
-            // survives neither mp4 nor (as delivered) VP9/webm, so it arrives on
-            // white, and keying it back eats the product's own highlights.
+            // 'lighten' (max per channel), NOT 'screen', is what makes the unit
+            // float with no visible plate. The source is a normal render ON
+            // BLACK (alpha survives neither mp4 nor VP9/webm, so a keyed source
+            // arrives on white and eats the product's highlights). The plate's
+            // black is ~5/255; the page is #050505. 'screen' composites those to
+            // ~10 — the plate reads as a faint lighter square. 'lighten' takes
+            // max(plate, page) = 5, so equal near-blacks stay equal and the
+            // rectangle disappears, while the bright machine still wins.
             // See docs/motion-scroll-brief.md.
-            style={{ mixBlendMode: 'screen' }}
+            style={{ mixBlendMode: 'lighten' }}
           />
 
           {/* Rotation-light sheen travelling across the metalwork */}
@@ -152,7 +152,9 @@ function FloatingUnit({ active }: { active: boolean }) {
 
           {/* Electricity living around the unit */}
           <div className="absolute inset-[8%]">
-            <ElectricAura appearDelay={0.6} />
+            {/* Blue-only — the default palette includes red, which read as a
+                stray red haze floating behind the unit against the black. */}
+            <ElectricAura appearDelay={0.6} colors={['#00AEEF', '#7fd8ff']} />
           </div>
         </motion.div>
       </div>
