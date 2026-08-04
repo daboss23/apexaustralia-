@@ -402,7 +402,9 @@ export default function CheckoutFlow({
   onStageChange?: (stage: Stage) => void
 }) {
   const [stage, setStage] = useState<Stage>('shipping')
-  const [payMethod, setPayMethod] = useState<PayMethod>('card')
+  // Only card payment remains (the Invoice/EFT option was removed), so this is
+  // fixed to 'card'; the summary/branch logic below still reads it.
+  const [payMethod] = useState<PayMethod>('card')
   const [bump, setBump] = useState(false)
   const [oto, setOto] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -700,25 +702,10 @@ export default function CheckoutFlow({
                           </p>
                         </div>
 
-                        {/* Payment method toggle */}
-                        <div className="grid grid-cols-1 gap-px bg-apex-line/50 mb-6">
-                          {([
-                            { id: 'card' as PayMethod, label: 'Card', sub: 'Instant · secure' },
-                          ]).map((m) => (
-                            <button
-                              key={m.id}
-                              type="button"
-                              onClick={() => setPayMethod(m.id)}
-                              className={`px-4 py-3 text-left transition-colors duration-300 cursor-pointer ${
-                                payMethod === m.id ? 'bg-apex-panel' : 'bg-apex-black-2/70 hover:bg-apex-panel/60'
-                              }`}
-                            >
-                              <span className={`block font-display font-bold text-[12px] tracking-[0.1em] uppercase ${payMethod === m.id ? 'text-apex-white' : 'text-apex-grey-dim'}`}>
-                                {m.label}
-                              </span>
-                              <span className="block font-mono text-[11px] tracking-[0.12em] uppercase text-apex-grey mt-0.5">{m.sub}</span>
-                            </button>
-                          ))}
+                        {/* Billing section header (replaced the payment-method toggle) */}
+                        <div className="flex items-center gap-3 mb-4">
+                          <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-apex-blue">Billing Information</span>
+                          <div className="flex-1 h-px bg-apex-line/60" />
                         </div>
 
                         {payMethod === 'card' ? (
