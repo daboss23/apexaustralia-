@@ -145,29 +145,6 @@ export default function DataInsightsSection() {
               of relying on feel.
             </motion.p>
 
-            {/* Data ownership callout — a genuine differentiator from the guide */}
-            <motion.div
-              className="mt-8 relative p-6"
-              style={{
-                background: 'rgba(20,20,24,0.7)',
-                border: '1px solid rgba(0,174,239,0.22)',
-                borderLeft: '3px solid #00AEEF',
-              }}
-              initial={{ opacity: 0, y: 14 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              <div className="text-[9px] font-mono tracking-[0.26em] uppercase mb-3" style={{ color: 'rgba(0,174,239,0.85)' }}>
-                Your Data Stays Yours
-              </div>
-              <p className="text-apex-grey font-body leading-relaxed" style={{ fontSize: 'clamp(0.9rem, 1.3vw, 1rem)' }}>
-                Athlete data is stored securely on your{' '}
-                <span className="text-apex-white font-display font-bold">dedicated team tablet</span>{' '}
-                — complete team control, no mandatory cloud subscription, and none of the
-                third-party cloud risk. Raw data for any repetition can be exported and moved into
-                other software easily.
-              </p>
-            </motion.div>
           </div>
 
           {/* Insight cards */}

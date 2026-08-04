@@ -227,6 +227,23 @@ export default function ProductShowcase() {
           </motion.h2>
         </div>
 
+        {/* Subheadline — sits directly under the main headline */}
+        <motion.div
+          className="max-w-3xl mx-auto text-center mb-10 md:mb-16 flex flex-col gap-5"
+          initial={{ opacity: 0, y: 18 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, delay: 0.3 }}
+        >
+          <p className="text-apex-white font-display font-semibold leading-snug" style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.4rem)' }}>
+            This is not consumer-grade equipment dressed up as innovation.
+          </p>
+          <p className="text-apex-grey font-body leading-[1.8]" style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.1rem)' }}>
+            From the chassis to the way it applies resistance in motion, T-Apex is built for hard,
+            repeatable use — for coaches who care about movement quality, measurable progress,
+            and real-world results.
+          </p>
+        </motion.div>
+
         {/* ── CINEMATIC PRODUCT VIDEO — native 4:3, flanked by callouts on xl ── */}
         <div className="max-w-3xl mx-auto mb-10 md:mb-16">
           {/* Positioning context for the flanking callouts */}
@@ -339,34 +356,6 @@ export default function ProductShowcase() {
           </motion.div>
         </div>
 
-        {/* Body copy */}
-        <motion.div
-          className="max-w-3xl mx-auto text-center mb-10 md:mb-16 flex flex-col gap-5"
-          initial={{ opacity: 0, y: 18 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.85 }}
-        >
-          <p className="text-apex-white font-display font-semibold leading-snug" style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.4rem)' }}>
-            This is not consumer-grade equipment dressed up as innovation.
-          </p>
-          <p className="text-apex-grey font-body leading-[1.8]" style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.1rem)' }}>
-            From the chassis to the way it applies resistance in motion, T-Apex is built for hard,
-            repeatable use — for coaches who care about movement quality, measurable progress,
-            and real-world results.
-          </p>
-        </motion.div>
-
-        {/* Closing line — sells the next section (anatomy + data) */}
-        <motion.p
-          className="text-center font-display font-black text-apex-white leading-tight max-w-3xl mx-auto"
-          style={{ fontSize: 'clamp(1.2rem, 2.4vw, 2rem)' }}
-          initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 1 }}
-        >
-          Here is exactly what is inside —{' '}
-          <span className="text-apex-blue">and what it records on every rep.</span>
-        </motion.p>
       </div>
     </section>
   )
