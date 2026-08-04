@@ -694,6 +694,25 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready])
 
+  // ── Act 0's charge, brought in on MOUNT ──────────────────────────────────────
+  // Deliberately not part of the scroll timeline below: that block waits on
+  // `ready` (the first frames of the film decoding), so on a phone the bolt did
+  // not exist until the sequence had downloaded — the opening read as a dead
+  // black screen and the charge only turned up once you had started scrolling.
+  // The bolt needs none of the film to run, so it starts as soon as it is in the
+  // DOM. The timeline's own tween takes the opacity from here (immediateRender:
+  // false) when the split begins.
+  useGSAP(
+    () => {
+      gsap.fromTo(
+        '.cine-bolt',
+        { opacity: 0 },
+        { opacity: 0.55, duration: 1.1, ease: 'power1.out' },
+      )
+    },
+    { scope: rootRef },
+  )
+
   // ── The scroll-driven timeline ───────────────────────────────────────────────
   useGSAP(
     () => {
@@ -778,16 +797,12 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // the headline parts — the charge leaving with the type rather than
       // simply switching off. It clears well before the film's aperture is
       // open, so the two never overlap on screen.
-      // Fades UP on arrival rather than being switched on: the static export
-      // paints a black plate with no bolt in it (see OpeningStill), so without
-      // this the charge would pop into existence the moment the frames finish
-      // decoding. `immediateRender: false` on the scrub tween below is what
-      // lets this one own the opacity until the split actually starts.
-      gsap.fromTo(
-        '.cine-bolt',
-        { opacity: 0 },
-        { opacity: 0.55, duration: 1.1, ease: 'power1.out' },
-      )
+      // The fade-UP that brings the charge in is NOT here — it runs from its own
+      // effect on mount (see below), because this block is gated on `ready`,
+      // i.e. on the first frames of the film having decoded. On a phone over a
+      // real connection that wait is seconds long, and it made the opening a
+      // dead black screen until you scrolled. `immediateRender: false` below is
+      // what lets that mount tween own the opacity until the split starts.
       tl.fromTo(
         '.cine-bolt',
         { opacity: 0.55, y: 0 },
