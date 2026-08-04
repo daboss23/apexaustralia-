@@ -1139,9 +1139,9 @@ export default function CheckoutFlow({
                 ))}
 
                 <dt className="pt-5 font-display font-black text-apex-white text-[12px] sm:text-[13px] tracking-[0.1em] uppercase self-center">
-                  Total paid
+                  Total paid:
                 </dt>
-                <dd className="pt-5 text-right font-luxia t-silver leading-none metric-value whitespace-nowrap" style={{ fontSize: 'clamp(1.6rem, 3.4vw, 2.4rem)' }}>
+                <dd className="pt-5 text-right font-luxia t-gold-price leading-none metric-value whitespace-nowrap" style={{ fontSize: 'clamp(1.6rem, 3.4vw, 2.4rem)' }}>
                   {fmt(total)}
                 </dd>
               </dl>
@@ -1159,7 +1159,7 @@ export default function CheckoutFlow({
                     {form.city} {form.state} {form.postcode}, {form.country}
                   </p>
                 </div>
-                <div className="sm:text-right">
+                <div className="sm:text-right sm:justify-self-end">
                   <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-apex-blue mb-2">Payment</div>
                   <p className="text-apex-grey font-body text-[12.5px] sm:text-[13px] leading-relaxed">
                     <span className="text-apex-white">
