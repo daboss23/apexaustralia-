@@ -17,7 +17,7 @@ export default function WhatsIncludedSection() {
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         {/* Section label */}
-        <div ref={titleRef} className="flex items-center gap-3 mb-6">
+        <div ref={titleRef} className="flex items-center justify-center gap-3 mb-6">
           <div className="w-8 h-px bg-apex-blue" />
           <span className="text-apex-blue font-mono text-[12px] tracking-[0.3em] uppercase font-medium">
             What&apos;s Included
@@ -26,7 +26,7 @@ export default function WhatsIncludedSection() {
 
         {/* Headline */}
         <motion.h2
-          className="h-luxia t-silver leading-[0.9] mb-6 max-w-4xl"
+          className="h-luxia t-silver leading-[0.9] mb-6 max-w-4xl mx-auto text-center"
           style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -36,7 +36,7 @@ export default function WhatsIncludedSection() {
         </motion.h2>
 
         <motion.p
-          className="text-apex-grey font-body leading-relaxed max-w-2xl mb-10 md:mb-16"
+          className="text-apex-grey font-body leading-relaxed max-w-2xl mx-auto text-center mb-10 md:mb-16"
           style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
           initial={{ opacity: 0, y: 18 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -78,12 +78,12 @@ export default function WhatsIncludedSection() {
 
         {/* ── Overspeed module ────────────────────────────────────────── */}
         <motion.div
-          className="mb-6 flex items-baseline gap-4 flex-wrap"
+          className="mb-6 flex items-baseline justify-center gap-4 flex-wrap"
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.55, delay: 0.25 }}
         >
-          <h3 className="font-display font-black t-feature leading-tight" style={{ fontSize: 'clamp(1.3rem, 2.4vw, 1.9rem)' }}>
+          <h3 className="font-display font-black t-feature leading-tight text-center" style={{ fontSize: 'clamp(1.3rem, 2.4vw, 1.9rem)' }}>
             Overspeed Module
           </h3>
         </motion.div>

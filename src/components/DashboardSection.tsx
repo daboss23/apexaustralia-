@@ -296,7 +296,7 @@ export default function DashboardSection() {
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         {/* Section label */}
-        <div ref={titleRef} className="flex items-center gap-3 mb-6">
+        <div ref={titleRef} className="flex items-center justify-center gap-3 mb-6">
           <div className="w-8 h-px bg-apex-blue" />
           <span className="text-apex-blue font-mono text-[12px] tracking-[0.3em] uppercase font-medium">
             05b — Live Performance Dashboard
@@ -304,7 +304,7 @@ export default function DashboardSection() {
         </div>
 
         <motion.h2
-          className="h-luxia t-silver leading-[0.88] mb-4"
+          className="h-luxia t-silver leading-[0.88] mb-4 text-center"
           style={{ fontSize: 'clamp(1.9rem, 4.4vw, 3.6rem)' }}
           initial={{ opacity: 0, y: 28 }}
           animate={titleInView ? { opacity: 1, y: 0 } : {}}
@@ -314,7 +314,7 @@ export default function DashboardSection() {
         </motion.h2>
 
         <motion.p
-          className="text-apex-grey font-body mb-7 md:mb-12 max-w-xl leading-relaxed"
+          className="text-apex-grey font-body mb-7 md:mb-12 max-w-xl mx-auto text-center leading-relaxed"
           style={{ fontSize: 'clamp(0.88rem, 1.2vw, 1rem)' }}
           initial={{ opacity: 0, y: 18 }}
           animate={titleInView ? { opacity: 1, y: 0 } : {}}
