@@ -521,6 +521,97 @@
   mask-image: url('/checkout/complete-order.png');
 }
 
+/* ── UPSELL (one-time offer) screen ──────────────────────────────────────────
+   The post-purchase upsell borrows the direct-response furniture — a warning
+   ribbon, an "order is 50% complete" progress bar and a single oversized YES
+   button — but rendered in the T-APEX language: carbon black, brand red, gold.
+
+   The YES button is drawn in CSS (not baked artwork like the order-form CTAs)
+   because its label changes with the offer. Gold chevron plate on the left,
+   deep-red bar carrying the type, red rim light around the whole thing. */
+.cta-yes {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  isolation: isolate;
+  overflow: hidden;
+  border: 2px solid rgba(255, 90, 90, 0.85);
+  background: linear-gradient(180deg, #b3161c 0%, #8c0f14 46%, #5e0a0d 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.55),
+    0 10px 26px rgba(214, 31, 38, 0.35);
+  animation: cta-yes-halo 4.2s ease-in-out infinite;
+  transition: transform 0.25s ease;
+}
+.cta-yes:hover { transform: translateY(-2px); }
+.cta-yes:active { transform: translateY(0); }
+
+@keyframes cta-yes-halo {
+  0%, 100% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -2px 6px rgba(0,0,0,0.55), 0 10px 22px rgba(214,31,38,0.32); }
+  50% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -2px 6px rgba(0,0,0,0.55), 0 12px 34px rgba(230,45,52,0.62); }
+}
+
+/* The gold chevron plate carrying the cart glyph. */
+.cta-yes-plate {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem 0 1.1rem;
+  background: linear-gradient(160deg, #f6e7a8 0%, #d9b455 32%, #b98f2f 62%, #f0dc9b 100%);
+  color: #6b4d0d;
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%);
+}
+
+/* Phones: the chevron plate eats the bar's width, so tighten it there. */
+@media (max-width: 480px) {
+  .cta-yes-plate {
+    padding: 0 1rem 0 0.65rem;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
+  }
+}
+
+.cta-yes-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+.cta-yes-shine::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 34%, rgba(255, 250, 240, 0.34) 50%, transparent 64%);
+  transform: translateX(-130%);
+  animation: cta-shine 5.5s ease-in-out infinite;
+}
+.cta-yes:hover .cta-yes-shine::before { animation: cta-shine 1.1s ease-in-out; }
+
+/* Barber-pole progress bar — "your order is 50% complete". */
+.upsell-progress-fill {
+  background-image: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.16) 0 12px,
+    rgba(255, 255, 255, 0) 12px 24px
+  ),
+  linear-gradient(180deg, #e0464c 0%, #b3161c 55%, #8c0f14 100%);
+  background-size: 34px 100%, 100% 100%;
+  animation: upsell-progress-stripes 1.1s linear infinite;
+}
+@keyframes upsell-progress-stripes {
+  to { background-position: 34px 0, 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-yes { animation: none; }
+  .cta-yes-shine::before { animation: none; opacity: 0; }
+  .upsell-progress-fill { animation: none; }
+}
+
 /* Gold price treatment — the checkout total. A clipped gold gradient with a
    bright band that drifts slowly across it, so the figure catches light
    without the loop reading as an animation. */
