@@ -50,27 +50,19 @@ export default function ScrollExpandVideo() {
   const width = useTransform(scrollYProgress, [0, 0.75], isMobile ? ['74vw', '95vw'] : ['32vw', '92vw'])
   const radius = useTransform(scrollYProgress, [0, 0.75], ['2px', '0px'])
   const veil = useTransform(scrollYProgress, [0, 0.7], [0.55, 0])
-  // The quote comes TOWARD the lens rather than parting sideways: it holds at
-  // rest, then pushes forward, growing as it approaches and dissolving as it
-  // passes the camera. The two halves scale as one block so the line stays a
-  // line — parting them would fight the forward move.
+  // Title halves part around the growing plate.
   //
-  // The push is deliberately back-loaded (the ease below) and the fade starts
-  // late, so the words are legible for a good stretch of the expansion before
-  // anything happens to them — roughly three seconds longer at a normal scroll
-  // rate than the old sideways parting, which began drifting immediately.
-  const titleScale = useTransform(
-    scrollYProgress,
-    [0, 0.3, 0.62, 0.8],
-    [1, 1.04, isMobile ? 1.55 : 1.7, isMobile ? 2.3 : 2.7],
-  )
-  // Gone by 0.8 — the plate is fully open at 0.75, so the quote clears the
-  // screen just as the film owns it. Held at full strength until 0.5 first.
-  const titleOpacity = useTransform(scrollYProgress, [0.1, 0.5, 0.8], [1, 1, 0])
-  // A touch of defocus as it passes the lens, so the growth reads as depth
-  // rather than as type being scaled up.
-  const titleBlur = useTransform(scrollYProgress, [0.5, 0.8], [0, 9])
-  const titleFilter = useTransform(titleBlur, (b) => `blur(${b}px)`)
+  // These distances are a function of how wide the words are: the parting ends
+  // with the left half's edge at the edge of the screen, so a longer first half
+  // needs a shorter travel or it slides straight off. They were tuned for
+  // "EVERY FEATURE" (13 characters) and this half is now 19, hence 18/8vw
+  // rather than 32/24vw — measured to leave clearance from 390px to 1920px.
+  const shiftL = useTransform(scrollYProgress, [0, 0.75], ['0vw', isMobile ? '-8vw' : '-18vw'])
+  const shiftR = useTransform(scrollYProgress, [0, 0.75], ['0vw', isMobile ? '8vw' : '18vw'])
+  // …and fade out as they go, so the quote hands the screen over to the film
+  // instead of sitting on top of it. Gone by the time the plate is two-thirds
+  // open; the parting continues underneath and is never seen finishing.
+  const titleOpacity = useTransform(scrollYProgress, [0.1, 0.45], [1, 0])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
 
   function play() {
@@ -120,33 +112,23 @@ export default function ScrollExpandVideo() {
         className="sticky top-0 w-full overflow-hidden flex flex-col items-center justify-center"
         style={{ height: isMobile ? '68svh' : '100svh' }}
       >
-        {/* The quote — holds, then travels toward the lens and dissolves.
-            Scaled on the wrapper (not per line) and about its own centre, so
-            the line grows out of the middle of the screen the way something
-            approaching the camera does. `willChange` keeps the scale on the
-            compositor; a blurred, scaling text node repainting every frame is
-            the one thing here that could cost a phone its framerate. */}
+        {/* Title halves — they part, and fade, as the plate opens */}
         <motion.div
-          className="absolute inset-x-0 top-1/2 z-20 pointer-events-none flex flex-col items-center gap-2 px-4"
-          style={{
-            opacity: titleOpacity,
-            scale: titleScale,
-            /* The vertical centring is a motion value, NOT Tailwind's
-               -translate-y-1/2: once this element has a scale, Framer owns the
-               whole `transform` property and a class-based translate is simply
-               overwritten — the quote would sit half a line low. */
-            y: '-50%',
-            filter: titleFilter,
-            transformOrigin: 'center center',
-            willChange: 'transform, opacity, filter',
-          }}
+          className="absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 pointer-events-none flex flex-col items-center gap-2 px-4"
+          style={{ opacity: titleOpacity }}
         >
-          <h2 className="h-luxia leading-[0.92] text-center" style={{ fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}>
+          <motion.h2
+            className="h-luxia leading-[0.92] text-center"
+            style={{ x: shiftL, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
+          >
             <span className="t-silver">&ldquo;PERFORMANCE BECOMES</span>
-          </h2>
-          <h2 className="h-luxia leading-[0.92] text-center" style={{ fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}>
+          </motion.h2>
+          <motion.h2
+            className="h-luxia leading-[0.92] text-center"
+            style={{ x: shiftR, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
+          >
             <span className="t-red">INEVITABLE.&rdquo;</span>
-          </h2>
+          </motion.h2>
         </motion.div>
 
         {/* The growing video plate */}
