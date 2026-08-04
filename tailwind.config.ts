@@ -35,6 +35,7 @@ const config: Config = {
       },
       fontFamily: {
         luxia: ['var(--font-marcellus)', 'Georgia', 'serif'],
+        cinzel: ['var(--font-cinzel)', 'Georgia', 'serif'],
         display: ['var(--font-inter)', 'system-ui', 'sans-serif'],
         body: ['var(--font-inter)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-jetbrains)', 'monospace'],

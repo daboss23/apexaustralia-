@@ -2,6 +2,8 @@
 
 import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { POLICIES } from '@/components/policies/PolicyPage'
+import { ENQUIRY_HREF } from '@/lib/site'
 
 /* ────────────────────────────────────────────────────────────────────────────
    TWO-STEP CHECKOUT FLOW — direct-response ("ClickFunnels") order form, built
@@ -863,6 +865,12 @@ export default function CheckoutFlow({
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="max-w-3xl mx-auto text-center"
           >
+            {/* T-APEX mark, centred — this screen stands on its own. */}
+            <div className="flex justify-center mb-7">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/apexaustralialogo.webp" alt="T-APEX Australia" className="h-9 sm:h-11 w-auto object-contain" />
+            </div>
+
             {/* ── Warning ribbon — the direct-response "don't leave" bar ── */}
             <div
               className="flex items-center justify-center px-4 py-2.5 mb-5"
@@ -1047,6 +1055,12 @@ export default function CheckoutFlow({
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="max-w-4xl mx-auto"
           >
+            {/* T-APEX mark, centred — this screen stands on its own. */}
+            <div className="flex justify-center mb-7">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/apexaustralialogo.webp" alt="T-APEX Australia" className="h-9 sm:h-11 w-auto object-contain" />
+            </div>
+
             {/* Order progress — the upsell's bar, run out to 100%. */}
             <div className="max-w-xl mx-auto mb-8">
               <div className="relative h-8 border border-apex-line/70 bg-apex-black overflow-hidden">
@@ -1214,9 +1228,36 @@ export default function CheckoutFlow({
               ))}
             </div>
 
-            <div className="text-center border-t border-apex-line/40 pt-8">
-              <p className="font-display font-black text-apex-white leading-tight max-w-2xl mx-auto" style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.35rem)' }}>
+            <div className="text-center border-t border-apex-line/40 pt-9">
+              <p
+                className="font-cinzel font-bold text-apex-white leading-tight max-w-3xl mx-auto tracking-[0.04em]"
+                style={{ fontSize: 'clamp(1.45rem, 3.1vw, 2.1rem)' }}
+              >
                 WELCOME TO THE <span className="text-apex-blue">T-APEX FAMILY</span>!
+              </p>
+
+              {/* Policy / contact links + copyright — the same set as the
+                  site footer, so the popup closes the loop on its own. */}
+              <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mt-8" aria-label="Policies">
+                {POLICIES.map((p) => (
+                  <a
+                    key={p.slug}
+                    href={`/policies/${p.slug}/`}
+                    className="font-mono text-[11px] tracking-[0.16em] uppercase text-apex-grey hover:text-apex-white transition-colors duration-300 py-1"
+                  >
+                    {p.name}
+                  </a>
+                ))}
+                <a
+                  href={ENQUIRY_HREF}
+                  className="font-mono text-[11px] tracking-[0.16em] uppercase text-apex-grey hover:text-apex-white transition-colors duration-300 py-1"
+                >
+                  Contact Us
+                </a>
+              </nav>
+
+              <p className="font-mono text-[11px] tracking-[0.14em] uppercase text-apex-grey-dim mt-4">
+                © 2026 T-APEX Australia. All rights reserved.
               </p>
             </div>
           </motion.div>

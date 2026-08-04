@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Marcellus, Inter, JetBrains_Mono } from 'next/font/google'
+import { Marcellus, Cinzel, Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import MotionProvider from '@/components/MotionProvider'
 
@@ -8,6 +8,15 @@ const marcellus = Marcellus({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-marcellus',
+  display: 'swap',
+})
+
+// Cinzel — Roman inscriptional capitals. Used sparingly, for the checkout's
+// closing "welcome to the family" line.
+const cinzel = Cinzel({
+  weight: ['400', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-cinzel',
   display: 'swap',
 })
 
@@ -101,7 +110,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${marcellus.variable} ${inter.variable} ${jetbrains.variable}`}
+      className={`${marcellus.variable} ${cinzel.variable} ${inter.variable} ${jetbrains.variable}`}
     >
       <head>
         <HeroFramePreloads />
