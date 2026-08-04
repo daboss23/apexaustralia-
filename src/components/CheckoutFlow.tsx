@@ -676,39 +676,10 @@ export default function CheckoutFlow({
                           </button>
                         </div>
 
-                        {/* Shipping recap */}
-                        <div className="border border-apex-line/50 bg-apex-black/50 px-4 py-3 mb-6">
-                          <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-apex-blue mb-1.5">Shipping to</div>
-                          <p className="text-apex-grey font-body text-[12.5px] leading-snug">
-                            <span className="text-apex-white">{form.name}</span>
-                            {form.org && ` · ${form.org}`}
-                            <br />
-                            {form.address}, {form.city} {form.state} {form.postcode}, {form.country}
-                          </p>
-                        </div>
-
-                        {/* Order summary — the price reveal */}
+                        {/* Order summary */}
                         <div className="border border-apex-line/60 bg-apex-panel/40 px-4 py-4 mb-6" style={{ borderTop: '2px solid rgba(214,31,38,0.6)' }}>
-                          <div className="font-mono text-[11px] tracking-[0.24em] uppercase text-apex-red mb-3">Your order</div>
-                          <dl className="flex flex-col gap-2.5">
-                            <div className="flex items-baseline justify-between gap-4">
-                              <dt className="text-apex-white font-body text-[13px]">{product.name}</dt>
-                              <dd className="font-mono text-apex-white text-[13px] metric-value">{fmt(product.price)}</dd>
-                            </div>
-                            {bump && (
-                              <div className="flex items-baseline justify-between gap-4">
-                                <dt className="font-body text-[13px]" style={{ color: GOLD }}>Elite Onboarding & Calibration</dt>
-                                <dd className="font-mono text-[13px] metric-value" style={{ color: GOLD }}>{fmt(BUMP.price)}</dd>
-                              </div>
-                            )}
-                            <div className="flex items-baseline justify-between gap-4">
-                              <dt className="text-apex-grey font-body text-[13px]">Free shipping · Australia-wide</dt>
-                              <dd className="font-mono text-apex-blue text-[13px] uppercase tracking-wide">Free</dd>
-                            </div>
-                          </dl>
-                          <p className="font-mono text-[11px] tracking-[0.16em] uppercase text-apex-grey mt-3 pt-3 border-t border-apex-line/40">
-                            AUD · GST included · flexible payment plans available
-                          </p>
+                          <div className="font-mono text-[11px] tracking-[0.24em] uppercase text-apex-red mb-2">Your order</div>
+                          <div className="text-apex-white font-body text-[14px]">{product.name}</div>
                         </div>
 
                         {/* Billing section header (replaced the payment-method toggle) */}
