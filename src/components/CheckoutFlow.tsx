@@ -1064,8 +1064,7 @@ export default function CheckoutFlow({
               </h2>
               <p className="text-apex-grey font-body max-w-xl mx-auto text-[14px] sm:text-[15px] leading-relaxed">
                 Thank you, {form.name.split(' ')[0] || 'Coach'}. A confirmation is on its way to{' '}
-                <span className="text-apex-white break-words">{form.email}</span>. Your build slot is locked and the Australian
-                team will be in touch within one business day.
+                <span className="text-apex-white break-words">{form.email}</span>.
               </p>
             </div>
 
