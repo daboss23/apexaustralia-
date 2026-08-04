@@ -243,7 +243,7 @@ export default function ComparisonSection() {
 
         {/* Verdict + CTA — graphite glass with blue edge, red accent line */}
         <motion.div
-          className="mt-8 md:mt-14 p-8 md:p-9 flex flex-col md:flex-row md:items-center gap-6 md:gap-10 relative overflow-hidden"
+          className="mt-8 md:mt-14 p-8 md:p-9 relative overflow-hidden"
           style={{
             background: 'rgba(12,12,14,0.7)',
             backdropFilter: 'blur(20px)',
@@ -260,20 +260,10 @@ export default function ComparisonSection() {
           {/* Red accent rule, left */}
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-12 pointer-events-none" style={{ background: C.red, boxShadow: `0 0 16px ${C.red}` }} />
 
-          <h3 className="font-display font-black text-apex-white leading-tight flex-1" style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.7rem)' }}>
+          <h3 className="font-display font-black text-apex-white leading-tight max-w-3xl mx-auto" style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.7rem)', textAlign: 'justify', textAlignLast: 'center' }}>
             You&apos;re not choosing between products — you&apos;re choosing whether to{' '}
             <span className="text-apex-blue">measure, or keep guessing.</span>
           </h3>
-          <a
-            href="#order"
-            className="flex-shrink-0 inline-flex items-center gap-2.5 cta-glow text-white font-display font-bold text-[11px] px-7 py-4 tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
-            style={{ borderRadius: 0 }}
-          >
-            Start Measuring
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </a>
         </motion.div>
       </div>
     </section>
