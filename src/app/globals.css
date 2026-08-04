@@ -183,7 +183,7 @@
      these classes only set the size and the tapered shape. */
   .kicker-line {
     width: 2.75rem;
-    height: 6px;
+    height: 3px;
     flex-shrink: 0;
   }
   .kicker-line--l { clip-path: polygon(100% 0, 100% 100%, 0 50%); }
