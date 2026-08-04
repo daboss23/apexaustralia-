@@ -672,9 +672,9 @@
   0% { background-position: 180% 0; }
   55%, 100% { background-position: -80% 0; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .badge-shine { animation: none; opacity: 0; }
-}
+/* Deliberately NOT gated by prefers-reduced-motion: the warranty seal's gold
+   shine is meant to play on every device, mobile included (a subtle looping
+   light band, not vestibular motion). Owner-requested parity with desktop. */
 
 /* ── Neon play button (ScrollExpandVideo) ────────────────────────────────────
    A glossy near-black disc ringed by a glowing multicolour neon band, with a
