@@ -1133,8 +1133,7 @@ export default function CheckoutFlow({
 
             <div className="text-center border-t border-apex-line/40 pt-8">
               <p className="font-display font-black text-apex-white leading-tight max-w-2xl mx-auto" style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.35rem)' }}>
-                You did not just buy a sprint tool. You bought an{' '}
-                <span className="text-apex-blue">Adaptive Resistance Intelligence system</span> for your program.
+                WELCOME TO THE <span className="text-apex-blue">T-APEX FAMILY</span>!
               </p>
             </div>
           </motion.div>
