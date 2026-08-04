@@ -255,9 +255,14 @@ export default function PerformanceSection() {
           One portable unit loads any movement, tows athletes past their top speed, and captures force and velocity at up to 1000Hz — from Olympic sprinters to full professional squads.
         </motion.p>
 
-        {/* Cinematic product film */}
+        {/* Cinematic product film.
+            Full-bleed on a phone: the -mx-6 cancels the container's own px-6 so
+            the plate spans the screen instead of sitting inside the text
+            column, which is the only way to gain size on a 16:9 band that is
+            already width-limited. mt-2 drops it clear of the intro copy so the
+            gap above it matches the one below. Desktop keeps the column. */}
         <motion.div
-          className="relative mb-12 md:mb-20 overflow-hidden aspect-video"
+          className="relative -mx-6 md:mx-0 mt-2 md:mt-0 mb-12 md:mb-20 overflow-hidden aspect-video"
           initial={{ opacity: 0, y: 26 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
