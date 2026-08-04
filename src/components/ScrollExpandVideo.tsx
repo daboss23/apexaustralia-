@@ -100,17 +100,18 @@ export default function ScrollExpandVideo() {
          sticky, so this height is the "scroll budget" for the growth.
          Shorter on a phone: the budget is spent at the same rate but there is
          less of it left doing nothing once the plate is open. */
-      style={{ height: isMobile ? '185svh' : '230svh' }}
+      style={{ height: isMobile ? '150svh' : '230svh' }}
     >
       {/* The stage is only as tall as it needs to be on a phone. At a full
           100svh the 16:9 plate (95vw ≈ 53svh) left ~23svh of dead black above
           AND below it, and the lower band read as a long break between this
           section and the next — the plate is centred, so the emptiness is
-          symmetrical and unavoidable at that height. 68svh brackets the plate
-          evenly and hands over to the next section's own padding. */}
+          symmetrical and unavoidable at that height. Tightened to 56svh so the
+          plate sits higher in the pinned view (less dead black above it) and
+          the section is shorter overall — both cut scroll time on a phone. */}
       <div
         className="sticky top-0 w-full overflow-hidden flex flex-col items-center justify-center"
-        style={{ height: isMobile ? '68svh' : '100svh' }}
+        style={{ height: isMobile ? '56svh' : '100svh' }}
       >
         {/* Title halves — they part, and fade, as the plate opens */}
         <motion.div
