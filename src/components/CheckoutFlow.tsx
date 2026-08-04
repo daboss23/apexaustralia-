@@ -615,12 +615,12 @@ export default function CheckoutFlow({
                           <div className="flex-1 h-px bg-apex-line/60" />
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
-                          <Field label="Street address" name="address" value={form.address} onChange={set('address')} error={errors.address} placeholder="12 Training Centre Drive" autoComplete="address-line1" className="sm:col-span-6" />
-                          <Field label="Suburb / City" name="city" value={form.city} onChange={set('city')} error={errors.city} placeholder="Moore Park" autoComplete="address-level2" className="sm:col-span-3" />
-                          <SelectField label="State" name="state" value={form.state} onChange={set('state')} error={errors.state} options={AU_STATES} className="sm:col-span-2" />
-                          <Field label="Postcode" name="postcode" value={form.postcode} onChange={set('postcode')} error={errors.postcode} inputMode="numeric" maxLength={4} placeholder="2021" autoComplete="postal-code" className="sm:col-span-1" />
-                          <Field label="Country" name="country" value={form.country} onChange={set('country')} autoComplete="country-name" className="sm:col-span-6" />
+                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                          <Field label="Street address" name="address" value={form.address} onChange={set('address')} error={errors.address} placeholder="12 Training Centre Drive" autoComplete="address-line1" className="sm:col-span-12" />
+                          <Field label="Suburb / City" name="city" value={form.city} onChange={set('city')} error={errors.city} placeholder="Moore Park" autoComplete="address-level2" className="sm:col-span-6" />
+                          <SelectField label="State" name="state" value={form.state} onChange={set('state')} error={errors.state} options={AU_STATES} className="sm:col-span-3" />
+                          <Field label="Postcode" name="postcode" value={form.postcode} onChange={set('postcode')} error={errors.postcode} inputMode="numeric" maxLength={4} placeholder="2021" autoComplete="postal-code" className="sm:col-span-3" />
+                          <Field label="Country" name="country" value={form.country} onChange={set('country')} autoComplete="country-name" className="sm:col-span-12" />
                         </div>
 
                         <button
@@ -707,10 +707,9 @@ export default function CheckoutFlow({
                         </div>
 
                         {/* Payment method toggle */}
-                        <div className="grid grid-cols-2 gap-px bg-apex-line/50 mb-6">
+                        <div className="grid grid-cols-1 gap-px bg-apex-line/50 mb-6">
                           {([
                             { id: 'card' as PayMethod, label: 'Card', sub: 'Instant · secure' },
-                            { id: 'invoice' as PayMethod, label: 'Invoice / EFT', sub: 'Club purchase order' },
                           ]).map((m) => (
                             <button
                               key={m.id}
@@ -747,7 +746,7 @@ export default function CheckoutFlow({
                         )}
 
                         {/* ORDER BUMP */}
-                        <div className="mt-6 border-2 border-dashed p-4" style={{ borderColor: 'rgba(180,140,60,0.55)', background: 'rgba(180,140,60,0.06)' }}>
+                        <div className="marching-border-gold mt-6 p-4">
                           <label className="flex items-start gap-3 cursor-pointer">
                             <input
                               type="checkbox"
