@@ -219,8 +219,11 @@ export default function ProductShowcase() {
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            ENGINEERED LIKE NOTHING ELSE{' '}
-            <span className="t-blue">IN THE ROOM</span>
+            {/* Two blocks, not one flowing line: "IN THE ROOM" owns the last
+                line at every width instead of being broken across two by the
+                wrap point ("…IN THE / ROOM"). Both centre on their own line. */}
+            <span className="block">ENGINEERED LIKE NOTHING ELSE</span>
+            <span className="block t-blue">IN THE ROOM</span>
           </motion.h2>
         </div>
 
