@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { lockScroll, unlockScroll } from '@/lib/scroll'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import CheckoutFlow, { HighlightBullets } from './CheckoutFlow'
+import CheckoutFlow, { HighlightBullets, type Stage } from './CheckoutFlow'
 import MovingTestimonials from './MovingTestimonials'
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -445,6 +445,7 @@ export default function CheckoutSection() {
 
   const [variantId, setVariantId] = useState<VariantId>('core')
   const [cartOpen, setCartOpen] = useState(false)
+  const [checkoutStage, setCheckoutStage] = useState<Stage>('shipping')
   const [mounted, setMounted] = useState(false)
   const variant = VARIANTS[variantId]
   const isOver = variantId === 'overspeed'
@@ -790,33 +791,40 @@ export default function CheckoutSection() {
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Sticky header — the direct-response "don't leave" urgency bar.
-                    A discreet close (×) is kept so the modal can still be
-                    dismissed (the backdrop tap alone is hard to hit on mobile). */}
-                <div
-                  className="sticky top-0 z-30 relative flex items-center justify-center px-10 sm:px-12 py-3"
-                  style={{
-                    background: 'linear-gradient(180deg, #d61f26 0%, #9c0f0d 100%)',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)',
-                  }}
-                >
-                  <span className="font-mono text-[10.5px] sm:text-[11.5px] tracking-[0.2em] sm:tracking-[0.26em] uppercase text-white text-center leading-tight">
-                    ** Do not close this page · customise your order below **
-                  </span>
-                  <button
-                    onClick={() => setCartOpen(false)}
-                    aria-label="Close checkout"
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-white/80 hover:text-white transition-colors duration-300 cursor-pointer"
+                {/* Sticky header. On the upsell (OTO) stage it's the red
+                    "don't leave" urgency bar with NO close — the visitor commits
+                    or declines via the on-page buttons. Every other stage gets a
+                    plain header with a close (×). */}
+                {checkoutStage === 'oto' ? (
+                  <div
+                    className="sticky top-0 z-30 flex items-center justify-center px-6 sm:px-10 py-3"
+                    style={{
+                      background: 'linear-gradient(180deg, #d61f26 0%, #9c0f0d 100%)',
+                      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)',
+                    }}
                   >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
+                    <span className="font-mono text-[10.5px] sm:text-[11.5px] tracking-[0.2em] sm:tracking-[0.26em] uppercase text-white text-center leading-tight">
+                      ** Do not close this page · customise your order below **
+                    </span>
+                  </div>
+                ) : (
+                  <div className="sticky top-0 z-30 flex items-center justify-end px-4 sm:px-6 py-3 bg-apex-black-2/95 backdrop-blur-sm border-b border-apex-line/60">
+                    <button
+                      onClick={() => setCartOpen(false)}
+                      aria-label="Close checkout"
+                      className="flex-shrink-0 w-10 h-10 flex items-center justify-center border border-apex-line/60 text-apex-white hover:border-apex-red/60 transition-colors duration-300 cursor-pointer"
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
 
                 <div className="p-5 sm:p-8 md:p-10">
                   <CheckoutFlow
                     key={variant.id}
+                    onStageChange={setCheckoutStage}
                     gallery={<Gallery variant={variant} />}
                     upsell={
                       !isOver ? (

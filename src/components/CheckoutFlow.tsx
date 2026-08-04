@@ -4,7 +4,6 @@ import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from '
 import { motion, AnimatePresence } from 'framer-motion'
 import { POLICIES } from '@/components/policies/PolicyPage'
 import { ENQUIRY_HREF } from '@/lib/site'
-import MovingTestimonials from '@/components/MovingTestimonials'
 
 /* ────────────────────────────────────────────────────────────────────────────
    TWO-STEP CHECKOUT FLOW — direct-response ("ClickFunnels") order form, built
@@ -536,17 +535,7 @@ export default function CheckoutFlow({
             className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-14 items-start"
           >
             {/* LEFT — product gallery (owned by the section) */}
-            <div className="order-2 lg:order-1">
-              {gallery}
-              {/* Fill the blank space beneath the gallery (desktop only, where the
-                  form column runs taller) with the animated reviews wall. */}
-              <MovingTestimonials
-                className="hidden lg:block mt-10"
-                fadeColor="#0A0D10"
-                heightClass="h-[460px]"
-                maxCols={2}
-              />
-            </div>
+            <div className="order-2 lg:order-1">{gallery}</div>
 
             {/* RIGHT — product identity + the two-step form */}
             <div className="order-1 lg:order-2 flex flex-col">
