@@ -181,13 +181,13 @@ export default function FinalCTA() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.4 }}
           >
-            Join the coaches, clubs, and athletes raising the standard. See T-Apex measure speed, force, and control in real time — then decide. We&apos;re placing units with select Australian programs now.
+            Champions are remembered. So are the tools that built them.
           </motion.p>
 
           {/* CTA — the supplied artwork button, same one both heroes use, so the
               page opens and closes on the identical primary CTA. */}
           <motion.div
-            className="flex justify-center mb-10 md:mb-16"
+            className="flex justify-center mb-6 md:mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.65 }}
@@ -199,6 +199,17 @@ export default function FinalCTA() {
               <span className="sr-only">Order your T-APEX machine</span>
             </a>
           </motion.div>
+
+          {/* Sign-off under the CTA — readable weight, not microcopy. */}
+          <motion.p
+            className="font-display font-bold text-apex-white tracking-[0.14em] uppercase mb-10 md:mb-16"
+            style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)' }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.85 }}
+          >
+            Performance Without Limits
+          </motion.p>
         </div>
       </motion.div>
 
