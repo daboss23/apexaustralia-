@@ -204,8 +204,8 @@ export default function TApexVs1080Section() {
 
         {/* Comparison intro */}
         <motion.p
-          className="font-display font-bold t-feature leading-snug mb-8 max-w-3xl"
-          style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.4rem)' }}
+          className="font-display font-bold t-feature leading-snug mb-8 max-w-3xl mx-auto"
+          style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.4rem)', textAlign: 'justify', textAlignLast: 'center' }}
           initial={{ opacity: 0, y: 16 }}
           animate={tableInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
