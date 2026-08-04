@@ -144,8 +144,11 @@ export default function FinalCTA() {
 
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto">
-          {/* Main headline */}
-          <div className="overflow-hidden mb-3">
+          {/* Main headline. No bottom margin here: the silver line wraps to two
+              lines and "HAS ARRIVED" is a third — a margin between the blocks
+              made the last line sit lower than the gap between the first two.
+              With none, all three lines share the same leading-[0.86] rhythm. */}
+          <div className="overflow-hidden">
             <motion.h2
               className="h-luxia t-silver leading-[0.86]"
               style={{ fontSize: 'clamp(2rem, 4.9vw, 4.3rem)' }}
