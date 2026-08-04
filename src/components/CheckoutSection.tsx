@@ -789,18 +789,23 @@ export default function CheckoutSection() {
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Sticky header with close */}
-                <div className="sticky top-0 z-30 flex items-center justify-between gap-4 px-5 sm:px-8 py-4 bg-apex-black-2/95 backdrop-blur-sm border-b border-apex-line/60">
-                  <div className="min-w-0">
-                    <div className="font-mono text-[11px] tracking-[0.28em] uppercase text-apex-red">Secure Checkout</div>
-                    <div className="font-display font-black text-apex-white text-[14px] sm:text-[15px] leading-tight truncate">
-                      Two steps away
-                    </div>
-                  </div>
+                {/* Sticky header — the direct-response "don't leave" urgency bar.
+                    A discreet close (×) is kept so the modal can still be
+                    dismissed (the backdrop tap alone is hard to hit on mobile). */}
+                <div
+                  className="sticky top-0 z-30 relative flex items-center justify-center px-10 sm:px-12 py-3"
+                  style={{
+                    background: 'linear-gradient(180deg, #d61f26 0%, #9c0f0d 100%)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)',
+                  }}
+                >
+                  <span className="font-mono text-[10.5px] sm:text-[11.5px] tracking-[0.2em] sm:tracking-[0.26em] uppercase text-white text-center leading-tight">
+                    ** Do not close this page · customise your order below **
+                  </span>
                   <button
                     onClick={() => setCartOpen(false)}
                     aria-label="Close checkout"
-                    className="flex-shrink-0 w-10 h-10 flex items-center justify-center border border-apex-line/60 text-apex-white hover:border-apex-red/60 transition-colors duration-300 cursor-pointer"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-white/80 hover:text-white transition-colors duration-300 cursor-pointer"
                   >
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />

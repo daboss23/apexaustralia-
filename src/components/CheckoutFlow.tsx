@@ -868,20 +868,7 @@ export default function CheckoutFlow({
             {/* T-APEX mark, centred — this screen stands on its own. */}
             <div className="flex justify-center mb-7">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/apexaustralialogo.webp" alt="T-APEX Australia" className="h-9 sm:h-11 w-auto object-contain" />
-            </div>
-
-            {/* ── Warning ribbon — the direct-response "don't leave" bar ── */}
-            <div
-              className="flex items-center justify-center px-4 py-2.5 mb-5"
-              style={{
-                background: 'linear-gradient(180deg, #d61f26 0%, #9c0f0d 100%)',
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)',
-              }}
-            >
-              <span className="font-mono text-[10.5px] sm:text-[11.5px] tracking-[0.2em] sm:tracking-[0.26em] uppercase text-white text-center leading-tight">
-                ** Do not close this page · customise your order below **
-              </span>
+              <img src="/apexaustralialogo.webp" alt="T-APEX Australia" className="h-12 sm:h-14 w-auto object-contain" />
             </div>
 
             {/* ── WAIT headline + progress ── */}
@@ -906,14 +893,6 @@ export default function CheckoutFlow({
                       Your order is 50% complete…
                     </span>
                   </div>
-                </div>
-                <div className="flex items-center justify-center gap-2 mt-3">
-                  <svg className="w-3.5 h-3.5 text-apex-blue flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                  <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-apex-blue text-center">
-                    Order {orderNo} confirmed — one step left
-                  </span>
                 </div>
               </div>
             </div>
