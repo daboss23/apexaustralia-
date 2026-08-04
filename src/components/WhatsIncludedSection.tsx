@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 
 export default function WhatsIncludedSection() {
-  const titleRef = useRef<HTMLDivElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
 
   return (
@@ -16,18 +16,10 @@ export default function WhatsIncludedSection() {
       />
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        {/* Section label */}
-        <div ref={titleRef} className="flex items-center justify-center gap-3 mb-6">
-          <div className="kicker-line kicker-line--l bg-apex-blue" />
-          <span className="text-apex-blue font-mono text-[12px] tracking-[0.3em] uppercase font-medium">
-            What&apos;s Included
-          </span>
-          <div className="kicker-line kicker-line--r bg-apex-blue" />
-        </div>
-
         {/* Headline */}
         <motion.h2
-          className="h-luxia t-silver leading-[0.9] mb-6 max-w-4xl mx-auto text-center"
+          ref={titleRef}
+          className="h-luxia t-silver leading-[0.9] mb-10 md:mb-16 max-w-4xl mx-auto text-center"
           style={{ fontSize: 'clamp(2rem, 5.2vw, 4.3rem)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -35,17 +27,6 @@ export default function WhatsIncludedSection() {
         >
           HERE&apos;S WHAT<br /><span className="t-red">YOU&apos;LL RECEIVE.</span>
         </motion.h2>
-
-        <motion.p
-          className="text-apex-grey font-body leading-relaxed max-w-2xl mx-auto text-center mb-10 md:mb-16"
-          style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}
-          initial={{ opacity: 0, y: 18 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.65, delay: 0.15 }}
-        >
-          Everything arrives calibrated to work as one system — ready to train on day one,
-          with no extra purchases to get started.
-        </motion.p>
 
         {/* Everything-in-the-box hero — full annotated kit, edges feathered into the section bg.
             Full-bleed to the screen edges on mobile so the kit reads large; contained on desktop. */}
