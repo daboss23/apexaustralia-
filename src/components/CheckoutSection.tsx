@@ -41,7 +41,7 @@ const VARIANTS: Record<VariantId, Variant> = {
   core: {
     id: 'core',
     chip: 'Core System',
-    name: 'Core T-APEX',
+    name: 'T-APEX Machine',
     tagline: 'Portable Adaptive Resistance Intelligence',
     priceLabel: 'From',
     price: 9450,
@@ -68,7 +68,7 @@ const VARIANTS: Record<VariantId, Variant> = {
   overspeed: {
     id: 'overspeed',
     chip: 'Full System · Best Value',
-    name: 'Core T-APEX + Overspeed',
+    name: 'T-APEX + Overspeed',
     tagline: 'Everything in Core — plus the complete Overspeed Module',
     priceLabel: 'Full system',
     price: 9990,
@@ -81,7 +81,7 @@ const VARIANTS: Record<VariantId, Variant> = {
       { title: 'Just A$540 more', desc: 'The entire system for a fraction of adding the module later.' },
     ],
     inBox: [
-      'Everything in Core T-APEX',
+      'Everything in the T-APEX Machine',
       'OS Tether Reel',
       'OS Pulley',
       'OS Weight Anchor',
@@ -553,7 +553,7 @@ export default function CheckoutSection() {
 
         {/* Variant toggle */}
         <div className="flex justify-center mb-7 md:mb-12">
-          <div className="inline-flex p-1 border border-apex-line/70 bg-apex-black-2/80 backdrop-blur-sm">
+          <div className="pulse-glow-border inline-flex p-1 border bg-apex-black-2/80 backdrop-blur-sm">
             {Object.values(VARIANTS).map((v) => {
               const isActive = v.id === variantId
               return (
@@ -572,7 +572,7 @@ export default function CheckoutSection() {
                       transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                     />
                   )}
-                  <span className="relative z-10">{v.id === 'core' ? 'Core T-APEX' : 'Core + Overspeed'}</span>
+                  <span className="relative z-10">{v.id === 'core' ? 'T-APEX Machine' : 'T-APEX + Overspeed'}</span>
                 </button>
               )
             })}

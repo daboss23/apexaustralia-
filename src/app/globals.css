@@ -121,6 +121,24 @@
     box-shadow: 0 8px 24px -6px rgba(214,31,38, 0.45);
   }
 
+  /* Pulsing red glow-border — a live, breathing outline for a focal control
+     (the checkout variant toggle). The border colour and the outer glow swell
+     together on one clock so it reads as a single pulse. Square-corner safe. */
+  .pulse-glow-border {
+    border-color: rgba(214,31,38, 0.55);
+    animation: pulse-glow-border 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse-glow-border {
+    0%, 100% {
+      border-color: rgba(214,31,38, 0.35);
+      box-shadow: 0 0 0 1px rgba(214,31,38,0.12), 0 0 14px -2px rgba(214,31,38,0.35);
+    }
+    50% {
+      border-color: rgba(255,59,48, 0.9);
+      box-shadow: 0 0 0 1px rgba(214,31,38,0.35), 0 0 30px 2px rgba(214,31,38,0.6);
+    }
+  }
+
   /* ── Display headline font: Marcellus (elegant high-contrast Roman serif —
         luxury). Positive tracking so uppercase words breathe and never merge.
         The metallic finish is applied via .t-silver/.t-blue/.t-red below. ───── */
@@ -304,7 +322,8 @@
 @media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
   .cine-tele-line,
   .cine-cue-pulse,
-  .cine-cue-tip {
+  .cine-cue-tip,
+  .pulse-glow-border {
     animation-iteration-count: infinite !important;
   }
 }
