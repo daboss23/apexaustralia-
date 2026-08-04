@@ -98,7 +98,7 @@ export default function TApexVs1080Section() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           MORE THAN A<br />
-          <span className="t-blue">SPRINT RESISTANCE TOOL.</span>
+          <span className="t-blue">SPRINT RESISTANCE<br />TOOL.</span>
         </motion.h2>
 
         {/* Subheadline */}

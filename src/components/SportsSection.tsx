@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import SportTransitionStage from './SportTransitionStage'
-import { DEMO_HREF } from '@/lib/site'
 
 const SPORTS = [
   {
@@ -389,36 +388,18 @@ export default function SportsSection() {
                 ))}
               </div>
 
-              {/* Outcome card */}
-              <div
-                className="flex-1 p-8 flex flex-col justify-end relative overflow-hidden"
-                style={{ borderRadius: 0, background: `linear-gradient(135deg, #0A0D10 0%, #141418 60%, ${sport.color}15 100%)`, border: `1px solid ${sport.color}30` }}
-              >
-                <div
-                  className="absolute top-0 right-0 w-48 h-48 opacity-10 rounded-full"
-                  style={{ background: sport.color, filter: 'blur(60px)' }}
-                />
-                <div className="relative">
-                  <div className="text-[9px] font-mono tracking-[0.25em] uppercase mb-3" style={{ color: sport.color }}>
-                    Coaching Potential
-                  </div>
-                  <div
-                    className="font-display font-black t-feature leading-tight mb-4"
-                    style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.2rem)' }}
-                  >
-                    More precise.<br />More adaptable.
-                  </div>
-                  <a
-                    href={DEMO_HREF}
-                    className="inline-flex items-center gap-2 min-h-11 text-[11px] font-display font-bold tracking-[0.12em] uppercase px-5 py-2.5 border transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
-                    style={{ borderRadius: 0, color: sport.color, borderColor: `${sport.color}50` }}
-                  >
-                    Book Your Free Demo
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                    </svg>
-                  </a>
-                </div>
+              {/* CTA — the artwork order button, sitting under the application
+                  boxes (replaced the old "Coaching Potential" outcome card).
+                  Same #order artwork as the hero/final CTA so the primary
+                  action reads identically everywhere. flex-1 + centring keeps
+                  this column the same height as the copy column on the left. */}
+              <div className="flex-1 flex items-center justify-center">
+                <a href="#order" aria-label="Order your T-APEX machine" className="group cta-cart cta-machine">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/checkout/order-machine.png" alt="" width={1596} height={274} />
+                  <span className="cta-cart-shine" aria-hidden="true" />
+                  <span className="sr-only">Order your T-APEX machine</span>
+                </a>
               </div>
             </div>
           </motion.div>
