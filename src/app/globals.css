@@ -189,15 +189,15 @@
     background-image:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.4' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.4' intercept='0.3'/%3E%3CfeFuncG type='linear' slope='0.4' intercept='0.3'/%3E%3CfeFuncB type='linear' slope='0.4' intercept='0.3'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E"),
       linear-gradient(180deg,
-        #F6F8F9 0%,
-        #E2E6EA 14%,
-        #BFC6CD 33%,
-        #9AA1AA 47%,
-        #868D96 49.6%,
-        #D2D8DE 55%,
-        #A8B0B9 72%,
-        #828A93 88%,
-        #5A616A 100%);
+        #FBFCFD 0%,
+        #ECEFF2 14%,
+        #D0D6DC 33%,
+        #ADB4BC 47%,
+        #99A0A9 49.6%,
+        #E6EAEE 55%,
+        #C2C9D0 72%,
+        #9BA3AC 88%,
+        #7B828B 100%);
     background-size: 160px 160px, 100% 100%;
     background-repeat: repeat, no-repeat;
     background-blend-mode: soft-light, normal;
@@ -212,12 +212,12 @@
   .t-blue {
     background-image:
       linear-gradient(180deg,
-        #6FD6FB 0%,
-        #2CC0F8 22%,
-        #10B4F2 48%,
-        #06AAEA 66%,
-        #009CDC 88%,
-        #0090CD 100%);
+        #8FE2FD 0%,
+        #4CCEFA 22%,
+        #24BFF6 48%,
+        #12B4EF 66%,
+        #04A8E6 88%,
+        #009CD9 100%);
     text-shadow:
       0 -1px 0 rgba(150, 222, 252, 0.55),
       0 1px 0 rgba(0, 24, 38, 0.6),
@@ -236,11 +236,11 @@
   .t-red {
     background-image:
       linear-gradient(180deg,
-        #FF2A16 0%,
-        #FF0D04 20%,
-        #FC0202 48%,
-        #F40108 76%,
-        #E90210 100%);
+        #FF4326 0%,
+        #FF1A0C 20%,
+        #FF0505 48%,
+        #FB0209 76%,
+        #F30211 100%);
     text-shadow:
       0 -1px 0 rgba(255, 95, 75, 0.3),
       0 1px 0 rgba(70, 3, 0, 0.5),
