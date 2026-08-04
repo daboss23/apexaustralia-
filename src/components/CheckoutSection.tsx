@@ -393,7 +393,7 @@ function Gallery({ variant }: { variant: Variant }) {
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={active.src} alt={active.alt} className="max-w-[94vw] max-h-[86vh] object-contain" />
               ) : (
-                <video src={active.src} autoPlay loop muted playsInline controls className="max-w-[94vw] max-h-[86vh] object-contain" {...startAtProps(active.startAt)} />
+                <video src={active.src} autoPlay loop muted playsInline controls preload="auto" className="max-w-[94vw] max-h-[86vh] object-contain" {...startAtProps(active.startAt)} />
               )}
             </div>
 

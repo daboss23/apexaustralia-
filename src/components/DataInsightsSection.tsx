@@ -163,10 +163,10 @@ export default function DataInsightsSection() {
                   style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,174,239,0.06), transparent)' }}
                 />
                 <h3 className="font-display font-black t-feature mb-2 leading-tight"
-                  style={{ fontSize: 'clamp(0.98rem, 1.5vw, 1.15rem)' }}>
+                  style={{ fontSize: 'clamp(1.15rem, 1.9vw, 1.4rem)' }}>
                   {item.title}
                 </h3>
-                <p className="text-apex-grey font-body text-[12.5px] leading-relaxed">{item.body}</p>
+                <p className="text-apex-grey font-body text-[15px] leading-relaxed">{item.body}</p>
               </motion.div>
             ))}
           </div>

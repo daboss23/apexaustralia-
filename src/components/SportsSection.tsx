@@ -332,7 +332,7 @@ export default function SportsSection() {
                 {sport.tagline}
               </h3>
 
-              <p className="text-apex-grey font-body text-sm leading-relaxed mb-8 flex-1">
+              <p className="text-apex-grey font-body text-[15px] leading-relaxed mb-8 flex-1">
                 {sport.description}
               </p>
 
@@ -351,7 +351,7 @@ export default function SportsSection() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                       </svg>
                     </div>
-                    <span className="text-apex-grey font-body text-[13px] leading-snug">{focus}</span>
+                    <span className="text-apex-grey font-body text-[15px] leading-snug">{focus}</span>
                   </div>
                 ))}
               </div>

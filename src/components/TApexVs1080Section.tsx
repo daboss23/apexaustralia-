@@ -282,7 +282,7 @@ export default function TApexVs1080Section() {
             >
               {/* Dimension */}
               <div className="px-5 py-4 bg-apex-panel/60 border border-t-0 border-apex-line/50 border-r-0 flex items-start">
-                <span className="text-apex-white font-display font-semibold text-[12px] tracking-wide leading-snug">
+                <span className="text-apex-white font-display font-semibold text-[14px] tracking-wide leading-snug">
                   {row.dimension}
                 </span>
               </div>
@@ -297,14 +297,14 @@ export default function TApexVs1080Section() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
                 </div>
-                <p className="font-body text-[12px] leading-relaxed" style={{ color: 'rgba(244,244,246,0.9)' }}>
+                <p className="font-body text-[14px] leading-relaxed" style={{ color: 'rgba(244,244,246,0.9)' }}>
                   {row.tapex}
                 </p>
               </div>
 
               {/* 1080 Sprint 2 */}
               <div className="px-5 py-4 bg-apex-panel/30 border border-t-0 border-apex-line/40 flex items-start">
-                <p className="text-apex-grey font-body text-[12px] leading-relaxed">{row.sprint}</p>
+                <p className="text-apex-grey font-body text-[14px] leading-relaxed">{row.sprint}</p>
               </div>
             </motion.div>
           ))}

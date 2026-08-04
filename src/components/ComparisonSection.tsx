@@ -169,7 +169,7 @@ export default function ComparisonSection() {
             <div className={HEAD} aria-hidden="true" />
             {ADVANTAGES.map((a) => (
               <div key={a.label} className={`flex items-center ${ROW} px-1 sm:px-4 border-b`} style={{ borderColor: C.border }}>
-                <span className="font-body text-[12.5px] sm:text-sm leading-snug" style={{ color: C.text }}>{a.label}</span>
+                <span className="font-body text-[13px] sm:text-[15px] leading-snug" style={{ color: C.text }}>{a.label}</span>
               </div>
             ))}
           </div>

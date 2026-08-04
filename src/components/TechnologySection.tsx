@@ -124,12 +124,12 @@ function StepCard({
 
       <h3
         className="font-display font-black t-feature mb-3 leading-tight"
-        style={{ fontSize: 'clamp(1.1rem, 1.8vw, 1.35rem)' }}
+        style={{ fontSize: 'clamp(1.15rem, 1.9vw, 1.4rem)' }}
       >
         {step.title}
       </h3>
 
-      <p className="text-apex-grey font-body text-sm leading-relaxed">{step.body}</p>
+      <p className="text-apex-grey font-body text-[15px] leading-relaxed">{step.body}</p>
     </motion.div>
   )
 }
