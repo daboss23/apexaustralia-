@@ -75,6 +75,27 @@ function Arrow({ dir }: { dir: 'left' | 'right' }) {
   )
 }
 
+function NavButtons({ prev, next }: { prev: () => void; next: () => void }) {
+  return (
+    <>
+      <button
+        onClick={prev}
+        className="inline-flex items-center justify-center w-12 h-12 rounded-full border border-apex-line text-apex-white hover:border-apex-grey/60 transition-colors duration-300 cursor-pointer"
+        aria-label="Previous testimonial"
+      >
+        <Arrow dir="left" />
+      </button>
+      <button
+        onClick={next}
+        className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-apex-red text-white hover:bg-apex-red/90 transition-colors duration-300 cursor-pointer"
+        aria-label="Next testimonial"
+      >
+        <Arrow dir="right" />
+      </button>
+    </>
+  )
+}
+
 const imageVariants = {
   enter: (dir: 'left' | 'right') => ({ y: dir === 'right' ? '100%' : '-100%', opacity: 0 }),
   center: { y: 0, opacity: 1 },
@@ -105,10 +126,10 @@ export default function TestimonialSlider({ reviews = REVIEWS }: { reviews?: Rev
   return (
     <div className="relative w-full text-apex-white overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-        {/* Left — pagination, vertical label, thumbnails.
-            Mobile order: quote (order-1) → portrait (order-2) → this rail
-            (order-3), so the review reads first and the images sit below it. */}
-        <div className="md:col-span-3 flex flex-col justify-between order-3 md:order-1">
+        {/* Left — pagination, vertical label, thumbnails. Desktop only:
+            on mobile this "image view" rail is hidden (quote → portrait →
+            arrows is the whole mobile flow). */}
+        <div className="hidden md:col-span-3 md:flex md:flex-col md:justify-between md:order-1">
           <div className="flex flex-row md:flex-col items-center md:items-start justify-between md:justify-start gap-4">
             <span className="font-mono text-[13px] text-apex-grey-dim">
               {String(index + 1).padStart(2, '0')} <span className="text-apex-grey-dim/60">/ {String(count).padStart(2, '0')}</span>
@@ -169,14 +190,17 @@ export default function TestimonialSlider({ reviews = REVIEWS }: { reviews?: Rev
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+                className="flex flex-col"
               >
-                <p className="font-body text-[14px] text-apex-grey-dim">{review.affiliation}</p>
-                <h3 className="font-display font-bold text-apex-white text-xl mt-1">{review.name}</h3>
-                <div className="mt-4">
+                {/* On mobile the quote leads (order-first); name + stats sit
+                    below it. Desktop keeps the original name → stars → quote. */}
+                <p className="order-2 md:order-none mt-8 md:mt-0 font-body text-[14px] text-apex-grey-dim">{review.affiliation}</p>
+                <h3 className="order-2 md:order-none font-display font-bold text-apex-white text-xl mt-1">{review.name}</h3>
+                <div className="order-2 md:order-none mt-4">
                   <Stars rating={review.rating} />
                 </div>
                 <blockquote
-                  className="mt-6 font-display font-bold text-apex-white leading-snug"
+                  className="order-1 md:order-none mt-6 md:mt-6 font-display font-bold text-apex-white leading-snug"
                   style={{ fontSize: 'clamp(1.4rem, 2.6vw, 1.9rem)' }}
                 >
                   &ldquo;{review.quote}&rdquo;
@@ -185,25 +209,21 @@ export default function TestimonialSlider({ reviews = REVIEWS }: { reviews?: Rev
             </AnimatePresence>
           </div>
 
+          {/* Desktop arrows — bottom of the quote column. On mobile these are
+              hidden; a mobile-only row below the portrait carries them. */}
           {count > 1 && (
-            <div className="flex items-center gap-3 mt-10">
-              <button
-                onClick={prev}
-                className="inline-flex items-center justify-center w-12 h-12 rounded-full border border-apex-line text-apex-white hover:border-apex-grey/60 transition-colors duration-300 cursor-pointer"
-                aria-label="Previous testimonial"
-              >
-                <Arrow dir="left" />
-              </button>
-              <button
-                onClick={next}
-                className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-apex-red text-white hover:bg-apex-red/90 transition-colors duration-300 cursor-pointer"
-                aria-label="Next testimonial"
-              >
-                <Arrow dir="right" />
-              </button>
+            <div className="hidden md:flex items-center gap-3 mt-10">
+              <NavButtons prev={prev} next={next} />
             </div>
           )}
         </div>
+
+        {/* Mobile arrows — sit directly below the portrait (order-2). */}
+        {count > 1 && (
+          <div className="md:hidden order-3 flex items-center gap-3 mt-6">
+            <NavButtons prev={prev} next={next} />
+          </div>
+        )}
       </div>
     </div>
   )
