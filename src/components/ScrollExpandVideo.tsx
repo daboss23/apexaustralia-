@@ -172,10 +172,11 @@ export default function ScrollExpandVideo() {
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    // Start expanding as the stage arrives, finish before the section leaves, so
-    // the plate sits fully open for the last stretch instead of popping. Same on
-    // phone and desktop: the video grows centred, in the middle of the screen.
-    offset: ['start start', 'end 85%'],
+    // Start expanding as the stage arrives, finish before the section leaves,
+    // so the plate sits fully open for the last stretch instead of popping.
+    // On phones the growth begins as the section reaches the MIDDLE of the screen
+    // (not the top), so the film no longer feels like it kicks in way too late.
+    offset: isMobile ? ['start 50%', 'end 85%'] : ['start start', 'end 85%'],
   })
 
   // A second, earlier tracker covering the section's *approach*: 0 when the
@@ -201,19 +202,20 @@ export default function ScrollExpandVideo() {
   // rather than 32/24vw — measured to leave clearance from 390px to 1920px.
   const shiftL = useTransform(scrollYProgress, [0, 0.75], ['0vw', isMobile ? '-8vw' : '-18vw'])
   const shiftR = useTransform(scrollYProgress, [0, 0.75], ['0vw', isMobile ? '8vw' : '18vw'])
+  // …and fade out as they go, so the quote hands the screen over to the film
+  // instead of sitting on top of it. Gone by the time the plate is two-thirds
+  // open; the parting continues underneath and is never seen finishing.
+  const titleOpacity = useTransform(scrollYProgress, [0.1, 0.45], [1, 0])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
   // Spec bar: fade IN as soon as the section's black edge appears from below
-  // (approach ~0.1), rising into place under where the scroll-cinema hero froze,
-  // hold, then fade OUT on the main progress as the plate grows. The two never
-  // overlap (fade-in finishes long before fade-out starts), so multiplying gates.
+  // (approach ~0.1), rising into place as it comes up the screen, hold, then
+  // fade OUT on the main progress as the plate grows. The two never overlap
+  // (fade-in finishes long before fade-out starts), so multiplying is a clean gate.
   const statsFadeIn = useTransform(approach, [0.1, 0.45], [0, 1])
-  const statsFadeOut = useTransform(scrollYProgress, [0.28, 0.42], [1, 0])
+  // On phones the bar sits flush above the video and stays put (no fade-out) so
+  // it reads as a header over the film; on desktop it hands off to the plate.
+  const statsFadeOut = useTransform(scrollYProgress, [0.28, 0.42], isMobile ? [1, 1] : [1, 0])
   const statsOpacity = useTransform([statsFadeIn, statsFadeOut], (v: number[]) => v[0] * v[1])
-  // Title: fades IN right AFTER the bar (approach 0.45→0.72), sits centred under
-  // it over the plate, then fades OUT with the bar as the plate grows.
-  const titleFadeIn = useTransform(approach, [0.45, 0.72], [0, 1])
-  const titleFadeOut = useTransform(scrollYProgress, [0.22, 0.4], [1, 0])
-  const titleOpacity = useTransform([titleFadeIn, titleFadeOut], (v: number[]) => v[0] * v[1])
   // The figures are scroll-linked: they climb 0→target as the bar rises in, so
   // the numbers move under the reader's scroll instead of running on a timer.
   const countProgress = useTransform(approach, [0.12, 0.55], [0, 1])
@@ -271,44 +273,52 @@ export default function ScrollExpandVideo() {
           plate sits higher in the pinned view (less dead black above it) and
           the section is shorter overall — both cut scroll time on a phone. */}
       <div
-        className="sticky top-0 w-full overflow-hidden flex flex-col items-center justify-center"
-        style={{ height: isMobile ? '85svh' : '100svh' }}
+        className="sticky top-0 w-full overflow-hidden flex flex-col items-center justify-center gap-[2svh]"
+        style={{ height: isMobile ? '60svh' : '100svh' }}
       >
-        {/* POWER REDEFINED spec bar — an overlay near the top of the stage on every
-            screen. It fades IN as the section arrives (just under where the
-            scroll-cinema hero froze) and fades OUT as the plate grows. */}
+        {/* POWER REDEFINED spec bar. Desktop: an overlay near the top of the
+            stage. Phones: sits in normal flow so the video stacks flush directly
+            beneath it — bar above, video below, never overlapping — on every
+            screen size (the bar's height varies, so flow keeps the gap honest). */}
         <motion.div
-          className="absolute top-[5%] sm:top-[9%] inset-x-0 z-30 px-4 flex justify-center pointer-events-none"
+          className={
+            isMobile
+              ? 'relative w-full px-4 z-30 flex justify-center pointer-events-none'
+              : 'absolute top-[9%] inset-x-0 z-30 px-4 flex justify-center pointer-events-none'
+          }
           style={{ opacity: statsOpacity }}
         >
           <PowerStatsBar countProgress={countProgress} />
         </motion.div>
 
-        {/* Title halves — fade IN right after the bar, sit centred over the plate
-            (underneath the bar), part, and fade OUT with the bar as the plate
-            grows. Same behaviour on phone and desktop. */}
-        <motion.div className="absolute inset-0 z-20 pointer-events-none" style={isMobile ? undefined : { y: plateShift }}>
-          <motion.div
-            className="absolute inset-x-0 top-1/2 -translate-y-1/2 pointer-events-none flex flex-col items-center gap-2 px-4"
-            style={{ opacity: titleOpacity }}
-          >
-            <motion.h2
-              className="h-luxia leading-[0.92] text-center"
-              style={{ x: shiftL, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
+        {/* Title halves — desktop-only overlay that parts and fades as the plate
+            opens. On phones the plate's own poster carries the line, so this
+            overlay is dropped to keep the stacked bar-over-video layout clean. */}
+        {!isMobile && (
+          <motion.div className="absolute inset-0 z-20 pointer-events-none" style={{ y: plateShift }}>
+            <motion.div
+              className="absolute inset-x-0 top-1/2 -translate-y-1/2 pointer-events-none flex flex-col items-center gap-2 px-4"
+              style={{ opacity: titleOpacity }}
             >
-              <span className="t-silver">&ldquo;PERFORMANCE BECOMES</span>
-            </motion.h2>
-            <motion.h2
-              className="h-luxia leading-[0.92] text-center"
-              style={{ x: shiftR, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
-            >
-              <span className="t-red">INEVITABLE.&rdquo;</span>
-            </motion.h2>
+              <motion.h2
+                className="h-luxia leading-[0.92] text-center"
+                style={{ x: shiftL, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
+              >
+                <span className="t-silver">&ldquo;PERFORMANCE BECOMES</span>
+              </motion.h2>
+              <motion.h2
+                className="h-luxia leading-[0.92] text-center"
+                style={{ x: shiftR, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
+              >
+                <span className="t-red">INEVITABLE.&rdquo;</span>
+              </motion.h2>
+            </motion.div>
           </motion.div>
-        </motion.div>
+        )}
 
-        {/* The growing video plate — centred, grows in place (in the middle of the
-            screen); on desktop it also rides plateShift out to near-full-bleed. */}
+        {/* The growing video plate. Desktop: centred, rides plateShift out to
+            near-full-bleed. Phones: sits in flow directly under the spec bar and
+            grows downward, stopping just below the bar at full size. */}
         <motion.div
           className="relative z-10 border border-apex-line/60 bg-apex-black-2 overflow-hidden"
           style={{
