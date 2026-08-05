@@ -934,14 +934,6 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       )
       tl.to('.beat-sprint', { opacity: 0, y: -22, filter: 'blur(6px)', duration: 0.05 }, 0.87)
 
-      // ── ACT 3b — resolve / CTA ───────────────────────────────────────────────
-      tl.fromTo(
-        '.beat-3',
-        { opacity: 0, y: 56, filter: 'blur(8px)' },
-        { opacity: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.06 },
-        0.92,
-      )
-
       // ── The lighting cue ─────────────────────────────────────────────────────
       // `.cine-dim` lifts under each copy beat and drops between them, so the
       // film plays at full strength exactly when nothing is written over it.
@@ -950,8 +942,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       tl.to('.cine-dim', { opacity: 0.46, ease: 'power1.inOut', duration: 0.07 }, 0.46) // telemetry
       tl.to('.cine-dim', { opacity: 0.1, ease: 'power1.inOut', duration: 0.07 }, 0.62) // tunnel — clear
       tl.to('.cine-dim', { opacity: 0.58, ease: 'power1.inOut', duration: 0.06 }, 0.74) // sprint headline
-      tl.to('.cine-dim', { opacity: 0.14, ease: 'power1.inOut', duration: 0.06 }, 0.87) // machine hero — clear
-      tl.to('.cine-dim', { opacity: 0.62, ease: 'power1.inOut', duration: 0.06 }, 0.92) // resolve + CTAs
+      tl.to('.cine-dim', { opacity: 0.14, ease: 'power1.inOut', duration: 0.06 }, 0.87) // machine hero — clear (holds to the end)
 
       // useGSAP reverts the context for us; the ticker callback is ours to undo.
       return () => {
@@ -1116,22 +1107,6 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
           </h2>
         </div>
 
-        {/* ACT 3b — the resolve + CTA */}
-        <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
-          <div className="beat-3 w-full max-w-[900px] opacity-0 pointer-events-auto">
-            {/* One CTA, the supplied artwork, centred. Same shine + breathing
-                halo as every other artwork CTA on the site (.cta-cart), with
-                its own silhouette mask (.cta-machine). The demo enquiry that
-                used to sit beside it is gone — this beat now asks for exactly
-                one thing. */}
-            <a href="#order" aria-label="Order your T-APEX machine" className="group cta-cart cta-machine">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/checkout/order-machine.png" alt="" width={1596} height={274} />
-              <span className="cta-cart-shine" aria-hidden="true" />
-              <span className="sr-only">Order your T-APEX machine</span>
-            </a>
-          </div>
-        </div>
       </div>
 
       {/* Scroll cue */}
