@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion, useMotionValue, useMotionValueEvent, type MotionValue } from 'framer-motion'
 import { useIsMobile } from './useIsMobile'
 
@@ -193,19 +193,6 @@ export default function ScrollExpandVideo() {
   const width = useTransform(scrollYProgress, [0, 0.75], isMobile ? ['74vw', '92vw'] : ['32vw', '92vw'])
   const radius = useTransform(scrollYProgress, [0, 0.75], ['2px', '0px'])
   const veil = useTransform(scrollYProgress, [0, 0.7], [0.55, 0])
-  // Title halves part around the growing plate.
-  //
-  // These distances are a function of how wide the words are: the parting ends
-  // with the left half's edge at the edge of the screen, so a longer first half
-  // needs a shorter travel or it slides straight off. They were tuned for
-  // "EVERY FEATURE" (13 characters) and this half is now 19, hence 18/8vw
-  // rather than 32/24vw — measured to leave clearance from 390px to 1920px.
-  const shiftL = useTransform(scrollYProgress, [0, 0.75], ['0vw', isMobile ? '-8vw' : '-18vw'])
-  const shiftR = useTransform(scrollYProgress, [0, 0.75], ['0vw', isMobile ? '8vw' : '18vw'])
-  // …and fade out as they go, so the quote hands the screen over to the film
-  // instead of sitting on top of it. Gone by the time the plate is two-thirds
-  // open; the parting continues underneath and is never seen finishing.
-  const titleOpacity = useTransform(scrollYProgress, [0.1, 0.45], [1, 0])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
   // Spec bar: fade IN as soon as the section's black edge appears from below
   // (approach ~0.1), rising into place as it comes up the screen, hold, then
@@ -224,6 +211,32 @@ export default function ScrollExpandVideo() {
   // plate expands toward full-bleed.
   const plateShiftN = useTransform(scrollYProgress, [0, 0.5], isMobile ? [16, 0] : [10, 0])
   const plateShift = useTransform(plateShiftN, (v) => `${v}svh`)
+
+  // ── Title reveal ──────────────────────────────────────────────────────────
+  // The quote sits UNDER the spec bar (not over the plate). It fades in a genuine
+  // ~2s AFTER the bar has finished coming into full view — a deliberate beat —
+  // then fades out again as soon as the plate starts to grow. Time-based in,
+  // scroll-triggered out.
+  const [titleShown, setTitleShown] = useState(false)
+  const [plateGrowing, setPlateGrowing] = useState(false)
+  const titleArmed = useRef(false)
+  const titleTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useMotionValueEvent(approach, 'change', (v) => {
+    // Bar is essentially fully in around approach 0.5 → reveal the title 2s later.
+    if (v >= 0.5 && !titleArmed.current) {
+      titleArmed.current = true
+      titleTimer.current = setTimeout(() => setTitleShown(true), 2000)
+    } else if (v < 0.2 && titleArmed.current) {
+      // Scrolled back above the section — reset so it can play again next time.
+      titleArmed.current = false
+      if (titleTimer.current) clearTimeout(titleTimer.current)
+      setTitleShown(false)
+    }
+  })
+  // Hide it again as soon as the plate starts to grow (fades out with the bar).
+  useMotionValueEvent(scrollYProgress, 'change', (v) => setPlateGrowing(v > 0.3))
+  useEffect(() => () => { if (titleTimer.current) clearTimeout(titleTimer.current) }, [])
 
   function play() {
     setPlaying(true)
@@ -291,29 +304,21 @@ export default function ScrollExpandVideo() {
           <PowerStatsBar countProgress={countProgress} />
         </motion.div>
 
-        {/* Title halves — desktop-only overlay that parts and fades as the plate
-            opens. On phones the plate's own poster carries the line, so this
-            overlay is dropped to keep the stacked bar-over-video layout clean. */}
+        {/* Title — sits UNDER the spec bar (never over the video). Fades in ~2s
+            after the bar has finished coming into full view, then fades out with
+            the bar as the plate grows. Desktop only. */}
         {!isMobile && (
-          <motion.div className="absolute inset-0 z-20 pointer-events-none" style={{ y: plateShift }}>
-            <motion.div
-              className="absolute inset-x-0 top-1/2 -translate-y-1/2 pointer-events-none flex flex-col items-center gap-2 px-4"
-              style={{ opacity: titleOpacity }}
-            >
-              <motion.h2
-                className="h-luxia leading-[0.92] text-center"
-                style={{ x: shiftL, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
-              >
-                <span className="t-silver">&ldquo;PERFORMANCE BECOMES</span>
-              </motion.h2>
-              <motion.h2
-                className="h-luxia leading-[0.92] text-center"
-                style={{ x: shiftR, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
-              >
-                <span className="t-red">INEVITABLE.&rdquo;</span>
-              </motion.h2>
-            </motion.div>
-          </motion.div>
+          <div
+            className="absolute inset-x-0 top-[23%] z-20 pointer-events-none flex flex-col items-center gap-1 px-4 text-center transition-opacity duration-700 ease-out"
+            style={{ opacity: titleShown && !plateGrowing ? 1 : 0 }}
+          >
+            <h2 className="h-luxia leading-[0.95] text-center" style={{ fontSize: 'clamp(1.3rem, 3.6vw, 3rem)' }}>
+              <span className="t-silver">&ldquo;PERFORMANCE BECOMES</span>
+            </h2>
+            <h2 className="h-luxia leading-[0.95] text-center" style={{ fontSize: 'clamp(1.3rem, 3.6vw, 3rem)' }}>
+              <span className="t-red">INEVITABLE.&rdquo;</span>
+            </h2>
+          </div>
         )}
 
         {/* The growing video plate. Desktop: centred, rides plateShift out to
