@@ -113,12 +113,14 @@ function PowerStatsBar({
       />
 
       <div className="flex flex-col sm:flex-row items-stretch gap-2.5 sm:gap-3">
-        {/* Side label — desktop only. On phones the headline moves inside the
-            stats bar (below), centred on top of the figures. */}
+        {/* Side label — desktop only. Uses the site's headline system (Marcellus
+            h-luxia) with the metallic silver / electric-blue finish. On phones the
+            headline moves inside the stats bar (below), centred on top of the
+            figures. */}
         <Bezel className="hidden sm:block sm:flex-shrink-0">
-          <div className="h-full px-7 py-4 flex flex-col items-start justify-center gap-x-2.5">
-            <span className="font-display font-black text-apex-white leading-[1.02] tracking-tight text-2xl xl:text-[1.8rem]">Power</span>
-            <span className="font-display font-black leading-[1.02] tracking-tight text-2xl xl:text-[1.8rem]" style={NUM_STYLE}>Redefined</span>
+          <div className="h-full px-7 py-4 flex flex-col items-start justify-center">
+            <span className="h-luxia t-silver leading-[0.98] text-2xl xl:text-[2rem]" style={{ letterSpacing: '0.04em' }}>POWER</span>
+            <span className="h-luxia t-blue leading-[0.98] text-2xl xl:text-[2rem]" style={{ letterSpacing: '0.04em' }}>REDEFINED</span>
           </div>
         </Bezel>
 
@@ -126,11 +128,13 @@ function PowerStatsBar({
             Redefined headline centred on top, then the figures below it. */}
         <Bezel className="flex-1">
           <div className="h-full px-4 sm:px-8 py-4 sm:py-5">
-            {/* Mobile-only headline, centred on top of the figures. */}
+            {/* Mobile-only headline, centred on top of the figures — the site's
+                headline system (Marcellus h-luxia): silver POWER, electric-blue
+                REDEFINED. */}
             <div className="sm:hidden text-center mb-4">
-              <span className="font-display font-black tracking-tight leading-none text-[1.75rem]">
-                <span className="text-apex-white">Power </span>
-                <span style={NUM_STYLE}>Redefined</span>
+              <span className="h-luxia leading-none" style={{ fontSize: 'clamp(1.7rem, 7vw, 2.2rem)', letterSpacing: '0.04em' }}>
+                <span className="t-silver">POWER </span>
+                <span className="t-blue">REDEFINED</span>
               </span>
             </div>
 
@@ -186,7 +190,7 @@ export default function ScrollExpandVideo() {
   })
 
   // The plate grows from a small centred card to near-full-bleed.
-  const width = useTransform(scrollYProgress, [0, 0.75], isMobile ? ['74vw', '95vw'] : ['32vw', '92vw'])
+  const width = useTransform(scrollYProgress, [0, 0.75], isMobile ? ['74vw', '92vw'] : ['32vw', '92vw'])
   const radius = useTransform(scrollYProgress, [0, 0.75], ['2px', '0px'])
   const veil = useTransform(scrollYProgress, [0, 0.7], [0.55, 0])
   // Title halves part around the growing plate.
@@ -208,7 +212,9 @@ export default function ScrollExpandVideo() {
   // fade OUT on the main progress as the plate grows. The two never overlap
   // (fade-in finishes long before fade-out starts), so multiplying is a clean gate.
   const statsFadeIn = useTransform(approach, [0.1, 0.45], [0, 1])
-  const statsFadeOut = useTransform(scrollYProgress, [0.28, 0.42], [1, 0])
+  // On phones the bar sits flush above the video and stays put (no fade-out) so
+  // it reads as a header over the film; on desktop it hands off to the plate.
+  const statsFadeOut = useTransform(scrollYProgress, [0.28, 0.42], isMobile ? [1, 1] : [1, 0])
   const statsOpacity = useTransform([statsFadeIn, statsFadeOut], (v: number[]) => v[0] * v[1])
   // The figures are scroll-linked: they climb 0→target as the bar rises in, so
   // the numbers move under the reader's scroll instead of running on a timer.
@@ -267,42 +273,52 @@ export default function ScrollExpandVideo() {
           plate sits higher in the pinned view (less dead black above it) and
           the section is shorter overall — both cut scroll time on a phone. */}
       <div
-        className="sticky top-0 w-full overflow-hidden flex flex-col items-center justify-center"
-        style={{ height: isMobile ? '56svh' : '100svh' }}
+        className="sticky top-0 w-full overflow-hidden flex flex-col items-center justify-center gap-[2svh]"
+        style={{ height: isMobile ? '60svh' : '100svh' }}
       >
-        {/* POWER REDEFINED spec bar — sits in the gap at the top of the stage,
-            counts up on view, then fades out as the plate grows. */}
+        {/* POWER REDEFINED spec bar. Desktop: an overlay near the top of the
+            stage. Phones: sits in normal flow so the video stacks flush directly
+            beneath it — bar above, video below, never overlapping — on every
+            screen size (the bar's height varies, so flow keeps the gap honest). */}
         <motion.div
-          className="absolute top-[6%] sm:top-[9%] inset-x-0 z-30 px-4 flex justify-center pointer-events-none"
+          className={
+            isMobile
+              ? 'relative w-full px-4 z-30 flex justify-center pointer-events-none'
+              : 'absolute top-[9%] inset-x-0 z-30 px-4 flex justify-center pointer-events-none'
+          }
           style={{ opacity: statsOpacity }}
         >
           <PowerStatsBar countProgress={countProgress} />
         </motion.div>
 
-        {/* Title halves — they part, and fade, as the plate opens. Wrapped so the
-            pair rides down with the plate (plateShift) and stays centred over it. */}
-        <motion.div className="absolute inset-0 z-20 pointer-events-none" style={{ y: plateShift }}>
-          <motion.div
-            className="absolute inset-x-0 top-1/2 -translate-y-1/2 pointer-events-none flex flex-col items-center gap-2 px-4"
-            style={{ opacity: titleOpacity }}
-          >
-            <motion.h2
-              className="h-luxia leading-[0.92] text-center"
-              style={{ x: shiftL, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
+        {/* Title halves — desktop-only overlay that parts and fades as the plate
+            opens. On phones the plate's own poster carries the line, so this
+            overlay is dropped to keep the stacked bar-over-video layout clean. */}
+        {!isMobile && (
+          <motion.div className="absolute inset-0 z-20 pointer-events-none" style={{ y: plateShift }}>
+            <motion.div
+              className="absolute inset-x-0 top-1/2 -translate-y-1/2 pointer-events-none flex flex-col items-center gap-2 px-4"
+              style={{ opacity: titleOpacity }}
             >
-              <span className="t-silver">&ldquo;PERFORMANCE BECOMES</span>
-            </motion.h2>
-            <motion.h2
-              className="h-luxia leading-[0.92] text-center"
-              style={{ x: shiftR, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
-            >
-              <span className="t-red">INEVITABLE.&rdquo;</span>
-            </motion.h2>
+              <motion.h2
+                className="h-luxia leading-[0.92] text-center"
+                style={{ x: shiftL, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
+              >
+                <span className="t-silver">&ldquo;PERFORMANCE BECOMES</span>
+              </motion.h2>
+              <motion.h2
+                className="h-luxia leading-[0.92] text-center"
+                style={{ x: shiftR, fontSize: 'clamp(1.45rem, 4.4vw, 3.6rem)' }}
+              >
+                <span className="t-red">INEVITABLE.&rdquo;</span>
+              </motion.h2>
+            </motion.div>
           </motion.div>
-        </motion.div>
+        )}
 
-        {/* The growing video plate — sits lower early (plateShift), centres as it
-            expands. */}
+        {/* The growing video plate. Desktop: centred, rides plateShift out to
+            near-full-bleed. Phones: sits in flow directly under the spec bar and
+            grows downward, stopping just below the bar at full size. */}
         <motion.div
           className="relative z-10 border border-apex-line/60 bg-apex-black-2 overflow-hidden"
           style={{
@@ -310,7 +326,7 @@ export default function ScrollExpandVideo() {
             aspectRatio: '16 / 9',
             maxHeight: '82svh',
             borderRadius: radius,
-            y: plateShift,
+            ...(isMobile ? {} : { y: plateShift }),
             boxShadow: '0 30px 90px -20px rgba(0,0,0,0.8)',
           }}
         >
@@ -324,7 +340,7 @@ export default function ScrollExpandVideo() {
 
         {/* Scroll cue — fades out as soon as the expansion starts */}
         <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 pointer-events-none"
+          className="absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 pointer-events-none"
           style={{ opacity: cueOpacity }}
           aria-hidden="true"
         >

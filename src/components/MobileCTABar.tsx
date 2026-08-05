@@ -68,8 +68,9 @@ export default function MobileCTABar() {
           aria-hidden="true"
         />
         <div className="flex-1 min-w-0">
-          <span className="block font-display font-bold text-apex-white leading-none truncate" style={{ fontSize: '20px' }}>
-            T-Apex
+          <span className="block font-display leading-none truncate">
+            <span className="font-bold text-apex-white align-baseline" style={{ fontSize: '19px' }}>T-Apex</span>
+            <span className="font-semibold text-apex-blue align-baseline" style={{ fontSize: '13px' }}>&nbsp;·&nbsp;Free Shipping</span>
           </span>
         </div>
         {/* The same ORDER NOW artwork the navbar uses top-right, reused here on
