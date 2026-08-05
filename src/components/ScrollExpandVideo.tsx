@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useRef, useState } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion, useMotionValue, useMotionValueEvent, type MotionValue } from 'framer-motion'
 import { useIsMobile } from './useIsMobile'
 
@@ -213,30 +213,14 @@ export default function ScrollExpandVideo() {
   const plateShift = useTransform(plateShiftN, (v) => `${v}svh`)
 
   // ── Title reveal ──────────────────────────────────────────────────────────
-  // The quote sits UNDER the spec bar (not over the plate). It fades in a genuine
-  // ~2s AFTER the bar has finished coming into full view — a deliberate beat —
-  // then fades out again as soon as the plate starts to grow. Time-based in,
-  // scroll-triggered out.
-  const [titleShown, setTitleShown] = useState(false)
-  const [plateGrowing, setPlateGrowing] = useState(false)
-  const titleArmed = useRef(false)
-  const titleTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  useMotionValueEvent(approach, 'change', (v) => {
-    // Bar is essentially fully in around approach 0.5 → reveal the title 2s later.
-    if (v >= 0.5 && !titleArmed.current) {
-      titleArmed.current = true
-      titleTimer.current = setTimeout(() => setTitleShown(true), 2000)
-    } else if (v < 0.2 && titleArmed.current) {
-      // Scrolled back above the section — reset so it can play again next time.
-      titleArmed.current = false
-      if (titleTimer.current) clearTimeout(titleTimer.current)
-      setTitleShown(false)
-    }
-  })
-  // Hide it again as soon as the plate starts to grow (fades out with the bar).
-  useMotionValueEvent(scrollYProgress, 'change', (v) => setPlateGrowing(v > 0.3))
-  useEffect(() => () => { if (titleTimer.current) clearTimeout(titleTimer.current) }, [])
+  // The quote sits UNDER the spec bar (never over the plate). It fades in slowly,
+  // starting as the bar finishes coming in, then fades back out WITH the bar as
+  // the plate grows. Scroll-linked, so it reliably tracks the reader's scroll.
+  const titleFadeIn = useTransform(approach, [0.4, 0.85], [0, 1])
+  // On phones the bar stays put (flow header), so the title stays with it; on
+  // desktop both fade out together as the plate grows.
+  const titleFadeOut = useTransform(scrollYProgress, [0.2, 0.4], isMobile ? [1, 1] : [1, 0])
+  const titleOpacity = useTransform([titleFadeIn, titleFadeOut], (v: number[]) => v[0] * v[1])
 
   function play() {
     setPlaying(true)
@@ -287,7 +271,7 @@ export default function ScrollExpandVideo() {
           the section is shorter overall — both cut scroll time on a phone. */}
       <div
         className="sticky top-0 w-full overflow-hidden flex flex-col items-center justify-center gap-[2svh]"
-        style={{ height: isMobile ? '60svh' : '100svh' }}
+        style={{ height: isMobile ? '66svh' : '100svh' }}
       >
         {/* POWER REDEFINED spec bar. Desktop: an overlay near the top of the
             stage. Phones: sits in normal flow so the video stacks flush directly
@@ -304,22 +288,24 @@ export default function ScrollExpandVideo() {
           <PowerStatsBar countProgress={countProgress} />
         </motion.div>
 
-        {/* Title — sits UNDER the spec bar (never over the video). Fades in ~2s
-            after the bar has finished coming into full view, then fades out with
-            the bar as the plate grows. Desktop only. */}
-        {!isMobile && (
-          <div
-            className="absolute inset-x-0 top-[23%] z-20 pointer-events-none flex flex-col items-center gap-1 px-4 text-center transition-opacity duration-700 ease-out"
-            style={{ opacity: titleShown && !plateGrowing ? 1 : 0 }}
-          >
-            <h2 className="h-luxia leading-[0.95] text-center" style={{ fontSize: 'clamp(1.3rem, 3.6vw, 3rem)' }}>
-              <span className="t-silver">&ldquo;PERFORMANCE BECOMES</span>
-            </h2>
-            <h2 className="h-luxia leading-[0.95] text-center" style={{ fontSize: 'clamp(1.3rem, 3.6vw, 3rem)' }}>
-              <span className="t-red">INEVITABLE.&rdquo;</span>
-            </h2>
-          </div>
-        )}
+        {/* Title — ONE line, same max size as the scroll-cinema titles. On phones
+            it sits in flow between the bar and the video; on desktop it's an
+            overlay just under the bar. Never over the plate. Fades in slowly as
+            the bar finishes coming in (fades out with the bar on desktop; stays
+            with the bar on phones). */}
+        <motion.div
+          className={
+            isMobile
+              ? 'relative w-full px-4 z-20 flex justify-center pointer-events-none'
+              : 'absolute inset-x-0 top-[24%] z-20 px-4 flex justify-center pointer-events-none'
+          }
+          style={{ opacity: titleOpacity }}
+        >
+          <h2 className="h-luxia leading-none text-center whitespace-nowrap" style={{ fontSize: 'clamp(15px, 4.8vw, 66px)', letterSpacing: '0.04em' }}>
+            <span className="t-silver">&ldquo;PERFORMANCE BECOMES </span>
+            <span className="t-red">INEVITABLE.&rdquo;</span>
+          </h2>
+        </motion.div>
 
         {/* The growing video plate. Desktop: centred, rides plateShift out to
             near-full-bleed. Phones: sits in flow directly under the spec bar and
