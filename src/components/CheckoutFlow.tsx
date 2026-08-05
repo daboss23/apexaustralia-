@@ -836,17 +836,17 @@ export default function CheckoutFlow({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-2xl mx-auto text-center"
+            className="max-w-4xl mx-auto text-center"
           >
-            {/* T-APEX mark, centred — tight so the whole offer sits above the fold. */}
-            <div className="flex justify-center mb-2.5">
+            {/* T-APEX mark, centred. */}
+            <div className="flex justify-center mb-4 sm:mb-5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/apexaustralialogo.webp" alt="T-APEX Australia" className="h-8 sm:h-9 w-auto object-contain" />
+              <img src="/apexaustralialogo.webp" alt="T-APEX Australia" className="h-10 sm:h-12 w-auto object-contain" />
             </div>
 
             {/* One-time-upgrade chip — breathing gold glow. */}
             <span
-              className="pulse-glow-gold inline-block font-mono text-[10.5px] sm:text-[12px] tracking-[0.26em] uppercase px-3.5 py-1.5 border mb-3"
+              className="pulse-glow-gold inline-block font-mono text-[11px] sm:text-[13px] tracking-[0.26em] uppercase px-4 py-2 border mb-5 sm:mb-6"
               style={{ color: '#e6be74', background: 'rgba(180,140,60,0.14)' }}
             >
               {otoOffer.chip}
@@ -854,7 +854,7 @@ export default function CheckoutFlow({
 
             {/* ── Hero panel: WAIT · progress · headline · subheadline · price. ── */}
             <div
-              className="relative overflow-hidden px-5 sm:px-8 pt-5 pb-6 mb-4"
+              className="relative overflow-hidden px-5 sm:px-12 pt-8 pb-9 mb-7"
               style={{
                 background: 'linear-gradient(180deg, #0D1117 0%, #060708 100%)',
                 boxShadow: '0 34px 80px -34px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.05)',
@@ -862,9 +862,9 @@ export default function CheckoutFlow({
             >
               <p
                 className="font-display font-normal text-apex-white leading-tight flex items-center justify-center gap-2.5 flex-wrap"
-                style={{ fontSize: 'clamp(1.05rem, 2.2vw, 1.5rem)' }}
+                style={{ fontSize: 'clamp(1.1rem, 2.4vw, 1.65rem)' }}
               >
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="#F2B41C" aria-hidden="true">
+                <svg className="w-6 h-6 flex-shrink-0" viewBox="0 0 24 24" fill="#F2B41C" aria-hidden="true">
                   <path d="M12 2.5 22.5 20.5H1.5L12 2.5Zm0 5.6a1 1 0 0 0-1 1v4.6a1 1 0 1 0 2 0V9.1a1 1 0 0 0-1-1Zm0 8.1a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 0 0 0-2.3Z" />
                 </svg>
                 <span className="font-black text-apex-red-bright">WAIT!</span>
@@ -873,50 +873,51 @@ export default function CheckoutFlow({
 
               {/* Order-progress bar — super-light-blue track so the whole bar reads;
                   the bright blue fill rides out to 58%. */}
-              <div className="mt-3.5 max-w-md mx-auto">
+              <div className="mt-5 max-w-md mx-auto">
                 <div
-                  className="relative h-7 overflow-hidden"
+                  className="relative h-8 overflow-hidden"
                   style={{ background: 'rgba(150,216,245,0.32)', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.3)' }}
                 >
                   <div className="upsell-progress-fill upsell-progress-done absolute inset-y-0 left-0 w-[58%] flex items-center justify-center">
-                    <span className="font-mono text-[9.5px] sm:text-[11px] tracking-[0.16em] uppercase text-white whitespace-nowrap px-2">
+                    <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.16em] uppercase text-white whitespace-nowrap px-2">
                       Your order is 50% complete…
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Headline — the site's metallic Marcellus system (h-luxia), sized up
-                  to match the main sales-page headlines: silver lead, blue accent. */}
+              {/* Headline — the site's metallic Marcellus system (h-luxia), on two
+                  lines (lead, then accent): silver lead, blue accent. */}
               <h2
-                className="h-luxia t-silver uppercase leading-[0.98] mt-5 mb-2.5"
-                style={{ fontSize: 'clamp(2rem, 5vw, 3.6rem)', letterSpacing: '0.04em' }}
+                className="h-luxia t-silver uppercase leading-[1.02] mt-7 mb-4"
+                style={{ fontSize: 'clamp(2.1rem, 5vw, 3.8rem)', letterSpacing: '0.04em' }}
               >
-                {otoOffer.askLead}{' '}
+                {otoOffer.askLead}<br />
                 <span className="t-blue">{otoOffer.askAccent}</span>
               </h2>
 
-              {/* Subheadline — all caps, bold, a touch larger for presence. */}
+              {/* Subheadline — all caps, bold, larger for presence. */}
               <p
-                className="font-display font-bold uppercase text-apex-white leading-tight max-w-xl mx-auto mb-3 tracking-[0.01em]"
-                style={{ fontSize: 'clamp(1.05rem, 1.9vw, 1.35rem)' }}
+                className="font-display font-bold uppercase text-apex-white leading-snug max-w-2xl mx-auto mb-5 tracking-[0.01em]"
+                style={{ fontSize: 'clamp(1.1rem, 2vw, 1.5rem)' }}
               >
                 and unlock all of the T-Apex software features?
               </p>
 
-              {/* Price line — one line, white; old price red-struck, new price in the
-                  checkout page's gold-shine treatment. */}
-              <p className="font-display font-semibold text-apex-white leading-none whitespace-nowrap" style={{ fontSize: 'clamp(0.7rem, 2.5vw, 1.3rem)' }}>
+              {/* Price line — one line, white connective copy; the prices in the
+                  checkout page's serif (Marcellus) treatment: old red-struck, new
+                  in the gold-shine finish (matching the A$9,450 total). */}
+              <p className="font-display font-semibold text-apex-white leading-none whitespace-nowrap" style={{ fontSize: 'clamp(0.72rem, 2.3vw, 1.5rem)' }}>
                 Regular price{' '}
-                <span className="line-through text-apex-red-bright">{fmt(otoOffer.was)}</span>{' '}
+                <span className="font-luxia metric-value line-through text-apex-red-bright">{fmt(otoOffer.was)}</span>{' '}
                 — add to your order today for just{' '}
-                <span className="t-gold-price font-bold">{fmt(otoOffer.price)}!</span>
+                <span className="font-luxia t-gold-price metric-value">{fmt(otoOffer.price)}!</span>
               </p>
 
               {/* Save badge. */}
-              <div className="mt-3">
+              <div className="mt-5">
                 <span
-                  className="pulse-glow-border inline-block font-mono text-[11.5px] sm:text-[13px] tracking-[0.24em] uppercase px-3.5 py-1.5 border"
+                  className="pulse-glow-border inline-block font-mono text-[12px] sm:text-[13.5px] tracking-[0.24em] uppercase px-4 py-2 border"
                   style={{ color: '#ff6b6b', background: 'rgba(214,31,38,0.14)' }}
                 >
                   Save {fmt(otoOffer.was - otoOffer.price)}
@@ -924,23 +925,24 @@ export default function CheckoutFlow({
               </div>
             </div>
 
-            {/* Offer imagery + checklist, side by side: image left, bullets right. */}
-            <div className="flex flex-row items-center gap-3 sm:gap-5 mb-4 text-left">
+            {/* Offer imagery + checklist, side by side (image left, bullets right) —
+                the same layout on every screen size, just scaled. */}
+            <div className="flex flex-row items-center gap-5 sm:gap-8 mb-7 text-left">
               <div
-                className="relative flex-[1.4] min-w-0 bg-apex-black-2 overflow-hidden"
+                className="relative flex-[1.5] min-w-0 bg-apex-black-2 overflow-hidden"
                 style={{ aspectRatio: '16 / 9', boxShadow: '0 26px 60px -30px rgba(0,0,0,0.85)' }}
               >
                 <div className="carbon-weave absolute inset-0 opacity-40" aria-hidden="true" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={otoOffer.image} alt={otoOffer.title} className="absolute inset-0 w-full h-full object-contain p-1.5" />
+                <img src={otoOffer.image} alt={otoOffer.title} className="absolute inset-0 w-full h-full object-contain p-2" />
               </div>
-              <div className="flex-1 min-w-0 flex flex-col gap-2">
+              <div className="flex-1 min-w-0 flex flex-col gap-3">
                 {otoOffer.items.map((it) => (
-                  <div key={it} className="flex items-center gap-2">
-                    <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: GOLD }} fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
+                  <div key={it} className="flex items-center gap-2.5">
+                    <svg className="w-4 h-4 flex-shrink-0" style={{ color: GOLD }} fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
-                    <span className="text-apex-grey font-body text-[11.5px] sm:text-[13.5px] leading-tight">{it}</span>
+                    <span className="text-apex-grey font-body text-[12.5px] sm:text-[15px] leading-tight">{it}</span>
                   </div>
                 ))}
               </div>
@@ -949,7 +951,7 @@ export default function CheckoutFlow({
             {/* YES — the upsell CTA: baked artwork (public/apex upsell cta button.png)
                 driven by .cta-upsell (opaque plate cropped + screen-blended, with the
                 pulsing halo and a travelling shine). */}
-            <div className="w-full max-w-md mx-auto mb-3">
+            <div className="w-full max-w-lg mx-auto mb-4">
               <button
                 onClick={() => takeOto(true)}
                 aria-label={`Yes — upgrade my order with the ${otoOffer.title.replace('Add the ', '')}`}
@@ -966,7 +968,7 @@ export default function CheckoutFlow({
 
             <button
               onClick={() => takeOto(false)}
-              className="block mx-auto px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase text-apex-grey hover:text-apex-white underline underline-offset-4 transition-colors cursor-pointer"
+              className="block mx-auto mt-1 px-4 py-3 font-mono text-[11.5px] tracking-[0.14em] uppercase text-apex-grey hover:text-apex-white underline underline-offset-4 transition-colors cursor-pointer"
             >
               No thanks — I understand this offer will not be shown again
             </button>
