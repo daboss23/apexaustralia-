@@ -258,19 +258,9 @@ export default function ResultsSection() {
           </div>
 
           <div className="flex flex-col justify-center">
+            {/* Verified customer review — the featured quote (the earlier demo
+                placeholder line was removed). */}
             <blockquote className="border-l-4 border-apex-red pl-6">
-              <p className="text-apex-white font-body leading-relaxed mb-4 italic"
-                style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}>
-                &ldquo;Elite-level resisted and assisted sprint capability, objective data, and squad scalability — at a fraction of traditional system costs.&rdquo;
-              </p>
-              <footer className="text-apex-grey-dim font-mono text-[11px] tracking-wide">
-                — T-APEX Resisted &amp; Assisted Speed Training System
-              </footer>
-            </blockquote>
-
-            {/* Verified customer review — same italic style as the quote above,
-                borderless. */}
-            <blockquote className="mt-8">
               <p className="text-apex-white font-body leading-relaxed mb-4 italic"
                 style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)' }}>
                 &ldquo;T-APEX will be a game changer for our athletes this coming year and year

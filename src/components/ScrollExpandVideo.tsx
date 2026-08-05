@@ -159,6 +159,16 @@ export default function ScrollExpandVideo() {
     offset: ['start start', 'end 85%'],
   })
 
+  // A second, earlier tracker covering the section's *approach*: 0 when the
+  // section is still a viewport below, 1 when it pins at the top. The spec bar
+  // keys its fade-in and count to this, so it rises into view while the section
+  // is still coming up the screen — earlier than the main progress, which only
+  // begins once the section is pinned.
+  const { scrollYProgress: approach } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'start start'],
+  })
+
   // The plate grows from a small centred card to near-full-bleed.
   const width = useTransform(scrollYProgress, [0, 0.75], isMobile ? ['74vw', '95vw'] : ['32vw', '92vw'])
   const radius = useTransform(scrollYProgress, [0, 0.75], ['2px', '0px'])
@@ -177,12 +187,17 @@ export default function ScrollExpandVideo() {
   // open; the parting continues underneath and is never seen finishing.
   const titleOpacity = useTransform(scrollYProgress, [0.1, 0.45], [1, 0])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
-  // The spec bar fades IN as it arrives, holds while the figures climb, then
-  // fades OUT as the plate below begins to grow.
-  const statsOpacity = useTransform(scrollYProgress, [0, 0.12, 0.3, 0.44], [0, 1, 1, 0])
-  // The figures are scroll-linked: they climb 0→target across this range, so the
-  // numbers move under the reader's scroll instead of running on a timer.
-  const countProgress = useTransform(scrollYProgress, [0, 0.3], [0, 1])
+  // Spec bar: fade IN early on the approach (rising into place while the section
+  // is still ~half a screen down — well before the plate starts to grow), hold,
+  // then fade OUT on the main progress as the plate grows. The two never overlap
+  // (fade-in finishes before the section pins; fade-out starts well after), so
+  // multiplying them is a clean gate.
+  const statsFadeIn = useTransform(approach, [0.6, 0.88], [0, 1])
+  const statsFadeOut = useTransform(scrollYProgress, [0.28, 0.42], [1, 0])
+  const statsOpacity = useTransform([statsFadeIn, statsFadeOut], (v: number[]) => v[0] * v[1])
+  // The figures are scroll-linked: they climb 0→target as the bar rises in, so
+  // the numbers move under the reader's scroll instead of running on a timer.
+  const countProgress = useTransform(approach, [0.55, 0.9], [0, 1])
   // Video + its title ride lower in the stage early on — clearing the spec bar so
   // it no longer squashes onto the plate on phones — then settle to centre as the
   // plate expands toward full-bleed.
