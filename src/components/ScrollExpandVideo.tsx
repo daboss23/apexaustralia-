@@ -113,31 +113,45 @@ function PowerStatsBar({
       />
 
       <div className="flex flex-col sm:flex-row items-stretch gap-2.5 sm:gap-3">
-        {/* Side label */}
-        <Bezel className="sm:flex-shrink-0">
-          <div className="h-full px-5 sm:px-7 py-3.5 sm:py-4 flex flex-row sm:flex-col items-baseline sm:items-start justify-center gap-x-2.5">
-            <span className="font-display font-black text-apex-white leading-[1.02] tracking-tight text-xl sm:text-2xl xl:text-[1.8rem]">Power</span>
-            <span className="font-display font-black leading-[1.02] tracking-tight text-xl sm:text-2xl xl:text-[1.8rem]" style={NUM_STYLE}>Redefined</span>
+        {/* Side label — desktop only. On phones the headline moves inside the
+            stats bar (below), centred on top of the figures. */}
+        <Bezel className="hidden sm:block sm:flex-shrink-0">
+          <div className="h-full px-7 py-4 flex flex-col items-start justify-center gap-x-2.5">
+            <span className="font-display font-black text-apex-white leading-[1.02] tracking-tight text-2xl xl:text-[1.8rem]">Power</span>
+            <span className="font-display font-black leading-[1.02] tracking-tight text-2xl xl:text-[1.8rem]" style={NUM_STYLE}>Redefined</span>
           </div>
         </Bezel>
 
-        {/* Stats */}
+        {/* Stats bar — one cohesive panel. On phones it carries the Power
+            Redefined headline centred on top, then the figures below it. */}
         <Bezel className="flex-1">
-          <div className="h-full px-4 sm:px-8 py-3.5 sm:py-5 grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-x-3 gap-y-3.5">
-            {POWER_STATS.map((s, i) => (
-              <Fragment key={s.label}>
-                {i > 0 && <UpTick className="hidden sm:block" />}
-                <div className="flex items-baseline gap-2 justify-center sm:justify-start">
-                  <span className="font-display font-black leading-none tracking-tight text-[1.75rem] sm:text-5xl xl:text-6xl metric-value" style={NUM_STYLE}>
-                    <ScrollCount to={s.to} progress={progress} />
-                    <span className="text-base sm:text-2xl xl:text-3xl">{s.unit}</span>
-                  </span>
-                  <span className="font-mono text-[8px] sm:text-[9px] leading-[1.25] uppercase tracking-[0.08em] text-apex-red/60 text-left max-w-[54px] sm:max-w-[82px]">
-                    {s.label}
-                  </span>
-                </div>
-              </Fragment>
-            ))}
+          <div className="h-full px-4 sm:px-8 py-4 sm:py-5">
+            {/* Mobile-only headline, centred on top of the figures. */}
+            <div className="sm:hidden text-center mb-4">
+              <span className="font-display font-black tracking-tight leading-none text-[1.75rem]">
+                <span className="text-apex-white">Power </span>
+                <span style={NUM_STYLE}>Redefined</span>
+              </span>
+            </div>
+
+            {/* Figures — a centred 2×2 grid on phones, a single divided row on
+                desktop. */}
+            <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-x-3 gap-y-4">
+              {POWER_STATS.map((s, i) => (
+                <Fragment key={s.label}>
+                  {i > 0 && <UpTick className="hidden sm:block" />}
+                  <div className="flex items-baseline gap-2 justify-center sm:justify-start">
+                    <span className="font-display font-black leading-none tracking-tight text-[1.9rem] sm:text-5xl xl:text-6xl metric-value" style={NUM_STYLE}>
+                      <ScrollCount to={s.to} progress={progress} />
+                      <span className="text-base sm:text-2xl xl:text-3xl">{s.unit}</span>
+                    </span>
+                    <span className="font-mono text-[8px] sm:text-[9px] leading-[1.25] uppercase tracking-[0.08em] text-apex-red/60 text-left max-w-[54px] sm:max-w-[82px]">
+                      {s.label}
+                    </span>
+                  </div>
+                </Fragment>
+              ))}
+            </div>
           </div>
         </Bezel>
       </div>
@@ -156,7 +170,9 @@ export default function ScrollExpandVideo() {
     target: sectionRef,
     // Start expanding as the stage arrives, finish before the section leaves,
     // so the plate sits fully open for the last stretch instead of popping.
-    offset: ['start start', 'end 85%'],
+    // On phones the growth begins as the section reaches the MIDDLE of the screen
+    // (not the top), so the film no longer feels like it kicks in way too late.
+    offset: isMobile ? ['start 50%', 'end 85%'] : ['start start', 'end 85%'],
   })
 
   // A second, earlier tracker covering the section's *approach*: 0 when the
@@ -187,17 +203,16 @@ export default function ScrollExpandVideo() {
   // open; the parting continues underneath and is never seen finishing.
   const titleOpacity = useTransform(scrollYProgress, [0.1, 0.45], [1, 0])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
-  // Spec bar: fade IN early on the approach (rising into place while the section
-  // is still ~half a screen down — well before the plate starts to grow), hold,
-  // then fade OUT on the main progress as the plate grows. The two never overlap
-  // (fade-in finishes before the section pins; fade-out starts well after), so
-  // multiplying them is a clean gate.
-  const statsFadeIn = useTransform(approach, [0.6, 0.88], [0, 1])
+  // Spec bar: fade IN as soon as the section's black edge appears from below
+  // (approach ~0.1), rising into place as it comes up the screen, hold, then
+  // fade OUT on the main progress as the plate grows. The two never overlap
+  // (fade-in finishes long before fade-out starts), so multiplying is a clean gate.
+  const statsFadeIn = useTransform(approach, [0.1, 0.45], [0, 1])
   const statsFadeOut = useTransform(scrollYProgress, [0.28, 0.42], [1, 0])
   const statsOpacity = useTransform([statsFadeIn, statsFadeOut], (v: number[]) => v[0] * v[1])
   // The figures are scroll-linked: they climb 0→target as the bar rises in, so
   // the numbers move under the reader's scroll instead of running on a timer.
-  const countProgress = useTransform(approach, [0.55, 0.9], [0, 1])
+  const countProgress = useTransform(approach, [0.12, 0.55], [0, 1])
   // Video + its title ride lower in the stage early on — clearing the spec bar so
   // it no longer squashes onto the plate on phones — then settle to centre as the
   // plate expands toward full-bleed.
