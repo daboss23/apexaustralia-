@@ -178,13 +178,13 @@ export default function FinalCTA() {
 
           {/* Subtext — bold sign-off, sits right under the headline. */}
           <motion.p
-            className="font-display font-bold text-apex-white max-w-none mx-auto mb-7 md:mb-12 leading-snug md:whitespace-nowrap"
-            style={{ fontSize: 'clamp(1.05rem, 1.7vw, 1.4rem)' }}
+            className="font-display font-bold uppercase tracking-[0.01em] text-apex-white max-w-none mx-auto mb-7 md:mb-12 leading-snug md:whitespace-nowrap"
+            style={{ fontSize: 'clamp(1rem, 1.6vw, 1.3rem)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.4 }}
           >
-            Champions are remembered. So are the tools that built them.
+            &ldquo;Champions are remembered. So are the tools that built them.&rdquo;
           </motion.p>
 
           {/* CTA — the supplied artwork button, same one both heroes use, so the

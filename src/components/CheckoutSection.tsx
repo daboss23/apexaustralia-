@@ -683,11 +683,6 @@ export default function CheckoutSection() {
         {/* ── Description ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mt-24">
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="kicker-line kicker-line--l bg-apex-blue" />
-              <span className="text-apex-blue font-mono text-[12px] tracking-[0.3em] uppercase">The Product</span>
-              <div className="kicker-line kicker-line--r bg-apex-blue" />
-            </div>
             <h3 className="font-display font-black t-feature leading-tight mb-5" style={{ fontSize: 'clamp(1.4rem, 2.6vw, 2.1rem)' }}>
               Not another sprint tool. An intelligence system.
             </h3>
