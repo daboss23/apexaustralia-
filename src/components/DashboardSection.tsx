@@ -295,14 +295,8 @@ export default function DashboardSection() {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        {/* Section label */}
-        <div ref={titleRef} className="flex items-center justify-center gap-3 mb-6">
-          <div className="kicker-line kicker-line--l bg-apex-blue" />
-          <span className="text-apex-blue font-mono text-[12px] tracking-[0.3em] uppercase font-medium">
-            05b — Live Performance Dashboard
-          </span>
-          <div className="kicker-line kicker-line--r bg-apex-blue" />
-        </div>
+        {/* Section kicker removed — kept as an invisible in-view trigger. */}
+        <div ref={titleRef} aria-hidden="true" />
 
         <motion.h2
           className="h-luxia t-silver leading-[0.88] mb-4 text-center"

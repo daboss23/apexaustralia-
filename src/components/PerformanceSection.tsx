@@ -208,18 +208,8 @@ export default function PerformanceSection() {
   return (
     <section id="performance" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        {/* Section label */}
-        <motion.div
-          ref={titleRef}
-          className="flex items-center justify-center gap-3 mb-6"
-          initial={{ opacity: 0, y: -10 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="kicker-line kicker-line--l bg-apex-blue" />
-          <span className="text-apex-blue font-mono text-[12px] tracking-[0.3em] uppercase font-medium">What T-APEX Does</span>
-          <div className="kicker-line kicker-line--r bg-apex-blue" />
-        </motion.div>
+        {/* Section kicker removed — kept as an invisible in-view trigger. */}
+        <div ref={titleRef} aria-hidden="true" />
 
         {/* Title */}
         <motion.h2
