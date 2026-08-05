@@ -1161,10 +1161,11 @@ export default function CheckoutFlow({
 
             <div className="text-center border-t border-apex-line/40 pt-9">
               <p
-                className="font-cinzel font-bold text-apex-white leading-tight max-w-3xl mx-auto tracking-[0.04em]"
-                style={{ fontSize: 'clamp(1.45rem, 3.1vw, 2.1rem)' }}
+                className="h-luxia leading-tight max-w-3xl mx-auto"
+                style={{ fontSize: 'clamp(1.5rem, 3.2vw, 2.3rem)', letterSpacing: '0.04em' }}
               >
-                WELCOME TO THE <span className="text-apex-blue whitespace-nowrap">T-APEX FAMILY</span>!
+                <span className="t-silver">WELCOME TO THE</span>{' '}
+                <span className="t-blue whitespace-nowrap">T-APEX FAMILY!</span>
               </p>
 
               {/* Policy / contact links + copyright — the same set as the
