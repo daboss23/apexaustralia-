@@ -4,25 +4,28 @@ This is the production brief for the **pinned, scroll-scrubbed hero** built in
 `src/components/ScrollCinemaHero.tsx`. It tells you exactly what footage to
 generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
-> **Current footage:** `public/apex-hero-cinema.mp4` — **11.75s, 282 frames at
-> 24fps**, cut from two sources with one dissolve (§6). Extracted at native
-> `fps=24`, `scale=1920` (lanczos + light unsharp) → **282 frames at 1920×1080,
-> 14.4 MB**, plus a phone sequence at 960×540, 5.5 MB.
+> **Current footage:** `public/apex-hero-cinema.mp4` — **22.29s, 535 frames at
+> 24fps**, cut from two sources plus a rendered transition (§6). Extracted at
+> `fps=16`, `scale=1920` (lanczos + light unsharp) → **357 frames at 1920×1080,
+> 25.9 MB**, plus a phone sequence at 960×540 / `fps=12`, 268 frames, 7.5 MB.
 >
 > **The read the whole cut exists to protect:**
 >
-> > **You watch the machine. That machine opens. The athlete comes out of it.**
+> > **You watch the machine. It opens. You fly through it, and out the far end an
+> > athlete is running at you.**
 >
 > - **0.0–2.9s** — the T-APEX machine alone on a pure black plate, deep down the
->   lens, travelling in and turning to face camera.
-> - **2.9–3.9s** — ✦ **the panels open**, internals lit: cable spool, motor,
->   gears. This is the centrepiece of the hero and nothing may be written over it.
-> - **3.9–4.8s** — a 0.9s dissolve carries the camera *through* the open machine
->   and into an indoor training hall.
-> - **4.8–10.5s** — the athlete drives out of the far end of that hall toward the
->   lens, the same machine now trackside paying out its cable; the ARI overlay
->   floods his musculature in red and blue.
-> - **10.5–11.75s** — he comes apart into particles and the frame fades to black.
+>   lens, turning to face camera.
+> - **2.9–4.8s** — ✦ **the panels open**, internals lit.
+> - **4.8–13.4s** — the fly-through: spool, motor, gears, copper, circuit macros,
+>   the chip. The longest act, and the brightest.
+> - **13.4–14.5s** — the camera banks up and out into a red grid tunnel.
+> - **14.5–17.0s** — ✦ **it flies THROUGH the opening at the end of the tunnel**
+>   and out into an indoor training hall. Rendered frame by frame, not dissolved
+>   — see §6.
+> - **17.0–20.3s** — the athlete drives toward the lens, the same machine
+>   trackside paying cable; the ARI overlay floods his musculature.
+> - **20.3–22.29s** — he comes apart into particles and the frame fades to black.
 >
 > **The tail problem is solved, and the fix must be preserved.** An earlier cut
 > ended with the sprinter still half in shot — a body frozen mid-stride at the
@@ -30,14 +33,21 @@ generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 > source's own **fade to black**, so the last frame of the film and the last pixel
 > of the pin are the same moment: the hero resolves to black and releases into
 > `<ScrollExpandVideo/>` black-to-black. Do not trim that fade off to reclaim the
-> ~10 % of scroll it costs — that 10 % *is* the transition. Any replacement
-> footage needs the same property: something to rest on after the subject clears.
+> ~9 % of scroll it costs — that 9 % *is* the transition.
 >
-> **Two exposures in one film.** Acts A–B are a near-black product plate; acts
-> C–E are a lit hall (Y≈55, rising to 73 under the charge). That single fact
-> drives two things that would otherwise look arbitrary — the camera push has to
-> cross 1.0 partway through (§1) and `.cine-dim` has to be scheduled rather than
-> set (§1). Neither is a taste setting.
+> **Two exposures in one film.** Acts A–B are a near-black product plate;
+> everything after is lit, and the *fly-through* is the brightest thing in the cut
+> (mean Y≈72 in the HUD's flank), not the hall (61 under the closing statement).
+> That drives two things that would otherwise look arbitrary — the camera push has
+> to cross 1.0 partway through (§1) and `.cine-dim` has to be scheduled rather
+> than set (§1). Neither is a taste setting.
+>
+> **⚠ Check every source for duplicate frames before you cut it.** The upscaled
+> sprint arrived as a 30fps file whose real content was 24fps — **one frame in
+> five was an exact duplicate**, the signature of a 24fps timeline exported at 30.
+> In a video nobody notices. In a scrub a duplicate is a *stall at a fixed scroll
+> position*, hit on every pass, in the same place every time. The check is cheap
+> and there is a script for it in §6; `fps=<true rate>` removes them.
 >
 > **⚠ Do not try to stabilise a subject with a whole-frame transform.** Learned
 > on the previous cut, and it generalises to any frame-scrub: that footage read
@@ -92,73 +102,76 @@ generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
 ## 1. What the scroll experience does
 
-As the visitor scrolls the hero (**4900px pinned, ~5 viewport-heights**), in six
-acts. Percentages below are timeline progress, which is also scroll progress
+As the visitor scrolls the hero (**6100px pinned, ~6 viewport-heights**), in
+nine acts. Percentages below are timeline progress, which is also scroll progress
 across the pin.
 
 - **ACT 0 — HOLD (0–4.5%).** Pure black, *TRAIN BEYOND HUMAN LIMITS* alone. Kept
-  deliberately short: at 10% the headline took five wheel notches to budge and
-  read as broken. (It doubles as the loading state — scrubbing arms once the
-  first 18 frames decode, the rest stream in behind.)
-- **ACT 1 — SPLIT (4.5–25%).** The headline parts — `TRAIN BEYOND` rises, `HUMAN
-  LIMITS` drops — on a `power2.out` ease so they break apart on contact rather
-  than creeping. A blue seam opens across the gap and the film is revealed *by*
-  the split: a `clip-path` aperture unclips vertically from that seam.
-- **ACT A — INTRO (4.5–25%).** The machine on its black plate, deep down the lens
-  at 0.34 scale, travelling in and turning to face camera.
-- **ACT B — OPEN (25–42%).** ✦ **The panels open.** Then the push carries on
-  through the 0.9s dissolve into the hall. The headline halves clear at 25%,
-  immediately before the panels move.
-- **ACT C — APPROACH (42–60%).** The athlete drives out of the far end toward the
-  lens. Telemetry HUD lands at 53%, flanked left and right at 11–13% inset, not
-  centred — he owns the middle of frame the whole way.
-- **ACT D/E — CHARGE & DISSOLVE (60–100%).** The ARI overlay floods him; *WHEN
-  PERFORMANCE MEETS INTELLIGENCE* lands at 78% and holds through the peak,
-  clearing at 95% as he comes apart into particles and the frame falls to black
-  on the last pixel of the pin.
+  deliberately short — it doubles as the loading state, and scrubbing arms once
+  the first 18 frames decode.
+- **ACT 1 — SPLIT (4.5–17%).** The headline parts on a `power2.out` ease. A blue
+  seam opens across the gap and the film is revealed *by* the split: a `clip-path`
+  aperture unclips vertically from that seam.
+- **ACT A — INTRO (4.5–17%).** The machine on its black plate, at 0.34 scale,
+  travelling in and turning to face camera.
+- **ACT B — OPEN (17–26%).** ✦ **The panels open.** The headline halves clear at
+  17%, immediately before they move.
+- **ACT C — FLY (26–62%).** Through the interior. The longest act, and where the
+  telemetry HUD lives (34–53%) — a live instrument readout means something over
+  the machine's own internals, which is a better home for it than over an athlete.
+- **ACT D — THROUGH (62–76%).** The red grid tunnel, then ✦ **the flight through
+  its far opening.**
+- **ACT E — RUN (76–85%).** The athlete driving toward the lens.
+- **ACT F/G — CHARGE & DISSOLVE (85–100%).** The ARI overlay; *WHEN PERFORMANCE
+  MEETS INTELLIGENCE* lands at 84.5% and clears at 95.5% as he comes apart into
+  particles and the frame falls to black on the last pixel of the pin.
 
 ### ⭐ The camera push has to cross 1.0, and only once
 
-This is the one number that a future edit is most likely to get wrong, because
-the correct value is *opposite* at the two ends of the film:
+This is the number a future edit is most likely to get wrong, because the correct
+value is *opposite* at the two ends of the film:
 
-- **Acts A–B sit on a pure black plate.** Drawing the frame *under* 1.0 puts
-  black around it, which reads as **distance** — the machine is a long way down
-  the lens and flies in. Nothing else can buy that: the footage holds the machine
-  at a constant size, so the travel is entirely the push. This is why it starts
-  at **0.34**.
-- **From act C on it is a lit hall**, and `fit: 'cover'` sizes the frame to
-  exactly fill the screen at 1.0. Anything under it letterboxes, and on a lit
-  shot a letterbox reads as **black bars**, not as distance.
+- **Acts A–B sit on a pure black plate.** Drawing the frame *under* 1.0 puts black
+  around it, which reads as **distance** — the machine is a long way down the lens
+  and flies in. Nothing else can buy that: the footage holds the machine at a
+  constant size, so the travel is entirely the push. Hence **0.34**.
+- **From act C on the frame is filled** — interior, then tunnel, then hall — and
+  `fit: 'cover'` sizes the frame to exactly fill the screen at 1.0. Anything under
+  it letterboxes, and on a filled shot a letterbox reads as **black bars**.
 
 So the push must reach 1.0 by the end of act B and must never go back. Past 1.0
-keep the increments small (1.06 → 1.22 across the rest) — the athlete is already
-sprinting at the lens, and a push-in on top of a push-in is two motions fighting.
-
-That crossing does a second job: the camera is still moving *through* the
-dissolve, and continuous motion across a join is what makes two generations read
-as one move rather than as two clips.
+keep the increments small (1.06 → 1.24 across the rest): act D contains a rendered
+fly-through of its own, and a push-in on top of a push-in is two motions fighting.
 
 ### Where the content sits (scroll progress → shot)
 
-282 frames, scrubbed across `0.045 → 1.0`. The act boundaries are stored as
-**ratios** of the sequence, not frame indices, so the phone — same frames,
-shorter pin — lands every cut on the same moment of the film.
+357 frames, scrubbed across `0.045 → 1.0`. Act boundaries are stored as **ratios**
+of the sequence, not frame indices, so the phone — 268 frames, a shorter pin —
+lands every cut on the same moment of the film.
 
 | Progress | Frames | On screen | px/frame |
 |---|---|---|---:|
-| 0.045–0.25 | 1–70 | the machine alone on black, travelling in and turning | ~14.6 |
-| 0.25–0.42 | 70–116 | ✦ **the panels open**, internals lit — then the dissolve through into the hall | ~18.1 |
-| 0.42–0.60 | 116–164 | the athlete driving out of the far end, machine trackside | ~18.4 |
-| 0.60–0.90 | 164–253 | the charge — the ARI overlay floods his musculature | ~16.5 |
-| 0.90–1.0 | 253–282 | particles, then black on the last frame of the pin | ~16.9 |
+| 0.045–0.170 | 1–47 | the machine alone on black, turning to face camera | ~16.6 |
+| 0.170–0.262 | 47–78 | ✦ **the panels open**, internals lit | ~18.1 |
+| 0.262–0.615 | 78–215 | the fly-through — spool, gears, copper, circuits, the chip | ~15.7 |
+| 0.615–0.760 | 215–272 | the red tunnel, then ✦ **through its far opening** | ~15.5 |
+| 0.760–0.845 | 272–304 | the athlete driving out of the far end | ~16.2 |
+| 0.845–0.905 | 304–326 | the charge — the ARI overlay | ~16.6 |
+| 0.905–1.0 | 326–357 | particles, then black on the last frame of the pin | ~18.7 |
 
-**The allocation is deliberately uneven, and the shape is the inverse of the
-footage's own speed.** The coarsest rate goes on the act that moves least; the
-finest on the dissolve, where the picture changes fastest. A flat allocation
-would have spent 26 px/frame on act A and starved act E.
+**The allocation is deliberately near-flat** — every leg between 15.5 and 18.7
+px/frame. Earlier cuts of this hero spent 24px/frame on the opening to "give the
+hero shot room"; that trade made sense when the opening was 19 % of the sequence,
+but this film is long enough that every act gets real screen time from a
+proportional split, and flat scrubs smoother.
 
-**Two layout rules this footage forces:**
+**The flight through the tunnel gets 39 frames and ~605px of scroll.** The first
+cut of it was 12 frames and 200px and flashed past. It is the signature shot of
+the hero and the only one that exists in neither source, so it was made *longer in
+the master* rather than given more scroll — more scroll across 12 frames only
+makes 12 frames step.
+
+**Two layout rules this footage forces:****Two layout rules this footage forces:**
 
 1. **Nothing goes on screen during the box opening.** It is the centrepiece; the
    headline halves are timed to clear at 25%, immediately before it starts.
@@ -169,16 +182,23 @@ would have spent 26 px/frame on act A and starved act E.
    lands the backdrop near **Y≈32**, which is where the metallic type holds its
    contrast.
 
-   | beat | act | backdrop | measured Y | → dim |
+   | beat | act | zone | measured Y | → dim |
    |---|---|---|---:|---:|
-   | split headline | A | black plate | ~8 | 0.16 |
-   | telemetry HUD | C | hall, left/right flank | 63 | 0.46 |
-   | closing statement | D | hall, centre band | 73 | 0.56 |
+   | split headline | A | centre band, black plate | ~8 | 0.16 |
+   | telemetry HUD | C | left / right flank, fly-through | 72 | 0.52 |
+   | closing statement | F | centre band, the charge | 61 | 0.50 |
 
-   Between the beats it drops to **0.05** over the panels opening — the film at
-   full strength, and it can go that far because a near-black plate has nothing
-   to lift off — and to **0.14** between the HUD and the closing line, which is
-   as clear as a lit hall gets without the shot flaring.
+   Note the HUD needs **more** scrim than the closing statement despite being
+   smaller type: the circuit macros behind it are brighter than the hall. That is
+   exactly why the levels are measured per zone rather than set once.
+
+   Between the beats the scrim drops to **0.05** over the panels opening — the
+   film at full strength, affordable only because a near-black plate has nothing
+   to lift off — and to **0.10** across the tunnel and the flight through it,
+   which is as clear as a lit shot gets without flaring. That second window runs
+   from 0.58 to 0.845: about 1600px of scroll with nothing written on it at all,
+   covering the tunnel, the flight, and the athlete arriving. The emptiness is
+   the point.
 
    If you recut, **re-measure and re-time the cue**. Crop to the zone the beat
    occupies rather than measuring the whole frame — a centred headline over a
@@ -194,11 +214,13 @@ would have spent 26 px/frame on act A and starved act E.
 
 ## 2. The ideal footage (what to generate)
 
-**One continuous 10–15s clip at the highest fps the tool offers**, 16:9. Length
-and frame rate are the budget the entire scrub is spent from, and neither can be
-topped up afterwards. The 7.8s second source used on its own would have forced
-the pin down to ~3400px; it takes the 4.8s product segment joined in front of it
-to get the hero back to a full 4900.
+**One continuous 10–15s clip at the timeline's true frame rate**, 16:9. Length is
+the budget the entire scrub is spent from and it cannot be topped up afterwards:
+the sprint source used on its own would have forced the pin down to ~3400px,
+where the full cut supports 6100. Frame *rate* is a different matter — export at
+the real rate rather than the highest available, because anything above the true
+rate is duplicated frames, and this pipeline has to strip them back out (see the
+warning at the top).
 
 The shape that currently works, and the one to beat:
 
@@ -261,15 +283,22 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
    ```bash
    rm -f public/hero-frames/*.webp
    ffmpeg -y -i public/apex-hero-cinema.mp4 \
-     -vf "fps=24,scale=1920:1080:flags=lanczos,unsharp=5:5:0.4:3:3:0.2" \
+     -vf "fps=16,scale=1920:1080:flags=lanczos,unsharp=5:5:0.4:3:3:0.2" \
      -f image2 -c:v libwebp -quality 70 \
      public/hero-frames/frame-%03d.webp
    ```
-   **Extract at the source's own frame rate.** `fps=24` on a 24fps master takes
-   every real frame and invents none; anything lower throws away smoothness you
-   have already paid for, and anything higher duplicates frames, which the scrub
-   shows as a stall. (Do not reach for `minterpolate` to manufacture more — on
-   thin limbs and particle effects it warps.)
+   **Never extract at a rate that is not an exact divisor of the master's.** 16
+   and 12 both divide 24, so every kept frame is evenly spaced. A non-divisor
+   (20 from 24, say) keeps an uneven cadence — one frame in six covers double the
+   motion — and never invent frames by extracting *above* the master's rate,
+   which duplicates them; a duplicate under a scrub is a stall at a fixed scroll
+   position. (Do not reach for `minterpolate` either — on thin limbs and particle
+   effects it warps.)
+
+   **Extracting below the master's rate is a legitimate, separate decision.** It
+   is how the sequence's weight is controlled, and it costs nothing in scroll
+   smoothness, which is governed by px-of-scroll-per-frame, not by source fps —
+   see the sizing note below.
 
    `lanczos` + a light `unsharp` matter: the source is 720p and the canvas asks
    for ~1920, so *something* has to upscale. Doing it once here beats the
@@ -278,12 +307,12 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
    Keep the unsharp light (0.4/0.2); the previous recipe's 0.7/0.35 was set for
    a source that had already been sharpened by an upscaler.
 3. Extract the **phone** sequence into `public/hero-frames-mobile/` — same cut,
-   **same frame count**, 960×540 (see §3b):
+   three quarters the frames, 960×540 (see §3b):
    ```bash
    rm -f public/hero-frames-mobile/*.webp
    ffmpeg -y -i public/apex-hero-cinema.mp4 \
-     -vf "fps=24,scale=960:540:flags=lanczos" \
-     -f image2 -c:v libwebp -quality 68 \
+     -vf "fps=12,scale=960:540:flags=lanczos" \
+     -f image2 -c:v libwebp -quality 66 \
      public/hero-frames-mobile/frame-%03d.webp
    ```
    No `unsharp` here: 960 from a 1280 source is a *downscale*, and sharpening a
@@ -291,7 +320,8 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
 4. Update **both** frame counts in `src/components/ScrollCinemaHero.tsx` —
    `DESKTOP.frameCount` and `MOBILE.frameCount` — re-check `pinDistance` against
    the new count (see the px/frame rule below), and re-derive the `ACTS` table:
-   the frame ratios have to land on the new cut's actual beats.
+   the frame ratios have to land on the new cut's actual beats, and `zoom` is a
+   parallel array that must stay exactly one entry longer.
 5. Re-measure luma and re-time the `.cine-dim` cue (see §1). If the new cut also
    mixes a dark plate with a lit environment, re-check the `zoom` crossing too.
 6. `npm run build` to verify, then commit both frame directories + the component.
@@ -304,11 +334,14 @@ and it is a **consequence of the footage, not a taste setting**:
 pinDistance ÷ frameCount  →  keep it in the 15–20 px/frame band
 ```
 
-282 frames × ~17 px = 4900 desktop; × ~13 px = 3600 phone (finer, because touch
-has no Lenis interpolation upstream of it — see §8). Note the desktop figure is a
-*different* 4900 from the pin an earlier cut used: that one carried 318 frames
-extracted at `fps=14` from a 22.7s film, where this carries every real frame of
-an 11.75s cut at 24fps. Same scroll distance, considerably more film per pixel.
+357 frames × ~17 px = 6100 desktop; 268 × ~15.7 px = 4200 phone (finer, because
+touch has no Lenis interpolation upstream of it — see §8).
+
+**6100px is a long hero — about six viewport heights — and that is the honest
+cost of a 22-second film.** There is no way to play 22 seconds of footage in less
+scroll without either skipping frames or cutting the film. If it ever has to be
+shorter, take it out of **act C**, the fly-through, which is 35 % of the pin and
+the least load-bearing stretch in the cut.
 
 Verify it rather than trusting it. Hook `drawImage` and record which sequence
 frame is painted on each animation frame; under a slow, deliberate scroll the
@@ -316,20 +349,21 @@ film should never advance **more than one frame per painted frame**:
 
 | scroll | paints over the pin | median jump | p95 | max jump | stalls |
 |---|---:|---:|---:|---:|---|
-| deliberate (~330 px/s) | 593 | 0 | 1 | **2** | none |
-| brisk (~1800 px/s) | 175 | 2 | 3 | 4 | none |
+| deliberate (~330 px/s) | 734 | 0 | 1 | **1** | none |
+| brisk (~1800 px/s) | 205 | 2 | 3 | 3 | none |
 
 (Measured in headless Chromium, whose software renderer caps rAF at ~18 fps — so
 the paint counts are a floor, and the jumps a ceiling, versus real hardware.)
 
 ### 3b. The phone sequence
-Phones run the same acts off their own sequence: **282 frames at 960×540,
-5.5 MB** (WebP q66), with `readyFrames: 12` (~240 KB) gating the start.
+Phones run the same acts off their own sequence: **268 frames at 960×540,
+7.5 MB** (WebP q66, `fps=12`), with `readyFrames: 12` (~340 KB) gating the start.
 
-It is the **same frame count as desktop, not half of it.** The phone used to run
-every second frame because an older desktop cut had 318 to spare; this one does
-not — halving it would put ~26 px of scroll on every frame against a shorter pin,
-which steps.
+That is **three quarters of the desktop count, because the phone's pin is three
+quarters as long** — 268 frames over 4200px is ~15.7 px/frame against desktop's
+~17. Matching desktop's 357 here would buy nothing the shorter pin can reach and
+cost 2.5 MB on a phone. Both rates (16 and 12) divide the master's 24 exactly, so
+neither sequence has an uneven cadence.
 
 The framing could not carry across unchanged. The footage is 16:9 and a phone is
 about 9:19.5, so cover-fitting shows a ~26 % wide slice of every shot — the run
@@ -349,8 +383,8 @@ could have shown it sharp. It is now **960 wide at `maxDpr: 2`**: a 780px buffer
 the band drawn ~1150px from a 960px source, once. **Those two numbers have to
 move together** or the canvas upscales twice.
 
-960 is also a *downscale* from the 1280-wide sources rather than an upscale,
-which is why 282 frames cost only 5.5 MB.
+960 is also a *downscale* from the 1920-wide master rather than an upscale, which
+is why 268 frames cost only 7.5 MB.
 
 ### Sizing the sequence — the real trade-off
 Frame **count** sells smoothness far more than frame **resolution**: the scrub is
@@ -358,37 +392,35 @@ a temporal effect, and a soft frame in motion reads fine where a chunky one does
 not. So when the budget gets tight, drop `scale` before you drop `fps` — and on a
 cut this short, never drop `fps` at all: 24 is every real frame the source has.
 
-Measured on the current 282-frame master (WebP, lanczos, light unsharp above
-1280):
+Measured on the current master (28 frames sampled across the whole cut, WebP,
+lanczos, light unsharp above 1280):
 
-| desktop | KB/frame | sequence | note |
+| desktop | KB/frame | 357-frame sequence | note |
 |---|---:|---:|---|
-| 1280×720 q76 (native, no upscale) | 40.2 | 11.1 MB | softest — the browser still upscales it to ~1920 at draw time |
-| 1600×900 q72 | 53.0 | 14.6 MB | better, but still under-supplies the canvas |
-| **1920×1080 q70 — shipped** | **52.5** | **14.4 MB** | pixel-for-pixel on a 1080p desktop |
+| 1440×810 q70 | 56.3 | 19.7 MB | visibly soft on the circuit macros |
+| 1600×900 q68 | 62.0 | 21.7 MB | still blurs the fine copper traces |
+| 1920×1080 q58 | 66.9 | 23.4 MB | quality-only cut; buys little, costs visibly |
+| **1920×1080 q70 — shipped** | **74.4** | **25.9 MB** | pixel-for-pixel on a 1080p desktop |
 
-| phone | KB/frame | sequence |
+| phone | KB/frame | 268-frame sequence |
 |---|---:|---:|
-| 640×360 q68 | 14.1 | 4.0 MB |
-| **960×540 q66 — shipped** | **19.8** | **5.5 MB** |
+| 800×450 q64 | 22.6 | 5.9 MB |
+| **960×540 q66 — shipped** | **28.7** | **7.5 MB** |
 
-(The 1920 row landing at roughly the same KB/frame as 1600 is not a mistake: a
-third of this cut is a black plate with a single object on it, which costs almost
-nothing to encode at any resolution.)
+**On this footage the usual rule inverts, and that is worth understanding.** The
+brief has long said *frame count sells smoothness more than resolution, so drop
+`scale` before you drop `fps`* — and that was right when the sources were upscaled
+from 720p, because resolution there was fake detail. This cut's first source is
+**native 1920×1080**, and the fly-through is dense: circuit macros, cable texture,
+machined edges. Rendered to the same 1920 canvas and compared side by side, a 1600
+sequence visibly blurs the copper traces running into the chip. So here the
+resolution is real and the *frame rate* is the cheaper thing to spend: the
+sequence is extracted at `fps=16` rather than 24, which costs nothing in scroll
+smoothness (that is governed by px-of-scroll-per-frame — 17 either way) and takes
+a third off the weight.
 
-**The resolution question is settled by where the canvas draws, not by the source
-size.** A 1280-wide source into a ~1920-wide backing store gets upscaled either
-way; the only choice is whether lanczos does it once, offline, or the browser
-does it every frame. Rendered to the same 1920 output and compared side by side,
-the pre-upscaled frames hold the wall texture and the T-APEX lettering that the
-browser path smears. That is why 1920 is the right extraction size here, and it is the first time
-this pipeline's extraction and §7's recommendation have agreed.
-
-Net against what this replaced: **22.4 MB → 14.4 MB desktop**, despite this cut
-carrying every real frame of its sources at 24fps where the old one sampled a
-22.7s film at `fps=14`. The phone sequence went the other way — 2.7 → 5.5 MB —
-buying both the extra frames and the 960/DPR-2 pairing in §3b, which is a visible
-sharpness win on the screens that can show it.
+Net: **25.9 MB desktop / 7.5 MB phone**, against 22.4 / 2.7 for a cut that was
+half the length and had no fly-through in it.
 
 AVIF at comparable quality measures about a third smaller than WebP *and*
 sharper. It is still **not** adopted: AVIF decodes considerably slower, and a
@@ -396,11 +428,11 @@ decode stall during a scrub costs smoothness, which is the more valuable of the
 two. Revisit only if the weight has to come down.
 
 Neither number decides how the page *feels*. Only `readyFrames` gate the start
-(18 desktop ≈ 950 KB, 12 phone ≈ 240 KB) and the rest streams in behind Act 0's
+(18 desktop ≈ 1.3 MB, 12 phone ≈ 340 KB) and the rest streams in behind Act 0's
 black hold, so time-to-interactive beats the contiguously-buffered video the hero
-originally ran. If the weight ever genuinely has to come down, take **frames out
-of act A** before you take pixels out of every frame — the machine turning on
-black is the least eventful stretch in the cut and the cheapest to thin.
+originally ran. If the weight genuinely has to come down, **shorten act C** — the
+fly-through is 35 % of the pin and the least load-bearing stretch in the cut, and
+cutting film beats degrading every frame of it.
 
 ### Load ordering
 The opening frames are fetched at `fetchPriority: 'high'` and the rest at
@@ -410,20 +442,21 @@ frames specifically, not any N completions; counting completions let a scattered
 set of late arrivals satisfy it while the opening was still in flight.
 
 ### Optional tuning knobs (the `DESKTOP` / `MOBILE` configs in `ScrollCinemaHero.tsx`)
-- `pinDistance` — px of scroll the hero stays pinned (`'+=4900'` desktop,
-  `'+=3600'` phone). Keep it near **15–20 px of scroll per frame** or the scrub
+- `pinDistance` — px of scroll the hero stays pinned (`'+=6100'` desktop,
+  `'+=4200'` phone). Keep it near **15–20 px of scroll per frame** or the scrub
   changes feel — it is a function of `frameCount`, not a free parameter. Phones
-  get less because a thumb covers ground far faster than a wheel, and a 4900px
+  get less because a thumb covers ground far faster than a wheel, and a 6100px
   pin on a phone reads as the page having stopped.
 - `ACTS` — the act table: `[frame ratio, scroll progress]` at the end of each
   act. The frame scrub *and* the camera push are both generated from it, one leg
   per act, precisely so they cannot drift apart — a push that changes gear at a
   different scroll position from the footage visibly slides against it.
-- `zoom` — the camera push, per device, as the scale at each of the six act
-  boundaries (`[0.34, 0.62, 1.06, 1.10, 1.16, 1.22]` desktop; the phone's is
+- `zoom` — the camera push, per device: the scale at HOLD and then at the end of
+  each act, so it is always exactly `ACTS.length + 1` long
+  (`[0.34, 0.62, 1.06, 1.10, 1.12, 1.16, 1.20, 1.24]` desktop; the phone's is
   multiplied by `baseScale: 1.35` before it hits the canvas). Read §1 before
-  touching it — the sub-1.0 opening and the crossing to ≥1.0 are both load-bearing
-  and for opposite reasons.
+  touching it — the sub-1.0 opening and the crossing to ≥1.0 are both
+  load-bearing, and for opposite reasons.
 - Every leg is **linear**. Pacing lives in how much scroll each act gets, not in
   easing: an eased leg accelerates the film *within* a shot, which reads as the
   video speeding up rather than as the page moving.
@@ -474,90 +507,123 @@ to a human.
 
 ## 6. How the master is cut
 
-Two sources, one dissolve. The join is the whole design, so it gets its own
-notes below.
+Two sources and one **rendered** transition. The transition is the whole design,
+so it gets its own section below.
 
 | Segment | Source | In–out | What it gives |
 |---|---|---|---|
-| 1 | the previous master (`old-master.mp4`, 1600×900 / 30fps) | **0.00–4.80** | the machine on black, turning, then ✦ the panels opening |
-| 2 | `apexscroll.mp4` (1280×720 / 24fps) | **3.00–10.80** | the hall, the run, the charge, the fade to black |
+| 1 | `Untitled_design.mp4` (1920×1080 / 30fps, 15.03s) | **0.00–14.53** | the machine on black, the panels opening, the fly-through, and the red tunnel |
+| 2 | *rendered* — `docs/portal-transition.py` | 58 frames | ✦ the flight **through** the tunnel's far opening |
+| 3 | the upscaled sprint (1920×1080, 24fps content) | **2.4167–7.75** | the run, the charge, the fade to black |
 
 ```bash
-ffmpeg -y -i old-master.mp4 -i apexscroll.mp4 -filter_complex "\
-[0:v]trim=0:4.80,setpts=PTS-STARTPTS,fps=24,scale=1280:720:flags=lanczos[v0];\
-[1:v]trim=3.0:10.80,setpts=PTS-STARTPTS,fps=24[v1];\
-[v0][v1]xfade=transition=fade:duration=0.9:offset=3.9[x]" \
--map "[x]" -an -c:v libx264 -crf 16 -preset slow -pix_fmt yuv420p \
-public/apex-hero-cinema.mp4
+# 0 — strip the duplicate frames from the sprint FIRST (see the warning up top:
+#     it arrived as 24fps content in a 30fps wrapper, 1 frame in 5 a duplicate)
+ffmpeg -y -i sprint-upscaled.mp4 -vf "fps=24" -an \
+  -c:v libx264 -crf 14 -preset medium -pix_fmt yuv420p spr24.mp4
+
+# 1 — the two layers the transition composites, both at the master's rate
+mkdir -p ptun pspr
+ffmpeg -v error -ss 14.53 -i Untitled_design.mp4 -vf "fps=24" -f image2 ptun/f-%03d.png
+ffmpeg -v error -t 2.6         -i spr24.mp4      -vf "fps=24" -f image2 pspr/f-%03d.png
+
+# 2 — render the flight through the opening
+python3 docs/portal-transition.py ptun pspr pout 58
+
+# 3 — concatenate. No dissolves anywhere: segment 2 already IS the transition.
+ffmpeg -y -i Untitled_design.mp4 -framerate 24 -i pout/t-%03d.png -i spr24.mp4 \
+  -filter_complex "\
+[0:v]trim=0:14.53,setpts=PTS-STARTPTS,fps=24,format=yuv420p[a];\
+[1:v]format=yuv420p[b];\
+[2:v]trim=2.4167:7.75,setpts=PTS-STARTPTS,fps=24,format=yuv420p[c];\
+[a][b][c]concat=n=3:v=1:a=0[out]" \
+  -map "[out]" -an -c:v libx264 -crf 16 -preset slow -pix_fmt yuv420p \
+  public/apex-hero-cinema.mp4
 ```
 
-`xfade`'s `offset` is measured on the *incoming* chain: `4.80 − 0.90 = 3.90`.
+**Why the master is 24fps when one source is a real 30.** Segment 1 is genuinely
+30fps; segment 3's real content is 24. Going to 30 would mean duplicating frames
+in segment 3 — a stall at a fixed scroll position on every pass. Going to 24 means
+dropping 1 real frame in 5 from segment 1, which a scrub does not care about
+because it has no clock: fewer distinct frames simply makes that act sample the
+motion slightly more coarsely, and the site extracts at 16 anyway. **Always
+resample down to the slowest true rate, never up.**
 
-**Output at 24fps, not 30.** Segment 1 is a 30fps source and segment 2 a 24fps
-one. Going to 24 *drops* frames from segment 1, which a scrub does not mind —
-there is no playback rate, so fewer distinct frames simply means a slightly
-coarser act. Going to 30 would *duplicate* frames in segment 2, and a duplicated
-frame under a scrub reads as the film stalling. Always resample down to the
-slowest source, never up.
+### ⭐ The flight through the tunnel
 
-(Segment 1 also comes down 1600×900 → 1280×720. That is not a loss: every
-original source in this project is 1280×720, so the old master was itself an
-upscale — see §7.)
+The tunnel clip ends looking down a red grid corridor whose far end is a soft dark
+opening, measured at **(960, 592)** with a half-extent of **215 × 113** on the last
+frame. `docs/portal-transition.py` continues that flight *through* the opening:
 
-**Why 3.00s on segment 2.** Its first three seconds hold the athlete a long way
-off and barely growing. At ~17 px of scroll per frame that is a large slice of
-the pin spent on a shot that hardly changes, and it would arrive right after the
-dissolve, killing the momentum the join builds.
+- **back** — the sprint frame, cover-fit, settling from a slight over-scale to 1.0
+- **mask** — a soft-edged superellipse at the opening, growing with the flight
+- **front** — the tunnel frame, scaled about the *same* point so the geometry
+  tracks, knocked out by the mask
 
-**Why 10.80s and not 11.04s.** The source fades to black at ~10.75s and then
-holds pure black for another seven frames. Those are identical, so scrolling
-through them is scrolling through nothing. 10.80 keeps the fade and one frame of
-black to land on.
+Growth is exponential and **eased in** (`K**(t**1.6)`, K=6). Constant-velocity
+approach is exponential in apparent size, so a plain `K**t` is the honest curve —
+but only about a dozen real tunnel frames exist before the layer has to hold its
+last one, and a plain curve spends them in the first fifth. Easing the growth in
+keeps the real footage carrying the opening and holds the athlete framed inside
+the tunnel mouth long enough to be a composition rather than a flash.
 
-### ⭐ Why this particular join survives a scrub
+**Nothing crossfades.** The tunnel leaves the screen by being flown past; by t=1
+the mask covers the frame and the tunnel layer is fully knocked out. That is what
+makes it survive being scrubbed, which no video transition ever has to: a viewer
+can stop anywhere in it, and every intermediate frame is a real composition —
+around 50 % the athlete is framed dead centre in the red tunnel mouth.
 
-A dissolve in a video is seen once, at a fixed speed. A dissolve in a *scrub* can
-be stopped on, reversed, and crawled through — so every intermediate frame has to
-be an image you would be happy to publish. Four things make this one work, in
-order of importance:
+**Two things that will bite whoever edits this next:**
 
-1. **Both halves are centre-weighted with dark surrounds.** The open machine sits
-   dead centre on black; the hall is a dark box with the athlete and the lit
-   T-APEX wall in the middle. The dissolve therefore blends subject onto subject
-   and edge onto edge, instead of smearing a bright frame over a dark one.
-2. **The camera never stops.** The push runs straight through the join (§1).
-   Continuous motion across a dissolve is what makes it read as one move; a
-   dissolve between two *static* framings always reads as an edit.
-3. **The mid-dissolve frames are the best argument for the cut.** Around 50 % the
-   athlete appears to be running out through the machine's own interior, with the
-   cable spool and motor ghosting over the track. That is the product story in one
-   frame, and a scrub is the only medium that lets anyone dwell on it.
-4. **0.9s, not 0.5s.** Held that long with both subjects in frame, the change of
-   environment reads as a transformation rather than as a cut. Short dissolves
-   under a scrub just look like a dirty edit.
+1. **The far scene must land on scale 1.0 on the final frame**, because segment 3
+   continues from there at 1.0. The first version pushed it 1.0 → 1.10 and left a
+   **20/255 jump** at the seam. It now settles 1.12 → 1.0 instead — which also
+   reads better, as arriving rather than still travelling.
+2. **Doing this in Python is deliberate.** Two time-varying scales about an
+   off-centre point plus a soft procedural mask is a lot of ffmpeg expression
+   syntax to get subtly wrong, and every frame here can be eyeballed before it is
+   committed to.
 
 ### Checking a source before you cut it
-Scene-detect first — a hard cut mid-segment will wreck the scrub:
+
+Two checks, both cheap, both of which have caught a real defect in this project:
+
 ```bash
+# 1 — hard cuts. Scrubbing amplifies every jump.
 ffmpeg -v error -i clip.mp4 -vf "select='gt(scene,0.2)',metadata=print:file=-" \
   -an -f null - 2>&1 | grep -o "pts_time:[0-9.]*"
-```
-On the old master this is also how the segment-1 out-point was found: it reports a
-clean break at 2.9s (the panels starting to move) and then a dense run from 4.4s
-onward, which is the *previous* cut's own dissolve into its fly-through. 4.80 sits
-just inside that, so segment 1 ends on the machine wide open with the camera
-already moving in — exactly the energy the new dissolve needs to inherit.
 
-### If you have to join two clips again
-The rules this project has paid for, in order:
+# 2 — duplicate frames. A 24fps timeline exported at 30 has 20% of them, and in
+#     a scrub each one is a stall at a fixed scroll position.
+ffmpeg -v error -ss 4 -t 2 -i clip.mp4 -vf scale=480:-1 -vsync 0 dq/f-%03d.png
+python3 - <<'EOF'
+import numpy as np, pathlib
+from PIL import Image
+prev = None; dup = n = 0
+for f in sorted(pathlib.Path("dq").glob("*.png")):
+    im = np.asarray(Image.open(f).convert("L"), np.float32)
+    if prev is not None:
+        n += 1
+        if np.abs(im - prev).mean() < 0.15: dup += 1
+    prev = im
+print(f"{dup}/{n} duplicates ({100*dup/n:.0f}%)")
+EOF
+```
+
+Check 1 is also how segment 1's out-point was found: it reports a clean break at
+2.9s (the panels starting to move) and a dense run from 4.4s, which is the *old*
+master's own dissolve. 14.53 sits at the end of the tunnel, one frame before the
+opening starts to fill.
+
+### If you have to join two clips with a dissolve
+
+Sometimes there is no portal to fly through. The rules this project has paid for,
+in order:
 
 1. **Grade the environments to match — that is the big one.** A change of
    *location* is what makes an edit read as "different video"; a change of angle
-   is not. An earlier cut crushed a lit hall to black with `curves` + a double
-   `vignette` and that did more than any other single change. This join needed no
-   grade only because segment 1 *is* a black void and segment 2 is genuinely dark.
-2. **Zoom and re-centre** so the subject lands at a comparable size and the
-   frame-edge giveaways are pushed out.
+   is not.
+2. **Zoom and re-centre** so the subject lands at a comparable size.
 3. **Make the dissolve long** — 0.7–0.9s, not 0.5s.
 4. **Dissolve between frames that already share subject, scale and palette.** A
    dissolve between mismatched frames is just a slow cut, and a scrub makes that
@@ -569,10 +635,12 @@ The rules this project has paid for, in order:
 - **No on-screen text** — all copy is live HTML over the top.
 - **Leave a tail.** Something to rest on after the subject clears frame: a fade,
   or ~1.5–2s of held shot. The hero's release lands on the last frame.
-- **The longest duration the tool allows, at the highest fps.** Frame count is
-  the budget the whole scrub is spent from, and it cannot be topped up later.
-- Watch the luma: bright footage forces the `.cine-dim` cue to work harder and
-  leaves less room for copy.
+- **Export at the timeline's true frame rate.** Not 30 "because it's smoother" —
+  that only duplicates frames, and this pipeline has to strip them back out.
+- **The longest duration the tool allows.** Frame count is the budget the whole
+  scrub is spent from, and it cannot be topped up later.
+- Watch the luma: bright footage forces `.cine-dim` to work harder and leaves
+  less room for copy.
 
 ---
 
