@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import Hero from './Hero'
 import Lightning from './ui/Lightning'
+import { setChromeHidden } from '@/lib/chrome'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
@@ -47,6 +48,11 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 // nothing crossfades: the tunnel leaves the screen by being flown past. Stopping
 // halfway shows the athlete framed inside the red tunnel mouth, which is a
 // composition worth stopping on rather than a smear between two clips.
+//
+// ── The page chrome gets out of the way ──────────────────────────────────────
+// The navbar and its progress rail are pulled off screen for the length of the
+// film and put back as the pin releases (see src/lib/chrome.ts). They stay for
+// Act 0, which is the landing state and carries no picture.
 //
 // ── The film ends on black, and that is load-bearing ─────────────────────────
 // The cut runs to the source's own fade-out, so the last frame of the pin is a
@@ -344,48 +350,6 @@ const ACTS: ReadonlyArray<readonly [number, number]> = [
 // the HUD needs MORE scrim than the closing statement even though it is smaller
 // type — the circuit macros behind it are brighter than the hall. If you recut,
 // re-measure; the method and the crops are in docs/motion-scroll-brief.md §1.
-
-const STATS = [
-  { k: 'Force', v: '412', u: 'N' },
-  { k: 'Velocity', v: '9.6', u: 'm/s' },
-  { k: 'Response', v: '<2', u: 'ms' },
-  { k: 'Control', v: '100', u: '%' },
-]
-
-function Stat({
-  k,
-  v,
-  u,
-  align,
-}: {
-  k: string
-  v: string
-  u: string
-  align: 'left' | 'right' | 'center'
-}) {
-  return (
-    <div className={align === 'center' ? 'text-center' : undefined}>
-      <div className="font-mono text-[8px] tracking-[0.3em] uppercase text-apex-grey-dim mb-2">
-        {k}
-      </div>
-      <div className="font-display font-black text-apex-white leading-none text-3xl sm:text-4xl xl:text-5xl">
-        {v}
-        <span className="text-apex-blue text-sm xl:text-lg ml-1 align-top">{u}</span>
-      </div>
-      <div
-        className={`mt-3 h-px w-12 ${
-          align === 'right' ? 'ml-auto' : align === 'center' ? 'mx-auto' : ''
-        }`}
-        style={{
-          background:
-            align === 'left'
-              ? 'linear-gradient(270deg,transparent,rgba(0,174,239,0.7))'
-              : 'linear-gradient(90deg,transparent,rgba(0,174,239,0.7))',
-        }}
-      />
-    </div>
-  )
-}
 
 /**
  * The size of Act 0's two small labels — the eyebrow above the headline and the
@@ -881,7 +845,39 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
               boltLiveRef.current = live
               setBoltLive(live)
             }
+            // Pull the navbar and its progress rail off screen while the film
+            // owns it, and put them back as the pin releases. A fixed bar across
+            // the top of a full-bleed shot is the one piece of furniture that
+            // gives away that this is a web page rather than a film.
+            //
+            // Not from progress 0: Act 0 is a black plate with the headline on
+            // it, no film yet, and that is the landing state — taking the site's
+            // only navigation away before the visitor has scrolled at all is a
+            // different and worse thing than keeping it off a picture. It goes at
+            // the same moment the aperture starts to open.
+            //
+            // The store's setter is a no-op when the value has not changed, so
+            // this is safe to call on every scroll frame.
+            setChromeHidden(self.progress > HOLD * 0.5 && self.progress < 0.985)
           },
+          // Belt and braces on the way out. `onUpdate` stops firing once the
+          // trigger is no longer active, so the boundary cases get their own
+          // handlers — otherwise a fast fling past the end can leave the site
+          // with no navigation at all.
+          //
+          // `released` also hands the paint order to the section below, which has
+          // been pulled up over the hero's own trailing height — see the
+          // `[data-cinema]` rules in globals.css. It has to flip exactly here, at
+          // the pin's end, which is why it rides the pin's own callbacks rather
+          // than a progress threshold.
+          onLeave: () => {
+            setChromeHidden(false)
+            document.documentElement.dataset.cinema = 'released'
+          },
+          onEnterBack: () => {
+            document.documentElement.dataset.cinema = 'pinned'
+          },
+          onLeaveBack: () => setChromeHidden(false),
         },
       })
 
@@ -987,37 +983,25 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       tl.to('.cine-cue', { opacity: 0, duration: 0.05 }, HOLD - 0.015)
 
       // ── The vignette ─────────────────────────────────────────────────────────
-      // Comes in with the panels, not before. Acts A–B open on a void — a
-      // vignette on a black plate does nothing but crush the machine's own rim
-      // light — and from the fly-through onward the frame is full, so it earns
-      // its keep pulling the eye to the centre of a busy shot. It eases back for
+      // Deliberately absent from the fly-through, which is the most colourful
+      // stretch in the film — machined copper, blue circuit light, red cabling.
+      // It used to ramp to 0.5 from the moment the panels opened, and between
+      // that and the scrim below the interior visibly drained as the camera went
+      // in. Both existed to make a telemetry readout legible over the top; that
+      // readout is gone, and so is the reason.
+      //
+      // What is left is a light 0.3 over the tunnel only, where the shot is a
+      // symmetrical corridor and a vignette genuinely adds depth, easing off for
       // the closing dissolve, which fills the frame corner to corner and must
       // not be cropped by its own furniture.
-      //
-      // Softer than the 0.8 this used to run at: that number was set against
-      // footage whose edges were already black, and at full strength on a lit
-      // shot it reads as a rifle scope rather than as depth.
-      tl.fromTo('.cine-tunnel', { opacity: 0 }, { opacity: 0.5, duration: 0.18 }, 0.26)
-      tl.to('.cine-tunnel', { opacity: 0.28, duration: 0.1 }, 0.92)
+      tl.fromTo('.cine-tunnel', { opacity: 0 }, { opacity: 0.3, duration: 0.08 }, 0.6)
+      tl.to('.cine-tunnel', { opacity: 0.12, duration: 0.08 }, 0.86)
 
       // The split halves clear at 0.17 — the instant before the panels move.
       // This is the one hard layout rule the footage imposes: the box opening is
       // the centrepiece of the whole hero and nothing sits on top of it.
       tl.to('.split-top', { opacity: 0, y: () => -travel() - 60, duration: 0.055 }, 0.115)
       tl.to('.split-bot', { opacity: 0, y: () => travel() + 60, duration: 0.055 }, 0.115)
-
-      // ── ACT C — telemetry HUD, over the fly-through ──────────────────────────
-      // Flanks the frame left and right. This is where a live instrument readout
-      // actually means something: the numbers are what the machine does, and you
-      // are looking at the inside of the machine while you read them. It also
-      // gives the longest act in the cut something to be about.
-      tl.fromTo(
-        '.beat-2',
-        { opacity: 0, scale: 0.94, filter: 'blur(6px)' },
-        { opacity: 1, scale: 1, filter: 'blur(0px)', ease: 'power2.out', duration: 0.09 },
-        0.34,
-      )
-      tl.to('.beat-2', { opacity: 0, scale: 1.05, filter: 'blur(6px)', duration: 0.05 }, 0.53)
 
       // ── ACT F — the promise, over the charge ─────────────────────────────────
       // Lands as the ARI overlay takes his whole body, holds through the peak,
@@ -1031,24 +1015,37 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       tl.to('.beat-sprint', { opacity: 0, y: -22, filter: 'blur(6px)', duration: 0.045 }, 0.955)
 
       // ── The lighting cue ─────────────────────────────────────────────────────
-      // See the note above ACTS for the method and the measurements. The two low
-      // points are not the same kind of low: 0.05 over the panels opening is the
-      // film at full strength on a near-black plate, which it can afford because
-      // there is nothing to lift off; 0.10 across the tunnel and the portal is as
-      // clear as a lit shot gets without flaring. Between them sits the longest
-      // uninterrupted stretch of film in the hero — 0.58 to 0.845, about 1600px
-      // of scroll with nothing written on it at all, covering the tunnel, the
-      // flight through it, and the athlete arriving. That emptiness is the point.
+      // `.cine-dim` is a black scrim over the film. It exists for exactly one
+      // reason: to hold contrast under copy. So it lifts under a copy beat and is
+      // otherwise as close to zero as the shot allows.
+      //
+      // There are now only two beats, and between them the film plays at full
+      // strength. That is a change of principle, not just of numbers: this used
+      // to carry a third level (0.52) across the whole fly-through so a telemetry
+      // readout could sit on top of it, and the effect was that the interior —
+      // copper, blue circuit light, red cabling, the most colourful footage in
+      // the cut — visibly drained the moment the camera went in. The readout is
+      // gone; the scrim goes with it.
+      //
+      //   beat                act   zone          measured Y   → dim
+      //   split headline      A     centre band      ~8         0.16
+      //   closing statement   F     centre band       61        0.50
+      //
+      // The levels are solved for, not chosen: the opacity that lands the
+      // backdrop near Y≈32, where the metallic type holds its contrast. If a beat
+      // is ever added back, measure the zone it actually occupies — do not reuse
+      // a level from a different act.
       tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.07 }, HOLD) // headline over the plate
-      tl.to('.cine-dim', { opacity: 0.05, ease: 'power1.inOut', duration: 0.05 }, 0.145) // ✦ the panels open — clear
-      tl.to('.cine-dim', { opacity: 0.52, ease: 'power1.inOut', duration: 0.05 }, 0.32) // telemetry, over the brightest act
-      tl.to('.cine-dim', { opacity: 0.1, ease: 'power1.inOut', duration: 0.06 }, 0.55) // tunnel + portal — clear
+      tl.to('.cine-dim', { opacity: 0.02, ease: 'power1.inOut', duration: 0.05 }, 0.145) // ✦ panels open — and stays clear all the way to the charge
       tl.to('.cine-dim', { opacity: 0.5, ease: 'power1.inOut', duration: 0.045 }, 0.83) // closing statement
       tl.to('.cine-dim', { opacity: 0.18, ease: 'power1.inOut', duration: 0.04 }, 0.955) // clears into the dissolve
 
-      // useGSAP reverts the context for us; the ticker callback is ours to undo.
+      // useGSAP reverts the context for us; the ticker callback and the chrome
+      // flag are ours to undo. The flag especially: leaving it set on unmount
+      // would strand the site with no navbar.
       return () => {
         gsap.ticker.remove(tick)
+        setChromeHidden(false)
       }
     },
     { scope: rootRef, dependencies: [ready] },
@@ -1111,19 +1108,20 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       >
         <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
-        {/* Readability ramp. Carries more than it used to: the previous cut sat
-            on a near-black plate and needed almost nothing, where this footage is
-            a lit hall whose brightest corner is the wall branding directly behind
-            the headline. */}
+        {/* Readability ramp — a corner falloff, permanently on. Cut from 0.55 to
+            0.22: at full strength it was a third of why the fly-through looked
+            drained, and with the telemetry readout gone nothing sits in the
+            corners any more. The only copy over the film now is centred, where
+            this gradient is transparent anyway. */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'radial-gradient(ellipse 120% 90% at 55% 45%, transparent 42%, rgba(5,8,14,0.55) 100%)',
+              'radial-gradient(ellipse 120% 90% at 55% 45%, transparent 52%, rgba(5,8,14,0.22) 100%)',
           }}
         />
-        {/* Vignette — draws the eye down the track to the athlete, then eases
-            back so the closing dissolve isn't cropped by its own furniture */}
+        {/* Vignette — over the tunnel only, where a symmetrical corridor gains
+            depth from it. Kept off the fly-through on purpose; see the timeline. */}
         <div
           className="cine-tunnel absolute inset-0 pointer-events-none"
           style={{
@@ -1145,55 +1143,6 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       <div className="absolute inset-0 z-20 pointer-events-none">
         {/* ACT 0/1 — the promise, which becomes the split */}
         <ActZero />
-
-        {/* ACT C — telemetry HUD over the fly-through.
-            Desktop flanks the film left/right: the shot holds its subject in the
-            middle of frame throughout, so the instrument readout lives in the
-            darker margins either side of it. A phone has no such margins — the
-            film is a band across the middle — so the readout becomes a 2×2 block
-            sitting in the black beneath it. */}
-        <div className="beat-2 absolute inset-0 opacity-0">
-          {phone ? (
-            <div className="absolute inset-x-0 bottom-[8%] px-8">
-              <div className="mb-5 flex items-center justify-center gap-2">
-                <span
-                  className="h-1.5 w-1.5 bg-apex-red"
-                  style={{ animation: 'cta-glow-pulse 1.6s ease-in-out infinite' }}
-                />
-                <span className="font-mono text-[8px] tracking-[0.3em] uppercase text-apex-blue">
-                  ARI · Live
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-x-6 gap-y-6">
-                {STATS.map((s) => (
-                  <Stat key={s.k} {...s} align="center" />
-                ))}
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="absolute left-[11%] xl:left-[13%] top-1/2 -translate-y-1/2 flex flex-col items-end gap-9 text-right">
-                <div className="flex items-center gap-2">
-                  <span
-                    className="h-1.5 w-1.5 bg-apex-red"
-                    style={{ animation: 'cta-glow-pulse 1.6s ease-in-out infinite' }}
-                  />
-                  <span className="font-mono text-[8px] tracking-[0.3em] uppercase text-apex-blue">
-                    ARI · Live
-                  </span>
-                </div>
-                {STATS.slice(0, 2).map((s) => (
-                  <Stat key={s.k} {...s} align="right" />
-                ))}
-              </div>
-              <div className="absolute right-[11%] xl:right-[13%] top-1/2 -translate-y-1/2 flex flex-col items-start gap-9 text-left">
-                {STATS.slice(2).map((s) => (
-                  <Stat key={s.k} {...s} align="left" />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
 
         {/* ACT F — the promise, centred over the charge, then gone */}
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
@@ -1237,6 +1186,15 @@ export default function ScrollCinemaHero() {
       return
     }
     setMode(window.matchMedia('(min-width: 1024px)').matches ? 'desktop' : 'phone')
+
+    // Tells the stylesheet a pinned cinema is running, so the section below can
+    // cancel the hero's own 100svh of trailing space — see `[data-cinema]` in
+    // globals.css. Set here rather than in the pinned component because it is a
+    // property of *which mode won*, and the fallback must not get it.
+    document.documentElement.dataset.cinema = 'pinned'
+    return () => {
+      delete document.documentElement.dataset.cinema
+    }
   }, [])
 
   if (mode === 'desktop') return <CinemaImpl cfg={DESKTOP} phone={false} />

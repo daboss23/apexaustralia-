@@ -167,6 +167,17 @@ rather than see.
   invisible in review — the whole site once shipped with seven of them.
 - **Stacking order** is documented at the top of `Navbar.tsx`. Portalled modals
   must clear the navbar (150), or it draws over them.
+- **The scroll-cinema pin reaches outside itself.** It sets `data-cinema`
+  (`pinned` → `released`) on `<html>`; `globals.css` uses that to pull the navbar
+  off screen for the film, and to pull `#film` up over the 100svh of trailing
+  space a pin leaves behind it. Three traps live in those few rules, all of which
+  render as "a black canvas covers the next section": a `position: relative`
+  element with `z-index: auto` does **not** contain its children's z-indexes;
+  ScrollTrigger **copies the pinned element's z-index inline onto the
+  `.pin-spacer` it creates**, once, and never updates it; and Tailwind
+  **tree-shakes class selectors written inside `@layer base`** when the class
+  only exists at runtime, as `.pin-spacer` does. See §7b of
+  `docs/motion-scroll-brief.md`.
 
 ## Mobile
 

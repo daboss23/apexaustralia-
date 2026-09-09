@@ -116,9 +116,9 @@ across the pin.
   travelling in and turning to face camera.
 - **ACT B — OPEN (17–26%).** ✦ **The panels open.** The headline halves clear at
   17%, immediately before they move.
-- **ACT C — FLY (26–62%).** Through the interior. The longest act, and where the
-  telemetry HUD lives (34–53%) — a live instrument readout means something over
-  the machine's own internals, which is a better home for it than over an athlete.
+- **ACT C — FLY (26–62%).** Through the interior. The longest act in the film and
+  the most colourful — machined copper, blue circuit light, red cabling — and
+  deliberately the one stretch with **nothing written over it at all**.
 - **ACT D — THROUGH (62–76%).** The red grid tunnel, then ✦ **the flight through
   its far opening.**
 - **ACT E — RUN (76–85%).** The athlete driving toward the lens.
@@ -185,20 +185,23 @@ makes 12 frames step.
    | beat | act | zone | measured Y | → dim |
    |---|---|---|---:|---:|
    | split headline | A | centre band, black plate | ~8 | 0.16 |
-   | telemetry HUD | C | left / right flank, fly-through | 72 | 0.52 |
    | closing statement | F | centre band, the charge | 61 | 0.50 |
 
-   Note the HUD needs **more** scrim than the closing statement despite being
-   smaller type: the circuit macros behind it are brighter than the hall. That is
-   exactly why the levels are measured per zone rather than set once.
+   **Two beats, and between them the scrim sits at 0.02.** That is a change of
+   principle, not just of numbers. A third level (0.52) used to run across the
+   whole fly-through so a telemetry readout could sit on top of it, with a
+   matching 0.5 vignette and a 0.55 corner falloff — and the combined effect was
+   that the interior visibly *drained* the moment the camera went in. It was the
+   brightest, most saturated footage in the cut, dimmed by three separate layers
+   so that four numbers could be legible over it.
 
-   Between the beats the scrim drops to **0.05** over the panels opening — the
-   film at full strength, affordable only because a near-black plate has nothing
-   to lift off — and to **0.10** across the tunnel and the flight through it,
-   which is as clear as a lit shot gets without flaring. That second window runs
-   from 0.58 to 0.845: about 1600px of scroll with nothing written on it at all,
-   covering the tunnel, the flight, and the athlete arriving. The emptiness is
-   the point.
+   The readout is gone and all three came down with it: the scrim to 0.02, the
+   vignette off the fly-through entirely (it now serves only the tunnel, at 0.3,
+   where a symmetrical corridor genuinely gains depth from one), and the corner
+   falloff from 0.55 to 0.22. **A scrim exists to hold contrast under copy. If
+   there is no copy, there is no scrim** — and if a beat is ever added back,
+   measure the zone it actually occupies rather than reusing a level from a
+   different act.
 
    If you recut, **re-measure and re-time the cue**. Crop to the zone the beat
    occupies rather than measuring the whole frame — a centred headline over a
@@ -689,6 +692,50 @@ over-sharpening artefacts on exactly the delicate energy effects that carry the
 film. Worth trying only if 1920 still isn't enough; do it on the **master**, not
 the individual sources, so the dissolves stay consistent, then re-extract at
 `scale=2560` and expect AVIF (see §3) to become necessary for the weight.
+
+---
+
+## 7b. What the pin does to the page around it
+
+Two things the hero does to its neighbours, both keyed to a `data-cinema`
+attribute the hero sets on `<html>` (`pinned` → `released`), so neither applies
+under `prefers-reduced-motion` or Data Saver, where there is no pin at all.
+
+### The chrome gets out of the way
+The navbar and its progress rail are pulled off screen for the length of the film
+and put back as the pin releases (`src/lib/chrome.ts`). A fixed bar across the top
+of a full-bleed shot is the one piece of furniture that gives away that this is a
+web page rather than a film. They stay for Act 0, which is the landing state and
+carries no picture — taking the site's only navigation away before the visitor has
+scrolled at all is a different and worse thing.
+
+Anything that hides the chrome needs a matching path that shows it again: the pin
+does it from `onLeave`, `onLeaveBack` and its own unmount, not just from a
+progress threshold, because `onUpdate` stops firing once the trigger goes
+inactive and a fast fling past the end would otherwise strand the site with no
+navbar.
+
+### The gap after the pin
+ScrollTrigger pins for `pinDistance`, but the hero `<section>` is itself 100svh
+tall and that height is *still in the document after the pin releases*. So the
+film ran out on its own fade to black, the pin let go — and then you scrolled a
+further full viewport of the same black before the next section could reach the
+top of the screen. Measured: 170px of intentional black at the end of the film,
+then 900px of nothing.
+
+`#film` is therefore pulled up by exactly the hero's own height. The overlap is
+invisible — both sides are black — but it makes the paint order a thing that has
+to be *stated*, and the right answer changes at the release. Three rules, and all
+three were needed:
+
+| | why |
+|---|---|
+| `#hero { z-index: 0 }` | It is `position: relative` with `z-index: auto`, which does **not** open a stacking context — so its children's z-indexes (the aperture at 1, the copy layer at 20) resolved against the root, and the aperture outranked the entire film section. |
+| `[data-cinema='pinned'] .pin-spacer { z-index: 2 !important }` | ScrollTrigger **copies the pinned element's computed z-index onto the `.pin-spacer` it wraps it in**, inline, once, when the pin is created — and never revises it. Put the pinned/released switch on `#hero` and it gets stamped permanently onto the wrapper. `!important` is the correct tool here: the declaration being overridden is written by a library, inline, at a moment we do not control. |
+| the rule lives **outside `@layer base`** | Tailwind tree-shakes class selectors written inside its layers when the class never appears in the scanned source. `.pin-spacer` is invented at runtime by GSAP, so the rule was silently dropped from the build while the `#hero` / `#film` ID rules beside it survived. |
+
+Each of those was a separate wrong render, and each looked like the same symptom:
+a black canvas covering the section below for a viewport after the pin had let go.
 
 ---
 

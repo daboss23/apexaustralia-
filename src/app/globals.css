@@ -81,6 +81,78 @@
   }
 }
 
+
+/* ── The scroll-cinema's page geometry ────────────────────────────────────────
+   Deliberately OUTSIDE @layer base. Tailwind tree-shakes class selectors written
+   inside its layers when the class never appears in the scanned source, and
+   `.pin-spacer` is created at runtime by GSAP — so the rule below was silently
+   dropped from the build while the `#hero` / `#film` ID rules beside it
+   survived. Anything keyed to a class some library invents at runtime has to
+   live out here. */
+/* ── Close the gap the pin leaves behind it ────────────────────────────────
+   ScrollTrigger pins the hero for `pinDistance`, but the hero <section> is
+   itself 100svh tall, and that height is still in the document AFTER the pin
+   releases. So the film runs out on its own fade to black, the pin lets go —
+   and then you scroll a further full viewport of the same black before the
+   next section can reach the top of the screen. Measured on a 900px viewport:
+   170px of intentional black at the end of the film, then 900px of nothing.
+
+   Pulling the following section up by exactly the hero's own height cancels
+   that trailing space. It is invisible: both the hero's last frame and the
+   film section's ground are black, so the overlap has nothing to show.
+
+   Keyed to the attribute the hero sets when it is actually running a pinned
+   cinema (see ScrollCinemaHero's mode effect). Under prefers-reduced-motion or
+   Data Saver there is no pin, no trailing space, and this must NOT apply — it
+   would drag the next section over a hero that is still on screen. */
+html[data-cinema] #film {
+  margin-top: -100svh;
+}
+
+/* ── …and the overlap that buys, handled ───────────────────────────────────
+   Pulling #film up means the two sections now occupy the same 100svh of the
+   document, so which one paints has to be stated rather than left to chance.
+   It cannot be stated once, because the right answer changes at the release:
+
+     pinned    the hero owns the screen. Without this the film section wins by
+               default — ScrollTrigger pins with `position: fixed`, #film is
+               `relative`, both are therefore positioned, and the later sibling
+               paints on top. The symptom is the hero's film being sliced off
+               from the bottom for the last viewport of the pin.
+     released  the hero's remaining height is a black frame nobody needs to
+               see, and the section pulled up over it must win instead.
+
+   ScrollCinemaHero flips the attribute in the pin's own onLeave/onEnterBack,
+   so the change lands on exactly the scroll position the pin ends at.
+
+   Two separate problems, and they need two separate rules.
+
+   1. `#hero` is `position: relative` with `z-index: auto`, which does *not*
+      open a stacking context — so its children's z-indexes (the film aperture
+      at 1, the copy layer at 20) resolved against the ROOT rather than against
+      the hero. The aperture at z-1 therefore outranked the whole film section
+      at z-auto and kept painting a black canvas over it for a full viewport
+      after the pin had already let go. `z-index: 0` contains them; any number
+      would, and 0 is the one that changes nothing else.
+
+   2. The pinned/released switch cannot live on `#hero`, because ScrollTrigger
+      COPIES the pinned element's computed z-index onto the `.pin-spacer` it
+      wraps it in — as an inline style, written once when the pin is created
+      and never revised. Putting `z-index: 2` on the hero therefore stamped a
+      permanent `z-index: 2` on the wrapper, which outranks the film section
+      forever and reproduces the exact bug it was meant to fix.
+
+      So the switch goes on the spacer itself, and it needs `!important` to
+      beat that inline copy. This is the rare case where !important is the
+      correct tool rather than a shortcut: the declaration it is overriding is
+      written by a library, inline, at a moment we do not control. */
+html[data-cinema] #hero {
+  z-index: 0;
+}
+html[data-cinema='pinned'] .pin-spacer {
+  z-index: 2 !important;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

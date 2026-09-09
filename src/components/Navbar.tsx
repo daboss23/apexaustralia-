@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
 import { lockScroll, unlockScroll, scrollToTarget } from '@/lib/scroll'
+import { subscribeChrome } from '@/lib/chrome'
 
 const NAV_LINKS = [
   { label: 'How It Works', href: '#how' },
@@ -18,6 +19,9 @@ const NAV_LINKS = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  // The scroll-cinema hero pulls the whole bar off screen while its film is
+  // playing and puts it back as the pin releases — see src/lib/chrome.ts.
+  const [chromeHidden, setChromeHidden] = useState(false)
   const { scrollYProgress } = useScroll()
   const progressWidth = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
 
@@ -25,6 +29,8 @@ export default function Navbar() {
     const unsub = scrollYProgress.on('change', (v) => setScrolled(v > 0.015))
     return unsub
   }, [scrollYProgress])
+
+  useEffect(() => subscribeChrome(setChromeHidden), [])
 
   // The menu is a full-screen sheet, so the page behind it must be frozen —
   // otherwise a swipe on the sheet scrolls the site underneath and you close it
@@ -60,12 +66,18 @@ export default function Navbar() {
           155  this progress rail (just clear of the navbar)
           180  checkout popup      ┐ portalled to <body>; both must sit above
           190  gallery lightbox    ┘ the navbar or it draws over them          */}
-      <div className="fixed top-0 left-0 right-0 h-[2px] z-[155] bg-apex-line/40">
+      {/* Goes with the bar: a 2px rule across the top of a full-bleed shot is
+          the same tell, and the two read as one piece of furniture. */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-[2px] z-[155] bg-apex-line/40"
+        animate={{ opacity: chromeHidden ? 0 : 1 }}
+        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+      >
         <motion.div
           className="h-full bg-gradient-to-r from-apex-red to-apex-red-bright"
           style={{ width: progressWidth }}
         />
-      </div>
+      </motion.div>
 
       <motion.nav
         className={`fixed top-0 left-0 right-0 md:top-4 md:left-4 md:right-4 z-[150] flex items-center justify-between px-5 py-3 md:py-3 border transition-colors duration-500 ${
@@ -76,10 +88,21 @@ export default function Navbar() {
         style={{
           borderRadius: 0,
           borderLeft: scrolled || mobileOpen ? '2px solid rgba(214,31,38,0.5)' : 'none',
+          pointerEvents: chromeHidden ? 'none' : undefined,
         }}
         initial={{ y: -90, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+        // Two jobs on one property set: the mount reveal, and the hero pulling
+        // the bar out of shot while its film plays. Driven through framer rather
+        // than a CSS class because framer owns this element's transform — a class
+        // would need !important to beat its inline style and would fight the
+        // mount animation on first paint.
+        animate={{ y: chromeHidden ? -110 : 0, opacity: chromeHidden ? 0 : 1 }}
+        transition={{ duration: chromeHidden ? 0.4 : 0.55, ease: [0.16, 1, 0.3, 1] }}
+        // Nothing in a bar that has left the screen should be tabbable — an
+        // element at opacity 0 is still in the tab order. `|| undefined` rather
+        // than the raw boolean because `inert` is presence-based: rendering
+        // inert="false" would make it inert.
+        inert={chromeHidden || undefined}
       >
         {/* Logo — hidden at the top (the hero carries the big brand mark),
             fades into the corner once you scroll past the hero */}
