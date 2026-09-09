@@ -10,23 +10,41 @@ import Lightning from './ui/Lightning'
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
 // ─── Scroll-cinema hero ───────────────────────────────────────────────────────
-// A pinned, scroll-scrubbed cinematic banner staged in four acts:
+// A pinned, scroll-scrubbed cinematic banner. One continuous camera move, staged
+// in six acts:
 //
 //   ACT 0  HOLD     black frame, the headline alone, a bolt of electricity
 //                   running behind it — no film yet.
 //   ACT 1  SPLIT    the headline parts (TRAIN BEYOND ↑ / HUMAN LIMITS ↓) and the
 //                   film opens out of the seam between them (clip-path aperture
 //                   + fade), so the video is literally revealed BY the split.
-//   ACT 2  APPROACH the frame sequence scrubs to scroll: the athlete sprints out
-//                   of the far end of the hall toward the lens, the T-APEX
-//                   machine trackside paying out its cable behind him.
-//   ACT 3  CHARGE   the ARI overlay floods him — musculature traced in red and
-//                   blue — then he dissolves into particles and the frame falls
-//                   to black on the last frame of the pin.
+//   ACT A  INTRO    the T-APEX machine, alone on a pure black plate, deep down
+//                   the lens — travelling in and turning to face camera.
+//   ACT B  OPEN     ✦ THE PANELS OPEN. The internals light: cable spool, motor,
+//                   gears. Then the camera keeps pushing in and the shot
+//                   dissolves THROUGH the open machine into the training hall.
+//   ACT C  APPROACH the athlete drives out of the far end of that hall toward
+//                   the lens, the same machine now trackside paying out cable.
+//   ACT D  CHARGE   the ARI overlay floods him — musculature traced in red and
+//                   blue.
+//   ACT E  DISSOLVE he comes apart into particles and the frame falls to black
+//                   on the last frame of the pin.
 //
 // Frames are a pre-extracted WebP sequence (buttery, no <video> stutter). Swap
 // the footage by dropping a new numbered sequence into /public/hero-frames and
 // updating the desktop `frameCount` below (see docs/motion-scroll-brief.md).
+//
+// ── The read this cut is built to protect ────────────────────────────────────
+// **You watch the machine. That machine opens. The athlete comes out of it.**
+//
+// Acts B and C are two different generations — a black-void product render and a
+// lit training hall — joined by a 0.9s dissolve in the master (see the brief's
+// §6). It survives being scrubbed because both halves are centre-weighted with
+// dark surrounds, and because the camera push (below) runs straight through the
+// join without pausing: continuous motion across a dissolve is what sells it as
+// one move rather than as two clips. Sitting mid-dissolve — which a scrub lets
+// you do, unlike a video — shows the athlete emerging through the machine's own
+// interior, which is the point rather than an artefact.
 //
 // ── The film ends on black, and that is load-bearing ─────────────────────────
 // The cut runs to the source's own fade-out, so the last frame of the pin is a
@@ -40,7 +58,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 // looping banner video — the single heaviest thing on the mobile site, loaded
 // through two stacked <video> elements. The scroll-cinema now runs there too,
 // off a separate sequence (/hero-frames-mobile) — the same frames at 960×540,
-// 4.3 MB all in, and only the first dozen gate the start. So mobile gained the
+// 5.5 MB all in, and only the first dozen gate the start. So mobile gained the
 // motion AND got several times lighter.
 //
 // The one thing that could NOT come across is the framing. The footage is 16:9
@@ -49,10 +67,10 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 // torso. Mobile therefore fits the film to the *width* (see FIT below) and
 // plays it as a band across the middle of a black screen, which is where the
 // headline splits apart anyway: the type parts, the band opens in the seam. Same
-// four acts, same beats, framed for the device instead of cropped for it.
+// acts, same beats, framed for the device instead of cropped for it.
 //
 // Still falls back to the classic <Hero /> under `prefers-reduced-motion` or
-// Data Saver — a two-hundred-frame preload is exactly what those settings ask
+// Data Saver — a three-hundred-frame preload is exactly what those settings ask
 // you not to do.
 
 type CinemaConfig = {
@@ -92,27 +110,29 @@ type CinemaConfig = {
    */
   copyShift: number
   /**
-   * The camera push, as scale multipliers on the fitted frame, at the four
-   * points of the timeline: the aperture opening (`start`), the end of the
-   * approach act (`open`), the start of the dissolve (`end`), and the last
-   * frame (`tail`).
+   * The camera push: the scale multiplier on the fitted frame at each of the six
+   * act boundaries — `[HOLD, end A, end B, end C, end D, last frame]`. One array
+   * rather than named stops so it cannot drift out of step with ACTS below.
    *
-   * Two hard rules live in these numbers.
+   * The shape is not a taste choice. It is dictated by what is behind the
+   * subject, and it changes halfway through the film:
    *
-   * 1. **On desktop none of them may go below 1.0.** `fit: 'cover'` sizes the
-   *    frame to exactly fill the screen at 1.0, so anything under it letterboxes
-   *    — and this footage is a lit hall, not the old near-black plate, so a
-   *    letterbox reads as black bars rather than as distance. (The previous cut
-   *    opened at 0.34 for exactly that reason: its subject sat on pure black, so
-   *    drawing it small read as being far down the lens. Reusing that number
-   *    here would put a small bright rectangle in the middle of the page.)
-   * 2. **Keep the whole span small.** The subject is already sprinting at the
-   *    lens; a push-in on top of a push-in is two motions fighting. 1.06 → 1.22
-   *    across the entire pin is a drift you feel rather than see, and its only
-   *    job is to keep the frame breathing through the shots where the athlete
-   *    himself has dissolved.
+   * - **Acts A–B sit on a pure black plate**, so drawing the frame *under* 1.0
+   *   puts black around it and reads as distance — the machine is a long way
+   *   down the lens and flies in. That is what 0.34 buys, and nothing else can:
+   *   the footage itself holds the machine at a constant size.
+   * - **From act C on it is a lit hall**, and `fit: 'cover'` sizes the frame to
+   *   exactly fill the screen at 1.0. Anything under it letterboxes, and on a
+   *   lit shot a letterbox reads as black bars, not as distance. So the push
+   *   **must** have reached 1.0 by the end of act B and must never go back.
+   *
+   * That crossing is also what carries the dissolve: the camera is still moving
+   * through the join, which is what makes two generations read as one move.
+   *
+   * Past 1.0 keep the increments small — the athlete is already sprinting at the
+   * lens, and a push-in on top of a push-in is two motions fighting.
    */
-  zoom: { start: number; open: number; end: number; tail: number }
+  zoom: [number, number, number, number, number, number]
 }
 
 /** The closed aperture — a zero-height slit sitting on the headline's seam. */
@@ -122,23 +142,23 @@ function apertureSlit(copyShift: number) {
 }
 
 const DESKTOP: CinemaConfig = {
-  frameCount: 188,
+  frameCount: 282,
   framePath: (i) => `/hero-frames/frame-${String(i).padStart(3, '0')}.webp`,
   // The gate is deliberately low. A frame that hasn't decoded holds the previous
   // one rather than flashing black, so arming early costs nothing visually — and
   // the alternative is a hero that ignores your scroll while a megabyte lands.
   readyFrames: 18,
   // ── Sized off the frame count, not off taste ────────────────────────────────
-  // The pin used to be 4800px against 318 frames (~15px of scroll per frame).
-  // This cut is 188 frames — every frame of a 7.8s 24fps source, so there is no
-  // more film to be had — and holding 4800 would have spent 26px of scroll on
-  // each one. That is past the point where a wheel notch skips a frame and the
-  // scrub starts to read as stepping rather than as motion.
+  // `pinDistance ÷ frameCount` has to land in the **15–20 px of scroll per
+  // frame** band. Under it you are paying for frames the scroll never reaches;
+  // over it a single wheel notch skips a frame and the scrub reads as stepping
+  // rather than as motion.
   //
-  // 3400 puts it back at ~18px/frame, inside the 15–20 band the pipeline doc
-  // calls for. The hero is a quarter shorter than it was, which is the honest
-  // length for 7.8 seconds of footage: the old pin was carrying a 22.7s film.
-  pinDistance: '+=3400',
+  // 282 frames × ~17px = 4900. Note this is a *different* 4900 from the old
+  // 4800: that pin carried 318 frames extracted at fps=14 from a 22.7s film,
+  // where this one carries every real frame of an 11.75s cut at 24fps. Same
+  // scroll distance, considerably more film per pixel of it.
+  pinDistance: '+=4900',
   fit: 'cover',
   baseScale: 1,
   splitTravel: 0.34,
@@ -154,23 +174,29 @@ const DESKTOP: CinemaConfig = {
   scrub: 0.35,
   // Desktop has the width to carry an honestly-centred block.
   copyShift: 0,
-  zoom: { start: 1.06, open: 1.1, end: 1.16, tail: 1.22 },
+  //          HOLD   A     B     C     D     end
+  //          ↓      ↓     ↓     ↓     ↓     ↓
+  //   machine deep down the lens ──▶ full frame as the panels open, and ≥1.0
+  //   from there on because act C is a lit hall under `fit: 'cover'`.
+  zoom: [0.34, 0.62, 1.06, 1.1, 1.16, 1.22],
 }
 
 const MOBILE: CinemaConfig = {
-  // The same 188 frames as desktop, not every second one. The phone used to run
-  // half the sequence because the desktop cut had 318 to spare; this one does
-  // not — halving it would put ~34px of scroll on every frame, which steps.
-  frameCount: 188,
+  // The same 282 frames as desktop, not every second one. The phone used to run
+  // half the sequence; halving this cut would put ~26px of scroll on every
+  // frame against a shorter pin, which steps.
+  frameCount: 282,
   framePath: (i) => `/hero-frames-mobile/frame-${String(i).padStart(3, '0')}.webp`,
   // ~280 KB before the film can start moving, and the first six of those are
   // already in flight from the HTML preloads (see layout.tsx).
   readyFrames: 12,
   // Shorter than desktop: a thumb covers ground far faster than a wheel, and a
-  // 4800px pin on a phone feels like the page has stopped responding. Against
-  // 188 frames this is ~17px of scroll per frame — slightly finer than desktop,
-  // which is right, because touch has no Lenis interpolation upstream of it.
-  pinDistance: '+=3200',
+  // 4900px pin on a phone feels like the page has stopped responding. Against
+  // 282 frames this is ~13px of scroll per frame — finer than desktop's ~17,
+  // which is the right way round, because touch has no Lenis interpolation
+  // upstream of it and the scrub is the only thing smoothing the platform's own
+  // scroll cadence.
+  pinDistance: '+=3600',
   fit: 'width',
   // 1.35× fit-width — the band fills a good third of the screen and the athlete
   // stays whole. Above ~1.5 the run starts cropping his arms at the frame edge.
@@ -195,29 +221,41 @@ const MOBILE: CinemaConfig = {
   scrub: 0.5,
   // Keep in step with `--cine-copy-shift` in globals.css.
   copyShift: 0.1,
-  // Flatter than desktop, and it never crosses 1.0. The phone plays the film as
-  // a letterboxed band whose size is `zoom × baseScale`, so these numbers are
-  // multiplied by 1.35 before they hit the canvas — the tail lands at 1.49,
-  // just under the ~1.5 where the run starts losing the athlete.
-  zoom: { start: 1.0, open: 1.02, end: 1.06, tail: 1.1 },
+  // Same shape as desktop, run flatter. The phone plays the film as a
+  // letterboxed band whose size is `zoom × baseScale`, so these are multiplied
+  // by 1.35 before they hit the canvas: the machine opens at 0.54 of fit-width
+  // and the tail lands at 1.49, just under the ~1.5 where the run starts losing
+  // the athlete. The band is small, so the machine has to close more of the
+  // distance before the panels move than it does on desktop — hence 0.72 at the
+  // end of act A rather than 0.62.
+  zoom: [0.4, 0.72, 1.0, 1.02, 1.06, 1.1],
 }
 
 // ── ACT SCRUB — where the scroll budget is spent ─────────────────────────────
-// Fractions of the sequence, and the share of the pinned scroll each act gets.
-// Deliberately uneven, and the shape is the inverse of the footage's own speed:
-// the coarsest rate goes on the shots that move least.
+// The film does NOT scrub at one flat rate. Each act gets a share of the pinned
+// scroll chosen against how fast that act's footage moves, so the rate changes
+// only at act boundaries — and those fall where the footage itself changes gear,
+// which is why no leg visibly speeds up mid-shot.
 //
-//   act         frames     scroll     px/frame
-//   approach     0– 24%     28%        ~20   ← athlete far off, small per-frame
-//   run         24– 56%     30%        ~17      movement; can carry a coarse rate
-//   charge      56– 85%     28%        ~18
-//   dissolve    85–end      10%        ~12   ← fastest footage, finest rate
+//   act              frames      scroll      px/frame
+//   A  intro          1– 70      0.045–0.25    ~14.6   machine turning on black
+//   B  open          70–116      0.25 –0.42    ~18.1   ✦ panels open, then the
+//                                                      dissolve through into the hall
+//   C  approach     116–164      0.42 –0.60    ~18.4   the athlete driving in
+//   D  charge       164–253      0.60 –0.90    ~16.5   the ARI overlay
+//   E  dissolve     253–282      0.90 –1.0     ~16.9   particles → black
 //
-// Expressed as ratios rather than frame indices so a re-cut at a different
-// length lands its act boundaries on the same moments of the film.
+// Every leg lands between 14 and 19 px of scroll per frame against the 4900px
+// pin, which is the whole point: a flat allocation would have spent 26px/frame
+// on act A (where the machine barely changes) and starved act E (where the
+// picture changes fastest).
+//
+// Boundaries are stored as **ratios of the sequence**, not frame indices, so the
+// phone — same frames, shorter pin — lands every cut on the same moment of the
+// film, and a re-cut at a different length keeps its choreography.
 
 // How long Act 0 holds before anything moves, as a fraction of the pinned
-// scroll. ~150px on the 3400px pin: the second wheel notch. See the map below —
+// scroll. ~220px on the 4900px pin: the second wheel notch. See the map below —
 // this number has been tuned from both directions.
 const HOLD = 0.045
 
@@ -225,15 +263,32 @@ const HOLD = 0.045
 // ~0.16; the margin is so a small scroll back up does not strobe it.
 const BOLT_OFF = 0.2
 
-// Frame 46 ≈ 1.9s in: the first blue tracing appears on his legs.
-const ACT_APPROACH_END = 46 / 188
-// Frame 106 ≈ 4.4s in: the ARI overlay is fully established across his body.
-const ACT_CHARGE_START = 106 / 188
-// Frame 160 ≈ 6.6s in: he has come apart into particles and the hall blurs out.
-const ACT_DISSOLVE_START = 160 / 188
+/**
+ * Act boundaries: `[frame ratio, scroll progress]` at the END of each act.
+ *
+ * Kept as one table because the two columns only mean anything together — a
+ * frame ratio without the scroll position it lands at says nothing about pace,
+ * and every px/frame figure in the map above is one row divided by the previous.
+ */
+const ACTS: ReadonlyArray<readonly [number, number]> = [
+  // A — the machine turns on black. Frame 70 ≈ 2.9s: it has come round to
+  //     face camera and the seam is lit but still shut.
+  [70 / 282, 0.25],
+  // B — ✦ the panels open, and the push carries on THROUGH the 0.9s dissolve
+  //     into the hall. Frame 116 ≈ 4.8s is where the dissolve completes.
+  //     Deliberately the most expensive act per frame: it is the centrepiece
+  //     and it is also the join, which is the one place a scrub can betray you.
+  [116 / 282, 0.42],
+  // C — the athlete driving out of the far end of the hall. Frame 164 ≈ 6.8s:
+  //     the first blue tracing appears on his legs.
+  [164 / 282, 0.6],
+  // D — the charge. Frame 253 ≈ 10.5s: he has come apart into particles.
+  [253 / 282, 0.9],
+  // E — the dissolve, to the last frame at the last pixel of the pin.
+  [1, 1],
+]
 
 // ── Where the cut's content sits, as scroll progress ─────────────────────────
-// The film scrubs HOLD → 1.0, act by act (see ACT SCRUB above):
 //
 //   0–HOLD     ACT 0 holds: black, the brand mark, the headline whole, the bolt
 //              running behind it. Nothing else moves.
@@ -242,33 +297,33 @@ const ACT_DISSOLVE_START = 160 / 188
 //              composed or as broken, and it has been wrong in both directions.
 //              At 0.10 the page felt dead on arrival; cut to 0.03 the split was
 //              already underway before you had seen the headline. It is now
-//              0.045 — about 150px, so the type parts on the SECOND notch — and
+//              0.045 — about 220px, so the type parts on the SECOND notch — and
 //              the reason that can be this short without feeling abrupt is that
 //              Act 0 is no longer still: the bolt is alive from the first pixel,
 //              so the hold reads as a charge rather than as a stall.
-//   HOLD–0.32  the hall: the athlete driving out of the far end of the track,
-//              the T-APEX wall behind him, the machine trackside paying cable.
-//              The headline halves clear at 0.24 and the frame plays clean from
-//              0.35 — the reveal gets a beat with nothing written on it.
-//   0.32–0.62  the run — he closes on the lens, the cable draws taut, and the
-//              first blue tracing appears on his legs. Telemetry HUD flanks the
-//              frame from 0.43.
-//   0.62–0.90  ✦ THE CHARGE — the ARI overlay floods his musculature in red and
-//              blue. This is the money shot; the closing statement lands over it
-//              at 0.71.
-//   0.90–1.0   he comes apart into particles, the hall blurs out, and the frame
-//              falls to black on the last frame of the pin.
+//   HOLD–0.25  the machine alone on black, deep down the lens, travelling in and
+//              turning to face camera. The headline halves clear at 0.25 —
+//              nothing may be on screen when the panels move.
+//   0.25–0.42  ✦ THE PANELS OPEN, internals lit, and the camera pushes on
+//              through the open machine and dissolves into the hall.
+//   0.42–0.60  the athlete drives out of the far end toward the lens, the same
+//              machine trackside paying out cable. Telemetry HUD from 0.53.
+//   0.60–0.90  the charge — the ARI overlay floods his musculature. The closing
+//              statement lands at 0.78.
+//   0.90–1.0   he comes apart into particles and the frame falls to black on the
+//              last frame of the pin.
 //
-// The read we're protecting is ONE continuous shot: a real athlete on a real
-// track, and then the thing the machine is doing to him made visible.
+// ── The lighting cue is measured, not eyeballed ──────────────────────────────
+// This film has two completely different exposures in it: acts A–B are a
+// near-black product plate, acts C–E a lit hall (mean luma Y≈55, rising to 73
+// under the charge). A single `.cine-dim` level cannot serve both, so it is
+// scheduled like a lighting cue — lifting under every copy beat and dropping
+// away between them.
 //
-// This footage is lit end to end — a hall at Y≈55 rising to Y≈73 under the
-// charge, where the previous cut opened near-black — so `.cine-dim` is
-// scheduled like a lighting cue and its levels are measured, not guessed. It
-// lifts under every copy beat and drops away between them, letting the film
-// play at full strength exactly when nothing is written over it. If you recut,
-// re-measure the luma of the copy zones and re-time it; the method and the
-// numbers are in docs/motion-scroll-brief.md.
+// The levels come from measuring the mean luma of the zone each beat actually
+// occupies and solving for the opacity that lands the backdrop near Y≈32, which
+// is where the metallic type holds its contrast. If you recut, re-measure; the
+// method and the crops are in docs/motion-scroll-brief.md §1.
 
 const STATS = [
   { k: 'Force', v: '412', u: 'N' },
@@ -532,7 +587,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
   const boltLiveRef = useRef(true)
 
   // Mutable render state the scroll timeline drives; the draw loop reads it.
-  const render = useRef({ frame: 0, scale: cfg.zoom.start }).current
+  const render = useRef({ frame: 0, scale: cfg.zoom[0] }).current
 
   // ── Preload the sequence so scrubbing never waits on I/O ────────────────────
   //
@@ -811,32 +866,33 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       })
 
       // ── The bed — frame scrub + camera push run under everything ─────────────
-      // Scrubbed act by act rather than at one flat rate (see ACT SCRUB above).
-      // Each leg is still linear (ease 'none' from defaults), so the rate changes
-      // only at the act boundaries — and those fall where the footage itself
-      // changes gear, so no leg visibly speeds up mid-shot.
+      // Both are driven straight off ACTS, one leg per act, rather than being
+      // written out by hand: the frame scrub and the camera push have to change
+      // gear at exactly the same scroll positions or the push visibly slides
+      // against the footage. Sharing one table is what guarantees that.
+      //
+      // Every leg is linear (ease 'none' from defaults). The pacing lives in how
+      // much scroll each act is given, not in easing curves — an eased leg
+      // accelerates the film *within* a shot, which reads as the video speeding
+      // up rather than as the page moving.
       //
       // The frames start moving the instant the hold ends: the aperture opening
       // on a *running* frame is what makes the split read as a reveal rather
       // than as a still being uncovered.
-      tl.to(render, { frame: f(ACT_APPROACH_END), duration: 0.32 - HOLD }, HOLD)
-      tl.to(render, { frame: f(ACT_CHARGE_START), duration: 0.3 }, 0.32)
-      tl.to(render, { frame: f(ACT_DISSOLVE_START), duration: 0.28 }, 0.62)
-      // Runs to 1.0, not short of it. The cut ends on the source's own fade to
-      // black, so the last frame of the film and the last pixel of the pin are
-      // the same moment: the hero resolves to black and releases into the film
-      // section below it. Parking the scrub early would freeze the dissolve
-      // mid-particle and then cut to black at the release instead.
-      tl.to(render, { frame: last, duration: 0.1 }, 0.9)
-
-      // The camera push. Linear and tiny — see `zoom` in CinemaConfig for why
-      // this is a drift rather than a move. The one place it does real work is
-      // the tail: once the athlete has come apart into particles the footage has
-      // almost no subject left to carry motion, and the extra push through the
-      // dissolve keeps the closing frames flying instead of dimming in place.
-      tl.to(render, { scale: cfg.zoom.open, duration: 0.32 - HOLD }, HOLD)
-      tl.to(render, { scale: cfg.zoom.end, duration: 0.58 }, 0.32)
-      tl.to(render, { scale: cfg.zoom.tail, duration: 0.1 }, 0.9)
+      //
+      // The last leg runs to 1.0, not short of it. The cut ends on the source's
+      // own fade to black, so the last frame of the film and the last pixel of
+      // the pin are the same moment: the hero resolves to black and releases
+      // into the film section below it. Parking the scrub early would freeze the
+      // dissolve mid-particle and then cut to black at the release instead.
+      let atFrame = HOLD
+      let atScale = HOLD
+      ACTS.forEach(([ratio, until], i) => {
+        tl.to(render, { frame: i === ACTS.length - 1 ? last : f(ratio), duration: until - atFrame }, atFrame)
+        atFrame = until
+        tl.to(render, { scale: cfg.zoom[i + 1], duration: until - atScale }, atScale)
+        atScale = until
+      })
 
       // ── ACT 0 — the charge ───────────────────────────────────────────────────
       // The bolt is at full strength for the hold, then travels UP and out as
@@ -910,70 +966,69 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // Scroll cue clears as the split begins.
       tl.to('.cine-cue', { opacity: 0, duration: 0.05 }, HOLD - 0.015)
 
-      // ── ACT 2 — the run ──────────────────────────────────────────────────────
-      // The vignette breathes in over the approach — it pulls the eye down the
-      // track to the athlete — then eases back for the dissolve, which fills the
-      // frame corner to corner and must not be cropped by its own furniture.
-      // Softer than the previous cut's 0.8: that number was set against footage
-      // whose edges were already black, and at full strength on a lit hall it
-      // reads as a rifle scope rather than as depth.
-      tl.fromTo('.cine-tunnel', { opacity: 0 }, { opacity: 0.55, duration: 0.22 }, 0.32)
-      tl.to('.cine-tunnel', { opacity: 0.3, duration: 0.1 }, 0.9)
+      // ── The vignette ─────────────────────────────────────────────────────────
+      // Only over the hall. Acts A–B are already a void — a vignette on a black
+      // plate does nothing but crush the machine's own rim light — so it comes
+      // in with the dissolve and pulls the eye down the track to the athlete,
+      // then eases back for the closing dissolve, which fills the frame corner
+      // to corner and must not be cropped by its own furniture.
+      //
+      // Softer than the 0.8 this used to run at: that number was set against
+      // footage whose edges were already black, and at full strength on a lit
+      // hall it reads as a rifle scope rather than as depth.
+      tl.fromTo('.cine-tunnel', { opacity: 0 }, { opacity: 0.5, duration: 0.18 }, 0.42)
+      tl.to('.cine-tunnel', { opacity: 0.28, duration: 0.1 }, 0.9)
 
-      // The split halves clear early and completely: from here the frame is the
-      // athlete running at the lens, and it is the one thing on screen.
-      tl.to('.split-top', { opacity: 0, y: () => -travel() - 60, duration: 0.07 }, 0.24)
-      tl.to('.split-bot', { opacity: 0, y: () => travel() + 60, duration: 0.07 }, 0.24)
+      // The split halves clear at 0.25 — the instant before the panels move.
+      // This is the one hard layout rule the footage imposes: the box opening is
+      // the centrepiece of the whole hero and nothing sits on top of it.
+      tl.to('.split-top', { opacity: 0, y: () => -travel() - 60, duration: 0.06 }, 0.19)
+      tl.to('.split-bot', { opacity: 0, y: () => travel() + 60, duration: 0.06 }, 0.19)
 
-      // Telemetry HUD — lands over the run, flanking the athlete. A live
-      // instrument readout means something here: the cable is drawn taut behind
-      // him and the numbers are what the machine is doing to it.
+      // ── ACT C — telemetry HUD, over the run ──────────────────────────────────
+      // Flanks the athlete left and right. A live instrument readout means
+      // something here: the cable is drawn taut behind him and the numbers are
+      // what the machine — the one whose internals you just flew through — is
+      // doing to it.
       tl.fromTo(
         '.beat-2',
         { opacity: 0, scale: 0.94, filter: 'blur(6px)' },
         { opacity: 1, scale: 1, filter: 'blur(0px)', ease: 'power2.out', duration: 0.09 },
-        0.43,
+        0.53,
       )
-      tl.to('.beat-2', { opacity: 0, scale: 1.05, filter: 'blur(6px)', duration: 0.05 }, 0.58)
+      tl.to('.beat-2', { opacity: 0, scale: 1.05, filter: 'blur(6px)', duration: 0.05 }, 0.68)
 
-      // ── ACT 3 — the promise, over the charge ─────────────────────────────────
+      // ── ACT D — the promise, over the charge ─────────────────────────────────
       // Lands as the ARI overlay takes his whole body, holds through the peak,
       // and clears into the dissolve so the film falls to black on its own.
       tl.fromTo(
         '.beat-sprint',
         { opacity: 0, y: 34, filter: 'blur(8px)' },
         { opacity: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.05 },
-        0.71,
+        0.78,
       )
-      tl.to('.beat-sprint', { opacity: 0, y: -22, filter: 'blur(6px)', duration: 0.05 }, 0.93)
+      tl.to('.beat-sprint', { opacity: 0, y: -22, filter: 'blur(6px)', duration: 0.05 }, 0.95)
 
       // ── The lighting cue ─────────────────────────────────────────────────────
-      // `.cine-dim` lifts under each copy beat and drops between them, so the
-      // film plays at full strength exactly when nothing is written over it.
+      // See the note above ACTS for the method. In short: this film has two
+      // exposures in it, so the scrim is scheduled rather than set.
       //
-      // The levels are derived, not eyeballed. Measured mean luma of the zone
-      // each beat actually occupies (see docs/motion-scroll-brief.md §1), then
-      // solved for the opacity that lands the backdrop near Y≈32, which is where
-      // the metallic type holds its contrast:
+      //   beat                act   backdrop            measured Y   → dim
+      //   split headline      A     black plate            ~8         0.16
+      //   telemetry HUD       C     hall, left/right       63         0.46
+      //   closing statement   D     hall, centre           73         0.56
       //
-      //   beat              zone          measured Y   → dim
-      //   split headline    centre band       55        0.42
-      //   telemetry HUD     left/right        63        0.46
-      //   closing statement centre band       73        0.56
-      //
-      // Every one of those is well above the previous cut's numbers, and that is
-      // the footage, not a change of taste: the old film opened on a near-black
-      // plate, this one opens on a lit hall.
-      tl.to('.cine-dim', { opacity: 0.42, ease: 'power1.inOut', duration: 0.09 }, HOLD) // headline over the hall
-      tl.to('.cine-dim', { opacity: 0.09, ease: 'power1.inOut', duration: 0.07 }, 0.28) // ✦ the type clears — the track plays clean
-      tl.to('.cine-dim', { opacity: 0.46, ease: 'power1.inOut', duration: 0.06 }, 0.42) // telemetry
-      // A partial lift, not a clear one. There is only ~0.08 of pin between the
-      // HUD leaving and the closing line arriving, and taking the scrim all the
-      // way down and straight back up across that gap strobes rather than
-      // breathes. 0.24 is enough for the charge igniting to register.
-      tl.to('.cine-dim', { opacity: 0.24, ease: 'power1.inOut', duration: 0.06 }, 0.6)
-      tl.to('.cine-dim', { opacity: 0.56, ease: 'power1.inOut', duration: 0.05 }, 0.7) // closing statement
-      tl.to('.cine-dim', { opacity: 0.18, ease: 'power1.inOut', duration: 0.05 }, 0.93) // clears into the dissolve
+      // The two low points are not the same kind of low. 0.05 over the panels
+      // opening is the film at full strength on a near-black plate — it can go
+      // that far because there is nothing to lift off. 0.14 between the HUD and
+      // the closing line is over a lit hall, so it is as clear as that stretch
+      // can get without the shot flaring.
+      tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.09 }, HOLD) // headline over the plate
+      tl.to('.cine-dim', { opacity: 0.05, ease: 'power1.inOut', duration: 0.06 }, 0.23) // ✦ the panels open — clear
+      tl.to('.cine-dim', { opacity: 0.46, ease: 'power1.inOut', duration: 0.06 }, 0.52) // telemetry
+      tl.to('.cine-dim', { opacity: 0.14, ease: 'power1.inOut', duration: 0.06 }, 0.68) // the charge ignites — clear
+      tl.to('.cine-dim', { opacity: 0.56, ease: 'power1.inOut', duration: 0.05 }, 0.77) // closing statement
+      tl.to('.cine-dim', { opacity: 0.18, ease: 'power1.inOut', duration: 0.05 }, 0.95) // clears into the dissolve
 
       // useGSAP reverts the context for us; the ticker callback is ours to undo.
       return () => {
@@ -1075,7 +1130,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
         {/* ACT 0/1 — the promise, which becomes the split */}
         <ActZero />
 
-        {/* ACT 2 — telemetry HUD over the run.
+        {/* ACT C — telemetry HUD over the run.
             Desktop flanks the film left/right: the athlete holds the middle of
             frame for the whole clip, so the instrument readout lives in the
             darker margins either side of him. A phone has no such margins — the
@@ -1124,7 +1179,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
           )}
         </div>
 
-        {/* ACT 3 — the promise, centred over the charge, then gone */}
+        {/* ACT D — the promise, centred over the charge, then gone */}
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
           {/* px bounds for the same reason as the h1 above. Two lines, one
               phrase each, both nowrap — the longest is 18 characters, which

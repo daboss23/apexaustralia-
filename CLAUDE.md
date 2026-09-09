@@ -46,8 +46,8 @@ src/
     scroll.ts       # shared Lenis handle: scrollToTarget + the scroll lock
     site.ts         # contact email + demo/enquiry mailto hrefs (all CTAs use these)
 public/             # static assets (hero-video.mp4, logos, images)
-  hero-frames/        # desktop scroll-cinema sequence (188 @ 1920x1080)
-  hero-frames-mobile/ # phone sequence (188 @ 960x540)
+  hero-frames/        # desktop scroll-cinema sequence (282 @ 1920x1080)
+  hero-frames-mobile/ # phone sequence (282 @ 960x540)
 tailwind.config.ts  # design tokens (apex.* colors), font families, keyframes
 ```
 
