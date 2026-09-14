@@ -55,10 +55,17 @@ const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
 const COPY_FADE_SPAN = 0.14
 
 /** How much of the section's scroll the plate takes to grow from its opening
-    size to near-full-bleed, and the point in the section the growth aims to be
-    finished by. See STAGE ANCHOR below. */
+    size to near-full-bleed, and the point in the section the growth must be
+    finished by. 0.75 — the shipped figure — not 1.0: the sticky stage begins
+    sliding off at 0.90 of the section's own progress, and the full-bleed frame
+    is the payoff, so it has to land with room to be looked at. At 0.75 it holds
+    for ~190px of pinned scroll; at 0.85 that fell to ~60px and the film reached
+    full size just as it started to leave. MIN_ROOM is the least scroll the
+    growth will accept: past that there is not enough section left, and the
+    entrance finishes the move on the clock instead. See STAGE ANCHOR below. */
 const EXPAND_SPAN = 0.75
-const EXPAND_DONE_BY = 0.95
+const EXPAND_DONE_BY = 0.75
+const MIN_ROOM = 0.25
 
 /** A figure driven by scroll: as `progress` moves 0→1 the value climbs 0→`to`,
     so the numbers visibly move under the reader's scroll (and scrub back down
@@ -211,10 +218,13 @@ export default function ScrollExpandVideo() {
      So the stage is anchored to the entrance instead of to the section:
 
        • `expand` — the plate's growth — starts from wherever the reader is when
-         the film rises in, and aims to finish by EXPAND_DONE_BY, never faster
-         than the original EXPAND_SPAN. Arrive slowly and the anchor is near
-         zero, which is the shipped curve unchanged; arrive fast and the film
-         still opens small under the headline and grows as you keep going.
+         the film rises in, and finishes by EXPAND_DONE_BY, never faster than
+         the original EXPAND_SPAN. Arrive slowly and the anchor is near zero,
+         which is the shipped curve unchanged; arrive fast and the film still
+         opens small under the headline and grows as you keep going. Arrive so
+         fast that less than MIN_ROOM of the section is left, and the entrance
+         plays the rest of the move on the clock rather than stranding the film
+         at its opening size — the full-bleed frame always lands.
        • `copyOpacity` — the bar and the headline — starts clearing from
          wherever the reader is when the entrance FINISHES, over the next
          COPY_FADE_SPAN.
@@ -228,19 +238,27 @@ export default function ScrollExpandVideo() {
   const copyOpacity = useMotionValue(1)
   const stageAnchor = useRef(-1)
   const fadeAnchor = useRef(-1)
+  // The clock's share of the move, used only when scroll has run out (see above).
+  // It never fights scroll: whichever is further through the move wins.
+  const clock = useRef(0)
 
   const syncStage = useCallback((p: number) => {
     const a = stageAnchor.current
-    if (a < 0) {
-      // The film has not risen in yet, so it is held at its opening size —
-      // invisible, so there is nothing to snap when the anchor lands.
-      expand.set(0)
-    } else {
-      const span = Math.min(EXPAND_SPAN, Math.max(0.3, EXPAND_DONE_BY - a))
-      expand.set(clamp01((p - a) / span))
+    let e = 0
+    if (a >= 0) {
+      // The film has risen in, so the growth reads from its anchor. Before that
+      // it is held at its opening size — and it is invisible, so there is
+      // nothing to snap when the anchor lands.
+      const span = Math.min(EXPAND_SPAN, Math.max(MIN_ROOM, EXPAND_DONE_BY - a))
+      e = clamp01((p - a) / span)
     }
+    expand.set(Math.max(e, clock.current))
+
     const f = fadeAnchor.current
-    copyOpacity.set(f < 0 || isMobile ? 1 : 1 - clamp01((p - f) / COPY_FADE_SPAN))
+    const scrolled = f < 0 || isMobile ? 1 : 1 - clamp01((p - f) / COPY_FADE_SPAN)
+    // The copy leads the film out: it is gone by the time the plate is 45 %
+    // grown, so the picture is never worn as a background for the headline.
+    copyOpacity.set(isMobile ? 1 : Math.min(scrolled, 1 - clamp01(clock.current / 0.45)))
   }, [expand, copyOpacity, isMobile])
 
   useMotionValueEvent(scrollYProgress, 'change', syncStage)
@@ -262,12 +280,34 @@ export default function ScrollExpandVideo() {
   useGSAP(() => {
     if (reduce || !sectionRef.current) return
     const count = { value: 0 }
+    const tick = { v: 0 }
     // Both anchors are taken at the reader's current position — see STAGE ANCHOR.
-    const armExpand = () => { stageAnchor.current = scrollYProgress.get(); syncStage(scrollYProgress.get()) }
+    const armExpand = () => {
+      const p = scrollYProgress.get()
+      stageAnchor.current = p
+      // Outran the section? Nothing is left to grow into, so hand the rest of
+      // the move to the clock. gsap.killTweensOf keeps a re-entry from stacking.
+      gsap.killTweensOf(tick)
+      tick.v = clock.current = 0
+      if (p > EXPAND_DONE_BY - MIN_ROOM) {
+        gsap.to(tick, {
+          v: 1, duration: 1.6, ease: 'power2.inOut',
+          onUpdate: () => { clock.current = tick.v; syncStage(scrollYProgress.get()) },
+        })
+      }
+      syncStage(p)
+    }
     const armExit = () => { fadeAnchor.current = scrollYProgress.get(); syncStage(fadeAnchor.current) }
+    // `opened` = the film is already open behind the reader (they are coming
+    // back up from below), so BOTH anchors go to zero and the whole stage reads
+    // straight off section progress again — the original shipped behaviour,
+    // which scrubs back down with them. The clock is always cleared: leaving it
+    // latched at 1 would pin the plate full-bleed and it could never shrink.
     const reset = (opened: boolean) => {
+      gsap.killTweensOf(tick)
+      tick.v = clock.current = 0
       stageAnchor.current = opened ? 0 : -1
-      fadeAnchor.current = -1
+      fadeAnchor.current = opened ? 0 : -1
       syncStage(scrollYProgress.get())
     }
 
@@ -291,7 +331,7 @@ export default function ScrollExpandVideo() {
       onEnter: () => { reset(false); intro.play(0) },
       // Coming back up from below: the film is already open, so the stage reads
       // straight off section progress and scrubs back down with the reader.
-      onEnterBack: () => { intro.progress(1); reset(true); armExit() },
+      onEnterBack: () => { intro.progress(1); reset(true) },
       onLeaveBack: () => { intro.pause(0); countProgress.set(0); reset(false) },
     })
   }, { scope: sectionRef, dependencies: [reduce, isMobile], revertOnUpdate: true })

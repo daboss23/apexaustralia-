@@ -4,10 +4,10 @@ This is the production brief for the **pinned, scroll-scrubbed hero** built in
 `src/components/ScrollCinemaHero.tsx`. It tells you exactly what footage to
 generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
-> **Current footage:** `public/apex-hero-cinema.mp4` — **22.29s, 535 frames at
+> **Current footage:** `public/apex-hero-cinema.mp4` — **19.29s, 463 frames at
 > 24fps**, cut from two sources plus a rendered transition (§6). Extracted at
-> `fps=16`, `scale=1920` (lanczos + light unsharp) → **357 frames at 1920×1080,
-> 25.9 MB**, plus a phone sequence at 960×540 / `fps=12`, 268 frames, 7.5 MB.
+> `fps=16`, `scale=1920` (lanczos + light unsharp) → **309 frames at 1920×1080,
+> 25 MB**, plus a phone sequence at 960×540, 232 frames, 7.2 MB.
 >
 > **The read the whole cut exists to protect:**
 >
@@ -17,15 +17,16 @@ generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 > - **0.0–2.9s** — the T-APEX machine alone on a pure black plate, deep down the
 >   lens, turning to face camera.
 > - **2.9–4.8s** — ✦ **the panels open**, internals lit.
-> - **4.8–13.4s** — the fly-through: spool, motor, gears, copper, circuit macros,
->   the chip. The longest act, and the brightest.
-> - **13.4–14.5s** — the camera banks up and out into a red grid tunnel.
-> - **14.5–17.0s** — ✦ **it flies THROUGH the opening at the end of the tunnel**
+> - **4.8–10.4s** — the fly-through: spool, motor, gears, copper, circuit macros,
+>   the chip. Still the longest act, and the brightest — but 3.0s shorter than it
+>   was, so the athlete can have that scroll instead (§6c).
+> - **10.4–11.5s** — the camera banks up and out into a red grid tunnel.
+> - **11.5–14.0s** — ✦ **it flies THROUGH the opening at the end of the tunnel**
 >   and out into an indoor training hall. Rendered frame by frame, not dissolved
 >   — see §6.
-> - **17.0–20.3s** — the athlete drives toward the lens, the same machine
+> - **14.0–17.3s** — the athlete drives toward the lens, the same machine
 >   trackside paying cable; the ARI overlay floods his musculature.
-> - **20.3–22.29s** — he comes apart into particles and the frame fades to black.
+> - **17.3–19.29s** — he comes apart into particles and the frame fades to black.
 >
 > **The tail problem is solved, and the fix must be preserved.** An earlier cut
 > ended with the sprinter still half in shot — a body frozen mid-stride at the
@@ -102,7 +103,7 @@ generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
 ## 1. What the scroll experience does
 
-As the visitor scrolls the hero (**6100px pinned, ~6 viewport-heights**), in
+As the visitor scrolls the hero (**5820px pinned, ~6 viewport-heights**), in
 nine acts. Percentages below are timeline progress, which is also scroll progress
 across the pin.
 
@@ -114,16 +115,16 @@ across the pin.
   aperture unclips vertically from that seam.
 - **ACT A — INTRO (4.5–17%).** The machine on its black plate, at 0.34 scale,
   travelling in and turning to face camera.
-- **ACT B — OPEN (17–26%).** ✦ **The panels open.** The headline halves clear at
-  17%, immediately before they move.
-- **ACT C — FLY (26–62%).** Through the interior. The longest act in the film and
-  the most colourful — machined copper, blue circuit light, red cabling — and
+- **ACT B — OPEN (17.6–27%).** ✦ **The panels open.** The headline halves clear
+  at 17.6%, immediately before they move.
+- **ACT C — FLY (27–52%).** Through the interior. Still the longest act and the
+  most colourful — machined copper, blue circuit light, red cabling — and
   deliberately the one stretch with **nothing written over it at all**.
-- **ACT D — THROUGH (62–76%).** The red grid tunnel, then ✦ **the flight through
-  its far opening.**
-- **ACT E — RUN (76–85%).** The athlete driving toward the lens.
-- **ACT F/G — CHARGE & DISSOLVE (85–100%).** The ARI overlay; *WHEN PERFORMANCE
-  MEETS INTELLIGENCE* lands at 84.5% and clears at 95.5% as he comes apart into
+- **ACT D — THROUGH (52–71%).** The red grid tunnel, then ✦ **the flight through
+  its far opening.** The athlete is first visible inside the opening at ~58%.
+- **ACT E — RUN (71–82%).** The athlete driving toward the lens.
+- **ACT F/G — CHARGE & DISSOLVE (82–100%).** The ARI overlay; *WHEN PERFORMANCE
+  MEETS INTELLIGENCE* lands at 82.3% and clears at 95.1% as he comes apart into
   particles and the frame falls to black on the last pixel of the pin.
 
 ### ⭐ The camera push has to cross 1.0, and only once
@@ -145,27 +146,42 @@ fly-through of its own, and a push-in on top of a push-in is two motions fightin
 
 ### Where the content sits (scroll progress → shot)
 
-357 frames, scrubbed across `0.045 → 1.0`. Act boundaries are stored as **ratios**
-of the sequence, not frame indices, so the phone — 268 frames, a shorter pin —
+309 frames, scrubbed across `0.045 → 1.0`. Act boundaries are stored as **ratios**
+of the sequence, not frame indices, so the phone — 232 frames, a shorter pin —
 lands every cut on the same moment of the film.
 
 | Progress | Frames | On screen | px/frame |
 |---|---|---|---:|
-| 0.045–0.170 | 1–47 | the machine alone on black, turning to face camera | ~16.6 |
-| 0.170–0.262 | 47–78 | ✦ **the panels open**, internals lit | ~18.1 |
-| 0.262–0.615 | 78–215 | the fly-through — spool, gears, copper, circuits, the chip | ~15.7 |
-| 0.615–0.760 | 215–272 | the red tunnel, then ✦ **through its far opening** | ~15.5 |
-| 0.760–0.845 | 272–304 | the athlete driving out of the far end | ~16.2 |
-| 0.845–0.905 | 304–326 | the charge — the ARI overlay | ~16.6 |
-| 0.905–1.0 | 326–357 | particles, then black on the last frame of the pin | ~18.7 |
+| 0.045–0.176 | 1–47 | the machine alone on black, turning to face camera | ~16.2 |
+| 0.176–0.272 | 47–78 | ✦ **the panels open**, internals lit | ~18.1 |
+| 0.272–0.517 | 78–167 | the fly-through — spool, gears, copper, circuits, the chip | ~16.0 |
+| 0.517–0.713 | 167–224 | the red tunnel, then ✦ **through its far opening** | ~20.0 |
+| 0.713–0.823 | 224–256 | the athlete driving out of the far end | ~20.0 |
+| 0.823–0.899 | 256–278 | the charge — the ARI overlay | ~20.0 |
+| 0.899–1.0 | 278–309 | particles, then black on the last frame of the pin | ~19.0 |
 
-**The allocation is deliberately near-flat** — every leg between 15.5 and 18.7
-px/frame. Earlier cuts of this hero spent 24px/frame on the opening to "give the
-hero shot room"; that trade made sense when the opening was 19 % of the sequence,
-but this film is long enough that every act gets real screen time from a
-proportional split, and flat scrubs smoother.
+### ⭐ The allocation is NOT flat, and the athlete is why
 
-**The flight through the tunnel gets 39 frames and ~605px of scroll.** The first
+It used to be — every leg between 15.5 and 18.7 px/frame — and the payoff of the
+whole film paid for it. The athlete had 121 frames at ~16px: **~2,030px of a
+6,100px pin, 33 %**, against ~2,150px of macro shots of the machine's insides.
+
+Screen time is `frames × px-per-frame` and **both ends are capped**:
+
+- **More sprint frames is not available.** The shipped ones are re-derived from
+  an 8K master that is not in this repo (§6b). Re-extracting them from
+  `apex-hero-cinema.mp4` measures **40–47 % lower Laplacian variance** — a
+  visible softening of the one shot the hero is selling. Measured, not guessed.
+- **px/frame stops at ~20.** Past that a slow scrub shows the 16fps sampling as
+  discrete steps rather than motion.
+
+So: the sprint acts (D–G) sit **at** that ceiling, the interior montage sits at
+the floor, and act C also gave up **48 frames of footage outright** (§6c). Net —
+the athlete holds **~2,390px of a 5,820px pin, 41 %**, the interior drops from
+35 % to 24 %, and the hero is 280px shorter than it was. Do not "tidy" this back
+to a flat rate: flat is smoother in the abstract, and it starved the climax.
+
+**The flight through the tunnel gets 39 frames and ~780px of scroll.** The first
 cut of it was 12 frames and 200px and flashed past. It is the signature shot of
 the hero and the only one that exists in neither source, so it was made *longer in
 the master* rather than given more scroll — more scroll across 12 frames only
@@ -220,7 +236,7 @@ makes 12 frames step.
 **One continuous 10–15s clip at the timeline's true frame rate**, 16:9. Length is
 the budget the entire scrub is spent from and it cannot be topped up afterwards:
 the sprint source used on its own would have forced the pin down to ~3400px,
-where the full cut supports 6100. Frame *rate* is a different matter — export at
+where the full cut supports 5820. Frame *rate* is a different matter — export at
 the real rate rather than the highest available, because anything above the true
 rate is duplicated frames, and this pipeline has to strip them back out (see the
 warning at the top).
@@ -337,14 +353,19 @@ and it is a **consequence of the footage, not a taste setting**:
 pinDistance ÷ frameCount  →  keep it in the 15–20 px/frame band
 ```
 
-357 frames × ~17 px = 6100 desktop; 268 × ~15.7 px = 4200 phone (finer, because
+309 frames × ~18.8 px = 5820 desktop; 232 × ~18.1 px = 4200 phone (finer, because
 touch has no Lenis interpolation upstream of it — see §8).
 
-**6100px is a long hero — about six viewport heights — and that is the honest
-cost of a 22-second film.** There is no way to play 22 seconds of footage in less
-scroll without either skipping frames or cutting the film. If it ever has to be
-shorter, take it out of **act C**, the fly-through, which is 35 % of the pin and
-the least load-bearing stretch in the cut.
+Those are averages, and **the rate is deliberately not flat any more**: the sprint
+acts run at the 20px ceiling and the interior montage at the 16px floor, which is
+what gives the athlete 41 % of the pin instead of 33 % (§1). The band is what each
+*leg* must stay inside — not the average.
+
+**5820px is still a long hero — about six viewport heights — and that is the
+honest cost of a 19-second film.** There is no way to play 19 seconds of footage
+in less scroll without either skipping frames or cutting the film. If it ever has
+to be shorter again, take it out of **act C**, the fly-through, which is the only
+act with slack left in it.
 
 Verify it rather than trusting it. Hook `drawImage` and record which sequence
 frame is painted on each animation frame; under a slow, deliberate scroll the
@@ -359,14 +380,15 @@ film should never advance **more than one frame per painted frame**:
 the paint counts are a floor, and the jumps a ceiling, versus real hardware.)
 
 ### 3b. The phone sequence
-Phones run the same acts off their own sequence: **268 frames at 960×540,
-7.5 MB** (WebP q66, `fps=12`), with `readyFrames: 12` (~340 KB) gating the start.
+Phones run the same acts off their own sequence: **232 frames at 960×540,
+7.2 MB** (WebP q66, `fps=12`), with `readyFrames: 12` (~280 KB) gating the start.
 
 That is **three quarters of the desktop count, because the phone's pin is three
-quarters as long** — 268 frames over 4200px is ~15.7 px/frame against desktop's
-~17. Matching desktop's 357 here would buy nothing the shorter pin can reach and
-cost 2.5 MB on a phone. Both rates (16 and 12) divide the master's 24 exactly, so
-neither sequence has an uneven cadence.
+quarters as long** — 232 frames over 4200px is ~18.1 px/frame against desktop's
+~18.8, and every leg lands between 15.6 and 19.3. Matching desktop's 309 here
+would buy nothing the shorter pin can reach and cost 2 MB on a phone. Both rates
+(16 and 12) divide the master's 24 exactly, so neither sequence has an uneven
+cadence.
 
 The framing could not carry across unchanged. The footage is 16:9 and a phone is
 about 9:19.5, so cover-fitting shows a ~26 % wide slice of every shot — the run
@@ -387,7 +409,7 @@ the band drawn ~1150px from a 960px source, once. **Those two numbers have to
 move together** or the canvas upscales twice.
 
 960 is also a *downscale* from the 1920-wide master rather than an upscale, which
-is why 268 frames cost only 7.5 MB.
+is why 232 frames cost only 7.2 MB.
 
 ### Sizing the sequence — the real trade-off
 Frame **count** sells smoothness far more than frame **resolution**: the scrub is
@@ -398,17 +420,17 @@ cut this short, never drop `fps` at all: 24 is every real frame the source has.
 Measured on the current master (28 frames sampled across the whole cut, WebP,
 lanczos, light unsharp above 1280):
 
-| desktop | KB/frame | 357-frame sequence | note |
+| desktop | KB/frame | 309-frame sequence | note |
 |---|---:|---:|---|
-| 1440×810 q70 | 56.3 | 19.7 MB | visibly soft on the circuit macros |
-| 1600×900 q68 | 62.0 | 21.7 MB | still blurs the fine copper traces |
-| 1920×1080 q58 | 66.9 | 23.4 MB | quality-only cut; buys little, costs visibly |
-| **1920×1080 q70 — shipped** | **74.4** | **25.9 MB** | pixel-for-pixel on a 1080p desktop |
+| 1440×810 q70 | 56.3 | 17.4 MB | visibly soft on the circuit macros |
+| 1600×900 q68 | 62.0 | 19.2 MB | still blurs the fine copper traces |
+| 1920×1080 q58 | 66.9 | 20.7 MB | quality-only cut; buys little, costs visibly |
+| **1920×1080 q70 — shipped** | **74.4** | **25 MB** | pixel-for-pixel on a 1080p desktop |
 
-| phone | KB/frame | 268-frame sequence |
+| phone | KB/frame | 232-frame sequence |
 |---|---:|---:|
-| 800×450 q64 | 22.6 | 5.9 MB |
-| **960×540 q66 — shipped** | **28.7** | **7.5 MB** |
+| 800×450 q64 | 22.6 | 5.2 MB |
+| **960×540 q66 — shipped** | **28.7** | **7.2 MB** |
 
 **On this footage the usual rule inverts, and that is worth understanding.** The
 brief has long said *frame count sells smoothness more than resolution, so drop
@@ -419,10 +441,10 @@ machined edges. Rendered to the same 1920 canvas and compared side by side, a 16
 sequence visibly blurs the copper traces running into the chip. So here the
 resolution is real and the *frame rate* is the cheaper thing to spend: the
 sequence is extracted at `fps=16` rather than 24, which costs nothing in scroll
-smoothness (that is governed by px-of-scroll-per-frame — 17 either way) and takes
-a third off the weight.
+smoothness (that is governed by px-of-scroll-per-frame — 16–20 either way) and
+takes a third off the weight.
 
-Net: **25.9 MB desktop / 7.5 MB phone**, against 22.4 / 2.7 for a cut that was
+Net: **25 MB desktop / 7.2 MB phone**, against 22.4 / 2.7 for a cut that was
 half the length and had no fly-through in it.
 
 AVIF at comparable quality measures about a third smaller than WebP *and*
@@ -445,10 +467,10 @@ frames specifically, not any N completions; counting completions let a scattered
 set of late arrivals satisfy it while the opening was still in flight.
 
 ### Optional tuning knobs (the `DESKTOP` / `MOBILE` configs in `ScrollCinemaHero.tsx`)
-- `pinDistance` — px of scroll the hero stays pinned (`'+=6100'` desktop,
+- `pinDistance` — px of scroll the hero stays pinned (`'+=5820'` desktop,
   `'+=4200'` phone). Keep it near **15–20 px of scroll per frame** or the scrub
   changes feel — it is a function of `frameCount`, not a free parameter. Phones
-  get less because a thumb covers ground far faster than a wheel, and a 6100px
+  get less because a thumb covers ground far faster than a wheel, and a 5820px
   pin on a phone reads as the page having stopped.
 - `ACTS` — the act table: `[frame ratio, scroll progress]` at the end of each
   act. The frame scrub *and* the camera push are both generated from it, one leg
@@ -647,12 +669,66 @@ in order:
 
 ---
 
+## 6c. Trimming act C to pay the athlete (2026-09)
+
+The climax had a third of the hero and the machine's insides had another third.
+Screen time is `frames × px-per-frame` and both ends are capped (§1), so the only
+way to give the run more was to take it off the montage.
+
+**48 frames came out of act C**, in two blocks, with no re-encode anywhere: the
+frames were deleted and the rest renumbered, so every surviving frame is
+byte-identical to what shipped before — the 8K sprint re-derivation of §6b is
+fully preserved.
+
+| dropped (old numbering) | frames | master time | what it was |
+|---|---:|---|---|
+| desktop f89–110 | 22 | `[5.500, 6.875)` | the second half of the spool / motor wides |
+| desktop f189–214 | 26 | `[11.750, 13.375)` | a return to board-and-gears material already seen |
+
+Mobile drops the 36 frames whose `round(m × 357/268)` lands in those ranges, which
+keeps the phone on the same moments of the film.
+
+**Why cutting a montage is safe here, and measurable.** Act C is not one camera
+move — it is a fast-cut montage that cuts every 2–4 frames. Mean frame-to-frame
+|Δ| inside it is **36**; the two new joins measure **61** (f88→f111) and **71**
+(f188→f215). Both land *above* the montage's own average cut, so each reads as one
+more cut in a sequence that is already cutting constantly. Measure this before
+choosing a cut point — a join *below* the local mean is a jump inside a shot and
+will read as a glitch.
+
+The master was re-cut to match, at exact 24fps frame boundaries (all four times
+above are integer 24fps frames), so `fps=16` on the new master reproduces the
+shipped 309 frames one-for-one:
+
+```bash
+ffmpeg -y -i apex-hero-cinema.mp4 -filter_complex "\
+[0:v]trim=0:5.5,setpts=PTS-STARTPTS,fps=24,format=yuv420p[a];\
+[0:v]trim=6.875:11.75,setpts=PTS-STARTPTS,fps=24,format=yuv420p[b];\
+[0:v]trim=13.375,setpts=PTS-STARTPTS,fps=24,format=yuv420p[c];\
+[a][b][c]concat=n=3:v=1:a=0[out]" -map "[out]" -an \
+  -c:v libx264 -crf 16 -preset slow -pix_fmt yuv420p out.mp4
+```
+
+Then the pin was re-budgeted (§1): sprint acts to the 20px ceiling, act C to the
+16px floor. **357 → 309 frames, 6100 → 5820px, 22.29s → 19.29s**, and the athlete
+went from 33 % to 41 % of the hero.
+
+
 ## 6b. Re-sharpening the sprint without re-rendering the tunnel
 
 `docs/sprint-resharpen.py <source.mp4>` replaces the sprint act from a
 higher-quality source and leaves the tunnel fly-through intact. It rewrote
 frames **234–357** (desktop) and **176–268** (mobile) in 2026-09 from an 8.03s
-7680×4320 HEVC master, held as a GitHub release asset.
+7680×4320 HEVC master, held as a GitHub release asset. Those are the PRE-§6c
+numbers; after the act-C trim the same frames are **186–309** and **152–232**.
+
+**That release asset is the only way to give the athlete more screen time.** The
+run is capped at the frames it has (§1) and the master in this repo cannot supply
+more without a 40–47 % drop in sharpness. Re-extracting the sprint from the 8K
+asset at `fps=24` instead of 16 would take the post-portal act from 87 frames to
+128 and buy roughly another 50 % of screen time at full clarity — at the cost of
+~5 MB, and only for frames past the portal composite (f186–224 here), whose
+cadence is locked to `portal-transition.py`'s 38-frame growth curve.
 
 ### Why the fly-through cannot simply be overwritten
 
@@ -698,14 +774,15 @@ is exactly what breaks the smoothness the scrub exists to provide. Shipped at
 **q86 desktop / q84 mobile** — comfortably transparent, and the clarity that
 matters came from the source, not from the quantiser.
 
-Sequence weight went 25.9 → 29.5 MB desktop and 7.5 → 8.5 MB mobile. That is the
-cheapest weight in the sequence: these frames sit at the end of a 6,100px pin, so
-they have the whole film to arrive.
+Sequence weight went 25.9 → 29.5 MB desktop and 7.5 → 8.5 MB mobile (both before
+the §6c trim took them to 25 / 7.2). That is the cheapest weight in the sequence:
+these frames sit at the end of a 5,820px pin, so they have the whole film to
+arrive.
 
 ### After running it
 
-1. **Frame counts must not move** (357 / 268), or every act boundary and both
-   `frameCount`s move with them.
+1. **Frame counts must not move** (309 / 232 — they were 357 / 268 when this ran),
+   or every act boundary and both `frameCount`s move with them.
 2. **Re-measure the luma** and check `.cine-dim` (§1). On this swap it barely
    moved — mean within 3, p90 within 4 — so the cue was left as tuned.
 3. **Check the handoff** at the last composited frame. Sharpness ran

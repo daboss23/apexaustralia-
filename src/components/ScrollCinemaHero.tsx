@@ -152,7 +152,7 @@ function apertureSlit(copyShift: number) {
 }
 
 const DESKTOP: CinemaConfig = {
-  frameCount: 357,
+  frameCount: 309,
   framePath: (i) => `/hero-frames/frame-${String(i).padStart(3, '0')}.webp`,
   // The gate is deliberately low. A frame that hasn't decoded holds the previous
   // one rather than flashing black, so arming early costs nothing visually — and
@@ -164,12 +164,12 @@ const DESKTOP: CinemaConfig = {
   // over it a single wheel notch skips a frame and the scrub reads as stepping
   // rather than as motion.
   //
-  // 357 frames × ~17px = 6100. This is a long hero — about six viewport heights
-  // — and that is the honest cost of a 22-second film: there is no way to play
-  // 22 seconds of footage in less scroll without either skipping frames or
-  // cutting the film. If it ever needs to be shorter, take it out of the
-  // fly-through (act C), which is 37 % of the pin.
-  pinDistance: '+=6100',
+  // 309 frames × ~19px = 5820, and the rate is NOT flat across the film any
+  // more — see ACT SCRUB below. The run is spent at the top of the band and the
+  // machine's interior at the bottom, which is what buys the athlete his screen
+  // time. If the hero ever needs to be shorter again, take it out of the
+  // fly-through (act C); it is the only act with slack left in it.
+  pinDistance: '+=5820',
   fit: 'cover',
   baseScale: 1,
   splitTravel: 0.34,
@@ -194,20 +194,20 @@ const DESKTOP: CinemaConfig = {
 
 const MOBILE: CinemaConfig = {
   // Three quarters of the desktop count, because the phone's pin is three
-  // quarters as long — 268 frames over 4200px is ~15.7 px/frame against
-  // desktop's ~17. Matching desktop's 357 here would buy nothing the shorter
-  // pin can reach and cost 2.5 MB on a phone.
-  frameCount: 268,
+  // quarters as long — 232 frames over 4200px is ~18.1 px/frame against
+  // desktop's ~18.8. Matching desktop's 309 here would buy nothing the shorter
+  // pin can reach and cost 2 MB on a phone.
+  frameCount: 232,
   framePath: (i) => `/hero-frames-mobile/frame-${String(i).padStart(3, '0')}.webp`,
   // ~280 KB before the film can start moving, and the first six of those are
   // already in flight from the HTML preloads (see layout.tsx).
   readyFrames: 12,
   // Shorter than desktop: a thumb covers ground far faster than a wheel, and a
-  // 6100px pin on a phone feels like the page has stopped responding. Against
-  // 268 frames this is ~15.7px of scroll per frame — slightly finer than
-  // desktop's ~17, which is the right way round, because touch has no Lenis
+  // 5820px pin on a phone feels like the page has stopped responding. Against
+  // 232 frames this is ~18.1px of scroll per frame — slightly finer than
+  // desktop's ~18.8, which is the right way round, because touch has no Lenis
   // interpolation upstream of it and the scrub is the only thing smoothing the
-  // platform's own scroll cadence.
+  // platform's own scroll cadence. Every act lands between 15.6 and 19.3 here.
   pinDistance: '+=4200',
   fit: 'width',
   // 1.35× fit-width — the band fills a good third of the screen and the athlete
@@ -250,19 +250,34 @@ const MOBILE: CinemaConfig = {
 // is why no leg visibly speeds up mid-shot.
 //
 //   act              frames       scroll        px/frame
-//   A  intro          1– 47      0.045–0.170      ~16.6   machine turning on black
-//   B  open          47– 78      0.170–0.262      ~18.1   ✦ the panels open
-//   C  fly           78–215      0.262–0.615      ~15.7   through the interior
-//   D  through      215–272      0.615–0.760      ~15.5   red tunnel, then ✦ through it
-//   E  run          272–304      0.760–0.845      ~16.2   the athlete driving in
-//   F  charge       304–326      0.845–0.905      ~16.6   the ARI overlay
-//   G  dissolve     326–357      0.905–1.0        ~18.7   particles → black
+//   A  intro          1– 47      0.045–0.176      ~16.2   machine turning on black
+//   B  open          47– 78      0.176–0.272      ~18.1   ✦ the panels open
+//   C  fly           78–167      0.272–0.517      ~16.0   through the interior
+//   D  through      167–224      0.517–0.713      ~20.0   red tunnel, then ✦ through it
+//   E  run          224–256      0.713–0.823      ~20.0   the athlete driving in
+//   F  charge       256–278      0.823–0.899      ~20.0   the ARI overlay
+//   G  dissolve     278–309      0.899–1.0        ~19.0   particles → black
 //
-// Against the 6100px pin every leg lands between 15.5 and 18.7 px of scroll per
-// frame — deliberately flat. Earlier cuts of this hero spent 24px/frame on the
-// opening to "give the hero shot room", but that trade only made sense when the
-// opening was 19 % of the sequence; here the film is long enough that every act
-// gets real screen time from a near-proportional split, and flat is smoother.
+// ⭐ THE SPLIT IS NOT FLAT, AND THAT IS THE POINT. It used to be — every leg
+// between 15.5 and 18.7 — and the athlete paid for it. He is the payoff of the
+// whole film and he had a third of it: 121 frames at ~16px was ~2,030px of a
+// 6,100px pin, against ~2,150px spent on macro shots of the machine's insides.
+//
+// Screen time is `frames × px-per-frame`, and BOTH ends of that are capped. The
+// sprint cannot be given more frames — the shipped ones are re-derived from an
+// 8K master that is not in this repo, and re-extracting them from
+// `apex-hero-cinema.mp4` measures 40–47 % lower Laplacian variance, which is a
+// visible softening of exactly the shot the hero is selling. And px/frame stops
+// at ~20: past that a slow scrub shows the 16fps sampling as discrete steps.
+//
+// So the sprint acts (D–G) are pinned AT that ceiling and the machine's interior
+// montage — the only act with slack — gives up the difference. Act C also lost
+// 48 frames of footage outright (see §6 of the brief): it is a fast-cut montage
+// that cuts every 2–4 frames, so two whole blocks came out on existing cuts.
+//
+// Net: the athlete now holds ~2,390px of a 5,820px pin — 41 % of the hero
+// against 33 % — the interior drops from 35 % to 24 %, and the hero is 280px
+// shorter than it was. Do not "tidy" this back to a flat rate.
 //
 // Boundaries are stored as **ratios of the sequence**, not frame indices, so the
 // phone — three quarters the frames, three quarters the pin — lands every cut on
@@ -277,8 +292,9 @@ const MOBILE: CinemaConfig = {
 const HOLD = 0.045
 
 // Progress past which the bolt's shader is switched off. It is fully faded by
-// ~0.16; the margin is so a small scroll back up does not strobe it.
-const BOLT_OFF = 0.2
+// ~0.176 (the split halves clear there); the margin is so a small scroll back up
+// does not strobe it.
+const BOLT_OFF = 0.207
 
 /**
  * Act boundaries: `[frame ratio, scroll progress]` at the END of each act.
@@ -291,29 +307,30 @@ const BOLT_OFF = 0.2
 const ACTS: ReadonlyArray<readonly [number, number]> = [
   // A — the machine turns on black. Frame 47 ≈ 2.9s: it has come round to face
   //     camera, the X seam lit but still shut.
-  [47 / 357, 0.17],
+  [47 / 309, 0.176],
   // B — ✦ the panels open. Frame 78 ≈ 4.8s: wide open, internals lit, the camera
   //     already moving in. Nothing may be written over this act.
-  [78 / 357, 0.262],
+  [78 / 309, 0.272],
   // C — the fly-through: spool, motor, gears, copper, circuit macros, the chip.
-  //     Frame 215 ≈ 13.4s, where the camera banks up and out. The longest act by
-  //     far, and where the telemetry HUD lives — a live instrument readout means
-  //     something over the machine's own internals.
-  [215 / 357, 0.615],
+  //     Frame 167, where the camera banks up and out. Still the longest act, and
+  //     where the telemetry HUD lives — a live instrument readout means something
+  //     over the machine's own internals — but 48 frames shorter than it was, and
+  //     scrubbed at the BOTTOM of the band so the athlete can have the top of it.
+  [167 / 309, 0.517],
   // D — out into the red grid tunnel and ✦ THROUGH the opening at the end of it.
-  //     Frame 272 ≈ 17.0s is where the tunnel has been flown past entirely.
+  //     Frame 224 is where the tunnel has been flown past entirely, and the
+  //     athlete is first visible through the growing opening from frame 188.
   //
-  //     The flight through is 39 of those frames, ~605px of scroll. It was 12
+  //     The flight through is 39 of those frames, ~780px of scroll. It was 12
   //     frames and 200px in the first cut of this and flashed past — it is the
   //     signature shot of the hero and the only one you cannot get from either
-  //     source alone, so it is rendered long (see the brief's §6) rather than
-  //     given more scroll, which would only have made 12 frames step.
-  [272 / 357, 0.76],
+  //     source alone, so it is rendered long (see the brief's §6).
+  [224 / 309, 0.713],
   // E — the athlete driving out of the far end of the hall toward the lens.
-  //     Frame 304 ≈ 18.9s: the ARI overlay has taken his whole body.
-  [304 / 357, 0.845],
-  // F — the charge. Frame 326 ≈ 20.3s: he starts coming apart.
-  [326 / 357, 0.905],
+  //     Frame 256: the ARI overlay has taken his whole body.
+  [256 / 309, 0.823],
+  // F — the charge. Frame 278: he starts coming apart.
+  [278 / 309, 0.899],
   // G — the dissolve, to the last frame at the last pixel of the pin.
   [1, 1],
 ]
@@ -322,17 +339,20 @@ const ACTS: ReadonlyArray<readonly [number, number]> = [
 //
 //   0–HOLD     ACT 0 holds: black, the brand mark, the headline whole, the bolt
 //              running behind it. Nothing else moves.
-//   HOLD–0.17  the machine alone on black, deep down the lens, travelling in and
-//              turning to face camera. The headline halves clear at 0.17 —
+//   HOLD–0.18  the machine alone on black, deep down the lens, travelling in and
+//              turning to face camera. The headline halves clear at 0.176 —
 //              nothing may be on screen when the panels move.
-//   0.17–0.26  ✦ THE PANELS OPEN, internals lit.
-//   0.26–0.62  the fly-through. Telemetry HUD from 0.34 to 0.53.
-//   0.62–0.76  the red tunnel, and ✦ THROUGH its far opening into the hall.
-//   0.76–0.85  the athlete drives out of the far end toward the lens.
-//   0.85–0.91  the charge — the ARI overlay floods his musculature. The closing
-//              statement lands at 0.845.
-//   0.91–1.0   he comes apart into particles and the frame falls to black on the
+//   0.18–0.27  ✦ THE PANELS OPEN, internals lit.
+//   0.27–0.52  the fly-through.
+//   0.52–0.71  the red tunnel, and ✦ THROUGH its far opening into the hall. The
+//              athlete is first visible inside the opening from ~0.58.
+//   0.71–0.82  the athlete drives out of the far end toward the lens.
+//   0.82–0.90  the charge — the ARI overlay floods his musculature. The closing
+//              statement lands at 0.823.
+//   0.90–1.0   he comes apart into particles and the frame falls to black on the
 //              last frame of the pin.
+//
+//   Everything from ~0.58 to 1.0 is the athlete — 41 % of the pin. See ACT SCRUB.
 //
 // ── The lighting cue is measured, not eyeballed ──────────────────────────────
 // This film has two very different exposures in it: acts A–B are a near-black
@@ -859,7 +879,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
             //
             // The store's setter is a no-op when the value has not changed, so
             // this is safe to call on every scroll frame.
-            setChromeHidden(self.progress > HOLD * 0.5 && self.progress < 0.985)
+            setChromeHidden(self.progress > HOLD * 0.5 && self.progress < 0.984)
           },
           // Belt and braces on the way out. `onUpdate` stops firing once the
           // trigger is no longer active, so the boundary cases get their own
@@ -937,7 +957,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
 
       // ── ACT 1 — the split ────────────────────────────────────────────────────
       // Logo and eyebrow clear first so the words are alone as they part.
-      tl.to('.cine-logo, .cine-eyebrow', { opacity: 0, y: -18, duration: 0.05 }, HOLD - 0.02)
+      tl.to('.cine-logo, .cine-eyebrow', { opacity: 0, y: -18, duration: 0.051 }, HOLD - 0.02)
 
       // The two halves travel apart, tracking wider as they go — the type reads
       // as being pulled open rather than simply moved.
@@ -964,7 +984,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
         { scaleX: 1, opacity: 1, ease: 'power2.out', duration: 0.15 },
         HOLD,
       )
-      tl.to('.cine-seam', { opacity: 0, duration: 0.11 }, 0.24)
+      tl.to('.cine-seam', { opacity: 0, duration: 0.055 }, 0.25)
 
       // The film opens out of the seam — aperture unclips vertically as it fades
       // up, so the video is revealed *by* the headline splitting.
@@ -981,7 +1001,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       )
 
       // Scroll cue clears as the split begins.
-      tl.to('.cine-cue', { opacity: 0, duration: 0.05 }, HOLD - 0.015)
+      tl.to('.cine-cue', { opacity: 0, duration: 0.051 }, HOLD - 0.015)
 
       // ── The vignette ─────────────────────────────────────────────────────────
       // Deliberately absent from the fly-through, which is the most colourful
@@ -995,14 +1015,14 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // symmetrical corridor and a vignette genuinely adds depth, easing off for
       // the closing dissolve, which fills the frame corner to corner and must
       // not be cropped by its own furniture.
-      tl.fromTo('.cine-tunnel', { opacity: 0 }, { opacity: 0.3, duration: 0.08 }, 0.6)
-      tl.to('.cine-tunnel', { opacity: 0.12, duration: 0.08 }, 0.86)
+      tl.fromTo('.cine-tunnel', { opacity: 0 }, { opacity: 0.3, duration: 0.092 }, 0.514)
+      tl.to('.cine-tunnel', { opacity: 0.12, duration: 0.091 }, 0.844)
 
-      // The split halves clear at 0.17 — the instant before the panels move.
+      // The split halves clear at 0.176 — the instant before the panels move.
       // This is the one hard layout rule the footage imposes: the box opening is
       // the centrepiece of the whole hero and nothing sits on top of it.
-      tl.to('.split-top', { opacity: 0, y: () => -travel() - 60, duration: 0.055 }, 0.115)
-      tl.to('.split-bot', { opacity: 0, y: () => travel() + 60, duration: 0.055 }, 0.115)
+      tl.to('.split-top', { opacity: 0, y: () => -travel() - 60, duration: 0.059 }, 0.117)
+      tl.to('.split-bot', { opacity: 0, y: () => travel() + 60, duration: 0.059 }, 0.117)
 
       // ── ACT F — the promise, over the charge ─────────────────────────────────
       // Lands as the ARI overlay takes his whole body, holds through the peak,
@@ -1010,10 +1030,10 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       tl.fromTo(
         '.beat-sprint',
         { opacity: 0, y: 34, filter: 'blur(8px)' },
-        { opacity: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.05 },
-        0.845,
+        { opacity: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.062 },
+        0.823,
       )
-      tl.to('.beat-sprint', { opacity: 0, y: -22, filter: 'blur(6px)', duration: 0.045 }, 0.955)
+      tl.to('.beat-sprint', { opacity: 0, y: -22, filter: 'blur(6px)', duration: 0.049 }, 0.951)
 
       // ── The lighting cue ─────────────────────────────────────────────────────
       // `.cine-dim` is a black scrim over the film. It exists for exactly one
@@ -1036,10 +1056,10 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // backdrop near Y≈32, where the metallic type holds its contrast. If a beat
       // is ever added back, measure the zone it actually occupies — do not reuse
       // a level from a different act.
-      tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.07 }, HOLD) // headline over the plate
-      tl.to('.cine-dim', { opacity: 0.02, ease: 'power1.inOut', duration: 0.05 }, 0.145) // ✦ panels open — and stays clear all the way to the charge
-      tl.to('.cine-dim', { opacity: 0.5, ease: 'power1.inOut', duration: 0.045 }, 0.83) // closing statement
-      tl.to('.cine-dim', { opacity: 0.18, ease: 'power1.inOut', duration: 0.04 }, 0.955) // clears into the dissolve
+      tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.072 }, HOLD) // headline over the plate
+      tl.to('.cine-dim', { opacity: 0.02, ease: 'power1.inOut', duration: 0.05 }, 0.151) // ✦ panels open — and stays clear all the way to the charge
+      tl.to('.cine-dim', { opacity: 0.5, ease: 'power1.inOut', duration: 0.059 }, 0.802) // closing statement
+      tl.to('.cine-dim', { opacity: 0.18, ease: 'power1.inOut', duration: 0.042 }, 0.951) // clears into the dissolve
 
       // Apply the overlap only AFTER the spacer exists. Doing this in the
       // mode effect pulled #film onto the opening screen while frames loaded.
