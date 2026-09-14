@@ -647,6 +647,74 @@ in order:
 
 ---
 
+## 6b. Re-sharpening the sprint without re-rendering the tunnel
+
+`docs/sprint-resharpen.py <source.mp4>` replaces the sprint act from a
+higher-quality source and leaves the tunnel fly-through intact. It rewrote
+frames **234–357** (desktop) and **176–268** (mobile) in 2026-09 from an 8.03s
+7680×4320 HEVC master, held as a GitHub release asset.
+
+### Why the fly-through cannot simply be overwritten
+
+Frames 233–270 are a composite — `existing = sprint*m + tunnel*(1-m)` — so
+dropping new sprint frames on top of them throws away the tunnel layer and the
+flight through it.
+
+Inside the hole, though, the composite is *pure sprint* (`m == 1` exactly), so
+those pixels swap cleanly. The replacement mask is the portal mask **shrunk by
+1/(1+EDGE)**, which makes it reach zero exactly where the portal mask stops
+being 1. Nothing in the soft shoulder or the tunnel is touched.
+
+**The obvious alternative is wrong.** Compositing `new*m + existing*(1-m)` with
+the portal mask looks equivalent but double-counts — `existing` already carries
+`sprint*m`, so the shoulder lands on `s*m*(2-m) + t*(1-m)²` instead of
+`s*m + t*(1-m)`: 0.75/0.25 rather than 0.50/0.50 at `m = 0.5`. The hole edge
+silently softens and widens. The tunnel layer cannot be recovered in the
+shoulder without the *original* sprint frames (one equation, two unknowns), and
+those are not in the repo. Hence: only replace where the mask is saturated.
+
+### Recovering the geometry
+
+None of it was guessed. The portal constants are `portal-transition.py`'s. The
+transition's start frame and length were recovered by fitting that script's own
+growth curve (`z = K**(t**EASE)`) to measured hole half-widths over f241–f265:
+
+| | value | check |
+|---|---|---|
+| transition start | **f233** | RMS error 0.037 in `z` |
+| length | **38 frames** | f250 measured z 1.68 vs model 1.68 |
+| source alignment | source frame 1 → **desktop f234** | NCC 0.98 mean, 0.997 on f280/f295 |
+| `SPRINT_SETTLE` | **0.12** confirmed | beats 0.00 at every test frame |
+
+The alignment matters more than it looks: a ±1 frame error makes the sprint
+judder against the tunnel inside the hole. It was swept, not assumed.
+
+### Choosing the WebP quality
+
+Measured against the lossless source, there is **no knee** — q78 41.4 dB, q84
+42.7, q88 43.7, q92 45.0, rising steadily. So it is not a quality decision but a
+decode-time one: bigger frames decode slower, and a decode stall during a scrub
+is exactly what breaks the smoothness the scrub exists to provide. Shipped at
+**q86 desktop / q84 mobile** — comfortably transparent, and the clarity that
+matters came from the source, not from the quantiser.
+
+Sequence weight went 25.9 → 29.5 MB desktop and 7.5 → 8.5 MB mobile. That is the
+cheapest weight in the sequence: these frames sit at the end of a 6,100px pin, so
+they have the whole film to arrive.
+
+### After running it
+
+1. **Frame counts must not move** (357 / 268), or every act boundary and both
+   `frameCount`s move with them.
+2. **Re-measure the luma** and check `.cine-dim` (§1). On this swap it barely
+   moved — mean within 3, p90 within 4 — so the cue was left as tuned.
+3. **Check the handoff** at the last composited frame. Sharpness ran
+   88 → 128 → 144 → 131 → 128 across f266–f274: a smooth rise as the hole opens,
+   no step where the composite hands off to clean frames.
+4. `npm run build`.
+
+---
+
 ## 7. The resolution ceiling — read this before chasing sharpness
 
 **Every source clip is 1280×720.** There is no 1080p in the material, so the
