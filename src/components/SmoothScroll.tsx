@@ -75,10 +75,25 @@ export default function SmoothScroll() {
     }
     document.addEventListener('click', onClick)
 
+    const hash = window.location.hash
+
+    // ── Start at the top ────────────────────────────────────────────────────
+    // The head script in layout.tsx sets `history.scrollRestoration = 'manual'`
+    // so the browser stops restoring a saved offset into a document whose
+    // height the hero's pin has not established yet. This is the other half of
+    // that fix: if the document still arrives scrolled anyway — a browser that
+    // ignores the flag, or an extension that re-scrolls — put it back before
+    // the hero arms, and tell Lenis too. Lenis caches its own position, so
+    // correcting only the window leaves the two disagreeing and the first wheel
+    // notch snaps the page back to wherever Lenis thought it was.
+    if (hash.length < 2 && window.scrollY !== 0) {
+      window.scrollTo(0, 0)
+      lenis?.scrollTo(0, { immediate: true, force: true })
+    }
+
     // Deep link on first load: the target has to clear the navbar too, and the
     // frame sequence / images above it may still be settling, so do it once the
     // page has actually laid out.
-    const hash = window.location.hash
     const deepLink = hash.length > 1 ? window.setTimeout(() => scrollToTarget(hash), 300) : 0
 
     return () => {

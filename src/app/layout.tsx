@@ -113,6 +113,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${marcellus.variable} ${cinzel.variable} ${inter.variable} ${jetbrains.variable}`}
     >
       <head>
+        {/* ── Never let the browser restore a scroll position ──────────────────
+            This has to run before first paint, which is why it is a raw inline
+            script in <head> rather than an effect: by the time React hydrates,
+            the browser has already restored and the damage is done.
+
+            The page cannot be restored into. Its document height is not final
+            until GSAP builds the hero's pin spacer after hydration — 30,300px
+            before, 35,500px after — so `scrollRestoration: 'auto'` measures a
+            saved offset against the short document and drops you somewhere
+            unrelated. Reloading anywhere on the page landed you on the film
+            section, mid-way through a hero that had never played.
+
+            Even with the heights reconciled there is nothing sane to restore
+            to: a position inside the pin implies a frame index, a chrome-hidden
+            flag and a pin state that only exist once ScrollTrigger has built
+            them. The hero is the page's opening statement and it is six
+            viewport-heights long; it plays from the top every time.
+
+            The cost is that returning from /policies/* lands at the top rather
+            than where you left. Deep links still work — SmoothScroll honours
+            location.hash on load. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if('scrollRestoration' in history)history.scrollRestoration='manual';`,
+          }}
+        />
         <HeroFramePreloads />
       </head>
       <body className="font-body antialiased overflow-x-hidden grain">
