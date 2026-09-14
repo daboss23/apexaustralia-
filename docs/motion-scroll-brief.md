@@ -4,26 +4,39 @@ This is the production brief for the **pinned, scroll-scrubbed hero** built in
 `src/components/ScrollCinemaHero.tsx`. It tells you exactly what footage to
 generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 
-> **⚠ The next cut must let the athlete run OUT of frame.** The current
-> generation ends with the sprinter still half in shot — his trailing leg is
-> mid-stride at the frame edge on the last frame — so however the scrub is
-> timed, the shot ends on a body frozen in motion. The film now scrubs to the
-> very end of the pin (rather than parking at 0.97) so the freeze coincides with
-> the hero releasing, which hides it; it does not fix it. When re-generating,
-> ask for **~1.5–2s of tail after the athlete clears frame**, camera holding on
-> the machine on the empty track. That gives the closing act something to rest
-> on and the CTAs a still, composed frame to land against.
+> **✅ The closing act now resolves.** The long-standing defect — the sprinter
+> frozen mid-stride at the frame edge on the last frame, hidden rather than fixed
+> by scrubbing to the very end of the pin — is gone. The current sprint dissolves
+> into energy and fades to black (frame 318 reads luma 7), so the film ends on a
+> composed, empty frame and the hero releases out of black instead of out of a
+> freeze. Keep that property in anything that replaces it.
 >
-> **Current footage:** `public/apex-hero-cinema.mp4` (22.7s, 30fps) — a single
-> continuous Seedance 2.0 generation delivered at 2560×1440, unmodified, tail-trimmed at 22.7s, extracted at `fps=14`, `scale=1600` (lanczos, no
-> unsharp) → **318 frames at 1600×900, 22 MB**.
+> **Current footage — two sources, not one.**
+>
+> | Frames | Source | Notes |
+> |---|---|---|
+> | 1–211 | `public/apex-hero-cinema.mp4` | the machine, the panels opening, the fly-through, the red tunnel |
+> | 212–318 | an 8.03s 7680×4320 HEVC clip, held as a GitHub **release asset** (too large to commit) | the sprint: 212–226 composited through the tunnel's aperture, 227+ clean |
+>
+> Frames 212–318 are produced by `scripts/splice-sprint.py` — see §6b. Do not
+> hand-edit them; re-run the script.
+>
+> **⚠ `apex-hero-cinema.mp4` is 1600×900, not the 2560×1440 this document used to
+> claim.** What is committed is a ~4 Mbps h264 at the sequence's own frame size,
+> so for frames 1–211 it is the ceiling, not a reserve of detail to re-extract
+> from. (That mistaken claim is why the sprint was thought to be 720p-soft: it
+> was, but the master could not have fixed it.)
 >
 > The spine is deliberately simple: **the black-plate scene plays out, then that
 > same box opens.** Then fly-through the internals → red tunnel → the sprint.
 > See §6 for how the one-flow read is bought and §7 for the resolution ceiling.
 >
-> **⚠ Do not try to stabilise the machine with a whole-frame transform.** As
-> generated, the sprint reads as though the athlete were towing the machine, and
+> **⚠ Historical — the footage this describes is no longer in the cut** (the
+> 2026-09 sprint has no towed machine). Kept because the finding is general: a
+> whole-frame warp can never change the relative motion of two things in frame.
+>
+> **Do not try to stabilise the machine with a whole-frame transform.** As
+> generated, the *old* sprint read as though the athlete were towing the machine, and
 > the obvious fix — track the machine and warp each frame so it holds a fixed
 > screen position — was tried and **made it dramatically worse**. It was shipped
 > briefly and reverted.
@@ -93,9 +106,10 @@ progress across the pin.
   scale — deep down the lens against its own black plate — and flies in to full
   frame as the panels open. The telemetry HUD lands over the fly-through,
   flanked left and right at 11–13% inset, not centred.
-- **ACT 3 — RESOLVE (74–100%).** *DEVELOPED FOR THE NEXT TENTH OF A SECOND*
-  lands centre-frame as the sprinter appears and clears at 87% so the machine
-  alone closes the shot; CTAs resolve at 92%.
+- **ACT 3 — RESOLVE (74–100%).** *WHEN PERFORMANCE MEETS INTELLIGENCE* lands
+  centre-frame as the sprinter comes in and clears at 87%, leaving the dissolve
+  into energy to close the shot alone. (The closing CTA beat that used to sit at
+  92% was removed — commit `3025ba3`.)
 
 ### Where the content sits (scroll progress → shot)
 
@@ -105,8 +119,8 @@ progress across the pin.
 |---|---|---|
 | 0.03–0.40 | 0–59 | the machine on pure black — travelling in, turning, then ✦ **the panels open**, internals lit |
 | 0.40–0.63 | 59–185 | fly-through: cable spool, motor, gears, circuit macro, chip |
-| 0.63–0.72 | 185–227 | the red grid tunnel, opening onto the track |
-| 0.72–0.97 | 227–317 | the sprint, resolving on the machine trackside |
+| 0.63–0.72 | 185–227 | the red grid tunnel; its aperture opens onto the sprint |
+| 0.72–0.97 | 227–317 | the sprint, dissolving into energy and fading to black |
 
 **Two layout rules this footage forces:**
 
@@ -114,10 +128,23 @@ progress across the pin.
    headline halves are timed to clear at 26%, just before it starts.
 2. **Copy can't just sit on the film.** Only the opening is near-black; the rest
    is lit. `.cine-dim` is therefore scheduled like a lighting cue — it lifts
-   under every copy beat (0.46 telemetry, 0.58 sprint headline, 0.62 CTAs) and
-   drops between them (0.04 at the box opening, 0.10 at the tunnel, 0.14 on the
-   closing hero shot) so the film plays at full strength exactly when nothing is
-   written over it. If you recut, **re-measure the luma and re-time that cue**:
+   under every copy beat (0.46 telemetry, 0.26 sprint headline) and drops
+   between them (0.04 at the box opening, 0.10 at the tunnel, 0.08 on the
+   closing dissolve) so the film plays at full strength exactly when nothing is
+   written over it.
+
+   **These are a response to one specific grade, not constants**, and the 2026-09
+   sprint replacement proved it. The incoming footage is shot in a dark facility
+   rather than on a sunlit track: in the box the headline occupies it measures
+   **35 mean / 54 p90 against the old 102 / 171**. The old `0.58` was therefore
+   buying no legibility at all — the new frames are *already darker than the old
+   ones were after being dimmed by it* — while costing more than half the shot's
+   brightness. It is now `0.26`. The closing cue went `0.14 → 0.08` because the
+   CTA beat that used to sit there was removed, so nothing is written over the
+   dissolve and it is the payoff shot.
+
+   If you recut, **re-measure the luma and re-time that cue**:
+
    ```bash
    ffmpeg -v error -i master.mp4 -vf "fps=14,signalstats,\
      metadata=print:key=lavfi.signalstats.YAVG:file=-" -an -f null -
@@ -209,8 +236,17 @@ The site scrubs a **numbered WebP image sequence** in `public/hero-frames/`
 6. `npm run build` to verify, then commit both frame directories + the component.
 
 ### 3b. The phone sequence
-Phones run the same four acts off their own sequence: **159 frames at 960×540,
-6.0 MB**, with `readyFrames: 12` (~450 KB) gating the start. That is still less
+Phones run the same four acts off their own sequence: **159 frames at 640×360,
+3.0 MB**, with `readyFrames: 12` gating the start.
+
+> **⚠ This section used to say 960×540 / 6.0 MB. The shipped frames are 640×360**
+> — and `MOBILE.maxDpr` is `1.25`, which is the cap that pairs with 640. The
+> 960 + `maxDpr: 2` pairing described further down lives on
+> `claude/tapex-motion-scroll-fix-izg5x9` and has never shipped here. Both halves
+> have to land together: a 960 sequence under a 1.25 cap, or a 640 sequence under
+> a cap of 2, makes the canvas resample twice and looks *worse* than either.
+> Worth doing properly — the current sprint footage is detailed enough to repay
+> it — but it is its own change, not a side effect of swapping footage. That is still less
 than half the 13 MB looping banner video it replaced — which was being loaded
 through two stacked `<video preload="auto">` elements and had to buffer
 contiguously — so the phone gained the film and got lighter at the same time.
@@ -345,7 +381,7 @@ set of late arrivals satisfy it while the opening was still in flight.
 | 2 | Panels split and open along the seams, glowing internals revealed | ✅ covered (source **A**) |
 | 3 | Fly-through of the interior — cable spool, machined gears meshing, taut red cable, circuit-lined walls | ✅ covered (source **C**) |
 | 4 | Bank up, burst out the top into black space, dissolve to a scanning-grid HUD tunnel | ⚠️ **not used.** Source A has a light-tunnel and a warp streak, but placing them mid-fly-through costs two more joins for a beat the cut doesn't need — the circuit→gears run already carries that stretch |
-| 5 | Performance centre — sprinter at camera, follow the electric rope, settle on the device trackside | ⚠️ **partly.** The film still ends trackside on the hero device, but the sprinter-charging-camera shot was cut — it sat between the plate and the box opening and broke the one-flow read (§6). Source C 0.3–3.6s if you want it back. |
+| 5 | Performance centre — sprinter at camera, follow the electric rope, settle on the device trackside | ✅ **covered** by the 2026-09 sprint replacement: the athlete runs at camera down a T-APEX-branded indoor track and dissolves into red/blue energy. Previously ⚠️ partly: The film still ends trackside on the hero device, but the sprinter-charging-camera shot was cut — it sat between the plate and the box opening and broke the one-flow read (§6). Source C 0.3–3.6s if you want it back. |
 
 **The deliberate departure from the storyboard:** the film opens on the product
 rather than an athlete, because the priority is that the box you watch is
@@ -438,6 +474,82 @@ t=12.0), which is why it carries two of the three segments. A cuts at t≈4.8–
 - **No on-screen text** — all copy is live HTML over the top.
 - Watch the luma: bright footage forces the `.cine-dim` cue to work harder and
   leaves less room for copy.
+
+---
+
+## 6b. Replacing only the closing act (the sprint)
+
+`scripts/splice-sprint.py <clip.mp4>` does the whole thing: extracts, composites,
+encodes both sequences. It rewrites frames **212–318** (desktop) and **107–159**
+(mobile) and leaves everything before that bit-identical, so the machine, the
+panels opening and the fly-through are untouched.
+
+### Why it is not a straight frame swap
+
+The tunnel does not *cut* to the sprint. Its opening is a **rectangular aperture
+that grows over ~15 frames, and the sprint is what you see through it.** Replace
+only the frames after the aperture finishes and the old footage carries on
+playing inside it — a bright daylight window in the middle of a red tunnel that
+then hard-cuts to the new shot. So frames 212–226 have to be recomposited: the
+same hole, new footage behind it.
+
+Two things had to be established to do that, and both are worth not re-deriving:
+
+**1. The aperture is a clip-path over full-size footage, not a window onto a
+scaled-down copy.** Measured by cross-correlating the aperture interior of frame
+222 against frame 224, under both models:
+
+| Model | NCC |
+|---|---|
+| aperture over full-size footage | **0.83** |
+| window onto a scaled copy | 0.42 |
+| control (adjacent frames, same region) | 0.95 |
+
+**2. Reproducing that technique verbatim still fails.** It only ever worked
+because the old footage framed the athlete far down the track, so a 145px-tall
+slit still held all of him. Footage that frames him closer gets decapitated by
+the same slit — which is exactly what the first pass produced. The script
+therefore keeps the aperture *geometry* and scales the **content** with it: the
+scene grows 0.23× → full size as the hole widens. That reproduces the original's
+*look* (a small complete shot seen through a small window, opening out to full
+frame) rather than its mechanism, and it is anyway what flying at a portal looks
+like.
+
+The aperture rects are hard-coded in the script, measured off the original frames
+by bounding the non-red pixels inside the red grid. They are dilated 7px and
+feathered 1.6px, and anything still matching the outgoing footage's signature
+(bright, not red-dominant) is swept into the mask as a second pass — so no sliver
+of the old shot can survive at the edge.
+
+### What to check after running it
+
+1. **Keep the frame count.** 318 desktop / 159 mobile. Change it and every act
+   boundary, the pin distance and both `frameCount`s move with it. The script
+   sizes the clip to fit instead: pick the trim so the new footage *ends* where
+   it should, and let the count stay.
+2. **Re-measure the luma and re-time `.cine-dim`** (§1). This is not optional —
+   it is the single most likely thing to be wrong after a footage change.
+3. **Contact-sheet the join**, frames 206–230. The aperture should light up, grow
+   smoothly, and hand off to the clean frames with no scale pop.
+4. `npm run build`.
+
+### Getting a large source into a web session
+
+Sessions are a fresh clone and the egress policy blocks the usual file-sharing
+hosts (Dropbox, WeTransfer, transfer.sh, Drive's download hosts all 403). GitHub
+is reachable. Attach the clip to a **draft release** on this repo — 2 GB/file,
+drag-and-drop, no repo bloat — and pull it with:
+
+```bash
+curl -sSL -H "Accept: application/octet-stream" \
+  "https://api.github.com/repos/daboss23/apexaustralia-/releases/assets/<ASSET_ID>" \
+  -o sprint.mp4
+```
+
+Plain `git push` caps at 100 MB/file, which most masters exceed. And there is no
+need to send an uncompressed master: the output is 1600×900 WebP, so anything
+above ~2K is empty resolution (the 8K source measured 44 dB round-tripping
+through 1600 — near-lossless, i.e. nothing up there).
 
 ---
 

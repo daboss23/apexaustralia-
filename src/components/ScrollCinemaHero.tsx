@@ -229,9 +229,9 @@ const ACT_TUNNEL_END = 227 / 318
 //              the hero shot and it owns a third of the scroll; the headline
 //              halves clear at 0.26 so nothing sits on top of the opening.
 //   0.40–0.63  fly-through: cable spool, motor, gears, circuit macro, chip
-//   0.63–0.72  the red grid tunnel, which opens onto the track
+//   0.63–0.72  the red grid tunnel, whose opening frames the sprint (below)
 //   0.72–0.97  the sprint — the promise lands centre-frame at 0.74 and clears at
-//              0.87 so the machine alone closes the shot, CTAs at 0.92
+//              0.87, leaving the dissolve into energy to close the shot alone
 //
 // The read we're protecting is ONE continuous shot: you watch the box, then that
 // box opens, then you fly through the thing you just watched open.
@@ -239,11 +239,14 @@ const ACT_TUNNEL_END = 227 / 318
 // The opening is near-black; everything after it is bright, so `.cine-dim` is
 // scheduled like a lighting cue — it lifts under every copy beat and drops away
 // between them, letting the film play at full strength exactly when nothing is
-// written over it.
+// written over it. Re-measure the luma whenever the footage changes: the values
+// are a response to a specific grade, not constants (see the sprint beat below,
+// and docs/motion-scroll-brief.md §1).
 //
-// The sprint footage is the generation as delivered — do NOT try to "fix" the
-// machine's apparent drag with a whole-frame stabilise. It cannot work, and it
-// makes things much worse; the measurement is in docs/motion-scroll-brief.md.
+// The sprint is separately-sourced footage composited INTO the tunnel's opening
+// — frames 212–226 are a blend, 227+ are the new clip clean. The recipe and the
+// reason the aperture had to be re-derived are in docs/motion-scroll-brief.md §6b;
+// re-run that script rather than hand-editing frames if the sprint changes again.
 
 const STATS = [
   { k: 'Force', v: '412', u: 'N' },
@@ -941,8 +944,19 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       tl.to('.cine-dim', { opacity: 0.04, ease: 'power1.inOut', duration: 0.07 }, 0.28) // ✦ the box opens — clear
       tl.to('.cine-dim', { opacity: 0.46, ease: 'power1.inOut', duration: 0.07 }, 0.46) // telemetry
       tl.to('.cine-dim', { opacity: 0.1, ease: 'power1.inOut', duration: 0.07 }, 0.62) // tunnel — clear
-      tl.to('.cine-dim', { opacity: 0.58, ease: 'power1.inOut', duration: 0.06 }, 0.74) // sprint headline
-      tl.to('.cine-dim', { opacity: 0.14, ease: 'power1.inOut', duration: 0.06 }, 0.87) // machine hero — clear (holds to the end)
+      // Re-measured for the current sprint footage, which is shot in a dark
+      // facility rather than on a sunlit track — less than half the luma of the
+      // cut it replaced. In the box the headline occupies, the old grade read
+      // 102 mean / 171 p90 and this one reads 35 / 54, so the old 0.58 was not
+      // buying legibility any more: the new frames are already DARKER than the
+      // old ones were after being dimmed by it. It only crushed the shot.
+      // 0.26 holds a real contrast margin through the back half of the beat,
+      // where the disintegration brightens (p90 climbs 54 → 126 by 0.87).
+      tl.to('.cine-dim', { opacity: 0.26, ease: 'power1.inOut', duration: 0.06 }, 0.74) // sprint headline
+      // Nothing is written over the film from here — the closing CTA beat was
+      // removed — and the dissolve into energy is the payoff shot, so this is
+      // as close to clear as the cue goes.
+      tl.to('.cine-dim', { opacity: 0.08, ease: 'power1.inOut', duration: 0.06 }, 0.87) // the dissolve — clear (holds to the end)
 
       // useGSAP reverts the context for us; the ticker callback is ours to undo.
       return () => {

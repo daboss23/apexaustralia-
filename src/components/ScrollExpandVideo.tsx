@@ -252,95 +252,115 @@ export default function ScrollExpandVideo() {
   }
 
   return (
-    <section
-      id="film"
-      ref={sectionRef}
-      className="relative bg-apex-black"
-      /* Tall enough to give the expansion room to read; the stage inside is
-         sticky, so this height is the "scroll budget" for the growth.
-         Shorter on a phone: the budget is spent at the same rate but there is
-         less of it left doing nothing once the plate is open. */
-      style={{ height: isMobile ? '150svh' : '230svh' }}
-    >
-      {/* The stage is only as tall as it needs to be on a phone. At a full
-          100svh the 16:9 plate (95vw ≈ 53svh) left ~23svh of dead black above
-          AND below it, and the lower band read as a long break between this
-          section and the next — the plate is centred, so the emptiness is
-          symmetrical and unavoidable at that height. Tightened to 56svh so the
-          plate sits higher in the pinned view (less dead black above it) and
-          the section is shorter overall — both cut scroll time on a phone. */}
-      <div
-        className="sticky top-0 w-full overflow-hidden flex flex-col items-center justify-center gap-[2svh]"
-        style={{ height: isMobile ? '66svh' : '100svh' }}
+    <>
+      {/* ── The beat after the hero ──────────────────────────────────────────
+          The scroll-cinema resolves to black now — the sprint dissolves into
+          energy and fades out — and bringing the spec bar up onto the back of
+          that fade steps on the ending. This is held black between the two:
+          the film finishes, the screen stays empty for a beat, THEN the bar
+          rises into it.
+
+          It sits OUTSIDE <section> deliberately. Every beat in here keys off
+          `approach` / `scrollYProgress`, both measured against the section
+          itself, so padding *inside* it would re-map the choreography instead
+          of delaying it — the bar would still start lifting immediately, just
+          against a differently-scaled range. A sibling moves the whole section
+          down the document and each beat keeps its tuned relative timing.
+
+          Shorter on a phone: a thumb covers ground several times faster than a
+          wheel, so the same pixel count reads as a far longer dead stretch. */}
+      <div aria-hidden className="h-[34svh] md:h-[56svh] bg-apex-black" />
+
+      <section
+        id="film"
+        ref={sectionRef}
+        className="relative bg-apex-black"
+        /* Tall enough to give the expansion room to read; the stage inside is
+           sticky, so this height is the "scroll budget" for the growth.
+           Shorter on a phone: the budget is spent at the same rate but there is
+           less of it left doing nothing once the plate is open. */
+        style={{ height: isMobile ? '150svh' : '230svh' }}
       >
-        {/* POWER REDEFINED spec bar. Desktop: an overlay near the top of the
-            stage. Phones: sits in normal flow so the video stacks flush directly
-            beneath it — bar above, video below, never overlapping — on every
-            screen size (the bar's height varies, so flow keeps the gap honest). */}
-        <motion.div
-          className={
-            isMobile
-              ? 'relative w-full px-4 z-30 flex justify-center pointer-events-none'
-              : 'absolute top-[9%] inset-x-0 z-30 px-4 flex justify-center pointer-events-none'
-          }
-          style={{ opacity: statsOpacity }}
+        {/* The stage is only as tall as it needs to be on a phone. At a full
+            100svh the 16:9 plate (95vw ≈ 53svh) left ~23svh of dead black above
+            AND below it, and the lower band read as a long break between this
+            section and the next — the plate is centred, so the emptiness is
+            symmetrical and unavoidable at that height. Tightened to 56svh so the
+            plate sits higher in the pinned view (less dead black above it) and
+            the section is shorter overall — both cut scroll time on a phone. */}
+        <div
+          className="sticky top-0 w-full overflow-hidden flex flex-col items-center justify-center gap-[2svh]"
+          style={{ height: isMobile ? '66svh' : '100svh' }}
         >
-          <PowerStatsBar countProgress={countProgress} />
-        </motion.div>
+          {/* POWER REDEFINED spec bar. Desktop: an overlay near the top of the
+              stage. Phones: sits in normal flow so the video stacks flush directly
+              beneath it — bar above, video below, never overlapping — on every
+              screen size (the bar's height varies, so flow keeps the gap honest). */}
+          <motion.div
+            className={
+              isMobile
+                ? 'relative w-full px-4 z-30 flex justify-center pointer-events-none'
+                : 'absolute top-[9%] inset-x-0 z-30 px-4 flex justify-center pointer-events-none'
+            }
+            style={{ opacity: statsOpacity }}
+          >
+            <PowerStatsBar countProgress={countProgress} />
+          </motion.div>
 
-        {/* Title — ONE line, same max size as the scroll-cinema titles. On phones
-            it sits in flow between the bar and the video; on desktop it's an
-            overlay just under the bar. Never over the plate. Fades in slowly as
-            the bar finishes coming in (fades out with the bar on desktop; stays
-            with the bar on phones). */}
-        <motion.div
-          className={
-            isMobile
-              ? 'relative w-full px-4 z-20 flex justify-center pointer-events-none'
-              : 'absolute inset-x-0 top-[24%] z-20 px-4 flex justify-center pointer-events-none'
-          }
-          style={{ opacity: titleOpacity }}
-        >
-          <h2 className="h-luxia leading-none text-center whitespace-nowrap" style={{ fontSize: 'clamp(15px, 4.8vw, 66px)', letterSpacing: '0.04em' }}>
-            <span className="t-silver">&ldquo;PERFORMANCE BECOMES </span>
-            <span className="t-red">INEVITABLE.&rdquo;</span>
-          </h2>
-        </motion.div>
+          {/* Title — ONE line, same max size as the scroll-cinema titles. On phones
+              it sits in flow between the bar and the video; on desktop it's an
+              overlay just under the bar. Never over the plate. Fades in slowly as
+              the bar finishes coming in (fades out with the bar on desktop; stays
+              with the bar on phones). */}
+          <motion.div
+            className={
+              isMobile
+                ? 'relative w-full px-4 z-20 flex justify-center pointer-events-none'
+                : 'absolute inset-x-0 top-[24%] z-20 px-4 flex justify-center pointer-events-none'
+            }
+            style={{ opacity: titleOpacity }}
+          >
+            <h2 className="h-luxia leading-none text-center whitespace-nowrap" style={{ fontSize: 'clamp(15px, 4.8vw, 66px)', letterSpacing: '0.04em' }}>
+              <span className="t-silver">&ldquo;PERFORMANCE BECOMES </span>
+              <span className="t-red">INEVITABLE.&rdquo;</span>
+            </h2>
+          </motion.div>
 
-        {/* The growing video plate. Desktop: centred, rides plateShift out to
-            near-full-bleed. Phones: sits in flow directly under the spec bar and
-            grows downward, stopping just below the bar at full size. */}
-        <motion.div
-          className="relative z-10 border border-apex-line/60 bg-apex-black-2 overflow-hidden"
-          style={{
-            width,
-            aspectRatio: '16 / 9',
-            maxHeight: '82svh',
-            borderRadius: radius,
-            ...(isMobile ? {} : { y: plateShift }),
-            boxShadow: '0 30px 90px -20px rgba(0,0,0,0.8)',
-          }}
-        >
-          <VideoPlate
-            videoRef={videoRef}
-            playing={playing}
-            onPlay={play}
-            veil={veil}
-          />
-        </motion.div>
+          {/* The growing video plate. Desktop: centred, rides plateShift out to
+              near-full-bleed. Phones: sits in flow directly under the spec bar and
+              grows downward, stopping just below the bar at full size. */}
+          <motion.div
+            className="relative z-10 border border-apex-line/60 bg-apex-black-2 overflow-hidden"
+            style={{
+              width,
+              aspectRatio: '16 / 9',
+              maxHeight: '82svh',
+              borderRadius: radius,
+              ...(isMobile ? {} : { y: plateShift }),
+              boxShadow: '0 30px 90px -20px rgba(0,0,0,0.8)',
+            }}
+          >
+            <VideoPlate
+              videoRef={videoRef}
+              playing={playing}
+              onPlay={play}
+              veil={veil}
+            />
+          </motion.div>
 
-        {/* Scroll cue — fades out as soon as the expansion starts */}
-        <motion.div
-          className="absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 pointer-events-none"
-          style={{ opacity: cueOpacity }}
-          aria-hidden="true"
-        >
-          <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-apex-grey-dim">
-            Scroll to expand
-          </span>
-        </motion.div>
-      </div>
-    </section>
+          {/* Scroll cue — fades out as soon as the expansion starts */}
+          <motion.div
+            className="absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 pointer-events-none"
+            style={{ opacity: cueOpacity }}
+            aria-hidden="true"
+          >
+            <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-apex-grey-dim">
+              Scroll to expand
+            </span>
+          </motion.div>
+        </div>
+      </section>
+    </>
   )
 }
 
