@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useRef, useState } from 'react'
+import { Fragment, useCallback, useRef, useState } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion, useMotionValue, useMotionValueEvent, type MotionValue } from 'framer-motion'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -49,6 +49,16 @@ const POWER_STATS = [
 ] as const
 
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
+
+/** How much of the section's scroll the spec bar and the headline take to
+    clear once their entrance has finished. See COPY EXIT below. */
+const COPY_FADE_SPAN = 0.14
+
+/** How much of the section's scroll the plate takes to grow from its opening
+    size to near-full-bleed, and the point in the section the growth aims to be
+    finished by. See STAGE ANCHOR below. */
+const EXPAND_SPAN = 0.75
+const EXPAND_DONE_BY = 0.95
 
 /** A figure driven by scroll: as `progress` moves 0→1 the value climbs 0→`to`,
     so the numbers visibly move under the reader's scroll (and scrub back down
@@ -184,42 +194,105 @@ export default function ScrollExpandVideo() {
     offset: isMobile ? ['start 50%', 'end 85%'] : ['start start', 'end 85%'],
   })
 
-  // The plate grows from a small centred card to near-full-bleed.
-  const width = useTransform(scrollYProgress, [0, 0.75], isMobile ? ['74vw', '92vw'] : ['32vw', '92vw'])
-  const radius = useTransform(scrollYProgress, [0, 0.75], ['2px', '0px'])
-  const veil = useTransform(scrollYProgress, [0, 0.7], [0.55, 0])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
-  const statsOpacity = useTransform(scrollYProgress, [0.28, 0.42], isMobile ? [1, 1] : [1, 0])
   const countProgress = useMotionValue(0)
+
+  /* ── STAGE ANCHOR — the entrance owns where the scroll-linked stage begins ──
+     Everything here used to hang off raw section progress on fixed windows:
+     the plate grew over 0→0.75, the spec bar faded over 0.28→0.42, the
+     headline over 0.2→0.4. The ENTRANCE, though, runs on a real clock — the
+     headline does not start moving until two seconds in, the film until three —
+     and scroll does not wait for it. Arrive quickly and the section was already
+     past every one of those windows before its own cues fired: the headline
+     faded out before it was due to fade in and never appeared at all, and the
+     film rose into a plate that had already grown to full-bleed underneath it,
+     stranding the copy on top of the picture.
+
+     So the stage is anchored to the entrance instead of to the section:
+
+       • `expand` — the plate's growth — starts from wherever the reader is when
+         the film rises in, and aims to finish by EXPAND_DONE_BY, never faster
+         than the original EXPAND_SPAN. Arrive slowly and the anchor is near
+         zero, which is the shipped curve unchanged; arrive fast and the film
+         still opens small under the headline and grows as you keep going.
+       • `copyOpacity` — the bar and the headline — starts clearing from
+         wherever the reader is when the entrance FINISHES, over the next
+         COPY_FADE_SPAN.
+
+     However fast you scroll, the beats always land in order and in full, and
+     the copy always clears the picture rather than sitting on it. Speed moves
+     where each exit begins, never whether it happens. Phones never fade this
+     copy at all — there the plate sits below it in flow rather than growing
+     over it. */
+  const expand = useMotionValue(0)
+  const copyOpacity = useMotionValue(1)
+  const stageAnchor = useRef(-1)
+  const fadeAnchor = useRef(-1)
+
+  const syncStage = useCallback((p: number) => {
+    const a = stageAnchor.current
+    if (a < 0) {
+      // The film has not risen in yet, so it is held at its opening size —
+      // invisible, so there is nothing to snap when the anchor lands.
+      expand.set(0)
+    } else {
+      const span = Math.min(EXPAND_SPAN, Math.max(0.3, EXPAND_DONE_BY - a))
+      expand.set(clamp01((p - a) / span))
+    }
+    const f = fadeAnchor.current
+    copyOpacity.set(f < 0 || isMobile ? 1 : 1 - clamp01((p - f) / COPY_FADE_SPAN))
+  }, [expand, copyOpacity, isMobile])
+
+  useMotionValueEvent(scrollYProgress, 'change', syncStage)
+
+  // The plate grows from a small centred card to near-full-bleed.
+  const width = useTransform(expand, [0, 1], isMobile ? ['74vw', '92vw'] : ['32vw', '92vw'])
+  const radius = useTransform(expand, [0, 1], ['2px', '0px'])
+  const veil = useTransform(expand, [0, 0.93], [0.55, 0])
   // Video + its title ride lower in the stage early on — clearing the spec bar so
   // it no longer squashes onto the plate on phones — then settle to centre as the
   // plate expands toward full-bleed.
-  const plateShiftN = useTransform(scrollYProgress, [0, 0.5], isMobile ? [16, 0] : [10, 0])
+  const plateShiftN = useTransform(expand, [0, 0.67], isMobile ? [16, 0] : [10, 0])
   const plateShift = useTransform(plateShiftN, (v) => `${v}svh`)
 
-  const titleOpacity = useTransform(scrollYProgress, [0.2, 0.4], isMobile ? [1, 1] : [1, 0])
-
   // A real clock owns the entrance: wheel speed cannot shorten the two-second
-  // interval. Scroll still owns the existing expansion and remains unrestricted.
+  // interval, and nothing is pinned or intercepted to buy that time. Scroll
+  // still owns the expansion and the exits — it is only WHERE they start that
+  // the entrance now dictates (see STAGE ANCHOR).
   useGSAP(() => {
     if (reduce || !sectionRef.current) return
     const count = { value: 0 }
-    const intro = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } })
+    // Both anchors are taken at the reader's current position — see STAGE ANCHOR.
+    const armExpand = () => { stageAnchor.current = scrollYProgress.get(); syncStage(scrollYProgress.get()) }
+    const armExit = () => { fadeAnchor.current = scrollYProgress.get(); syncStage(fadeAnchor.current) }
+    const reset = (opened: boolean) => {
+      stageAnchor.current = opened ? 0 : -1
+      fadeAnchor.current = -1
+      syncStage(scrollYProgress.get())
+    }
+
+    const intro = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' }, onComplete: armExit })
       .fromTo('.film-stats', { autoAlpha: 0, y: () => window.innerHeight * 0.7 },
         { autoAlpha: 1, y: 0, duration: 1.2 }, 0)
       .to(count, { value: 1, duration: 1.2, onUpdate: () => countProgress.set(count.value) }, 0)
       .fromTo('.film-title', { autoAlpha: 0, y: 90 },
         { autoAlpha: 1, y: 0, duration: 1.2 }, 2)
-      .fromTo('.film-plate, .film-cue', { autoAlpha: 0 },
-        { autoAlpha: 1, duration: 1 }, 3.2)
+      // The film comes in LAST, and it rises rather than simply appearing: the
+      // entrance reads as three stacked beats — the figures, the headline, then
+      // the picture climbing into place under it.
+      .fromTo('.film-plate-wrap', { autoAlpha: 0, y: () => (window.innerWidth < 768 ? 80 : 140) },
+        { autoAlpha: 1, y: 0, duration: 1.3, onStart: armExpand }, 3.2)
+      .fromTo('.film-cue', { autoAlpha: 0 }, { autoAlpha: 1, duration: 1 }, 3.6)
 
     ScrollTrigger.create({
       trigger: sectionRef.current,
       start: 'top top',
       end: 'bottom top',
-      onEnter: () => intro.play(0),
-      onEnterBack: () => intro.progress(1),
-      onLeaveBack: () => { intro.pause(0); countProgress.set(0) },
+      onEnter: () => { reset(false); intro.play(0) },
+      // Coming back up from below: the film is already open, so the stage reads
+      // straight off section progress and scrubs back down with the reader.
+      onEnterBack: () => { intro.progress(1); reset(true); armExit() },
+      onLeaveBack: () => { intro.pause(0); countProgress.set(0); reset(false) },
     })
   }, { scope: sectionRef, dependencies: [reduce, isMobile], revertOnUpdate: true })
 
@@ -284,7 +357,7 @@ export default function ScrollExpandVideo() {
               ? 'relative w-full px-4 z-30 flex justify-center pointer-events-none'
               : 'absolute top-[9%] inset-x-0 z-30 px-4 flex justify-center pointer-events-none'
           }
-          style={{ opacity: statsOpacity }}
+          style={{ opacity: copyOpacity }}
         >
           <div className="film-stats w-full" style={{ opacity: 0, visibility: 'hidden' }}>
             <PowerStatsBar countProgress={countProgress} />
@@ -301,7 +374,7 @@ export default function ScrollExpandVideo() {
               ? 'relative w-full px-4 z-20 flex justify-center pointer-events-none'
               : 'absolute inset-x-0 top-[24%] z-20 px-4 flex justify-center pointer-events-none'
           }
-          style={{ opacity: titleOpacity }}
+          style={{ opacity: copyOpacity }}
         >
           <h2 className="film-title h-luxia leading-none text-center whitespace-nowrap" style={{ opacity: 0, visibility: 'hidden', fontSize: 'clamp(15px, 4.8vw, 66px)', letterSpacing: '0.04em' }}>
             <span className="t-silver">&ldquo;PERFORMANCE BECOMES </span>
@@ -312,28 +385,34 @@ export default function ScrollExpandVideo() {
         {/* The growing video plate. Desktop: centred, rides plateShift out to
             near-full-bleed. Phones: sits in flow directly under the spec bar and
             grows downward, stopping just below the bar at full size. */}
-        <motion.div
-          className="relative z-10 overflow-hidden"
-          style={{
-            width,
-            aspectRatio: '16 / 9',
-            maxHeight: '82svh',
-            borderRadius: radius,
-            ...(isMobile ? {} : { y: plateShift }),
-          }}
-        >
-          <div
-            className="film-plate absolute inset-0 border border-apex-line/60 bg-apex-black-2"
-            style={{ opacity: 0, visibility: 'hidden', boxShadow: '0 30px 90px -20px rgba(0,0,0,0.8)' }}
+        {/* Two libraries, one element each. GSAP owns the OUTER wrapper (the
+            entrance rise); Framer owns the plate inside it (the scroll-linked
+            width / radius / shift). Both writing `transform` on the same node
+            is a fight, and the loser is whichever wrote first that frame. */}
+        <div className="film-plate-wrap relative z-10" style={{ opacity: 0, visibility: 'hidden' }}>
+          <motion.div
+            className="relative overflow-hidden"
+            style={{
+              width,
+              aspectRatio: '16 / 9',
+              maxHeight: '82svh',
+              borderRadius: radius,
+              ...(isMobile ? {} : { y: plateShift }),
+            }}
           >
-            <VideoPlate
-              videoRef={videoRef}
-              playing={playing}
-              onPlay={play}
-              veil={veil}
-            />
-          </div>
-        </motion.div>
+            <div
+              className="absolute inset-0 border border-apex-line/60 bg-apex-black-2"
+              style={{ boxShadow: '0 30px 90px -20px rgba(0,0,0,0.8)' }}
+            >
+              <VideoPlate
+                videoRef={videoRef}
+                playing={playing}
+                onPlay={play}
+                veil={veil}
+              />
+            </div>
+          </motion.div>
+        </div>
 
         {/* Scroll cue — fades out as soon as the expansion starts */}
         <motion.div
