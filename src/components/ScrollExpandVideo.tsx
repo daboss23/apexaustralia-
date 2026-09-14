@@ -2,6 +2,9 @@
 
 import { Fragment, useRef, useState } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion, useMotionValue, useMotionValueEvent, type MotionValue } from 'framer-motion'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
 import { useIsMobile } from './useIsMobile'
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -29,12 +32,14 @@ import { useIsMobile } from './useIsMobile'
    pull ~17 MB on first paint, high on the page, on mobile data.
    ──────────────────────────────────────────────────────────────────────────── */
 
+gsap.registerPlugin(ScrollTrigger, useGSAP)
+
 const SRC = '/checkout/tapex-features.mp4'
 const POSTER = '/checkout/tapex-features-poster.jpg'
 
 /* ── "POWER REDEFINED" spec bar ─────────────────────────────────────────────
    Real T-APEX headline specs. Sits in the black gap as the film section opens;
-   the figures count up when the bar scrolls into view, then the whole bar fades
+   the figures count up during its timed entrance, then the whole bar fades
    out as the video plate grows. */
 const POWER_STATS = [
   { to: 120, unit: 'm', label: 'Cable Length' },
@@ -179,48 +184,44 @@ export default function ScrollExpandVideo() {
     offset: isMobile ? ['start 50%', 'end 85%'] : ['start start', 'end 85%'],
   })
 
-  // A second, earlier tracker covering the section's *approach*: 0 when the
-  // section is still a viewport below, 1 when it pins at the top. The spec bar
-  // keys its fade-in and count to this, so it rises into view while the section
-  // is still coming up the screen — earlier than the main progress, which only
-  // begins once the section is pinned.
-  const { scrollYProgress: approach } = useScroll({
-    target: sectionRef,
-    offset: ['start end', 'start start'],
-  })
-
   // The plate grows from a small centred card to near-full-bleed.
   const width = useTransform(scrollYProgress, [0, 0.75], isMobile ? ['74vw', '92vw'] : ['32vw', '92vw'])
   const radius = useTransform(scrollYProgress, [0, 0.75], ['2px', '0px'])
   const veil = useTransform(scrollYProgress, [0, 0.7], [0.55, 0])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
-  // Spec bar: fade IN as soon as the section's black edge appears from below
-  // (approach ~0.1), rising into place as it comes up the screen, hold, then
-  // fade OUT on the main progress as the plate grows. The two never overlap
-  // (fade-in finishes long before fade-out starts), so multiplying is a clean gate.
-  const statsFadeIn = useTransform(approach, [0.1, 0.45], [0, 1])
-  // On phones the bar sits flush above the video and stays put (no fade-out) so
-  // it reads as a header over the film; on desktop it hands off to the plate.
-  const statsFadeOut = useTransform(scrollYProgress, [0.28, 0.42], isMobile ? [1, 1] : [1, 0])
-  const statsOpacity = useTransform([statsFadeIn, statsFadeOut], (v: number[]) => v[0] * v[1])
-  // The figures are scroll-linked: they climb 0→target as the bar rises in, so
-  // the numbers move under the reader's scroll instead of running on a timer.
-  const countProgress = useTransform(approach, [0.12, 0.55], [0, 1])
+  const statsOpacity = useTransform(scrollYProgress, [0.28, 0.42], isMobile ? [1, 1] : [1, 0])
+  const countProgress = useMotionValue(0)
   // Video + its title ride lower in the stage early on — clearing the spec bar so
   // it no longer squashes onto the plate on phones — then settle to centre as the
   // plate expands toward full-bleed.
   const plateShiftN = useTransform(scrollYProgress, [0, 0.5], isMobile ? [16, 0] : [10, 0])
   const plateShift = useTransform(plateShiftN, (v) => `${v}svh`)
 
-  // ── Title reveal ──────────────────────────────────────────────────────────
-  // The quote sits UNDER the spec bar (never over the plate). It fades in slowly,
-  // starting as the bar finishes coming in, then fades back out WITH the bar as
-  // the plate grows. Scroll-linked, so it reliably tracks the reader's scroll.
-  const titleFadeIn = useTransform(approach, [0.4, 0.85], [0, 1])
-  // On phones the bar stays put (flow header), so the title stays with it; on
-  // desktop both fade out together as the plate grows.
-  const titleFadeOut = useTransform(scrollYProgress, [0.2, 0.4], isMobile ? [1, 1] : [1, 0])
-  const titleOpacity = useTransform([titleFadeIn, titleFadeOut], (v: number[]) => v[0] * v[1])
+  const titleOpacity = useTransform(scrollYProgress, [0.2, 0.4], isMobile ? [1, 1] : [1, 0])
+
+  // A real clock owns the entrance: wheel speed cannot shorten the two-second
+  // interval. Scroll still owns the existing expansion and remains unrestricted.
+  useGSAP(() => {
+    if (reduce || !sectionRef.current) return
+    const count = { value: 0 }
+    const intro = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } })
+      .fromTo('.film-stats', { autoAlpha: 0, y: () => window.innerHeight * 0.7 },
+        { autoAlpha: 1, y: 0, duration: 1.2 }, 0)
+      .to(count, { value: 1, duration: 1.2, onUpdate: () => countProgress.set(count.value) }, 0)
+      .fromTo('.film-title', { autoAlpha: 0, y: 90 },
+        { autoAlpha: 1, y: 0, duration: 1.2 }, 2)
+      .fromTo('.film-plate, .film-cue', { autoAlpha: 0 },
+        { autoAlpha: 1, duration: 1 }, 3.2)
+
+    ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: 'top top',
+      end: 'bottom top',
+      onEnter: () => intro.play(0),
+      onEnterBack: () => intro.progress(1),
+      onLeaveBack: () => { intro.pause(0); countProgress.set(0) },
+    })
+  }, { scope: sectionRef, dependencies: [reduce, isMobile], revertOnUpdate: true })
 
   function play() {
     setPlaying(true)
@@ -285,14 +286,15 @@ export default function ScrollExpandVideo() {
           }
           style={{ opacity: statsOpacity }}
         >
-          <PowerStatsBar countProgress={countProgress} />
+          <div className="film-stats w-full" style={{ opacity: 0, visibility: 'hidden' }}>
+            <PowerStatsBar countProgress={countProgress} />
+          </div>
         </motion.div>
 
         {/* Title — ONE line, same max size as the scroll-cinema titles. On phones
             it sits in flow between the bar and the video; on desktop it's an
-            overlay just under the bar. Never over the plate. Fades in slowly as
-            the bar finishes coming in (fades out with the bar on desktop; stays
-            with the bar on phones). */}
+            overlay just under the bar. Its timed entrance starts two seconds
+            after the bar, then both yield to the expanding film on desktop. */}
         <motion.div
           className={
             isMobile
@@ -301,7 +303,7 @@ export default function ScrollExpandVideo() {
           }
           style={{ opacity: titleOpacity }}
         >
-          <h2 className="h-luxia leading-none text-center whitespace-nowrap" style={{ fontSize: 'clamp(15px, 4.8vw, 66px)', letterSpacing: '0.04em' }}>
+          <h2 className="film-title h-luxia leading-none text-center whitespace-nowrap" style={{ opacity: 0, visibility: 'hidden', fontSize: 'clamp(15px, 4.8vw, 66px)', letterSpacing: '0.04em' }}>
             <span className="t-silver">&ldquo;PERFORMANCE BECOMES </span>
             <span className="t-red">INEVITABLE.&rdquo;</span>
           </h2>
@@ -311,22 +313,26 @@ export default function ScrollExpandVideo() {
             near-full-bleed. Phones: sits in flow directly under the spec bar and
             grows downward, stopping just below the bar at full size. */}
         <motion.div
-          className="relative z-10 border border-apex-line/60 bg-apex-black-2 overflow-hidden"
+          className="relative z-10 overflow-hidden"
           style={{
             width,
             aspectRatio: '16 / 9',
             maxHeight: '82svh',
             borderRadius: radius,
             ...(isMobile ? {} : { y: plateShift }),
-            boxShadow: '0 30px 90px -20px rgba(0,0,0,0.8)',
           }}
         >
-          <VideoPlate
-            videoRef={videoRef}
-            playing={playing}
-            onPlay={play}
-            veil={veil}
-          />
+          <div
+            className="film-plate absolute inset-0 border border-apex-line/60 bg-apex-black-2"
+            style={{ opacity: 0, visibility: 'hidden', boxShadow: '0 30px 90px -20px rgba(0,0,0,0.8)' }}
+          >
+            <VideoPlate
+              videoRef={videoRef}
+              playing={playing}
+              onPlay={play}
+              veil={veil}
+            />
+          </div>
         </motion.div>
 
         {/* Scroll cue — fades out as soon as the expansion starts */}
@@ -335,7 +341,7 @@ export default function ScrollExpandVideo() {
           style={{ opacity: cueOpacity }}
           aria-hidden="true"
         >
-          <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-apex-grey-dim">
+          <span className="film-cue font-mono text-[9px] tracking-[0.3em] uppercase text-apex-grey-dim" style={{ opacity: 0, visibility: 'hidden' }}>
             Scroll to expand
           </span>
         </motion.div>

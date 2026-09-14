@@ -834,6 +834,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
           start: 'top top',
           end: cfg.pinDistance,
           pin: true,
+          refreshPriority: 1,
           scrub: cfg.scrub,
           invalidateOnRefresh: true,
           // Stop the bolt's shader once it is off screen, and start it again on
@@ -1040,12 +1041,19 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       tl.to('.cine-dim', { opacity: 0.5, ease: 'power1.inOut', duration: 0.045 }, 0.83) // closing statement
       tl.to('.cine-dim', { opacity: 0.18, ease: 'power1.inOut', duration: 0.04 }, 0.955) // clears into the dissolve
 
+      // Apply the overlap only AFTER the spacer exists. Doing this in the
+      // mode effect pulled #film onto the opening screen while frames loaded.
+      document.documentElement.dataset.cinema = tl.scrollTrigger!.progress < 1 ? 'pinned' : 'released'
+      ScrollTrigger.sort()
+      ScrollTrigger.refresh()
+
       // useGSAP reverts the context for us; the ticker callback and the chrome
       // flag are ours to undo. The flag especially: leaving it set on unmount
       // would strand the site with no navbar.
       return () => {
         gsap.ticker.remove(tick)
         setChromeHidden(false)
+        delete document.documentElement.dataset.cinema
       }
     },
     { scope: rootRef, dependencies: [ready] },
@@ -1186,15 +1194,6 @@ export default function ScrollCinemaHero() {
       return
     }
     setMode(window.matchMedia('(min-width: 1024px)').matches ? 'desktop' : 'phone')
-
-    // Tells the stylesheet a pinned cinema is running, so the section below can
-    // cancel the hero's own 100svh of trailing space — see `[data-cinema]` in
-    // globals.css. Set here rather than in the pinned component because it is a
-    // property of *which mode won*, and the fallback must not get it.
-    document.documentElement.dataset.cinema = 'pinned'
-    return () => {
-      delete document.documentElement.dataset.cinema
-    }
   }, [])
 
   if (mode === 'desktop') return <CinemaImpl cfg={DESKTOP} phone={false} />
