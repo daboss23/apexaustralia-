@@ -1,10 +1,7 @@
 'use client'
 
-import { Fragment, useRef, useState } from 'react'
-import { motion, useScroll, useTransform, useReducedMotion, useMotionValue, useMotionValueEvent, type MotionValue } from 'framer-motion'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useGSAP } from '@gsap/react'
+import { useRef, useState } from 'react'
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { useIsMobile } from './useIsMobile'
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -32,141 +29,8 @@ import { useIsMobile } from './useIsMobile'
    pull ~17 MB on first paint, high on the page, on mobile data.
    ──────────────────────────────────────────────────────────────────────────── */
 
-gsap.registerPlugin(ScrollTrigger, useGSAP)
-
 const SRC = '/checkout/tapex-features.mp4'
 const POSTER = '/checkout/tapex-features-poster.jpg'
-
-/* ── "POWER REDEFINED" spec bar ─────────────────────────────────────────────
-   Real T-APEX headline specs. Sits in the black gap as the film section opens;
-   the figures count up during its timed entrance, then the whole bar fades
-   out as the video plate grows. */
-const POWER_STATS = [
-  { to: 120, unit: 'm', label: 'Cable Length' },
-  { to: 40, unit: 'kgf', label: 'Continuous Resistance' },
-  { to: 300, unit: 'kgf', label: 'Load Capacity' },
-  { to: 20, unit: 'kg', label: 'Machine Weight' },
-] as const
-
-const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
-
-/** A figure driven by scroll: as `progress` moves 0→1 the value climbs 0→`to`,
-    so the numbers visibly move under the reader's scroll (and scrub back down
-    if they scroll up). The static / reduced-motion branch passes a constant 1,
-    so the final figure shows immediately. */
-function ScrollCount({ to, progress }: { to: number; progress: MotionValue<number> }) {
-  const [val, setVal] = useState(() => Math.round(to * clamp01(progress.get())))
-  useMotionValueEvent(progress, 'change', (v) => setVal(Math.round(to * clamp01(v))))
-  return <>{val}</>
-}
-
-/* Bright-to-deep red gradient clipped to the figures — gives the numerals a
-   lit, machined-metal depth instead of a flat fill. */
-const NUM_STYLE: React.CSSProperties = {
-  backgroundImage: 'linear-gradient(180deg, #ff6a62 0%, #ea2731 50%, #c1141a 100%)',
-  WebkitBackgroundClip: 'text',
-  backgroundClip: 'text',
-  color: 'transparent',
-  WebkitTextFillColor: 'transparent',
-}
-
-function UpTick({ className = '' }: { className?: string }) {
-  return (
-    <svg className={`w-2.5 h-8 flex-shrink-0 text-white/25 ${className}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.4} aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21V4m0 0-4.5 4.5M12 4l4.5 4.5" />
-    </svg>
-  )
-}
-
-/* One machined panel — the "double bezel": an outer shell (hairline ring +
-   faint fill) cradling an inner core with its own top-edge highlight and a
-   mathematically smaller radius, so the curves stay concentric. */
-function Bezel({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return (
-    <div
-      className={`rounded-[1.4rem] p-1.5 border border-white/10 bg-white/[0.045] ${className}`}
-      style={{ boxShadow: '0 24px 70px -34px rgba(0,0,0,0.85)' }}
-    >
-      <div
-        className="h-full rounded-[1.05rem] bg-gradient-to-b from-white/[0.06] to-white/[0.01]"
-        style={{ boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.13), inset 0 0 0 1px rgba(255,255,255,0.02)' }}
-      >
-        {children}
-      </div>
-    </div>
-  )
-}
-
-function PowerStatsBar({
-  style,
-  countProgress,
-}: {
-  style?: { opacity?: MotionValue<number> }
-  countProgress?: MotionValue<number>
-}) {
-  // A constant fallback so the static / reduced-motion branch shows the final
-  // figures immediately (progress pinned at 1).
-  const fallback = useMotionValue(1)
-  const progress = countProgress ?? fallback
-  return (
-    <motion.div style={style} className="relative w-full max-w-[1500px] mx-auto">
-      {/* Soft ambient wash so the bar reads as lit glass, not a flat plate */}
-      <div
-        aria-hidden="true"
-        className="absolute -inset-x-8 -inset-y-6 -z-10 pointer-events-none"
-        style={{ background: 'radial-gradient(65% 130% at 50% 0%, rgba(214,31,38,0.10), transparent 72%)' }}
-      />
-
-      <div className="flex flex-col sm:flex-row items-stretch gap-2.5 sm:gap-3">
-        {/* Side label — desktop only. Uses the site's headline system (Marcellus
-            h-luxia) with the metallic silver / electric-blue finish. On phones the
-            headline moves inside the stats bar (below), centred on top of the
-            figures. */}
-        <Bezel className="hidden sm:block sm:flex-shrink-0">
-          <div className="h-full px-7 py-4 flex flex-col items-start justify-center">
-            <span className="h-luxia t-silver leading-[0.98] text-2xl xl:text-[2rem]" style={{ letterSpacing: '0.04em' }}>POWER</span>
-            <span className="h-luxia t-blue leading-[0.98] text-2xl xl:text-[2rem]" style={{ letterSpacing: '0.04em' }}>REDEFINED</span>
-          </div>
-        </Bezel>
-
-        {/* Stats bar — one cohesive panel. On phones it carries the Power
-            Redefined headline centred on top, then the figures below it. */}
-        <Bezel className="flex-1">
-          <div className="h-full px-4 sm:px-8 py-4 sm:py-5">
-            {/* Mobile-only headline, centred on top of the figures — the site's
-                headline system (Marcellus h-luxia): silver POWER, electric-blue
-                REDEFINED. */}
-            <div className="sm:hidden text-center mb-4">
-              <span className="h-luxia leading-none" style={{ fontSize: 'clamp(1.7rem, 7vw, 2.2rem)', letterSpacing: '0.04em' }}>
-                <span className="t-silver">POWER </span>
-                <span className="t-blue">REDEFINED</span>
-              </span>
-            </div>
-
-            {/* Figures — a centred 2×2 grid on phones, a single divided row on
-                desktop. */}
-            <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-x-3 gap-y-4">
-              {POWER_STATS.map((s, i) => (
-                <Fragment key={s.label}>
-                  {i > 0 && <UpTick className="hidden sm:block" />}
-                  <div className="flex items-baseline gap-2 justify-center sm:justify-start">
-                    <span className="font-display font-black leading-none tracking-tight text-[1.9rem] sm:text-5xl xl:text-6xl metric-value" style={NUM_STYLE}>
-                      <ScrollCount to={s.to} progress={progress} />
-                      <span className="text-base sm:text-2xl xl:text-3xl">{s.unit}</span>
-                    </span>
-                    <span className="font-mono text-[8px] sm:text-[9px] leading-[1.25] uppercase tracking-[0.08em] text-apex-red/60 text-left max-w-[54px] sm:max-w-[82px]">
-                      {s.label}
-                    </span>
-                  </div>
-                </Fragment>
-              ))}
-            </div>
-          </div>
-        </Bezel>
-      </div>
-    </motion.div>
-  )
-}
 
 export default function ScrollExpandVideo() {
   const sectionRef = useRef<HTMLDivElement>(null)
@@ -175,53 +39,86 @@ export default function ScrollExpandVideo() {
   const reduce = useReducedMotion()
   const isMobile = useIsMobile()
 
+  /* ── The choreography ──────────────────────────────────────────────────────
+     Four phases, all driven off ONE scroll reading, in order:
+
+       1 ENTRANCE  0.00–0.17  the headline rises in, then the video plate.
+       2 HOLD      0.17–0.30  nothing moves. The composed frame — headline over
+                              film — sits still and is read.
+       3 EXPAND    0.30–0.65  the plate grows from a card to full-bleed, behind
+                              the headline.
+       4 DISSOLVE  0.40–0.58  the headline fades off the opening film, leaving
+                              the last third of the section to the film alone.
+
+     The POWER REDEFINED spec bar used to be the first beat of this entrance and
+     an overlay on this stage. It now lives directly below, at the top of
+     <PerformanceSection/>, flush under the bottom edge of the open video — so
+     the figures land on their own black plate instead of over moving footage.
+
+     Two things here have each been got wrong once, and the reasons are worth
+     keeping.
+
+     It is not a clock. The entrance was briefly a paused GSAP timeline played
+     on enter — a real four-second sequence. Scroll speed and a clock disagree:
+     arriving fast showed a half-built frame, arriving slow showed a finished one
+     that then sat waiting, and scrubbing back up replayed nothing. Everything
+     below is a pure function of scroll position, so every state is reachable in
+     both directions and nothing can race.
+
+     It is also not keyed to the section's *approach*. The obvious place to stage
+     an entrance is the viewport of scroll before a section pins, and for this
+     section that window does not exist: the hero above is a 6,500px GSAP pin and
+     `[data-cinema]` in globals.css pulls this section up over the hero's
+     trailing height, so #film's document position is reached while the hero
+     still owns every pixel of the screen. An approach-keyed entrance therefore
+     played out in full behind the hero, and the section arrived already
+     finished. Progress 0 here is the first moment this section is visible at
+     all, which is why the entrance starts there. */
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    // Start expanding as the stage arrives, finish before the section leaves,
-    // so the plate sits fully open for the last stretch instead of popping.
-    // On phones the growth begins as the section reaches the MIDDLE of the screen
-    // (not the top), so the film no longer feels like it kicks in way too late.
-    offset: isMobile ? ['start 50%', 'end 85%'] : ['start start', 'end 85%'],
+    // 0 the instant the hero releases and this section takes the screen; 1 just
+    // before it leaves, so the open film gets a clean beat of its own.
+    offset: ['start start', 'end 85%'],
   })
 
-  // The plate grows from a small centred card to near-full-bleed.
-  const width = useTransform(scrollYProgress, [0, 0.75], isMobile ? ['74vw', '92vw'] : ['32vw', '92vw'])
-  const radius = useTransform(scrollYProgress, [0, 0.75], ['2px', '0px'])
-  const veil = useTransform(scrollYProgress, [0, 0.7], [0.55, 0])
-  const cueOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
-  const statsOpacity = useTransform(scrollYProgress, [0.28, 0.42], isMobile ? [1, 1] : [1, 0])
-  const countProgress = useMotionValue(0)
-  // Video + its title ride lower in the stage early on — clearing the spec bar so
-  // it no longer squashes onto the plate on phones — then settle to centre as the
-  // plate expands toward full-bleed.
-  const plateShiftN = useTransform(scrollYProgress, [0, 0.5], isMobile ? [16, 0] : [10, 0])
+  // ── 1. ENTRANCE — the headline, then the plate ────────────────────────────
+  // The plate starts before the headline has quite finished, which is what makes
+  // it read as one move rather than two cues.
+  const titleIn = useTransform(scrollYProgress, [0, 0.085], [0, 1])
+  const titleRise = useTransform(scrollYProgress, [0, 0.085], [34, 0])
+  const plateIn = useTransform(scrollYProgress, [0.075, 0.17], [0, 1])
+  const cueIn = useTransform(scrollYProgress, [0.16, 0.22], [0, 1])
+
+  // ── 2. HOLD (0.17 → 0.30), then 3. EXPAND ─────────────────────────────────
+  // Nothing geometric happens in the gap, and that gap is the point: the plate
+  // used to start growing on the section's very first pixel, so the frame was
+  // never once composed and still.
+  const GROW: [number, number] = [0.3, 0.65]
+  const width = useTransform(scrollYProgress, GROW, isMobile ? ['74vw', '100vw'] : ['46vw', '100vw'])
+  const radius = useTransform(scrollYProgress, [GROW[0], 0.58], ['2px', '0px'])
+  const veil = useTransform(scrollYProgress, [GROW[0], 0.6], [0.5, 0])
+  // The plate rides low while the headline is above it, then settles to centre
+  // as it opens out.
+  const plateShiftN = useTransform(scrollYProgress, [GROW[0], 0.5], isMobile ? [8, 0] : [5, 0])
   const plateShift = useTransform(plateShiftN, (v) => `${v}svh`)
+  // "Scroll to expand" is an instruction; it is spent on the notch that acts on
+  // it, so it clears just before the growth rather than riding over it.
+  const cueOut = useTransform(scrollYProgress, [0.25, 0.31], [1, 0])
 
-  const titleOpacity = useTransform(scrollYProgress, [0.2, 0.4], isMobile ? [1, 1] : [1, 0])
+  // ── 4. DISSOLVE ───────────────────────────────────────────────────────────
+  // Begins only once the plate is visibly taking the screen. The plate grows
+  // BEHIND the headline (z-10 against z-20), so the words ride the opening film
+  // for a beat and then dissolve off it — that is the read, not an accident.
+  //
+  // Phones keep the headline. There it is in normal flow ABOVE the plate rather
+  // than over it, so it reads as a title on the film, and fading it would leave
+  // the video floating in black.
+  const titleOut = useTransform(scrollYProgress, [0.4, 0.58], isMobile ? [1, 1] : [1, 0])
 
-  // A real clock owns the entrance: wheel speed cannot shorten the two-second
-  // interval. Scroll still owns the existing expansion and remains unrestricted.
-  useGSAP(() => {
-    if (reduce || !sectionRef.current) return
-    const count = { value: 0 }
-    const intro = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } })
-      .fromTo('.film-stats', { autoAlpha: 0, y: () => window.innerHeight * 0.7 },
-        { autoAlpha: 1, y: 0, duration: 1.2 }, 0)
-      .to(count, { value: 1, duration: 1.2, onUpdate: () => countProgress.set(count.value) }, 0)
-      .fromTo('.film-title', { autoAlpha: 0, y: 90 },
-        { autoAlpha: 1, y: 0, duration: 1.2 }, 2)
-      .fromTo('.film-plate, .film-cue', { autoAlpha: 0 },
-        { autoAlpha: 1, duration: 1 }, 3.2)
-
-    ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: 'top top',
-      end: 'bottom top',
-      onEnter: () => intro.play(0),
-      onEnterBack: () => intro.progress(1),
-      onLeaveBack: () => { intro.pause(0); countProgress.set(0) },
-    })
-  }, { scope: sectionRef, dependencies: [reduce, isMobile], revertOnUpdate: true })
+  const titleOpacity = useTransform([titleIn, titleOut], (v: number[]) => v[0] * v[1])
+  const plateOpacity = plateIn
+  const cueOpacity = useTransform([cueIn, cueOut], (v: number[]) => v[0] * v[1])
 
   function play() {
     setPlaying(true)
@@ -236,9 +133,6 @@ export default function ScrollExpandVideo() {
       <section id="film" className="relative bg-apex-black py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-6 md:px-10">
           <SectionTitle />
-          <div className="mt-8">
-            <PowerStatsBar />
-          </div>
           <div className="relative mt-8 border border-apex-line/60 bg-apex-black-2">
             <VideoPlate
               videoRef={videoRef}
@@ -257,53 +151,42 @@ export default function ScrollExpandVideo() {
       id="film"
       ref={sectionRef}
       className="relative bg-apex-black"
-      /* Tall enough to give the expansion room to read; the stage inside is
-         sticky, so this height is the "scroll budget" for the growth.
-         Shorter on a phone: the budget is spent at the same rate but there is
-         less of it left doing nothing once the plate is open. */
-      style={{ height: isMobile ? '150svh' : '230svh' }}
+      /* The scroll budget for the whole four-phase sequence: the stage inside is
+         sticky, so (height − stage height) is how far the composed frame stays
+         still on screen while the phases play out.
+           desktop 250svh − 100svh stage = 1.5 viewports of pinned choreography
+           phone   190svh − 100svh stage = 0.9 viewports
+         Both were raised when the hold was added — at the old 230/150 the plate
+         finished growing with barely a screen left, so the open film never got
+         a clean beat of its own before the section handed over. Shorter on a
+         phone throughout: a thumb covers ground far faster than a wheel. */
+      style={{ height: isMobile ? '190svh' : '250svh' }}
     >
-      {/* The stage is only as tall as it needs to be on a phone. At a full
-          100svh the 16:9 plate (95vw ≈ 53svh) left ~23svh of dead black above
-          AND below it, and the lower band read as a long break between this
-          section and the next — the plate is centred, so the emptiness is
-          symmetrical and unavoidable at that height. Tightened to 56svh so the
-          plate sits higher in the pinned view (less dead black above it) and
-          the section is shorter overall — both cut scroll time on a phone. */}
+      {/* The stage is the full viewport on both. It was 66svh on phones, back
+          when the spec bar, the headline and the plate all had to share it and a
+          100svh stage left dead black above AND below the group. The bar has
+          moved out to the section below, so what is left is a headline over a
+          16:9 plate — and a 16:9 plate on a portrait phone cannot fill the
+          height whatever you do. A full-height stage centres that pair and puts
+          equal black above and below it, which reads as letterboxing. At 66svh
+          the same content sat in the top two thirds with one long empty band
+          under it, which reads as a gap. */}
       <div
-        className="sticky top-0 w-full overflow-hidden flex flex-col items-center justify-center gap-[2svh]"
-        style={{ height: isMobile ? '66svh' : '100svh' }}
+        className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col items-center justify-center gap-[2.5svh]"
       >
-        {/* POWER REDEFINED spec bar. Desktop: an overlay near the top of the
-            stage. Phones: sits in normal flow so the video stacks flush directly
-            beneath it — bar above, video below, never overlapping — on every
-            screen size (the bar's height varies, so flow keeps the gap honest). */}
-        <motion.div
-          className={
-            isMobile
-              ? 'relative w-full px-4 z-30 flex justify-center pointer-events-none'
-              : 'absolute top-[9%] inset-x-0 z-30 px-4 flex justify-center pointer-events-none'
-          }
-          style={{ opacity: statsOpacity }}
-        >
-          <div className="film-stats w-full" style={{ opacity: 0, visibility: 'hidden' }}>
-            <PowerStatsBar countProgress={countProgress} />
-          </div>
-        </motion.div>
-
-        {/* Title — ONE line, same max size as the scroll-cinema titles. On phones
-            it sits in flow between the bar and the video; on desktop it's an
-            overlay just under the bar. Its timed entrance starts two seconds
-            after the bar, then both yield to the expanding film on desktop. */}
+        {/* Title — ONE line, same max size as the scroll-cinema titles. On
+            phones it sits in flow directly above the video; on desktop it's an
+            overlay in the stage's upper third. It arrives first, holds over the
+            composed frame, then dissolves as the film takes the screen. */}
         <motion.div
           className={
             isMobile
               ? 'relative w-full px-4 z-20 flex justify-center pointer-events-none'
-              : 'absolute inset-x-0 top-[24%] z-20 px-4 flex justify-center pointer-events-none'
+              : 'absolute inset-x-0 top-[21%] z-20 px-4 flex justify-center pointer-events-none'
           }
-          style={{ opacity: titleOpacity }}
+          style={{ opacity: titleOpacity, y: titleRise }}
         >
-          <h2 className="film-title h-luxia leading-none text-center whitespace-nowrap" style={{ opacity: 0, visibility: 'hidden', fontSize: 'clamp(15px, 4.8vw, 66px)', letterSpacing: '0.04em' }}>
+          <h2 className="h-luxia leading-none text-center whitespace-nowrap" style={{ fontSize: 'clamp(15px, 4.8vw, 66px)', letterSpacing: '0.04em' }}>
             <span className="t-silver">&ldquo;PERFORMANCE BECOMES </span>
             <span className="t-red">INEVITABLE.&rdquo;</span>
           </h2>
@@ -313,35 +196,33 @@ export default function ScrollExpandVideo() {
             near-full-bleed. Phones: sits in flow directly under the spec bar and
             grows downward, stopping just below the bar at full size. */}
         <motion.div
-          className="relative z-10 overflow-hidden"
+          className="relative z-10 border border-apex-line/60 bg-apex-black-2 overflow-hidden"
           style={{
             width,
             aspectRatio: '16 / 9',
-            maxHeight: '82svh',
+            maxHeight: '90svh',
             borderRadius: radius,
+            opacity: plateOpacity,
             ...(isMobile ? {} : { y: plateShift }),
+            boxShadow: '0 30px 90px -20px rgba(0,0,0,0.8)',
           }}
         >
-          <div
-            className="film-plate absolute inset-0 border border-apex-line/60 bg-apex-black-2"
-            style={{ opacity: 0, visibility: 'hidden', boxShadow: '0 30px 90px -20px rgba(0,0,0,0.8)' }}
-          >
-            <VideoPlate
-              videoRef={videoRef}
-              playing={playing}
-              onPlay={play}
-              veil={veil}
-            />
-          </div>
+          <VideoPlate
+            videoRef={videoRef}
+            playing={playing}
+            onPlay={play}
+            veil={veil}
+          />
         </motion.div>
 
-        {/* Scroll cue — fades out as soon as the expansion starts */}
+        {/* Scroll cue — arrives last, and is spent on the first notch of the
+            expansion. */}
         <motion.div
           className="absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 pointer-events-none"
           style={{ opacity: cueOpacity }}
           aria-hidden="true"
         >
-          <span className="film-cue font-mono text-[9px] tracking-[0.3em] uppercase text-apex-grey-dim" style={{ opacity: 0, visibility: 'hidden' }}>
+          <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-apex-grey-dim">
             Scroll to expand
           </span>
         </motion.div>
