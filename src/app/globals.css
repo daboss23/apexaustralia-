@@ -315,6 +315,65 @@
       0 2px 4px rgba(28, 18, 0, 0.45);
   }
 
+  /* ── Hero scroll-cinema promise beat ("WHEN PERFORMANCE / MEETS INTELLIGENCE")
+        — maximum-brightness variant of the metallic finishes, scoped to that
+        one headline. It is the only headline that sits over a moving, already
+        bright frame (fire, smoke, blown highlights), so the site-wide silver
+        and blue average down into the plate and read grey. Three changes:
+
+        1. The stops are lifted into the top of the range and the dark contact
+           band is removed — a clipped gradient averages its stops, so the floor
+           is what sets perceived brightness, not the crown.
+        2. The silver drops its soft-light speckle layer. Soft-light with a
+           mid-grey noise only ever subtracts luminance, which is fine on a dark
+           panel and wrong here.
+        3. Separation comes from *outside* the glyph — a dark drop-shadow halo
+           on the spans — instead of from dark stops inside it. The halo lives
+           on the spans, never the <h2>: GSAP tweens `filter: blur()` on
+           `.beat-sprint` itself at the end of the beat and would overwrite it.
+
+        Reduced motion still gets it; only the movement is conditional. ───────── */
+  .beat-sprint .t-silver {
+    background-image:
+      linear-gradient(180deg,
+        #FFFFFF 0%,
+        #FFFFFF 18%,
+        #F3F6F9 40%,
+        #E2E8EE 50%,
+        #FFFFFF 58%,
+        #EFF3F7 78%,
+        #DCE3EA 100%);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-blend-mode: normal;
+    text-shadow:
+      0 -1px 0 rgba(255, 255, 255, 0.85),
+      0 1px 0 rgba(0, 8, 14, 0.55),
+      0 2px 5px rgba(0, 6, 12, 0.5);
+    filter:
+      drop-shadow(0 1px 2px rgba(0, 8, 16, 0.55))
+      drop-shadow(0 4px 16px rgba(0, 6, 14, 0.5));
+  }
+  .beat-sprint .t-blue {
+    background-image:
+      linear-gradient(180deg,
+        #E8FBFF 0%,
+        #B6F0FF 18%,
+        #7FE4FF 40%,
+        #58D8FF 52%,
+        #9DECFF 60%,
+        #5FD6FF 80%,
+        #33C6FA 100%);
+    text-shadow:
+      0 -1px 0 rgba(232, 251, 255, 0.85),
+      0 1px 0 rgba(0, 20, 32, 0.55),
+      0 2px 5px rgba(0, 14, 26, 0.5);
+    filter:
+      drop-shadow(0 1px 2px rgba(0, 16, 30, 0.55))
+      drop-shadow(0 4px 18px rgba(0, 40, 70, 0.55))
+      drop-shadow(0 0 22px rgba(0, 174, 239, 0.28));
+  }
+
   /* Carbon-fibre twill — subtle engineered texture for dark surfaces */
   .carbon-weave {
     background-image:
