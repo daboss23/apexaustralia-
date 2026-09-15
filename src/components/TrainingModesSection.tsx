@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { DEMO_HREF } from '@/lib/site'
+import { GlowCard } from '@/components/ui/spotlight-card'
 
 /* ── One System, Multiple Ways To Train ───────────────────────────────────────
    Sits between the multi-sport section and the "MORE THAN A SPRINT RESISTANCE
@@ -70,10 +71,12 @@ function ModeCard({ mode, i, inView }: { mode: Mode; i: number; inView: boolean 
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 26 }}
       transition={{ duration: 0.7, delay: 0.2 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
     >
-      {/* Media frame */}
-      <div
-        className="relative overflow-hidden border border-apex-line bg-apex-panel transition-colors duration-500"
-        style={{ borderRadius: 0, aspectRatio: '4 / 5' }}
+      {/* Media frame — a spotlight card: the border lights up in the mode's
+          own accent (red / blue) where the cursor is. */}
+      <GlowCard
+        glowColor={mode.accent}
+        className="overflow-hidden border border-apex-line bg-apex-panel"
+        style={{ aspectRatio: '4 / 5' }}
       >
         {!failed ? (
           /* eslint-disable-next-line @next/next/no-img-element */
@@ -141,7 +144,7 @@ function ModeCard({ mode, i, inView }: { mode: Mode; i: number; inView: boolean 
             {mode.title}
           </h3>
         </div>
-      </div>
+      </GlowCard>
 
       {/* Support copy */}
       <p

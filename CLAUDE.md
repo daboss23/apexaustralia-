@@ -62,7 +62,18 @@ between `SportsSection` and `TApexVs1080Section`) uses the same drop-in media
 convention as `public/sports/`: each of its three cards loads
 `public/training-modes/<id>.webp` and falls back to an engineered HUD plate if
 the file is absent, so photos can be added with no code change. See
-`public/training-modes/README.md`.
+`public/training-modes/README.md`. Its three cards are `GlowCard`s
+(`src/components/ui/spotlight-card.tsx`) — the border lights up in the card's
+own accent where the cursor is. Pass `glowColor` the brand red or blue; the
+component is generic, so reuse it rather than re-rolling the effect.
+
+`ComparisonSection.tsx` ("EVERYTHING THEY DO.") carries, *below* its untouched
+table, the head-to-head spec strip vs the 1080 Sprint 2 plus a
+`SpecComparisonModal` holding the full published sheet. Both read from
+`src/lib/spec-comparison.ts` — figures live there and nowhere else. That file's
+header sets the rules the table lives by: `—` means "not published", and rows
+where 1080 leads stay in and stay marked. Don't edit a figure except against
+the published spec.
 
 Most section components are client components (`'use client'`) using Framer
 Motion `useInView` / scroll transforms for reveal animations.
