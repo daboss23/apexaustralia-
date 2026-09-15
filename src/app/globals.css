@@ -204,7 +204,7 @@
         bright crown and a dark contact base. The bevel is built from a crisp
         bright top edge + a hard dark bottom edge + a tight downward contact
         shadow. High contrast, no bloom, no fog, no outer glow. ───────────────── */
-  .t-silver, .t-blue, .t-red, .t-feature, .t-gold {
+  .t-silver, .t-blue, .t-red, .t-feature, .t-gold, .t-white {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -275,6 +275,26 @@
       0 -1px 0 rgba(255, 95, 75, 0.3),
       0 1px 0 rgba(70, 3, 0, 0.5),
       0 2px 4px rgba(40, 2, 0, 0.34);
+  }
+  /* Clean white — for headline words that must read as WHITE rather than
+     pewter, while still carrying the same milled bevel as the rest of the
+     system (so it sits beside .t-red without looking like flat body text).
+     Deliberately the one finish that breaks the "no near-white band" rule:
+     the stops stay inside a 12-point range, so there's no dark core to average
+     against and it reads white instead of washed-out grey. */
+  .t-white {
+    background-image:
+      linear-gradient(180deg,
+        #FFFFFF 0%,
+        #FFFFFF 46%,
+        #F7F9FB 54%,
+        #EBEFF4 100%);
+    /* No hard 1px black edge here, unlike the other finishes. Marcellus's
+       serifs are hairlines; a crisp dark edge eats a third of the stroke and
+       the word averages out to grey — which is the exact opposite of the
+       point. A single soft ambient drop gives it weight off the background
+       without touching the stroke colour. */
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.55);
   }
   /* Silvery stone for feature / card titles — brighter, lighter base so it stays
      legible at smaller sizes (no speckle: keeps small text clean). */
