@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "node scripts/build-sprint-quality.mjs && npm run build",
   "outputDirectory": "out",
   "installCommand": "npm install"
 }

@@ -174,13 +174,8 @@ const DESKTOP: CinemaConfig = {
   fit: 'cover',
   baseScale: 1,
   splitTravel: 0.34,
-  // Capped at 1.5 rather than 2. Frames are 1920×1080, so on a standard 1080p
-  // desktop (DPR 1) the canvas is pixel-for-pixel with the source, and on a
-  // 1440pt laptop at DPR 2 it asks for 2160 — a mild upscale rather than the
-  // 1.35× it was getting from a 1600-wide sequence. Above 1.5 we're pushing 4×
-  // the pixels on a large retina display to show detail the frame does not have,
-  // and that fill rate is better spent on framerate, which is smoothness.
-  maxDpr: 1.5,
+  // The 8K-derived sprint has 4K detail for Retina displays.
+  maxDpr: 2,
   // Tight, because <SmoothScroll/> (Lenis) already interpolates the wheel. A big
   // scrub on top of that stacks two lags and the film trails the page.
   scrub: 0.35,
@@ -686,6 +681,46 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
     return true
   }
 
+  // Keep a small moving window of 4K frames; the original sequence remains
+  // the immediate fallback while detail arrives. No full 4K preload or blending.
+  const detailRef = useRef(new Map<number, HTMLImageElement>())
+  const detailRevision = useRef(0)
+  const detailFailed = useRef(new Set<number>())
+  const detailCenter = useRef(-1)
+  useEffect(() => () => {
+    detailRef.current.forEach((img) => { img.onload = null; img.onerror = null; img.src = '' })
+    detailRef.current.clear()
+  }, [])
+
+  const requestDetail = (frame: number) => {
+    if (phone || frame < 260) return
+    const center = Math.max(271, Math.min(357, Math.round(frame) + 1))
+    detailCenter.current = center
+    const cache = detailRef.current
+    for (const [i, img] of cache) {
+      if (i < center - 3 || i > center + 8) {
+        img.onload = null
+        img.onerror = null
+        img.src = ''
+        cache.delete(i)
+      }
+    }
+    let pending = [...cache.values()].filter(img => !img.complete).length
+    const order = [0, 1, 2, -1, 3, 4, -2, 5, 6, -3, 7, 8]
+    for (const offset of order) {
+      const i = center + offset
+      if (pending >= 3) break
+      if (i < 271 || i > 357 || cache.has(i) || detailFailed.current.has(i)) continue
+      const img = new Image()
+      img.decoding = 'async'
+      img.onload = () => { detailRevision.current++ }
+      img.onerror = () => { detailFailed.current.add(i); detailRevision.current++ }
+      cache.set(i, img)
+      img.src = `/hero-frames-hq/frame-${i}.webp`
+      pending++
+    }
+  }
+
   // ── Canvas draw — fit the active frame, scaled for the push-in ──────────────
   const draw = () => {
     const canvas = canvasRef.current
@@ -704,7 +739,8 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
     // The same trap is documented for video in docs/motion-scroll-brief.md —
     // frame blending to smooth motion always ghosts. Draw the nearest real frame.
     const f = Math.min(Math.max(render.frame, 0), cfg.frameCount - 1)
-    const ref = decoded(Math.round(f)) ?? decoded(Math.floor(f))
+    const detail = detailRef.current.get(Math.round(f) + 1)
+    const ref = detail?.complete && detail.naturalWidth ? detail : decoded(Math.round(f)) ?? decoded(Math.floor(f))
     // Nothing decoded yet — hold whatever is on the canvas rather than flashing.
     if (!ref) return
 
@@ -1011,7 +1047,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // the closing dissolve, which fills the frame corner to corner and must
       // not be cropped by its own furniture.
       tl.fromTo('.cine-tunnel', { opacity: 0 }, { opacity: 0.3, duration: 0.08 }, 0.622)
-      tl.to('.cine-tunnel', { opacity: 0.12, duration: 0.08 }, 0.866)
+      tl.to('.cine-tunnel', { opacity: 0, duration: 0.06 }, 0.735) // clear before the sprint
 
       // The split halves clear at 0.20 — the instant before the panels move.
       // This is the one hard layout rule the footage imposes: the box opening is
@@ -1055,8 +1091,8 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
       // a level from a different act.
       tl.to('.cine-dim', { opacity: 0.16, ease: 'power1.inOut', duration: 0.07 }, HOLD) // headline over the plate
       tl.to('.cine-dim', { opacity: 0.02, ease: 'power1.inOut', duration: 0.05 }, 0.175) // ✦ panels open — and stays clear all the way to the charge
-      tl.to('.cine-dim', { opacity: 0.5, ease: 'power1.inOut', duration: 0.045 }, 0.838) // closing statement
-      tl.to('.cine-dim', { opacity: 0.18, ease: 'power1.inOut', duration: 0.04 }, 0.955) // clears into the dissolve
+      tl.to('.cine-dim', { opacity: 0.32, ease: 'power1.inOut', duration: 0.045 }, 0.838) // closing statement
+      tl.to('.cine-dim', { opacity: 0, ease: 'power1.inOut', duration: 0.04 }, 0.955) // clears into the dissolve
 
       // Apply the overlap only AFTER the spacer exists. Doing this in the
       // mode effect pulled #film onto the opening screen while frames loaded.
