@@ -697,7 +697,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
     const center = Math.max(271, Math.min(357, Math.round(frame) + 1))
     detailCenter.current = center
     const cache = detailRef.current
-    for (const [i, img] of cache) {
+    for (const [i, img] of Array.from(cache.entries())) {
       if (i < center - 3 || i > center + 8) {
         img.onload = null
         img.onerror = null
@@ -705,7 +705,7 @@ function CinemaImpl({ cfg, phone }: { cfg: CinemaConfig; phone: boolean }) {
         cache.delete(i)
       }
     }
-    let pending = [...cache.values()].filter(img => !img.complete).length
+    let pending = Array.from(cache.values()).filter(img => !img.complete).length
     const order = [0, 1, 2, -1, 3, 4, -2, 5, 6, -3, 7, 8]
     for (const offset of order) {
       const i = center + offset
