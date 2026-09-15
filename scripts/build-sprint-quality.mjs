@@ -27,7 +27,7 @@ async function download(url, destination, gzip = false) {
 const size = async (p) => (await stat(p).catch(() => ({ size: 0 }))).size
 if ((await size(source)) !== 232026345) {
   console.log('Downloading the original 7680×4320 sprint master')
-  await download('https://github.com/daboss23/apexaustralia-/releases/download/sprint-source/Upscaled.Boss.Motion.scroll.vid.mp4', source)
+  await download('https://github.com/daboss23/apexaustralia-/releases/download/untagged-b4ece9c6ca8656444408/Upscaled.Boss.Motion.scroll.vid.mp4', source)
   if ((await size(source)) !== 232026345) throw new Error('Unexpected 8K master size')
 }
 if (!(await size(binary))) {
