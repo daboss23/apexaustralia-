@@ -1,15 +1,21 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { motion, useScroll, useTransform, useReducedMotion, type MotionValue } from 'framer-motion'
 import { useIsMobile } from './useIsMobile'
 
 /* ────────────────────────────────────────────────────────────────────────────
    SCROLL-EXPAND VIDEO — the film opens out of the hero.
 
-   Placed directly after ScrollCinemaHero: as the last frame of the scroll
-   cinema lands, this section takes over and a small video plate grows to
-   near-full-bleed while the title halves slide apart around it.
+   THE CHOREOGRAPHY (one sticky stage, four beats, all scroll-linked):
+
+     1. HOLD      the quote lands dead-centre of an otherwise empty black
+                  screen and sits there alone.
+     2. LIFT      it travels up the page and fades out.
+     3. RISE      as the quote starts to go, the video plate climbs in from
+                  below the fold and settles centred.
+     4. EXPAND    the plate grows from a small card to near-full-bleed, then
+                  the page carries on.
 
    IMPORTANT — why this is not the usual "scroll expansion hero" implementation:
    the widely-copied version of this effect listens on `window` for wheel and
@@ -18,10 +24,17 @@ import { useIsMobile } from './useIsMobile'
    ScrollTrigger pin (see ScrollCinemaHero + lib/scroll.ts), and both write the
    scroll position every frame. A third writer fighting them locks the page.
 
-   So the expansion is scroll-*linked* instead of scroll-*jacking*: a tall
+   So the sequence is scroll-*linked* instead of scroll-*jacked*: a tall
    section, a sticky viewport-height stage inside it, and Framer's `useScroll`
    reading the section's own progress. Nothing is intercepted, nothing is
    pinned, and Lenis stays the only thing moving the page.
+
+   On the "three second" hold: a scroll-linked stage has no clock, and a real
+   timer here would mean the screen stops responding to the wheel — the exact
+   failure the note above avoids. The hold is bought with scroll budget
+   instead: HOLD_END of a ~200svh travel ≈ 60svh of scrolling where nothing
+   moves, which reads as roughly three seconds at a normal reading pace and
+   degrades gracefully when someone flicks past it.
 
    The clip is a 100-second narrated explainer, so it deliberately does NOT
    autoplay: it holds on a poster until the viewer presses play, with native
@@ -32,6 +45,16 @@ import { useIsMobile } from './useIsMobile'
 const SRC = '/checkout/tapex-features.mp4'
 const POSTER = '/checkout/tapex-features-poster.jpg'
 
+/* Beat boundaries as fractions of the sticky stage's travel. Kept here as one
+   readable map so the timing can be retuned without hunting through transforms.
+   The overlaps are intentional: the plate starts rising while the quote is
+   still fading, so the two movements hand over instead of queueing. */
+const HOLD_END = 0.3 // quote alone, centred, nothing moving
+const LIFT_END = 0.55 // quote has travelled up and gone
+const RISE_START = 0.36 // plate enters from below the fold
+const RISE_END = 0.66 // plate settled, centred, small
+const EXPAND_END = 0.94 // plate near-full-bleed
+
 export default function ScrollExpandVideo() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -39,86 +62,41 @@ export default function ScrollExpandVideo() {
   const reduce = useReducedMotion()
   const isMobile = useIsMobile()
 
-  /* ── The choreography ──────────────────────────────────────────────────────
-     Four phases, all driven off ONE scroll reading, in order:
-
-       1 ENTRANCE  0.00–0.17  the headline rises in, then the video plate.
-       2 HOLD      0.17–0.30  nothing moves. The composed frame — headline over
-                              film — sits still and is read.
-       3 EXPAND    0.30–0.65  the plate grows from a card to full-bleed, behind
-                              the headline.
-       4 DISSOLVE  0.40–0.58  the headline fades off the opening film, leaving
-                              the last third of the section to the film alone.
-
-     The POWER REDEFINED spec bar used to be the first beat of this entrance and
-     an overlay on this stage. It now lives directly below, at the top of
-     <PerformanceSection/>, flush under the bottom edge of the open video — so
-     the figures land on their own black plate instead of over moving footage.
-
-     Two things here have each been got wrong once, and the reasons are worth
-     keeping.
-
-     It is not a clock. The entrance was briefly a paused GSAP timeline played
-     on enter — a real four-second sequence. Scroll speed and a clock disagree:
-     arriving fast showed a half-built frame, arriving slow showed a finished one
-     that then sat waiting, and scrubbing back up replayed nothing. Everything
-     below is a pure function of scroll position, so every state is reachable in
-     both directions and nothing can race.
-
-     It is also not keyed to the section's *approach*. The obvious place to stage
-     an entrance is the viewport of scroll before a section pins, and for this
-     section that window does not exist: the hero above is a 6,500px GSAP pin and
-     `[data-cinema]` in globals.css pulls this section up over the hero's
-     trailing height, so #film's document position is reached while the hero
-     still owns every pixel of the screen. An approach-keyed entrance therefore
-     played out in full behind the hero, and the section arrived already
-     finished. Progress 0 here is the first moment this section is visible at
-     all, which is why the entrance starts there. */
-
+  // The sticky stage's travel: 0 the moment the stage locks to the top of the
+  // viewport (quote centred), 1 as the section releases it.
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    // 0 the instant the hero releases and this section takes the screen; 1 just
-    // before it leaves, so the open film gets a clean beat of its own.
-    offset: ['start start', 'end 85%'],
+    offset: ['start start', 'end end'],
   })
 
-  // ── 1. ENTRANCE — the headline, then the plate ────────────────────────────
-  // The plate starts before the headline has quite finished, which is what makes
-  // it read as one move rather than two cues.
-  const titleIn = useTransform(scrollYProgress, [0, 0.085], [0, 1])
-  const titleRise = useTransform(scrollYProgress, [0, 0.085], [34, 0])
-  const plateIn = useTransform(scrollYProgress, [0.075, 0.17], [0, 1])
-  const cueIn = useTransform(scrollYProgress, [0.16, 0.22], [0, 1])
+  // The section's *approach* — 0 when it is still a viewport below, 1 when the
+  // stage locks. The quote keys its fade-in to this, so it is already fully lit
+  // and centred by the time the hold begins.
+  const { scrollYProgress: approach } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'start start'],
+  })
 
-  // ── 2. HOLD (0.17 → 0.30), then 3. EXPAND ─────────────────────────────────
-  // Nothing geometric happens in the gap, and that gap is the point: the plate
-  // used to start growing on the section's very first pixel, so the frame was
-  // never once composed and still.
-  const GROW: [number, number] = [0.3, 0.65]
-  const width = useTransform(scrollYProgress, GROW, isMobile ? ['74vw', '100vw'] : ['46vw', '100vw'])
-  const radius = useTransform(scrollYProgress, [GROW[0], 0.58], ['2px', '0px'])
-  const veil = useTransform(scrollYProgress, [GROW[0], 0.6], [0.5, 0])
-  // The plate rides low while the headline is above it, then settles to centre
-  // as it opens out.
-  const plateShiftN = useTransform(scrollYProgress, [GROW[0], 0.5], isMobile ? [8, 0] : [5, 0])
-  const plateShift = useTransform(plateShiftN, (v) => `${v}svh`)
-  // "Scroll to expand" is an instruction; it is spent on the notch that acts on
-  // it, so it clears just before the growth rather than riding over it.
-  const cueOut = useTransform(scrollYProgress, [0.25, 0.31], [1, 0])
-
-  // ── 4. DISSOLVE ───────────────────────────────────────────────────────────
-  // Begins only once the plate is visibly taking the screen. The plate grows
-  // BEHIND the headline (z-10 against z-20), so the words ride the opening film
-  // for a beat and then dissolve off it — that is the read, not an accident.
-  //
-  // Phones keep the headline. There it is in normal flow ABOVE the plate rather
-  // than over it, so it reads as a title on the film, and fading it would leave
-  // the video floating in black.
-  const titleOut = useTransform(scrollYProgress, [0.4, 0.58], isMobile ? [1, 1] : [1, 0])
-
+  // ── Beat 1–2 · the quote: holds dead-centre, then lifts and fades ─────────
+  const titleIn = useTransform(approach, [0.35, 0.85], [0, 1])
+  const titleOut = useTransform(scrollYProgress, [HOLD_END, LIFT_END], [1, 0])
   const titleOpacity = useTransform([titleIn, titleOut], (v: number[]) => v[0] * v[1])
-  const plateOpacity = plateIn
-  const cueOpacity = useTransform([cueIn, cueOut], (v: number[]) => v[0] * v[1])
+  const titleYn = useTransform(scrollYProgress, [HOLD_END, LIFT_END], [0, isMobile ? -20 : -26])
+  const titleY = useTransform(titleYn, (v) => `${v}svh`)
+
+  // ── Beat 3 · the plate rises from the bottom edge and settles centred ─────
+  const riseYn = useTransform(scrollYProgress, [RISE_START, RISE_END], [62, 0])
+  const riseY = useTransform(riseYn, (v) => `${v}svh`)
+  const plateOpacity = useTransform(scrollYProgress, [RISE_START, RISE_START + 0.12], [0, 1])
+
+  // ── Beat 4 · it grows out to take the screen ─────────────────────────────
+  const width = useTransform(scrollYProgress, [RISE_END, EXPAND_END], isMobile ? ['78vw', '100vw'] : ['34vw', '92vw'])
+  const radius = useTransform(scrollYProgress, [RISE_END, EXPAND_END], ['2px', '0px'])
+  const veil = useTransform(scrollYProgress, [RISE_END, EXPAND_END - 0.08], [0.45, 0])
+
+  // The cue belongs to the hold — it is the one thing telling the reader the
+  // quote is a beat and not a dead end. It leaves as soon as the quote moves.
+  const cueOpacity = useTransform(scrollYProgress, [HOLD_END - 0.08, HOLD_END + 0.02], [1, 0])
 
   function play() {
     setPlaying(true)
@@ -130,104 +108,77 @@ export default function ScrollExpandVideo() {
      the same clip. No sticky stage, no scroll-linked geometry. */
   if (reduce) {
     return (
-      <section id="film" className="relative bg-apex-black py-16 md:py-24">
-        <div className="max-w-6xl mx-auto px-6 md:px-10">
-          <SectionTitle />
-          <div className="relative mt-8 border border-apex-line/60 bg-apex-black-2">
-            <VideoPlate
-              videoRef={videoRef}
-              playing={playing}
-              onPlay={play}
-              veilOpacity={0}
-            />
+      <>
+        <section id="film" className="relative bg-apex-black py-16 md:py-24">
+          <div className="max-w-6xl mx-auto px-6 md:px-10">
+            <SectionTitle />
+            <div className="relative mt-8 aspect-video border border-apex-line/60 bg-apex-black-2">
+              <VideoPlate videoRef={videoRef} playing={playing} onPlay={play} veilOpacity={0} />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </>
     )
   }
 
   return (
-    <section
-      id="film"
-      ref={sectionRef}
-      className="relative bg-apex-black"
-      /* The scroll budget for the whole four-phase sequence: the stage inside is
-         sticky, so (height − stage height) is how far the composed frame stays
-         still on screen while the phases play out.
-           desktop 250svh − 100svh stage = 1.5 viewports of pinned choreography
-           phone   190svh − 100svh stage = 0.9 viewports
-         Both were raised when the hold was added — at the old 230/150 the plate
-         finished growing with barely a screen left, so the open film never got
-         a clean beat of its own before the section handed over. Shorter on a
-         phone throughout: a thumb covers ground far faster than a wheel. */
-      style={{ height: isMobile ? '190svh' : '250svh' }}
-    >
-      {/* The stage is the full viewport on both. It was 66svh on phones, back
-          when the spec bar, the headline and the plate all had to share it and a
-          100svh stage left dead black above AND below the group. The bar has
-          moved out to the section below, so what is left is a headline over a
-          16:9 plate — and a 16:9 plate on a portrait phone cannot fill the
-          height whatever you do. A full-height stage centres that pair and puts
-          equal black above and below it, which reads as letterboxing. At 66svh
-          the same content sat in the top two thirds with one long empty band
-          under it, which reads as a gap. */}
-      <div
-        className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col items-center justify-center gap-[2.5svh]"
+    <>
+      <section
+        id="film"
+        ref={sectionRef}
+        className="relative bg-apex-black"
+        /* Stage height + scroll budget. The budget (height − 100svh) is what the
+           four beats are spent from: ~200svh on desktop, ~170svh on a phone,
+           where a gesture covers more ground per second. */
+        style={{ height: isMobile ? '270svh' : '300svh' }}
       >
-        {/* Title — ONE line, same max size as the scroll-cinema titles. On
-            phones it sits in flow directly above the video; on desktop it's an
-            overlay in the stage's upper third. It arrives first, holds over the
-            composed frame, then dissolves as the film takes the screen. */}
-        <motion.div
-          className={
-            isMobile
-              ? 'relative w-full px-4 z-20 flex justify-center pointer-events-none'
-              : 'absolute inset-x-0 top-[21%] z-20 px-4 flex justify-center pointer-events-none'
-          }
-          style={{ opacity: titleOpacity, y: titleRise }}
-        >
-          <h2 className="h-luxia leading-none text-center whitespace-nowrap" style={{ fontSize: 'clamp(15px, 4.8vw, 66px)', letterSpacing: '0.04em' }}>
-            <span className="t-silver">&ldquo;PERFORMANCE BECOMES </span>
-            <span className="t-red">INEVITABLE.&rdquo;</span>
-          </h2>
-        </motion.div>
+        <div className="sticky top-0 w-full h-[100svh] overflow-hidden">
+          {/* Beat 1–2 — the quote. Dead-centre of an empty screen, alone, then
+              up and out. ONE line, same max size as the scroll-cinema titles. */}
+          <motion.div
+            className="absolute inset-0 z-20 px-4 flex items-center justify-center pointer-events-none"
+            style={{ opacity: titleOpacity, y: titleY }}
+          >
+            <h2 className="h-luxia leading-none text-center whitespace-nowrap" style={{ fontSize: 'clamp(15px, 4.8vw, 66px)', letterSpacing: '0.04em' }}>
+              <span className="t-silver">&ldquo;PERFORMANCE BECOMES </span>
+              <span className="t-red">INEVITABLE.&rdquo;</span>
+            </h2>
+          </motion.div>
 
-        {/* The growing video plate. Desktop: centred, rides plateShift out to
-            near-full-bleed. Phones: sits in flow directly under the spec bar and
-            grows downward, stopping just below the bar at full size. */}
-        <motion.div
-          className="relative z-10 border border-apex-line/60 bg-apex-black-2 overflow-hidden"
-          style={{
-            width,
-            aspectRatio: '16 / 9',
-            maxHeight: '90svh',
-            borderRadius: radius,
-            opacity: plateOpacity,
-            ...(isMobile ? {} : { y: plateShift }),
-            boxShadow: '0 30px 90px -20px rgba(0,0,0,0.8)',
-          }}
-        >
-          <VideoPlate
-            videoRef={videoRef}
-            playing={playing}
-            onPlay={play}
-            veil={veil}
-          />
-        </motion.div>
+          {/* Beat 3–4 — the plate. The wrapper carries the rise (so the plate
+              climbs in from below the stage's clipped bottom edge and lands
+              centred); the plate itself carries the growth. */}
+          <motion.div
+            className="absolute inset-0 z-10 flex items-center justify-center"
+            style={{ y: riseY, opacity: plateOpacity }}
+          >
+            <motion.div
+              className="relative border border-apex-line/60 bg-apex-black-2 overflow-hidden"
+              style={{
+                width,
+                aspectRatio: '16 / 9',
+                maxHeight: '82svh',
+                borderRadius: radius,
+                boxShadow: '0 30px 90px -20px rgba(0,0,0,0.8)',
+              }}
+            >
+              <VideoPlate videoRef={videoRef} playing={playing} onPlay={play} veil={veil} />
+            </motion.div>
+          </motion.div>
 
-        {/* Scroll cue — arrives last, and is spent on the first notch of the
-            expansion. */}
-        <motion.div
-          className="absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 pointer-events-none"
-          style={{ opacity: cueOpacity }}
-          aria-hidden="true"
-        >
-          <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-apex-grey-dim">
-            Scroll to expand
-          </span>
-        </motion.div>
-      </div>
-    </section>
+          {/* Scroll cue — lives with the hold, leaves when the quote does */}
+          <motion.div
+            className="absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-30 pointer-events-none"
+            style={{ opacity: cueOpacity }}
+            aria-hidden="true"
+          >
+            <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-apex-grey-dim">
+              Scroll
+            </span>
+          </motion.div>
+        </div>
+      </section>
+    </>
   )
 }
 
@@ -257,7 +208,7 @@ function VideoPlate({
   videoRef: React.RefObject<HTMLVideoElement>
   playing: boolean
   onPlay: () => void
-  veil?: ReturnType<typeof useTransform<number, number>>
+  veil?: MotionValue<number>
   veilOpacity?: number
 }) {
   return (

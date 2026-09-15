@@ -3,7 +3,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import LazyVideo from './LazyVideo'
-import PowerStatsBar from './PowerStatsBar'
 
 // Photo-finish counter — spins through random values, then locks onto the real
 // figure with a camera-strobe flash + scale pop (matches the Results counters).
@@ -207,16 +206,7 @@ export default function PerformanceSection() {
   const metricsLive = useInView(metricsRef, { amount: 0.4 })
 
   return (
-    <section id="performance" className="relative bg-apex-black pb-16 md:pb-36 overflow-hidden">
-      {/* POWER REDEFINED — the T-APEX headline specs, sitting flush under the
-          bottom edge of the film section's open video rather than floating over
-          it (it used to be an overlay on that sticky stage). Its own padding is
-          short at the top and long at the bottom so it reads as the caption on
-          the film above, not as the opening of this section. */}
-      <div className="relative z-10 px-4 pt-7 pb-16 md:pt-9 md:pb-28">
-        <PowerStatsBar />
-      </div>
-
+    <section id="performance" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         {/* Section kicker removed — kept as an invisible in-view trigger. */}
         <div ref={titleRef} aria-hidden="true" />
