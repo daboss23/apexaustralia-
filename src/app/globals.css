@@ -325,48 +325,66 @@ html[data-cinema='pinned'] .pin-spacer {
       0 1px 0 rgba(0, 24, 38, 0.6),
       0 2px 4px rgba(0, 14, 24, 0.4);
   }
-  /* Scroll-cinema sprint headline ("WHEN PERFORMANCE / MEETS INTELLIGENCE").
-     It lands over the brightest, busiest frame of the film, so the standard
-     silver/blue reads dull against it. Brighten THIS headline only (scoped to
-     .beat-sprint): the gradient stops are lifted a notch — brighter overall but
-     still saturated, no near-white wash — and a soft cool glow lifts the glyphs
-     off the fiery footage. The site-wide finishes are untouched. */
+  /* ── The scroll-cinema promise beat ("WHEN PERFORMANCE / MEETS INTELLIGENCE"),
+        scoped to .beat-sprint. The site-wide .t-silver/.t-blue are untouched.
+
+        Measured, not guessed: the beat runs from progress 0.853 to 0.955, which
+        is frames 304–341 — the charge. Sampled over the centre band those
+        frames average Y 38–55 with highlights to ~180, so there IS contrast
+        available. The headline was reading dull for a different reason.
+
+        The cause is `text-shadow`, not the gradient. These spans paint their
+        colour as a gradient clipped to the glyph
+        (background-clip: text + transparent fill), so every shadow behind them
+        shows THROUGH the antialiased edge pixels. Marcellus is a high-contrast
+        Roman serif: at this size its hairlines are almost entirely edge pixels,
+        so a dark shadow — even a 1px one — tints the whole stroke and the word
+        reads grey however bright the stops are. Proof: pushing the stops to a
+        near-solid white changed almost nothing until the shadows came off.
+
+        So brightness here is bought two ways, and neither is the gradient:
+
+        1. No text-shadow at all. Nothing dark sits behind the glyphs.
+        2. A hair of `-webkit-text-stroke` to put weight back into the
+           hairlines, so each letter gathers more light. Sized in `em`
+           (~0.0115em ≈ 0.75px at the 66px desktop cap) so it tracks the
+           clamped font-size instead of bolding the phone rendering, where the
+           type falls to 24px.
+
+        What NOT to add back, both tried and both worse:
+        - An outer glow (`0 0 20px`). It lifts the background around the glyph,
+          not the glyph, so local contrast drops and the line reads hazy.
+        - The .t-silver speckle. It is a mid-grey noise layer in `soft-light`,
+          which can only subtract luminance.
+
+        Separation over the fire comes from the frame itself and the `.cine-dim`
+        scrim already scheduled under this beat — not from darkening the type. ─ */
   .beat-sprint .t-silver {
     background-image:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.4' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.4' intercept='0.3'/%3E%3CfeFuncG type='linear' slope='0.4' intercept='0.3'/%3E%3CfeFuncB type='linear' slope='0.4' intercept='0.3'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E"),
       linear-gradient(180deg,
         #FFFFFF 0%,
-        #F5F8FA 15%,
-        #E3E8ED 34%,
-        #CBD1D8 47%,
-        #BFC6CE 49.6%,
-        #F1F4F7 55%,
-        #D8DEE4 72%,
-        #BFC6CE 88%,
-        #ABB2BA 100%);
-    background-size: 160px 160px, 100% 100%;
-    background-repeat: repeat, no-repeat;
-    background-blend-mode: soft-light, normal;
-    text-shadow:
-      0 -1px 0 rgba(255, 255, 255, 0.7),
-      0 1px 0 rgba(0, 0, 0, 0.55),
-      0 2px 5px rgba(0, 0, 0, 0.4),
-      0 0 20px rgba(214, 224, 234, 0.42);
+        #FFFFFF 46%,
+        #F2F7FB 52%,
+        #FFFFFF 62%,
+        #F7FAFD 100%);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-blend-mode: normal;
+    text-shadow: none;
+    -webkit-text-stroke: 0.0115em #FFFFFF;
   }
   .beat-sprint .t-blue {
     background-image:
       linear-gradient(180deg,
-        #BFF0FF 0%,
-        #82DEFD 20%,
-        #4FCEFA 46%,
-        #2FC3F8 64%,
-        #1AB6F2 86%,
-        #10ACEA 100%);
-    text-shadow:
-      0 -1px 0 rgba(180, 236, 255, 0.6),
-      0 1px 0 rgba(0, 24, 38, 0.55),
-      0 2px 5px rgba(0, 14, 24, 0.38),
-      0 0 24px rgba(0, 190, 255, 0.5);
+        #EAFDFF 0%,
+        #A8F0FF 26%,
+        #7FE9FF 48%,
+        #5FE0FF 56%,
+        #9DEEFF 64%,
+        #63DEFF 86%,
+        #3FD2FF 100%);
+    text-shadow: none;
+    -webkit-text-stroke: 0.0115em #7FE9FF;
   }
   /* Performance red — keyed to the logo.
      The mark's own red, sampled off public/apexaustralialogo.webp, is #FC0202:
