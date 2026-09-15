@@ -14,6 +14,7 @@ import DeviceStructureSection from '@/components/DeviceStructureSection'
 import DashboardSection from '@/components/DashboardSection'
 import DataInsightsSection from '@/components/DataInsightsSection'
 import SportsSection from '@/components/SportsSection'
+import TrainingModesSection from '@/components/TrainingModesSection'
 import TApexVs1080Section from '@/components/TApexVs1080Section'
 import ResultsSection from '@/components/ResultsSection'
 import LocalTrustSection from '@/components/LocalTrustSection'
@@ -72,6 +73,10 @@ export default function Home() {
 
       {/* 09 — BUILT FOR EVERY CODE (multi-sport transition) */}
       <SportsSection />
+
+      {/* 09b — ONE SYSTEM, MULTIPLE WAYS TO TRAIN (the three training modes —
+            establishes the range before the comparison argues the category) */}
+      <TrainingModesSection />
 
       {/* 10 — THE COMPARISON
             a) Intelligence (blue) section = strategic framing (category, philosophy, ARI)
