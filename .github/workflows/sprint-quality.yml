@@ -1,0 +1,31 @@
+name: Generate 8K sprint assets
+on:
+  push:
+    branches: [codex/8k-sprint-clarity]
+    paths:
+      - scripts/build-sprint-quality.mjs
+      - .github/workflows/sprint-quality.yml
+permissions:
+  contents: write
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Extract 4K detail from the private 8K master
+        run: node scripts/build-sprint-quality.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Commit generated display assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/hero-frames-hq
+          if ! git diff --cached --quiet; then
+            git commit -m "Add 4K sprint frames generated from the original 8K master"
+            git push origin HEAD:codex/8k-sprint-clarity
+          fi

@@ -17,8 +17,8 @@ const binary = path.join(cache, 'ffmpeg')
 const frames = path.join(cache, 'frames')
 await mkdir(frames, { recursive: true })
 
-async function download(url, destination, gzip = false) {
-  const response = await fetch(url, { signal: AbortSignal.timeout(180000) })
+async function download(url, destination, gzip = false, headers = {}) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(180000), headers })
   if (!response.ok || !response.body) throw new Error(`Download failed: ${response.status} ${url}`)
   const stream = Readable.fromWeb(response.body)
   if (gzip) await pipeline(stream, createGunzip(), createWriteStream(destination))
@@ -27,7 +27,11 @@ async function download(url, destination, gzip = false) {
 const size = async (p) => (await stat(p).catch(() => ({ size: 0 }))).size
 if ((await size(source)) !== 232026345) {
   console.log('Downloading the original 7680×4320 sprint master')
-  await download('https://github.com/daboss23/apexaustralia-/releases/download/untagged-b4ece9c6ca8656444408/Upscaled.Boss.Motion.scroll.vid.mp4', source)
+  if (!process.env.GITHUB_TOKEN) throw new Error('Generate assets in the authenticated GitHub workflow')
+  await download('https://api.github.com/repos/daboss23/apexaustralia-/releases/assets/563014482', source, false, {
+    Accept: 'application/octet-stream',
+    Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+  })
   if ((await size(source)) !== 232026345) throw new Error('Unexpected 8K master size')
 }
 if (!(await size(binary))) {
