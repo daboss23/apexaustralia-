@@ -48,6 +48,7 @@ src/
 public/             # static assets (hero-video.mp4, logos, images)
   hero-frames/        # desktop scroll-cinema sequence (318 @ 1600x900)
   hero-frames-mobile/ # phone sequence (159 @ 960x540)
+  training-modes/     # 3 photos for the "One System" section (drop-in, see its README)
 tailwind.config.ts  # design tokens (apex.* colors), font families, keyframes
 ```
 
@@ -55,6 +56,13 @@ The site is assembled in `src/app/page.tsx`. Section order (with the conversion
 flow) lives there as comments. Note: `TechnologySection.tsx` is imported as
 `HowItWorksSection`. A couple of component files (`WhoItsForSection`,
 `SportTransitionStage`) are not wired into `page.tsx` directly.
+
+`TrainingModesSection.tsx` ("ONE SYSTEM, MULTIPLE WAYS TO TRAIN", section 09b —
+between `SportsSection` and `TApexVs1080Section`) uses the same drop-in media
+convention as `public/sports/`: each of its three cards loads
+`public/training-modes/<id>.webp` and falls back to an engineered HUD plate if
+the file is absent, so photos can be added with no code change. See
+`public/training-modes/README.md`.
 
 Most section components are client components (`'use client'`) using Framer
 Motion `useInView` / scroll transforms for reveal animations.
@@ -105,6 +113,9 @@ classes over per-component overrides.
   - `.t-red` — bright saturated scarlet (performance red).
   - `.t-blue` — vivid electric blue, tuned to the brand `#00AEEF`.
   - `.t-feature` — lighter silver for smaller card / feature titles.
+  - `.t-white` — clean white. The one finish with no hard dark bevel edge:
+    Marcellus's serifs are hairlines, and a crisp 1px black shadow eats enough
+    of the stroke that the word averages out to grey. Soft ambient drop only.
 
 Headlines are typically `<h2 class="h-luxia ..."><span class="t-silver">…</span>
 <span class="t-red">…</span></h2>` with the words in UPPERCASE.
