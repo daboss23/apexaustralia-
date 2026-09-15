@@ -3,6 +3,14 @@
 import { useRef, useState } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion, type MotionValue } from 'framer-motion'
 import { useIsMobile } from './useIsMobile'
+import { TypewriterHeadline, type HeadlineSegment } from './TypewriterHeadline'
+
+/* The quote, as ordered colour segments so each character keeps its metallic
+   finish while the typewriter reveals it: silver clause, red payoff. */
+const FILM_QUOTE: HeadlineSegment[] = [
+  { text: '“PERFORMANCE BECOMES ', className: 't-silver' },
+  { text: 'INEVITABLE.”', className: 't-red' },
+]
 
 /* ────────────────────────────────────────────────────────────────────────────
    SCROLL-EXPAND VIDEO — the film opens out of the hero.
@@ -50,7 +58,6 @@ const POSTER = '/checkout/tapex-features-poster.jpg'
    The overlaps are intentional: the plate starts rising while the quote is
    still fading, so the two movements hand over instead of queueing. */
 const HOLD_END = 0.3 // quote alone, centred, nothing moving
-const LIFT_END = 0.55 // quote has travelled up and gone
 const RISE_START = 0.36 // plate enters from below the fold
 const RISE_END = 0.66 // plate settled, centred, small
 const EXPAND_END = 0.94 // plate near-full-bleed
@@ -69,20 +76,12 @@ export default function ScrollExpandVideo() {
     offset: ['start start', 'end end'],
   })
 
-  // The section's *approach* — 0 when it is still a viewport below, 1 when the
-  // stage locks. The quote keys its fade-in to this, so it is already fully lit
-  // and centred by the time the hold begins.
-  const { scrollYProgress: approach } = useScroll({
-    target: sectionRef,
-    offset: ['start end', 'start start'],
-  })
-
-  // ── Beat 1–2 · the quote: holds dead-centre, then lifts and fades ─────────
-  const titleIn = useTransform(approach, [0.35, 0.85], [0, 1])
-  const titleOut = useTransform(scrollYProgress, [HOLD_END, LIFT_END], [1, 0])
-  const titleOpacity = useTransform([titleIn, titleOut], (v: number[]) => v[0] * v[1])
-  const titleYn = useTransform(scrollYProgress, [HOLD_END, LIFT_END], [0, isMobile ? -20 : -26])
-  const titleY = useTransform(titleYn, (v) => `${v}svh`)
+  // ── Beat 1–2 · the quote ──────────────────────────────────────────────────
+  // A TypewriterHeadline: it types itself out when it scrolls into view, holds,
+  // then rises and fades up the page on its own timer — so the reveal is
+  // time-based, not scroll-linked, and the component owns its opacity/transform.
+  // The plate below still rides the scroll, taking over the stage once the quote
+  // has lifted away.
 
   // ── Beat 3 · the plate rises from the bottom edge and settles centred ─────
   const riseYn = useTransform(scrollYProgress, [RISE_START, RISE_END], [62, 0])
@@ -135,15 +134,13 @@ export default function ScrollExpandVideo() {
         <div className="sticky top-0 w-full h-[100svh] overflow-hidden">
           {/* Beat 1–2 — the quote. Dead-centre of an empty screen, alone, then
               up and out. ONE line, same max size as the scroll-cinema titles. */}
-          <motion.div
-            className="absolute inset-0 z-20 px-4 flex items-center justify-center pointer-events-none"
-            style={{ opacity: titleOpacity, y: titleY }}
-          >
-            <h2 className="h-luxia leading-none text-center whitespace-nowrap" style={{ fontSize: 'clamp(15px, 4.8vw, 66px)', letterSpacing: '0.04em' }}>
-              <span className="t-silver">&ldquo;PERFORMANCE BECOMES </span>
-              <span className="t-red">INEVITABLE.&rdquo;</span>
-            </h2>
-          </motion.div>
+          <div className="absolute inset-0 z-20 px-4 flex items-center justify-center pointer-events-none">
+            <TypewriterHeadline
+              segments={FILM_QUOTE}
+              className="h-luxia leading-none whitespace-nowrap"
+              style={{ fontSize: 'clamp(15px, 4.8vw, 66px)', letterSpacing: '0.04em' }}
+            />
+          </div>
 
           {/* Beat 3–4 — the plate. The wrapper carries the rise (so the plate
               climbs in from below the stage's clipped bottom edge and lands
