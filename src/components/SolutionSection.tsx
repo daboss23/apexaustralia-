@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import ElectricAura from './ElectricAura'
 import { useIsMobile } from './useIsMobile'
 import LazyVideo from './LazyVideo'
@@ -53,10 +53,13 @@ function FloatingUnit({ active }: { active: boolean }) {
   const [risers, setRisers] = useState<Riser[]>([])
   // Phones: hold the unit still (the slow float loop is perpetual = battery).
   const isMobile = useIsMobile()
-  // The product film — a slow turntable of the unit with its background removed
-  // and composited onto pure black, so `mix-blend-mode: screen` drops the black
-  // and leaves the unit floating in the section's energy field (the same
-  // treatment the static art used). Held on its first frame under reduced motion.
+  // The product film — a slow turntable of the unit on a true-black plate, so
+  // the blend below drops the black and leaves the unit floating in the
+  // section's energy field. Held on its first frame under reduced motion.
+  // v5 is re-timed from the 24fps delivery: its baked-in duplicate frames
+  // (a hitch every ~5th frame) were dropped and the 147 real frames play at
+  // 16fps — ~1.3× slower with no invented frames — and the loop hard-cuts at
+  // the tail frame closest to frame 0 (smaller than one normal frame step).
   // (The reduced-motion hold and the load-when-near-viewport behaviour both live
   // in <LazyVideo/> now.)
 
@@ -116,20 +119,30 @@ function FloatingUnit({ active }: { active: boolean }) {
       />
 
       {/* The unit — floating, slowly turning in space */}
-      <div className="absolute inset-x-0 top-[2%] bottom-[12%] flex items-center justify-center" style={{ perspective: 1200 }}>
+      {/* Every wrapper between the film and the page is a stacking context
+          (perspective, 3D transform, the stage's scroll offset), and a blend
+          mode only reaches its own group's backdrop. So 'lighten' is chained
+          up each one — otherwise the plate composites against transparency
+          and shows as a black square. */}
+      <div
+        className="absolute inset-x-0 top-[2%] bottom-[12%] flex items-center justify-center"
+        style={{ perspective: 1200, mixBlendMode: 'lighten' }}
+      >
         <motion.div
           className="relative h-[92%] max-w-full"
-          style={{ transformStyle: 'preserve-3d', aspectRatio: '1 / 1' }}
+          style={{ transformStyle: 'preserve-3d', aspectRatio: '1 / 1', mixBlendMode: 'lighten' }}
+          // No rotateX: the camera stays level with the unit (eye level), so the
+          // sway is a slow yaw + bob only.
           animate={
             active && !isMobile
-              ? { y: [-10, 10], rotateY: [-9, 9], rotateX: [1.5, -1.5] }
+              ? { y: [-8, 8], rotateY: [-7, 7] }
               : {}
           }
-          transition={{ duration: 9, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
+          transition={{ duration: 12, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
         >
           <LazyVideo
-            src="/product-rotation-v4.mp4"
-            poster="/product-rotation-v4-poster.jpg"
+            src="/product-rotation-v5.mp4"
+            poster="/product-rotation-v5-poster.jpg"
             aria-label="T-Apex adaptive resistance unit turning in space"
             className="absolute inset-0 w-full h-full object-contain"
             // 'lighten' (max per channel), NOT 'screen', is what makes the unit
@@ -143,18 +156,6 @@ function FloatingUnit({ active }: { active: boolean }) {
             // See docs/motion-scroll-brief.md.
             style={{ mixBlendMode: 'lighten' }}
           />
-
-          {/* Rotation-light sheen travelling across the metalwork */}
-          <div className="absolute inset-[12%] overflow-hidden" aria-hidden="true">
-            <div
-              className="absolute inset-y-0 w-[26%]"
-              style={{
-                background: 'linear-gradient(90deg, transparent, rgba(180,225,255,0.5), transparent)',
-                mixBlendMode: 'overlay',
-                animation: 'sheen-sweep 9s ease-in-out infinite',
-              }}
-            />
-          </div>
 
           {/* Electricity living around the unit */}
           <div className="absolute inset-[8%]">
@@ -263,6 +264,13 @@ export default function SolutionSection() {
   // Stage trigger — the floating unit + emerging cards replay on every pass
   const stageRef = useRef<HTMLDivElement>(null)
   const stageActive = useInView(stageRef, { amount: 0.35 })
+  // Eye-level hold — the stage scrolls a touch slower than the page, so the
+  // unit drifts toward the middle of the viewport and lingers there instead of
+  // sliding straight past. Unit, hairlines, reticles and callouts move as one,
+  // so the lock-ons stay on the machine.
+  const reduceMotion = useReducedMotion()
+  const { scrollYProgress: stageProgress } = useScroll({ target: stageRef, offset: ['start end', 'end start'] })
+  const stageY = useTransform(stageProgress, [0, 0.5, 1], reduceMotion ? [0, 0, 0] : [-56, 0, 56])
 
   return (
     <section ref={sectionRef} id="solution" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
@@ -421,60 +429,63 @@ export default function SolutionSection() {
 
         {/* ── The unit, floating in space — pillars materialize as it turns ── */}
         <div ref={stageRef} className="relative mt-16 lg:mt-24 h-[400px] sm:h-[480px] lg:h-[640px]">
-          <FloatingUnit active={stageActive} />
+          {/* 'lighten' here is the last link of the chain in FloatingUnit. */}
+          <motion.div className="absolute inset-0" style={{ y: stageY, mixBlendMode: 'lighten' }}>
+            <FloatingUnit active={stageActive} />
 
-          {/* Connector hairlines (lg+) — same structure as the "Engineered like
-              nothing else" callouts: dot → hairline (with an elbow) → reticle. */}
-          <svg
-            className="absolute inset-0 w-full h-full hidden xl:block pointer-events-none z-10"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            {STAGE_CARDS.map(c => {
-              const elbowX = c.target.x + (c.side === 'left' ? -6 : 6)
-              const d = `M ${c.anchor.x} ${c.anchor.y} L ${elbowX} ${c.anchor.y} L ${c.target.x} ${c.target.y}`
-              return (
-                <motion.path
-                  key={c.seq}
-                  d={d}
-                  fill="none"
-                  stroke="rgba(0,174,239,0.55)"
-                  strokeWidth="0.18"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={stageActive ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
-                  transition={
-                    stageActive
-                      ? { pathLength: { duration: 0.45, delay: CARD_LINE_AT(c.seq), ease: 'linear' }, opacity: { duration: 0.01, delay: CARD_LINE_AT(c.seq) } }
-                      : { duration: 0 }
-                  }
-                />
-              )
-            })}
-          </svg>
-
-          {/* Lock-on reticles on the unit */}
-          {STAGE_CARDS.map(c => (
-            <LockReticle key={c.seq} target={c.target} active={stageActive} delay={CARD_RETICLE_AT(c.seq)} />
-          ))}
-
-          {/* Pillars around the unit (lg+) */}
-          {STAGE_CARDS.map(({ seq, side, pos }) => (
-            <motion.div
-              key={seq}
-              className="absolute hidden xl:block w-[210px] z-10"
-              style={pos}
-              initial={{ opacity: 0, x: side === 'left' ? -8 : 8 }}
-              animate={stageActive ? { opacity: 1, x: 0 } : { opacity: 0, x: side === 'left' ? -8 : 8 }}
-              transition={
-                stageActive
-                  ? { duration: 0.4, delay: CARD_LABEL_AT(seq), ease: [0.16, 1, 0.3, 1] }
-                  : { duration: 0 }
-              }
+            {/* Connector hairlines (lg+) — same structure as the "Engineered like
+                nothing else" callouts: dot → hairline (with an elbow) → reticle. */}
+            <svg
+              className="absolute inset-0 w-full h-full hidden xl:block pointer-events-none z-10"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+              aria-hidden="true"
             >
-              <PillarCard pillar={SOLUTION_PILLARS[seq]} side={side} />
-            </motion.div>
-          ))}
+              {STAGE_CARDS.map(c => {
+                const elbowX = c.target.x + (c.side === 'left' ? -6 : 6)
+                const d = `M ${c.anchor.x} ${c.anchor.y} L ${elbowX} ${c.anchor.y} L ${c.target.x} ${c.target.y}`
+                return (
+                  <motion.path
+                    key={c.seq}
+                    d={d}
+                    fill="none"
+                    stroke="rgba(0,174,239,0.55)"
+                    strokeWidth="0.18"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={stageActive ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+                    transition={
+                      stageActive
+                        ? { pathLength: { duration: 0.45, delay: CARD_LINE_AT(c.seq), ease: 'linear' }, opacity: { duration: 0.01, delay: CARD_LINE_AT(c.seq) } }
+                        : { duration: 0 }
+                    }
+                  />
+                )
+              })}
+            </svg>
+
+            {/* Lock-on reticles on the unit */}
+            {STAGE_CARDS.map(c => (
+              <LockReticle key={c.seq} target={c.target} active={stageActive} delay={CARD_RETICLE_AT(c.seq)} />
+            ))}
+
+            {/* Pillars around the unit (lg+) */}
+            {STAGE_CARDS.map(({ seq, side, pos }) => (
+              <motion.div
+                key={seq}
+                className="absolute hidden xl:block w-[210px] z-10"
+                style={pos}
+                initial={{ opacity: 0, x: side === 'left' ? -8 : 8 }}
+                animate={stageActive ? { opacity: 1, x: 0 } : { opacity: 0, x: side === 'left' ? -8 : 8 }}
+                transition={
+                  stageActive
+                    ? { duration: 0.4, delay: CARD_LABEL_AT(seq), ease: [0.16, 1, 0.3, 1] }
+                    : { duration: 0 }
+                }
+              >
+                <PillarCard pillar={SOLUTION_PILLARS[seq]} side={side} />
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
 
         {/* Pillars stacked below the unit (mobile / tablet / lg) */}
