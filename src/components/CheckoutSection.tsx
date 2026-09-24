@@ -4,7 +4,9 @@ import { useRef, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { lockScroll, unlockScroll } from '@/lib/scroll'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import CheckoutFlow, { HighlightBullets, type Stage } from './CheckoutFlow'
+import CheckoutFlow, { HighlightBullets, type CheckoutResume, type Stage } from './CheckoutFlow'
+import { PRODUCTS, type ProductId } from '@/lib/catalogue'
+import { clearOrder, fetchSummary, loadOrder, orderFromSummary } from '@/lib/checkout-client'
 import MovingTestimonials from './MovingTestimonials'
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -20,7 +22,7 @@ type Slide =
      there on load and again on every loop. */
   | { type: 'video'; src: string; alt: string; startAt?: number }
 
-type VariantId = 'core' | 'overspeed'
+type VariantId = ProductId
 
 type Variant = {
   id: VariantId
@@ -41,10 +43,10 @@ const VARIANTS: Record<VariantId, Variant> = {
   core: {
     id: 'core',
     chip: 'Core System',
-    name: 'T-APEX Machine',
+    name: PRODUCTS.core.name,
     tagline: 'Portable Adaptive Resistance Intelligence',
     priceLabel: 'From',
-    price: 9450,
+    price: PRODUCTS.core.price, // what Stripe charges — src/lib/catalogue.ts
     priceClass: 't-silver',
     blurb:
       'The complete intelligent resistance training system — a portable motorised device paired with a preloaded tablet that measures speed, force and control on every single rep.',
@@ -68,10 +70,10 @@ const VARIANTS: Record<VariantId, Variant> = {
   overspeed: {
     id: 'overspeed',
     chip: 'Full System · Best Value',
-    name: 'T-APEX + Overspeed',
+    name: PRODUCTS.overspeed.name,
     tagline: 'Everything in Core — plus the complete Overspeed Module',
     priceLabel: 'Full system',
-    price: 9990,
+    price: PRODUCTS.overspeed.price,
     priceClass: 't-gold',
     blurb:
       'The complete T-APEX system with the full five-piece Overspeed Module added — unlocking the assisted overspeed training mode and its dedicated accessories, alongside every resisted mode.',
@@ -446,6 +448,7 @@ export default function CheckoutSection() {
   const [variantId, setVariantId] = useState<VariantId>('core')
   const [cartOpen, setCartOpen] = useState(false)
   const [checkoutStage, setCheckoutStage] = useState<Stage>('shipping')
+  const [resume, setResume] = useState<CheckoutResume | null>(null)
   const [mounted, setMounted] = useState(false)
   const variant = VARIANTS[variantId]
   const isOver = variantId === 'overspeed'
@@ -455,6 +458,55 @@ export default function CheckoutSection() {
   // The popup is portalled to <body>, so guard the portal until we're mounted
   // on the client (static export prerenders this component).
   useEffect(() => setMounted(true), [])
+
+  // Back from Stripe (?checkout=success|cancelled): reopen the checkout where
+  // the buyer left it — on the receipt once Stripe confirms the payment, or on
+  // step 2 with the order intact. The query is dropped straight away so a
+  // reload or a shared link can't replay it.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const outcome = params.get('checkout')
+    if (!outcome) return
+    const sessionId = params.get('session_id') ?? ''
+    window.history.replaceState(null, '', `${window.location.pathname}#order`)
+
+    const saved = loadOrder()
+    const open = (r: CheckoutResume) => {
+      setVariantId(r.order.product)
+      setResume(r)
+      setCartOpen(true)
+    }
+    const retry = (notice: string) => saved && open({ kind: 'retry', order: saved, notice })
+
+    if (outcome !== 'success' || !sessionId) {
+      retry('Payment cancelled — nothing was charged. Your order is saved below whenever you’re ready.')
+      return
+    }
+    fetchSummary(sessionId).then((r) => {
+      if ('summary' in r && !r.summary.paid) {
+        retry('That payment didn’t go through — nothing was charged. You can try again below.')
+      } else if ('missing' in r) {
+        retry('We couldn’t find that payment — nothing was charged. You can try again below.')
+      } else {
+        // Paid — or Stripe unreachable this second, which still means paid:
+        // Stripe only sends buyers to this URL after taking the payment.
+        const summary = 'summary' in r ? r.summary : null
+        const order = saved ?? (summary ? orderFromSummary(summary) : null)
+        if (!order) return
+        clearOrder()
+        open({ kind: 'paid', order, summary })
+      }
+    })
+  }, [])
+
+  // A finished (or abandoned) return trip is one-shot: closing the popup
+  // means the next ADD TO CART starts a fresh order. Only on a real
+  // open → closed transition — on first render this would race the reopen above.
+  const wasOpen = useRef(false)
+  useEffect(() => {
+    if (wasOpen.current && !cartOpen) setResume(null)
+    wasOpen.current = cartOpen
+  }, [cartOpen])
 
   // The checkout popup is its own entity: while it is open the page beneath is
   // frozen so only the popup scrolls, Esc closes it, and the exact scroll
@@ -819,6 +871,7 @@ export default function CheckoutSection() {
                 <div className="p-5 sm:p-8 md:p-10">
                   <CheckoutFlow
                     key={variant.id}
+                    resume={resume}
                     onStageChange={setCheckoutStage}
                     gallery={<Gallery variant={variant} />}
                     upsell={

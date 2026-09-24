@@ -18,7 +18,8 @@ motorsport / Formula-1 / aerospace: dark, engineered, with telemetry-HUD detail.
 - **Next.js 14** (App Router) + **React 18** + **TypeScript**
 - **Tailwind CSS 3** for styling, **Framer Motion 11** for animation
 - **Static export** (`next.config.mjs` → `output: 'export'`, images unoptimized)
-- Deployed on **Vercel** (`vercel.json`; build → `out/`)
+- Deployed on **Vercel** (`vercel.json`; build → `out/`), plus one serverless
+  function, `api/checkout.ts` (Stripe — see Checkout below)
 - Fonts via `next/font/google` (configured in `src/app/layout.tsx`)
 
 ## Commands
@@ -82,20 +83,30 @@ Motion `useInView` / scroll transforms for reveal animations.
 
 `CheckoutSection.tsx` is the storefront (gallery, variants, price). Its ADD TO
 CART button opens `CheckoutFlow.tsx` — a two-step popup (shipping → details)
-portalled to `<body>`. **No payment is processed**: the submit handler simulates
-the authorisation so the flow can be demoed end to end.
+portalled to `<body>`.
 
-After payment the flow goes **straight to the branded receipt** (the "thank
-you" page). The post-purchase one-time offer (OTO) is hidden, not deleted:
-`SHOW_OTO` at the top of `CheckoutFlow.tsx` switches it back on.
+**Payment is Stripe Checkout** (hosted page — card details never touch this
+site; never add card fields back to the form):
 
-A working **Stripe Checkout** integration — serverless function, Price ID env
-vars, `/success/` page — exists on the branch
-`claude/t-apex-sales-page-polish-vrk7h8`. It was written against the older
-single-button checkout that this two-step flow replaced, so it needs
-re-pointing at `CheckoutFlow`'s final step before it can ship, and
-`STRIPE_SECRET_KEY` set in Vercel. Until then the site takes no money and needs
-no keys.
+- Step 2's button POSTs the order to **`api/checkout.ts`**, a Vercel
+  serverless function beside the static export, which creates a Checkout
+  Session and returns Stripe's URL. The step-1 address rides on the payment.
+- Stripe returns the buyer to `/?checkout=success&session_id=…#order`;
+  `CheckoutSection` verifies the session (`GET /api/checkout`) and reopens the
+  popup **straight on the branded receipt**. `?checkout=cancelled` reopens
+  step 2 with the order intact. The order crosses the redirect in
+  `sessionStorage` (`src/lib/checkout-client.ts`).
+- **Prices live in `src/lib/catalogue.ts` and nowhere else** — the storefront
+  displays them and the function charges them; the browser only sends which
+  system and whether onboarding was ticked. Validation is shared
+  (`src/lib/order.ts`).
+- Without `STRIPE_SECRET_KEY` the final button offers "email my order" (the
+  whole order pre-written) — it never fakes a confirmation.
+- Env vars: `.env.example`. Go-live checklist: `docs/stripe-go-live.md`.
+
+The post-purchase one-time offer (OTO) is unreachable: payment goes straight
+from Stripe to the receipt. Its offers and stage are kept, but bringing it
+back needs a second payment, since the session is already paid by then.
 
 ## CTA destinations
 

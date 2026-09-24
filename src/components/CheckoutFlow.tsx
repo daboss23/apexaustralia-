@@ -4,6 +4,9 @@ import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from '
 import { motion, AnimatePresence } from 'framer-motion'
 import { POLICIES } from '@/components/policies/PolicyPage'
 import { ENQUIRY_HREF } from '@/lib/site'
+import { ONBOARDING, type ProductId } from '@/lib/catalogue'
+import { AU_STATES, newOrderRef, validEmail, type OrderRequest, type PaidSummary } from '@/lib/order'
+import { orderEmailHref, saveOrder, startCheckout } from '@/lib/checkout-client'
 
 /* ────────────────────────────────────────────────────────────────────────────
    TWO-STEP CHECKOUT FLOW — direct-response ("ClickFunnels") order form, built
@@ -23,14 +26,17 @@ import { ENQUIRY_HREF } from '@/lib/site'
      4  RECEIPT    — the "offer wall": confirmation, itemised receipt, what
                      happens next, and the follow-on offers.
 
-   No payment is actually processed — the submit handler simulates the
-   authorisation so the whole flow can be demoed end-to-end.
+   Payment is Stripe Checkout: step 2's button asks api/checkout.ts for a
+   Stripe-hosted payment page for exactly this order and sends the buyer
+   there. Stripe returns them to /?checkout=success, CheckoutSection verifies
+   the session and reopens this flow on the receipt (`resume`). Card details
+   are only ever typed on Stripe's page.
    ──────────────────────────────────────────────────────────────────────────── */
 
 const GOLD = 'rgba(180,140,60,1)'
 
 export type CheckoutProduct = {
-  id: string
+  id: ProductId
   name: string
   chip: string
   tagline: string
@@ -42,23 +48,29 @@ export type CheckoutProduct = {
 }
 
 export type Stage = 'shipping' | 'payment' | 'processing' | 'oto' | 'receipt'
-type PayMethod = 'card' | 'invoice'
+
+/* Coming back from Stripe: straight to the receipt (paid), or back to step 2
+   with the order intact (cancelled / not completed). Set by CheckoutSection. */
+export type CheckoutResume =
+  | { kind: 'paid'; order: OrderRequest; summary: PaidSummary | null }
+  | { kind: 'retry'; order: OrderRequest; notice: string }
 
 const fmt = (n: number) => `A$${n.toLocaleString('en-AU')}`
 
-/* The order bump — offered inline on step 2, never pre-checked. */
+/* The order bump — offered inline on step 2, never pre-checked. Price from
+   the shared catalogue, which is also what Stripe charges. */
 const BUMP = {
-  title: 'Add Elite Onboarding & Calibration',
-  price: 390,
-  was: 750,
+  title: `Add ${ONBOARDING.name}`,
+  price: ONBOARDING.price,
+  was: ONBOARDING.was,
   desc:
     'A 90-minute session with an Australian T-APEX performance specialist: unit calibration, athlete profiles built, and your first four sessions programmed with your staff.',
 }
 
-/* Stage 3 is switched off: a paid order goes straight to the branded receipt.
-   Everything below it is kept intact (the offers, the stage, and the section's
-   red "do not close" header), so setting this to true brings the OTO back. */
-const SHOW_OTO = false
+/* Stage 3 is switched off: a paid order goes straight from Stripe to the
+   branded receipt, so nothing routes to 'oto' any more. The offers and the
+   stage are kept for reference, but bringing the OTO back needs a second
+   payment — by stage 3 the Stripe session has already been paid. */
 
 /* The post-purchase one-time offer. Core buyers get the module they skipped; */
 /* Overspeed buyers get the multi-athlete expansion.                          */
@@ -92,18 +104,18 @@ const OTO_OVER = {
   image: '/accessories/shoulder-harness.png',
 }
 
-const AU_STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT']
-
 /* Payment marks. Real brand card badges served from public/checkout/badges —
-   Visa, Mastercard, Amex and PayPal are the official artwork (payment-icons,
-   MPL-2.0, licence kept alongside them); Apple Pay and Afterpay are drawn to
-   match the same 750×471 card format so the row stays even. */
+   Visa, Mastercard and Amex are the official artwork (payment-icons, MPL-2.0,
+   licence kept alongside them); Apple Pay is drawn to match the same 750×471
+   card format so the row stays even.
+   Only what Stripe Checkout will actually offer on these orders. PayPal and
+   Afterpay badges (still in that folder) are off: Afterpay caps orders far
+   below this price, and Stripe's PayPal isn't available to Australian
+   businesses. Re-add one only once it appears on the Stripe payment page. */
 const PAY_MARKS = [
   { id: 'visa', label: 'Visa' },
   { id: 'mastercard', label: 'Mastercard' },
   { id: 'amex', label: 'American Express' },
-  { id: 'paypal', label: 'PayPal' },
-  { id: 'afterpay', label: 'Afterpay' },
   { id: 'applepay', label: 'Apple Pay' },
 ]
 
@@ -408,6 +420,7 @@ export default function CheckoutFlow({
   gallery,
   upsell,
   onStageChange,
+  resume,
 }: {
   product: CheckoutProduct
   /** Left-hand column while the order form is open (the product gallery). */
@@ -415,35 +428,39 @@ export default function CheckoutFlow({
   /** Optional variant-upgrade nudge rendered above the form on step 1. */
   upsell?: ReactNode
   onStageChange?: (stage: Stage) => void
+  /** Set when the buyer is coming back from Stripe's payment page. */
+  resume?: CheckoutResume | null
 }) {
-  const [stage, setStage] = useState<Stage>('shipping')
-  // Only card payment remains (the Invoice/EFT option was removed), so this is
-  // fixed to 'card'; the summary/branch logic below still reads it.
-  const [payMethod] = useState<PayMethod>('card')
-  const [bump, setBump] = useState(false)
+  const [stage, setStage] = useState<Stage>(
+    resume?.kind === 'paid' ? 'receipt' : resume?.kind === 'retry' ? 'payment' : 'shipping',
+  )
+  const [bump, setBump] = useState(resume?.order.onboarding ?? false)
   const [oto, setOto] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [secondsLeft, setSecondsLeft] = useState(15 * 60)
-  const [orderNo, setOrderNo] = useState('')
+  const [orderNo, setOrderNo] = useState(resume?.order.ref ?? '')
+  // Step 2 problems: a notice from a cancelled payment, or checkout unreachable
+  // (`fallback` then offers the whole order by email instead).
+  const [payNote, setPayNote] = useState<{ text: string; fallback: string | null } | null>(
+    resume?.kind === 'retry' ? { text: resume.notice, fallback: null } : null,
+  )
+  const summary = resume?.kind === 'paid' ? resume.summary : null
   const rootRef = useRef<HTMLDivElement>(null)
   const firstRender = useRef(true)
 
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    org: '',
-    address: '',
-    city: '',
-    state: '',
-    postcode: '',
-    country: 'Australia',
-    cardName: '',
-    cardNumber: '',
-    expiry: '',
-    cvc: '',
-    po: '',
-  })
+  const [form, setForm] = useState(
+    resume?.order.customer ?? {
+      name: '',
+      email: '',
+      phone: '',
+      org: '',
+      address: '',
+      city: '',
+      state: '',
+      postcode: '',
+      country: 'Australia',
+    },
+  )
 
   const set = (k: keyof typeof form) => (v: string) => {
     setForm((f) => ({ ...f, [k]: v }))
@@ -469,14 +486,23 @@ export default function CheckoutFlow({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage])
 
+  /* Browser Back from Stripe's page can restore this page from the
+     back/forward cache with state intact — i.e. frozen on "processing".
+     Drop back to step 2 so the buyer can carry on. */
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => {
+      if (e.persisted) setStage((s) => (s === 'processing' ? 'payment' : s))
+    }
+    window.addEventListener('pageshow', onShow)
+    return () => window.removeEventListener('pageshow', onShow)
+  }, [])
+
   /* Allocation-hold countdown. Stops once the order is placed. */
   useEffect(() => {
     if (stage === 'receipt' || stage === 'oto') return
     const t = window.setInterval(() => setSecondsLeft((s) => (s > 0 ? s - 1 : 0)), 1000)
     return () => window.clearInterval(t)
   }, [stage])
-
-  const validEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
 
   const submitShipping = (e: React.FormEvent) => {
     e.preventDefault()
@@ -488,41 +514,41 @@ export default function CheckoutFlow({
     if (!form.city.trim()) next.city = 'Enter the suburb or city'
     if (!form.state) next.state = 'Select a state'
     if (!/^\d{4}$/.test(form.postcode)) next.postcode = 'Enter a 4-digit postcode'
+    if (!/^\s*(australia|au)\s*$/i.test(form.country)) next.country = 'We ship within Australia — contact us for international orders'
     setErrors(next)
     if (Object.keys(next).length) return
     setStage('payment')
   }
 
-  const submitPayment = (e: React.FormEvent) => {
+  /* Hand the order to Stripe. The page stays on "processing" through the
+     redirect; any failure drops back to step 2 with the reason. */
+  const submitPayment = async (e: React.FormEvent) => {
     e.preventDefault()
-    const next: Record<string, string> = {}
-    if (payMethod === 'card') {
-      if (!form.cardName.trim()) next.cardName = 'Enter the name on the card'
-      if (form.cardNumber.replace(/\s/g, '').length < 15) next.cardNumber = 'Enter a valid card number'
-      if (!/^\d{2}\/\d{2}$/.test(form.expiry)) next.expiry = 'MM/YY'
-      if (form.cvc.length < 3) next.cvc = '3–4 digits'
-    }
-    setErrors(next)
-    if (Object.keys(next).length) return
-
+    if (stage === 'processing') return
+    const ref = orderNo || newOrderRef()
+    setOrderNo(ref)
+    const order: OrderRequest = { product: product.id, onboarding: bump, ref, customer: form }
+    saveOrder(order)
+    setPayNote(null)
     setStage('processing')
-    setOrderNo(`TA-AU-${Math.floor(100000 + Math.random() * 899999)}`)
-    window.setTimeout(() => setStage(SHOW_OTO ? 'oto' : 'receipt'), 2100)
+
+    const result = await startCheckout(order)
+    if ('url' in result) {
+      window.location.assign(result.url)
+      return
+    }
+    setPayNote({
+      text: result.unavailable
+        ? "Online payment isn't available right now — send us your order and we'll reply with a secure payment link."
+        : result.error,
+      fallback: orderEmailHref(order),
+    })
+    setStage('payment')
   }
 
   const takeOto = (accept: boolean) => {
     setOto(accept)
     setStage('receipt')
-  }
-
-  const onCardNumber = (v: string) => {
-    const digits = v.replace(/\D/g, '').slice(0, 16)
-    set('cardNumber')(digits.replace(/(.{4})/g, '$1 ').trim())
-  }
-
-  const onExpiry = (v: string) => {
-    const digits = v.replace(/\D/g, '').slice(0, 4)
-    set('expiry')(digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits)
   }
 
   const isOrder = stage === 'shipping' || stage === 'payment' || stage === 'processing'
@@ -631,7 +657,7 @@ export default function CheckoutFlow({
                           <Field label="Suburb / City" name="city" value={form.city} onChange={set('city')} error={errors.city} placeholder="Moore Park" autoComplete="address-level2" className="sm:col-span-6" />
                           <SelectField label="State" name="state" value={form.state} onChange={set('state')} error={errors.state} options={AU_STATES} className="sm:col-span-3" />
                           <Field label="Postcode" name="postcode" value={form.postcode} onChange={set('postcode')} error={errors.postcode} inputMode="numeric" maxLength={4} placeholder="2021" autoComplete="postal-code" className="sm:col-span-3" />
-                          <Field label="Country" name="country" value={form.country} onChange={set('country')} autoComplete="country-name" className="sm:col-span-12" />
+                          <Field label="Country" name="country" value={form.country} onChange={set('country')} error={errors.country} autoComplete="country-name" className="sm:col-span-12" />
                         </div>
 
                         <button
@@ -688,29 +714,22 @@ export default function CheckoutFlow({
                           <div className="text-apex-white font-body text-[14px]">{product.name}</div>
                         </div>
 
-                        {/* Billing section header (replaced the payment-method toggle) */}
+                        {/* Payment — taken on Stripe's page, never in this form */}
                         <div className="flex items-center gap-3 mb-4">
-                          <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-apex-blue">Billing Information</span>
+                          <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-apex-blue">Secure Payment</span>
                           <div className="flex-1 h-px bg-apex-line/60" />
                         </div>
 
-                        {payMethod === 'card' ? (
-                          <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
-                            <Field label="Name on card" name="cardName" value={form.cardName} onChange={set('cardName')} error={errors.cardName} placeholder="Alex Marsh" autoComplete="cc-name" className="sm:col-span-6" />
-                            <Field label="Card number" name="cardNumber" value={form.cardNumber} onChange={onCardNumber} error={errors.cardNumber} inputMode="numeric" placeholder="0000 0000 0000 0000" autoComplete="cc-number" className="sm:col-span-6" />
-                            <Field label="Expiry" name="expiry" value={form.expiry} onChange={onExpiry} error={errors.expiry} inputMode="numeric" maxLength={5} placeholder="MM/YY" autoComplete="cc-exp" className="sm:col-span-3" />
-                            <Field label="CVC" name="cvc" value={form.cvc} onChange={(v) => set('cvc')(v.replace(/\D/g, '').slice(0, 4))} error={errors.cvc} inputMode="numeric" maxLength={4} placeholder="123" autoComplete="cc-csc" className="sm:col-span-3" />
-                          </div>
-                        ) : (
-                          <div className="border border-apex-line/60 bg-apex-black/50 p-4">
-                            <p className="text-apex-grey font-body text-[13px] leading-relaxed mb-4">
-                              We will issue a tax invoice with EFT details to{' '}
-                              <span className="text-apex-white">{form.email || 'your email'}</span> within one business
-                              hour. Your allocation is held for 7 days while the purchase order clears.
-                            </p>
-                            <Field label="Purchase order reference (optional)" name="po" value={form.po} onChange={set('po')} placeholder="PO-2026-0142" />
-                          </div>
-                        )}
+                        <div className="flex items-start gap-3 border border-apex-line/60 bg-apex-black/50 p-4">
+                          <svg className="w-5 h-5 text-apex-blue flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                          </svg>
+                          <p className="text-apex-grey font-body text-[13px] leading-relaxed">
+                            You&apos;ll pay on <span className="text-apex-white font-semibold">Stripe&apos;s secure checkout</span>{' '}
+                            — card, Apple Pay or Google Pay — then land straight back here on your receipt.
+                            Your receipt goes to <span className="text-apex-white break-words">{form.email}</span>.
+                          </p>
+                        </div>
 
                         {/* ORDER BUMP */}
                         <div className="marching-border-gold mt-6 p-4">
@@ -743,39 +762,34 @@ export default function CheckoutFlow({
                           </span>
                         </div>
 
-                        {/* Card pays with the supplied artwork; the invoice path keeps the
-                            text button, since its label and the total differ from the
-                            wording baked into the image. */}
-                        {payMethod === 'card' ? (
-                          <button
-                            type="submit"
-                            aria-label={`Complete my order — ${fmt(total)}, 2-year warranty, free shipping`}
-                            className="group cta-cart cta-complete mt-5 cursor-pointer"
-                          >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src="/checkout/complete-order.png" alt="" />
-                            <span className="cta-cart-shine" aria-hidden="true" />
-                            <span className="sr-only">
-                              Complete my order — {fmt(total)}, 2-year warranty, free shipping
-                            </span>
-                          </button>
-                        ) : (
-                          <button
-                            type="submit"
-                            className="group inline-flex flex-col items-center justify-center gap-0.5 cta-glow text-white font-display font-black px-6 py-4 tracking-[0.1em] uppercase w-full mt-5 cursor-pointer"
-                            style={{ borderRadius: 0 }}
-                          >
-                            <span className="inline-flex items-center gap-2.5 text-[16px] sm:text-[18px]">
-                              Reserve &amp; Send My Invoice
-                              <svg className="w-[18px] h-[18px] transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                              </svg>
-                            </span>
-                            <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-white/80 font-normal">
-                              {fmt(total)} · 2-year warranty · free shipping
-                            </span>
-                          </button>
+                        {/* A cancelled payment, or checkout unreachable — with the
+                            whole order ready to email when it's the latter. */}
+                        {payNote && (
+                          <div role="alert" className="mt-5 border border-apex-red/50 bg-apex-red/10 px-4 py-3">
+                            <p className="text-apex-white font-body text-[13px] leading-relaxed">{payNote.text}</p>
+                            {payNote.fallback && (
+                              <a
+                                href={payNote.fallback}
+                                className="inline-flex items-center gap-2 mt-2 min-h-[40px] font-mono text-[11.5px] tracking-[0.16em] uppercase text-apex-blue hover:text-apex-white transition-colors"
+                              >
+                                Email my order instead →
+                              </a>
+                            )}
+                          </div>
                         )}
+
+                        <button
+                          type="submit"
+                          aria-label={`Complete my order — ${fmt(total)}, 2-year warranty, free shipping`}
+                          className="group cta-cart cta-complete mt-5 cursor-pointer"
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="/checkout/complete-order.png" alt="" />
+                          <span className="cta-cart-shine" aria-hidden="true" />
+                          <span className="sr-only">
+                            Complete my order — {fmt(total)}, 2-year warranty, free shipping
+                          </span>
+                        </button>
 
                         <TrustBadges />
 
@@ -805,10 +819,10 @@ export default function CheckoutFlow({
                           />
                         </div>
                         <p className="font-display font-black text-apex-white text-[15px] tracking-[0.1em] uppercase mb-2">
-                          Authorising your order
+                          Opening secure checkout
                         </p>
                         <p className="font-mono text-[11.5px] tracking-[0.16em] uppercase text-apex-grey">
-                          Securing allocation · do not leave this page
+                          Handing you to Stripe · do not close this page
                         </p>
                       </motion.div>
                     )}
@@ -1034,7 +1048,7 @@ export default function CheckoutFlow({
             <div className="border border-apex-line/60 bg-apex-panel/40 mb-8" style={{ borderTop: '2px solid rgba(0,174,239,0.6)' }}>
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 px-4 sm:px-7 py-4 border-b border-apex-line/50">
                 <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-apex-blue">Your Receipt</span>
-                <span className="font-mono text-[11.5px] tracking-[0.14em] uppercase text-apex-grey">Order {orderNo}</span>
+                <span className="font-mono text-[11.5px] tracking-[0.14em] uppercase text-apex-grey">Order {summary?.ref ?? orderNo}</span>
               </div>
 
               {/* Line items. One shared two-column grid so the ITEM / PRICE
@@ -1078,7 +1092,7 @@ export default function CheckoutFlow({
                   Total paid:
                 </dt>
                 <dd className="pt-5 pl-4 text-right font-luxia t-gold-price leading-none metric-value whitespace-nowrap" style={{ fontSize: 'clamp(1.6rem, 3.4vw, 2.4rem)' }}>
-                  {fmt(total)}
+                  {fmt(summary?.total ?? total)}
                 </dd>
               </dl>
 
@@ -1099,9 +1113,9 @@ export default function CheckoutFlow({
                   <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-apex-blue mb-2">Payment</div>
                   <p className="text-apex-grey font-body text-[12.5px] sm:text-[13px] leading-relaxed">
                     <span className="text-apex-white">
-                      {payMethod === 'card'
-                        ? `Card ending ${form.cardNumber.replace(/\s/g, '').slice(-4) || '••••'}`
-                        : `Invoice / EFT${form.po ? ` · ${form.po}` : ''}`}
+                      {summary?.card
+                        ? `${summary.card.brand.charAt(0).toUpperCase()}${summary.card.brand.slice(1)} ending ${summary.card.last4}`
+                        : 'Paid securely via Stripe'}
                     </span>
                     <br />
                     Paid in full · GST included
