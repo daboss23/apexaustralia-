@@ -53,10 +53,10 @@ function FloatingUnit({ active }: { active: boolean }) {
   const [risers, setRisers] = useState<Riser[]>([])
   // Phones: hold the unit still (the slow float loop is perpetual = battery).
   const isMobile = useIsMobile()
-  // The product film — a slow turntable of the unit on a true-black plate, so
-  // the blend below drops the black and leaves the unit floating in the
-  // section's energy field. Held on its first frame under reduced motion.
-  // v5 is re-timed from the 24fps delivery: its baked-in duplicate frames
+  // The product film — a slow turntable of the unit on a plate graded to the
+  // page colour, so it floats in the section's energy field with no box.
+  // Held on its first frame under reduced motion.
+  // v6 is re-timed from the 24fps delivery: its baked-in duplicate frames
   // (a hitch every ~5th frame) were dropped and the 147 real frames play at
   // 16fps — ~1.3× slower with no invented frames — and the loop hard-cuts at
   // the tail frame closest to frame 0 (smaller than one normal frame step).
@@ -83,7 +83,48 @@ function FloatingUnit({ active }: { active: boolean }) {
 
   return (
     <div className="relative w-full h-full pointer-events-none">
-      {/* Ambient energy field behind the unit */}
+      {/* The unit — floating, slowly turning in space.
+          No blend modes and no 3D wrappers here, on purpose. The film's plate
+          is graded to exactly the page colour (#050505) and its edge is
+          feathered with a mask, so the square simply isn't there — in every
+          browser. The previous approach ('lighten' chained through
+          perspective + preserve-3d layers) rendered fine in software but made
+          the whole unit vanish under GPU compositing. */}
+      <div className="absolute inset-x-0 top-[2%] bottom-[12%] flex items-center justify-center">
+        <motion.div
+          className="relative h-[92%] max-w-full"
+          style={{ aspectRatio: '1 / 1' }}
+          // Level camera (eye level): a slow vertical bob only — no tilt.
+          animate={active && !isMobile ? { y: [-8, 8] } : {}}
+          transition={{ duration: 6, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
+        >
+          <LazyVideo
+            src="/product-rotation-v6.mp4"
+            poster="/product-rotation-v6-poster.jpg"
+            aria-label="T-Apex adaptive resistance unit turning in space"
+            className="absolute inset-0 w-full h-full object-contain"
+            // The machine never reaches beyond 47.4% of the frame width from
+            // centre (measured over every frame), so the feather starts at 95%
+            // of the half-width and can't clip it.
+            style={{
+              WebkitMaskImage: 'radial-gradient(closest-side, #000 95%, transparent 100%)',
+              maskImage: 'radial-gradient(closest-side, #000 95%, transparent 100%)',
+            }}
+          />
+
+          {/* Electricity living around the unit */}
+          <div className="absolute inset-[8%]">
+            {/* Blue-only — the default palette includes red, which read as a
+                stray red haze floating behind the unit against the black. */}
+            <ElectricAura appearDelay={0.6} colors={['#00AEEF', '#7fd8ff']} />
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Light layers — painted over the film (it's opaque), all faint
+          additive-looking blues, so the field and rings still read as
+          surrounding the unit. */}
+      {/* Ambient energy field */}
       <div
         className="absolute inset-x-[10%] inset-y-[6%]"
         style={{
@@ -117,54 +158,6 @@ function FloatingUnit({ active }: { active: boolean }) {
         }}
         aria-hidden="true"
       />
-
-      {/* The unit — floating, slowly turning in space */}
-      {/* Every wrapper between the film and the page is a stacking context
-          (perspective, 3D transform, the stage's scroll offset), and a blend
-          mode only reaches its own group's backdrop. So 'lighten' is chained
-          up each one — otherwise the plate composites against transparency
-          and shows as a black square. */}
-      <div
-        className="absolute inset-x-0 top-[2%] bottom-[12%] flex items-center justify-center"
-        style={{ perspective: 1200, mixBlendMode: 'lighten' }}
-      >
-        <motion.div
-          className="relative h-[92%] max-w-full"
-          style={{ transformStyle: 'preserve-3d', aspectRatio: '1 / 1', mixBlendMode: 'lighten' }}
-          // No rotateX: the camera stays level with the unit (eye level), so the
-          // sway is a slow yaw + bob only.
-          animate={
-            active && !isMobile
-              ? { y: [-8, 8], rotateY: [-7, 7] }
-              : {}
-          }
-          transition={{ duration: 12, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
-        >
-          <LazyVideo
-            src="/product-rotation-v5.mp4"
-            poster="/product-rotation-v5-poster.jpg"
-            aria-label="T-Apex adaptive resistance unit turning in space"
-            className="absolute inset-0 w-full h-full object-contain"
-            // 'lighten' (max per channel), NOT 'screen', is what makes the unit
-            // float with no visible plate. The source is a normal render ON
-            // BLACK (alpha survives neither mp4 nor VP9/webm, so a keyed source
-            // arrives on white and eats the product's highlights). The plate's
-            // black is ~5/255; the page is #050505. 'screen' composites those to
-            // ~10 — the plate reads as a faint lighter square. 'lighten' takes
-            // max(plate, page) = 5, so equal near-blacks stay equal and the
-            // rectangle disappears, while the bright machine still wins.
-            // See docs/motion-scroll-brief.md.
-            style={{ mixBlendMode: 'lighten' }}
-          />
-
-          {/* Electricity living around the unit */}
-          <div className="absolute inset-[8%]">
-            {/* Blue-only — the default palette includes red, which read as a
-                stray red haze floating behind the unit against the black. */}
-            <ElectricAura appearDelay={0.6} colors={['#00AEEF', '#7fd8ff']} />
-          </div>
-        </motion.div>
-      </div>
 
       {/* Rising energy particles */}
       {risers.map((p, i) => (
@@ -429,8 +422,7 @@ export default function SolutionSection() {
 
         {/* ── The unit, floating in space — pillars materialize as it turns ── */}
         <div ref={stageRef} className="relative mt-16 lg:mt-24 h-[400px] sm:h-[480px] lg:h-[640px]">
-          {/* 'lighten' here is the last link of the chain in FloatingUnit. */}
-          <motion.div className="absolute inset-0" style={{ y: stageY, mixBlendMode: 'lighten' }}>
+              <motion.div className="absolute inset-0" style={{ y: stageY }}>
             <FloatingUnit active={stageActive} />
 
             {/* Connector hairlines (lg+) — same structure as the "Engineered like

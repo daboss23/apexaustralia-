@@ -73,11 +73,15 @@ generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 > transform, and inpainting the vacated ground — or, far cheaper, re-generating
 > the shot. Reach for one of those, not a stabiliser.
 
-> **Floating product films** (`SolutionSection`'s turntable, and anything else
-> using `mix-blend-mode: screen` on the black page): the blend composites black
-> to exactly the page background, which is what makes the unit look like it is
-> floating rather than sitting in a video box. It only works on a **true black**
-> plate. Two traps:
+> **Floating product films** (`SolutionSection`'s turntable): **do not use
+> `mix-blend-mode` for this.** A blend only reaches its own stacking context, so
+> under any transformed / 3D wrapper it composites against transparency (visible
+> black square); chaining it up through `perspective` + `preserve-3d` layers
+> looked right in software rendering but made the unit vanish entirely under
+> GPU compositing. Instead grade the plate to exactly the page colour (#050505 →
+> Y=20 in limited-range yuv: `lutyuv=y='clip(20+(val-16)*215/219,20,235)'`) and
+> feather its edge with a radial `mask-image` placed outside the product's
+> measured extent. Draw glows/rings *over* the film, not behind it. Two traps:
 >
 > - **Do not supply a background-removed clip.** Alpha does not survive mp4, so
 >   a "transparent" export arrives on **white** — the worst possible case, since
