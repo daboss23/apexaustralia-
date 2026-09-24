@@ -56,10 +56,11 @@ function FloatingUnit({ active }: { active: boolean }) {
   // The product film — a slow turntable of the unit on a plate graded to the
   // page colour, so it floats in the section's energy field with no box.
   // Held on its first frame under reduced motion.
-  // v6 is re-timed from the 24fps delivery: its baked-in duplicate frames
-  // (a hitch every ~5th frame) were dropped and the 147 real frames play at
-  // 16fps — ~1.3× slower with no invented frames — and the loop hard-cuts at
-  // the tail frame closest to frame 0 (smaller than one normal frame step).
+  // v7 is cut from the latest 24fps delivery (the same render as v6, exported
+  // at a higher bitrate): its baked-in duplicate frames (a hitch every ~5th
+  // frame) were dropped and the 147 real frames play at 16fps — ~1.3× slower
+  // with no invented frames — and the loop hard-cuts at the tail frame closest
+  // to frame 0 (smaller than one normal frame step).
   // (The reduced-motion hold and the load-when-near-viewport behaviour both live
   // in <LazyVideo/> now.)
 
@@ -99,8 +100,8 @@ function FloatingUnit({ active }: { active: boolean }) {
           transition={{ duration: 6, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
         >
           <LazyVideo
-            src="/product-rotation-v6.mp4"
-            poster="/product-rotation-v6-poster.jpg"
+            src="/product-rotation-v7.mp4"
+            poster="/product-rotation-v7-poster.jpg"
             aria-label="T-Apex adaptive resistance unit turning in space"
             className="absolute inset-0 w-full h-full object-contain"
             // The machine never reaches beyond 47.4% of the frame width from
