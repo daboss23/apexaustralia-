@@ -85,6 +85,10 @@ CART button opens `CheckoutFlow.tsx` — a two-step popup (shipping → details)
 portalled to `<body>`. **No payment is processed**: the submit handler simulates
 the authorisation so the flow can be demoed end to end.
 
+After payment the flow goes **straight to the branded receipt** (the "thank
+you" page). The post-purchase one-time offer (OTO) is hidden, not deleted:
+`SHOW_OTO` at the top of `CheckoutFlow.tsx` switches it back on.
+
 A working **Stripe Checkout** integration — serverless function, Price ID env
 vars, `/success/` page — exists on the branch
 `claude/t-apex-sales-page-polish-vrk7h8`. It was written against the older

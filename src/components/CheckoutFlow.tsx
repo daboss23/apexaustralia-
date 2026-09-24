@@ -19,6 +19,7 @@ import { ENQUIRY_HREF } from '@/lib/site'
                      bump (dashed gold box) and the total, next to payment.
      3  OTO        — one-time offer immediately after the sale, before the
                      receipt, while buying momentum is at its peak.
+                     Currently OFF (see SHOW_OTO): payment goes straight to 4.
      4  RECEIPT    — the "offer wall": confirmation, itemised receipt, what
                      happens next, and the follow-on offers.
 
@@ -53,6 +54,11 @@ const BUMP = {
   desc:
     'A 90-minute session with an Australian T-APEX performance specialist: unit calibration, athlete profiles built, and your first four sessions programmed with your staff.',
 }
+
+/* Stage 3 is switched off: a paid order goes straight to the branded receipt.
+   Everything below it is kept intact (the offers, the stage, and the section's
+   red "do not close" header), so setting this to true brings the OTO back. */
+const SHOW_OTO = false
 
 /* The post-purchase one-time offer. Core buyers get the module they skipped; */
 /* Overspeed buyers get the multi-athlete expansion.                          */
@@ -501,7 +507,7 @@ export default function CheckoutFlow({
 
     setStage('processing')
     setOrderNo(`TA-AU-${Math.floor(100000 + Math.random() * 899999)}`)
-    window.setTimeout(() => setStage('oto'), 2100)
+    window.setTimeout(() => setStage(SHOW_OTO ? 'oto' : 'receipt'), 2100)
   }
 
   const takeOto = (accept: boolean) => {
