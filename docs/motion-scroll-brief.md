@@ -93,7 +93,11 @@ generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 > - **Do not motion-interpolate to slow a turntable down.** Both `minterpolate`
 >   (warping across the machine face) and `framerate` blending (ghosting two
 >   rotation angles into a mottled smear) were tried and produced visible
->   artefacts. Re-time instead: keep every real frame and lower the output rate
+>   artefacts. So was a third, more careful attempt for v8 — bidirectional DIS
+>   optical flow with forward/backward visibility weighting, validated by
+>   synthesising real frames from their neighbours: mean error 4–9 levels, and
+>   the edge rails and handles visibly wobble even in stills. Re-time instead:
+>   keep every real frame and lower the output rate
 >   (`setpts=1.667*PTS,fps=18`), which is judder-free because no frame is
 >   invented or duplicated.
 >
@@ -101,6 +105,37 @@ generate (Higgsfield / Seedance 2.0) and how to drop it into the site.
 > opening pose, so a matched hard cut pops wherever you put it. Crossfade the
 > tail into the head instead (~1.5s) and check the seam difference; under
 > ~5/255 is clean.
+>
+> **v8 (`product-rotation-v8.mp4`) — one level revolution, and how it was cut.**
+> The generated delivery is not a clean turntable: it starts high, swoops to eye
+> level with the handle extending (plus a glitch frame at real frame 107), then
+> climbs back. For a single camera angle the loop is spliced from the two
+> high-angle stretches — real frames `0–50` then `111–145` — joined where the
+> poses match (`50→111`, which sidesteps a 4× "snap" at `110→111`) and looped at
+> `145→0` (dropping `146`, whose step back to `0` ran slightly *backwards*).
+> Every step was checked with DIS optical flow: all move the same way.
+>
+> - **Timing is per frame (VFR), not a frame rate.** The source eases in and out
+>   and skips frames, so its per-frame rotation varies ~10×. Each frame is held
+>   for `step / 66 px·s⁻¹` (steps measured at 480px), capped at 1/10s where the
+>   footage is sparse, quantised with error diffusion onto a 60 Hz grid. Encode
+>   it from per-frame `.y4m` files through an `ffconcat` list with `duration`
+>   lines, and **use `-bf 0 -use_editlist 0`**: with B-frames the mp4 muxer
+>   writes an edit list that trimmed the last two frames, and it dropped the
+>   final frame's duration. Close the loop by giving frame 0 one refresh at the
+>   start and a copy of it one refresh at the end. Verify the `stts` table sums
+>   to the planned length.
+> - **The far wheel.** Wherever the wheel face swings in or out of view the
+>   render shows one wheel — correct occlusion, but it reads as a one-wheeled
+>   product. Real frames `129–141` and `112–116` get the far wheel composited
+>   back: the visible near wheel, offset by the pair's measured spacing
+>   (`(−3,−107)` entering, `(−1,−112)` leaving), darkened to 0.84, drawn in luma
+>   only (the tyres are neutral), and only onto plate pixels outside the body
+>   edge — so the body still occludes it and the red strap stays in front. In
+>   `138–141` and `112` the real, half-hidden far wheel is erased first.
+> - **Decode trap.** `select` without `setpts=N/(FR*TB)` into rawvideo re-fills
+>   the gaps with duplicates at the constant output rate — the "real frames" you
+>   get back are not. Always check consecutive frames differ.
 
 ---
 

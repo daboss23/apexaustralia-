@@ -56,11 +56,14 @@ function FloatingUnit({ active }: { active: boolean }) {
   // The product film — a slow turntable of the unit on a plate graded to the
   // page colour, so it floats in the section's energy field with no box.
   // Held on its first frame under reduced motion.
-  // v7 is cut from the latest 24fps delivery (the same render as v6, exported
-  // at a higher bitrate): its baked-in duplicate frames (a hitch every ~5th
-  // frame) were dropped and the 147 real frames play at 16fps — ~1.3× slower
-  // with no invented frames — and the loop hard-cuts at the tail frame closest
-  // to frame 0 (smaller than one normal frame step).
+  // v8 is one level revolution. The delivery swoops down to eye level and pops
+  // the handle mid-clip, so the loop is spliced from its two high-angle
+  // stretches (real frames 0–50 + 111–145, joined where the poses match): one
+  // camera angle, one direction. Frames are timed individually (VFR on a 60Hz
+  // grid): a steady turn where the footage is dense, never held past 1/10s
+  // where it isn't — ~28% slower than v7, nothing interpolated. Where the far
+  // wheel hides behind the body, it's composited back so the unit always shows
+  // both wheels. How and why: docs/motion-scroll-brief.md.
   // (The reduced-motion hold and the load-when-near-viewport behaviour both live
   // in <LazyVideo/> now.)
 
@@ -100,11 +103,11 @@ function FloatingUnit({ active }: { active: boolean }) {
           transition={{ duration: 6, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
         >
           <LazyVideo
-            src="/product-rotation-v7.mp4"
-            poster="/product-rotation-v7-poster.jpg"
+            src="/product-rotation-v8.mp4"
+            poster="/product-rotation-v8-poster.jpg"
             aria-label="T-Apex adaptive resistance unit turning in space"
             className="absolute inset-0 w-full h-full object-contain"
-            // The machine never reaches beyond 47.4% of the frame width from
+            // The machine never reaches beyond 40% of the frame width from
             // centre (measured over every frame), so the feather starts at 95%
             // of the half-width and can't clip it.
             style={{
