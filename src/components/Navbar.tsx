@@ -126,7 +126,7 @@ export default function Navbar() {
           <Image
             src="/apexaustralialogo.webp"
             alt="T-APEX Australia"
-            width={140}
+            width={174}
             height={46}
             className="h-8 md:h-9 w-auto object-contain"
             loading="lazy"

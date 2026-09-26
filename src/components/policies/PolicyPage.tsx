@@ -55,7 +55,7 @@ export function PolicyPage({
             <Image
               src="/apexaustralialogo.webp"
               alt="T-APEX Australia"
-              width={280}
+              width={340}
               height={90}
               className="h-10 w-auto object-contain"
               priority

@@ -90,7 +90,7 @@ export default function SiteFooter() {
               <Image
                 src="/apexaustralialogo.webp"
                 alt="T-APEX Australia"
-                width={280}
+                width={340}
                 height={90}
                 className="h-12 md:h-14 w-auto object-contain"
                 style={{ filter: 'brightness(1.08)' }}
