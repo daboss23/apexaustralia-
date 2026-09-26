@@ -79,8 +79,10 @@ const SPORTS = [
     tagline: 'Power From Every Position',
     description: 'Rugby league demands explosive power in every collision. T-Apex helps develop the force, speed, and conditioning to compete for the full 80 minutes.',
     color: '#D61F26',
-    // Still image animated to life on the stage (no clip filmed yet).
-    image: '/sports/rugby-league.webp',
+    video: '/sports/rugby-league.mp4',
+    // 8.1s clip against the 9s dwell: 0.9x plays it through once, electric
+    // surge included, before the stage moves on.
+    playbackRate: 0.9,
     focuses: [
       'Collision and contact force development',
       'Defensive line-speed and acceleration',
