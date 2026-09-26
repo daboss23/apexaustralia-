@@ -199,7 +199,6 @@ function SportCard({ card, index }: { card: typeof SPORT_CARDS[0]; index: number
 }
 
 export default function PerformanceSection() {
-  const [muted, setMuted] = useState(true)
   const titleRef = useRef<HTMLDivElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
   const metricsRef = useRef<HTMLDivElement>(null)
@@ -265,7 +264,6 @@ export default function PerformanceSection() {
             className="absolute inset-0 w-full h-full object-cover object-[50%_46%] md:object-center"
             src="/athlete-holograms.mp4"
             poster="/athlete-holograms-poster.jpg"
-            muted={muted}
           />
           {/* Cinematic vignette */}
           <div className="absolute inset-0 pointer-events-none" style={{
@@ -276,24 +274,6 @@ export default function PerformanceSection() {
             <div className="w-1.5 h-1.5 rounded-full bg-apex-blue animate-pulse" />
             <span className="text-[9px] font-mono tracking-[0.28em] uppercase text-apex-white/90">T-APEX // In Motion</span>
           </div>
-          {/* Sound toggle — the film autoplays muted (browsers block sound
-              without a click); this is that click. */}
-          <button
-            type="button"
-            onClick={() => setMuted(m => !m)}
-            aria-label={muted ? 'Turn sound on' : 'Turn sound off'}
-            aria-pressed={!muted}
-            className="absolute bottom-3 right-3 min-h-11 min-w-11 px-3 inline-flex items-center justify-center gap-2 border border-apex-white/20 bg-apex-black/55 backdrop-blur-sm text-apex-white/90 hover:border-apex-blue hover:text-apex-white transition-colors"
-            style={{ borderRadius: 0 }}
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5 6 9H3v6h3l5 4V5z" />
-              {muted
-                ? <path strokeLinecap="round" d="m16 9 5 6m0-6-5 6" />
-                : <path strokeLinecap="round" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" />}
-            </svg>
-            <span className="text-[9px] font-mono tracking-[0.24em] uppercase">{muted ? 'Sound' : 'Mute'}</span>
-          </button>
         </motion.div>
 
         {/* Headline metrics — editorial asymmetric layout */}

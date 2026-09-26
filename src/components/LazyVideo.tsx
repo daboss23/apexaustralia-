@@ -13,9 +13,6 @@ type Props = {
   rootMargin?: string
   loop?: boolean
   playbackRate?: number
-  /** Starts muted (browsers refuse to autoplay sound). Flip to false from a
-   *  user click to bring the soundtrack in. */
-  muted?: boolean
 }
 
 /**
@@ -42,7 +39,6 @@ export default function LazyVideo({
   rootMargin = '400px',
   loop = true,
   playbackRate = 1,
-  muted = true,
   ...rest
 }: Props) {
   const ref = useRef<HTMLVideoElement>(null)
@@ -86,15 +82,6 @@ export default function LazyVideo({
       if (!holdRef.current) el.play().catch(() => {})
     }
   }, [load, playbackRate])
-
-  // React only applies `muted` on first render, so drive the property itself.
-  // Unmuting always comes from a click, which is the gesture browsers require.
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    el.muted = muted
-    if (!muted && el.paused && load) el.play().catch(() => {})
-  }, [muted, load])
 
   return (
     <video
