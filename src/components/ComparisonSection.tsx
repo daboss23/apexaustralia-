@@ -86,9 +86,8 @@ export default function ComparisonSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.18 }}
         >
-          Conventional resistance tools were built before real-time data was possible.
-          Here&apos;s how T-Apex compares to the gear most facilities still rely on today.
-        </motion.p>
+          Here&apos;s how T-Apex compares to the 1080 Sprint 2.
+          </motion.p>
 
         {/* ── Comparison table ──────────────────────────────────────────────
             Ref lives on the always-rendered wrapper (not the hidden desktop
