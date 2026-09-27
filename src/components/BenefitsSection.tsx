@@ -27,8 +27,8 @@ const BENEFITS = [
   },
   {
     num: '04',
-    title: 'Performance Utility',
-    body: 'Use T-Apex across athlete development, rehab and reconditioning with more control and flexibility at every stage.',
+    title: 'Performance And Return-To-Play Utility',
+    body: 'Use T-Apex across athlete development, rehab, reconditioning, and return-to-play with more control and flexibility at every stage.',
     accent: '#00AEEF',
     tag: 'VERSATILITY',
   },
