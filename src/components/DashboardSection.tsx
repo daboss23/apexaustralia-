@@ -467,9 +467,9 @@ export default function DashboardSection() {
           <div className="flex items-center px-6 py-4 border-t border-apex-line bg-apex-black/60">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/tapexlogo.webp"
+              src="/tapex-logo.webp"
               alt="T-APEX"
-              className="h-14 sm:h-16 w-auto object-contain"
+              className="h-9 sm:h-10 w-auto object-contain"
               style={{ mixBlendMode: 'screen' }}
               loading="lazy"
               decoding="async"
