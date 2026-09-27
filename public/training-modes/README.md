@@ -29,7 +29,7 @@ Filenames must match the `id` values in `MODES` in the component exactly.
 
 ## Video cards
 
-`directional-resistance` and `overspeed-training` play clips instead
+All three cards play clips instead
 (`video: true` in `MODES`): `<id>.mp4` plays, `<id>.webp` is its poster (a
 representative frame). The sources were 3:2 landscape, so each clip is pre-cut to the
 4:5 frame at 720×900 with a smooth follow-pan that keeps the athlete in shot

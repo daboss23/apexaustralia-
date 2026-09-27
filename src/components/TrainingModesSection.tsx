@@ -48,6 +48,7 @@ const MODES: Mode[] = [
       'Continuous, precisely held load through the whole sprint — from block clearance to top-end velocity, without the drag spikes of a sled.',
     accent: '#D61F26',
     alt: 'Athlete accelerating against constant T-APEX resistance on an indoor field',
+    video: true,
   },
   {
     id: 'directional-resistance',
