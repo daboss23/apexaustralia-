@@ -1,9 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'framer-motion'
-import ElectricAura from './ElectricAura'
-import { useIsMobile } from './useIsMobile'
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import LazyVideo from './LazyVideo'
 
 const SOLUTION_PILLARS = [
@@ -23,167 +21,6 @@ const SOLUTION_PILLARS = [
     body: 'One system across speed development, force production, control work, progressive reconditioning, and controlled return-to-play.',
   },
 ]
-
-// Desktop stage positions: each pillar materializes around the floating unit,
-// connected to it by a hairline. anchor/from are % of the stage (x, y).
-// anchor = where the connector meets the callout (its dot); target = the
-// lock-on reticle on the unit. The hairline runs anchor → elbow → target.
-const STAGE_CARDS = [
-  { seq: 0, side: 'left' as const, pos: { left: 0, top: '14%' } as const, anchor: { x: 18, y: 16 }, target: { x: 30, y: 36 } },
-  { seq: 1, side: 'right' as const, pos: { right: 0, top: '10%' } as const, anchor: { x: 82, y: 12 }, target: { x: 60, y: 30 } },
-  { seq: 2, side: 'right' as const, pos: { right: '1%', bottom: '8%' } as const, anchor: { x: 82, y: 80 }, target: { x: 66, y: 62 } },
-]
-
-// Timing mirrors the ProductShowcase ("Engineered like nothing else") callouts
-// so both sections' blue lines + labels appear with the identical sequence and
-// spacing: reticle snaps on → hairline draws out → label slides in from the
-// line. (Was a slower 0.7s step with a rise+scale label; now the 0.5s step and
-// horizontal slide of the reference.)
-const CARD_RETICLE_AT = (seq: number) => 0.45 + seq * 0.5
-const CARD_LINE_AT = (seq: number) => CARD_RETICLE_AT(seq) + 0.18
-const CARD_LABEL_AT = (seq: number) => CARD_RETICLE_AT(seq) + 0.3
-
-type Riser = { left: number; bottom: number; size: number; dur: number; delay: number; drift: number; color: string }
-
-// ─── Floating T-Apex unit — mystical, high-tech centrepiece ──────────────────
-
-function FloatingUnit({ active }: { active: boolean }) {
-  // Rising energy particles around the unit (client-only for SSR safety,
-  // skipped under prefers-reduced-motion)
-  const [risers, setRisers] = useState<Riser[]>([])
-  // Phones: hold the unit still (the slow float loop is perpetual = battery).
-  const isMobile = useIsMobile()
-  // The product film — a slow turntable of the unit on a plate graded to the
-  // page colour, so it floats in the section's energy field with no box.
-  // Held on its first frame under reduced motion.
-  // v8 is one level revolution. The delivery swoops down to eye level and pops
-  // the handle mid-clip, so the loop is spliced from its two high-angle
-  // stretches (real frames 0–50 + 111–145, joined where the poses match): one
-  // camera angle, one direction. Frames are timed individually (VFR on a 60Hz
-  // grid): a steady turn where the footage is dense, never held past 1/10s
-  // where it isn't — ~28% slower than v7, nothing interpolated. Where the far
-  // wheel hides behind the body, it's composited back so the unit always shows
-  // both wheels. How and why: docs/motion-scroll-brief.md.
-  // (The reduced-motion hold and the load-when-near-viewport behaviour both live
-  // in <LazyVideo/> now.)
-
-  useEffect(() => {
-    // Off under reduced-motion and on phones (perpetual particles = mobile heat).
-    if (window.matchMedia('(prefers-reduced-motion: reduce), (max-width: 767px)').matches) return
-    const r = (a: number, b: number) => a + Math.random() * (b - a)
-    const colors = ['#00AEEF', '#7fd8ff', '#ff3b30']
-    setRisers(
-      Array.from({ length: 14 }, () => ({
-        left: r(28, 72),
-        bottom: r(8, 22),
-        size: r(1.5, 3.5),
-        dur: r(4, 8),
-        delay: r(0, 5),
-        drift: r(-18, 18),
-        color: colors[Math.floor(Math.random() * colors.length)],
-      }))
-    )
-  }, [])
-
-  return (
-    <div className="relative w-full h-full pointer-events-none">
-      {/* The unit — floating, slowly turning in space.
-          No blend modes and no 3D wrappers here, on purpose. The film's plate
-          is graded to exactly the page colour (#050505) and its edge is
-          feathered with a mask, so the square simply isn't there — in every
-          browser. The previous approach ('lighten' chained through
-          perspective + preserve-3d layers) rendered fine in software but made
-          the whole unit vanish under GPU compositing. */}
-      <div className="absolute inset-x-0 top-[2%] bottom-[12%] flex items-center justify-center">
-        <motion.div
-          className="relative h-[92%] max-w-full"
-          style={{ aspectRatio: '1 / 1' }}
-          // Level camera (eye level): a slow vertical bob only — no tilt.
-          animate={active && !isMobile ? { y: [-8, 8] } : {}}
-          transition={{ duration: 6, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
-        >
-          <LazyVideo
-            src="/product-rotation-v8.mp4"
-            poster="/product-rotation-v8-poster.jpg"
-            aria-label="T-Apex adaptive resistance unit turning in space"
-            className="absolute inset-0 w-full h-full object-contain"
-            // The machine never reaches beyond 40% of the frame width from
-            // centre (measured over every frame), so the feather starts at 95%
-            // of the half-width and can't clip it.
-            style={{
-              WebkitMaskImage: 'radial-gradient(closest-side, #000 95%, transparent 100%)',
-              maskImage: 'radial-gradient(closest-side, #000 95%, transparent 100%)',
-            }}
-          />
-
-          {/* Electricity living around the unit */}
-          <div className="absolute inset-[8%]">
-            {/* Blue-only — the default palette includes red, which read as a
-                stray red haze floating behind the unit against the black. */}
-            <ElectricAura appearDelay={0.6} colors={['#00AEEF', '#7fd8ff']} />
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Light layers — painted over the film (it's opaque), all faint
-          additive-looking blues, so the field and rings still read as
-          surrounding the unit. */}
-      {/* Ambient energy field */}
-      <div
-        className="absolute inset-x-[10%] inset-y-[6%]"
-        style={{
-          background:
-            'radial-gradient(ellipse 55% 50% at 50% 55%, rgba(0,174,239,0.09), transparent 68%)',
-          animation: 'energy-breathe 6s ease-in-out infinite',
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Orbiting energy rings beneath the unit */}
-      <svg
-        className="absolute left-1/2 -translate-x-1/2 bottom-[2%] w-[74%] h-[24%]"
-        viewBox="0 0 400 90"
-        preserveAspectRatio="none"
-        fill="none"
-        aria-hidden="true"
-      >
-        <ellipse cx="200" cy="45" rx="190" ry="36" stroke="rgba(0,174,239,0.25)" strokeWidth="1" strokeDasharray="3 9" style={{ animation: 'freq-march 9s linear infinite' }} />
-        <ellipse cx="200" cy="45" rx="140" ry="25" stroke="rgba(0,174,239,0.16)" strokeWidth="1" strokeDasharray="2 8" style={{ animation: 'freq-march 7s linear infinite reverse' }} />
-        <ellipse cx="200" cy="45" rx="95" ry="16" stroke="rgba(0,174,239,0.38)" strokeWidth="1.2" strokeDasharray="5 12" style={{ animation: 'freq-march 11s linear infinite' }} />
-      </svg>
-
-      {/* Floor glow the unit hovers above */}
-      <div
-        className="absolute left-1/2 -translate-x-1/2 bottom-[5%] w-[44%] h-[9%]"
-        style={{
-          background: 'radial-gradient(ellipse at center, rgba(0,174,239,0.28), transparent 70%)',
-          filter: 'blur(14px)',
-          animation: 'energy-breathe 5s ease-in-out infinite',
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Rising energy particles */}
-      {risers.map((p, i) => (
-        <motion.span
-          key={i}
-          className="absolute rounded-full"
-          style={{
-            left: `${p.left}%`,
-            bottom: `${p.bottom}%`,
-            width: p.size,
-            height: p.size,
-            background: p.color,
-            boxShadow: `0 0 ${p.size * 3}px ${p.color}`,
-          }}
-          animate={{ y: [0, -130], x: [0, p.drift], opacity: [0, 0.9, 0] }}
-          transition={{ duration: p.dur, delay: p.delay, repeat: Infinity, ease: 'easeOut' }}
-          aria-hidden="true"
-        />
-      ))}
-    </div>
-  )
-}
 
 // ─── Pillar card (presentational) ─────────────────────────────────────────────
 
@@ -218,37 +55,6 @@ function PillarCard({ pillar, side = 'right' }: { pillar: typeof SOLUTION_PILLAR
   )
 }
 
-// ─── Lock-on reticle — same brackets as the product-showcase callouts ─────────
-
-function LockReticle({ target, active, delay }: { target: { x: number; y: number }; active: boolean; delay: number }) {
-  return (
-    <motion.div
-      className="absolute hidden xl:block pointer-events-none z-20"
-      style={{
-        left: `${target.x}%`,
-        top: `${target.y}%`,
-        width: 22,
-        height: 22,
-        marginLeft: -11,
-        marginTop: -11,
-        filter: 'drop-shadow(0 0 6px rgba(0,174,239,0.7))',
-      }}
-      initial={{ opacity: 0, scale: 2.6 }}
-      animate={active ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 2.6 }}
-      transition={active ? { duration: 0.38, delay, ease: [0.2, 1.1, 0.3, 1] } : { duration: 0 }}
-      aria-hidden="true"
-    >
-      <svg viewBox="0 0 22 22" fill="none" className="w-full h-full">
-        <path d="M1 6V1h5" stroke="#00AEEF" strokeWidth="1.3" />
-        <path d="M16 1h5v5" stroke="#00AEEF" strokeWidth="1.3" />
-        <path d="M21 16v5h-5" stroke="#00AEEF" strokeWidth="1.3" />
-        <path d="M6 21H1v-5" stroke="#00AEEF" strokeWidth="1.3" />
-        <circle cx="11" cy="11" r="1.3" fill="#00AEEF" />
-      </svg>
-    </motion.div>
-  )
-}
-
 // ─── Solution section ─────────────────────────────────────────────────────────
 
 export default function SolutionSection() {
@@ -258,16 +64,8 @@ export default function SolutionSection() {
   // Boot trigger — fires when the section is well into view, and re-arms
   // each time it leaves so the boot sequence replays on every scroll-in
   const booted = useInView(sectionRef, { margin: '-30% 0px' })
-  // Stage trigger — the floating unit + emerging cards replay on every pass
-  const stageRef = useRef<HTMLDivElement>(null)
-  const stageActive = useInView(stageRef, { amount: 0.35 })
-  // Eye-level hold — the stage scrolls a touch slower than the page, so the
-  // unit drifts toward the middle of the viewport and lingers there instead of
-  // sliding straight past. Unit, hairlines, reticles and callouts move as one,
-  // so the lock-ons stay on the machine.
-  const reduceMotion = useReducedMotion()
-  const { scrollYProgress: stageProgress } = useScroll({ target: stageRef, offset: ['start end', 'end start'] })
-  const stageY = useTransform(stageProgress, [0, 0.5, 1], reduceMotion ? [0, 0, 0] : [-56, 0, 56])
+  const filmRef = useRef<HTMLDivElement>(null)
+  const filmInView = useInView(filmRef, { once: true, margin: '-10% 0px' })
 
   return (
     <section ref={sectionRef} id="solution" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
@@ -424,74 +222,51 @@ export default function SolutionSection() {
           </div>
         </div>
 
-        {/* ── The unit, floating in space — pillars materialize as it turns ── */}
-        <div ref={stageRef} className="relative mt-16 lg:mt-24 h-[400px] sm:h-[480px] lg:h-[640px]">
-              <motion.div className="absolute inset-0" style={{ y: stageY }}>
-            <FloatingUnit active={stageActive} />
+      </div>
 
-            {/* Connector hairlines (lg+) — same structure as the "Engineered like
-                nothing else" callouts: dot → hairline (with an elbow) → reticle. */}
-            <svg
-              className="absolute inset-0 w-full h-full hidden xl:block pointer-events-none z-10"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              {STAGE_CARDS.map(c => {
-                const elbowX = c.target.x + (c.side === 'left' ? -6 : 6)
-                const d = `M ${c.anchor.x} ${c.anchor.y} L ${elbowX} ${c.anchor.y} L ${c.target.x} ${c.target.y}`
-                return (
-                  <motion.path
-                    key={c.seq}
-                    d={d}
-                    fill="none"
-                    stroke="rgba(0,174,239,0.55)"
-                    strokeWidth="0.18"
-                    initial={{ pathLength: 0, opacity: 0 }}
-                    animate={stageActive ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
-                    transition={
-                      stageActive
-                        ? { pathLength: { duration: 0.45, delay: CARD_LINE_AT(c.seq), ease: 'linear' }, opacity: { duration: 0.01, delay: CARD_LINE_AT(c.seq) } }
-                        : { duration: 0 }
-                    }
-                  />
-                )
-              })}
-            </svg>
+      {/* ── The unit in motion — full-bleed film, melted into the black ──
+          Same treatment as the data-report film in DataInsightsSection: edge
+          to edge, a tint scrim, then a top/bottom vignette that reaches solid
+          #050505 before the clip's edge so no hard video outline shows. The
+          sides are feathered too, so the frame has no edge anywhere.
+          hero-banner.mp4 is the phone hero's clip — one file, one cache entry. */}
+      <motion.div
+        ref={filmRef}
+        className="relative w-full mt-12 md:mt-20 overflow-hidden aspect-[16/10] md:aspect-video"
+        initial={{ opacity: 0, y: 16 }}
+        animate={filmInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <LazyVideo
+          src="/hero-banner.mp4"
+          aria-label="T-Apex adaptive resistance unit in motion"
+          className="absolute inset-0 w-full h-full object-cover object-[50%_45%]"
+        />
 
-            {/* Lock-on reticles on the unit */}
-            {STAGE_CARDS.map(c => (
-              <LockReticle key={c.seq} target={c.target} active={stageActive} delay={CARD_RETICLE_AT(c.seq)} />
-            ))}
+        {/* Overall darkening scrim — same tint depth as the hero banner */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(5,5,8,0.35)' }} />
 
-            {/* Pillars around the unit (lg+) */}
-            {STAGE_CARDS.map(({ seq, side, pos }) => (
-              <motion.div
-                key={seq}
-                className="absolute hidden xl:block w-[210px] z-10"
-                style={pos}
-                initial={{ opacity: 0, x: side === 'left' ? -8 : 8 }}
-                animate={stageActive ? { opacity: 1, x: 0 } : { opacity: 0, x: side === 'left' ? -8 : 8 }}
-                transition={
-                  stageActive
-                    ? { duration: 0.4, delay: CARD_LABEL_AT(seq), ease: [0.16, 1, 0.3, 1] }
-                    : { duration: 0 }
-                }
-              >
-                <PillarCard pillar={SOLUTION_PILLARS[seq]} side={side} />
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
+        {/* Top & bottom vignette */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'linear-gradient(180deg, #050505 0%, rgba(5,5,5,0.85) 7%, transparent 22%, transparent 66%, rgba(5,5,5,0.8) 86%, #050505 96%)' }}
+        />
+        {/* Side feather — the film fades out into the page at both edges */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'linear-gradient(90deg, #050505 0%, transparent 16%, transparent 84%, #050505 100%)' }}
+        />
+      </motion.div>
 
-        {/* Pillars stacked below the unit (mobile / tablet / lg) */}
-        <div className="xl:hidden flex flex-col gap-4 mt-8">
+      <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
+        {/* Pillars beneath the film */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10 mt-4 md:mt-2">
           {SOLUTION_PILLARS.map((pillar, i) => (
             <motion.div
               key={pillar.label}
-              initial={{ opacity: 0, x: 24 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.65, delay: 0.2 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+              initial={{ opacity: 0, y: 18 }}
+              animate={filmInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.65, delay: 0.3 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
             >
               <PillarCard pillar={pillar} side="right" />
             </motion.div>

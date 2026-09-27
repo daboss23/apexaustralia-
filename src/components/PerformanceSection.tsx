@@ -230,7 +230,7 @@ export default function PerformanceSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          One portable unit loads any movement, tows athletes past their top speed, and captures force and velocity at up to 1000Hz — from Olympic sprinters to full professional squads.
+          One portable unit loads any movement, tows athletes past their top speed, and captures force and velocity at up to 1000Hz — from Olympic sprinters to full professional teams.
         </motion.p>
 
         {/* Cinematic product film.
