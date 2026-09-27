@@ -69,13 +69,15 @@ pre-cut to 4:5 with a follow-pan. See `public/training-modes/README.md`. Its thr
 own accent where the cursor is. Pass `glowColor` the brand red or blue; the
 component is generic, so reuse it rather than re-rolling the effect.
 
-`ComparisonSection.tsx` ("EVERYTHING THEY DO.") carries, *below* its untouched
-table, the head-to-head spec strip vs the 1080 Sprint 2 plus a
-`SpecComparisonModal` holding the full published sheet. Both read from
-`src/lib/spec-comparison.ts` — figures live there and nowhere else. That file's
-header sets the rules the table lives by: `—` means "not published", and rows
-where 1080 leads stay in and stay marked. Don't edit a figure except against
-the published spec.
+`ComparisonSection.tsx` ("EVERYTHING THEY DO.") holds the site's one T-APEX vs
+1080 Sprint 2 table (its `ROWS`, the user-supplied decision rows), with a VIEW
+FULL COMPARISON button under it opening `SpecComparisonModal` — the full
+published sheet from `src/lib/spec-comparison.ts`. That file's header sets the
+rules the sheet lives by: `—` means "not published", and rows where 1080 leads
+stay in and stay marked. Don't edit a figure except against the published spec.
+`TApexVs1080Section` keeps its framing copy but no longer carries a table —
+don't add the comparison back anywhere else; the navbar's "vs 1080" link points
+at `#comparison`.
 
 Most section components are client components (`'use client'`) using Framer
 Motion `useInView` / scroll transforms for reveal animations.

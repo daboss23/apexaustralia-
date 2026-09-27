@@ -12,59 +12,11 @@ const COACH_OUTCOMES = [
   'create greater transfer across multiple performance demands',
 ]
 
-const ROWS = [
-  {
-    dimension: 'Price',
-    tapex: 'From A$9,450 — A$9,990 with the Overspeed module',
-    sprint: '≈ A$30,000 + annual software fees',
-  },
-  {
-    dimension: 'Software subscription',
-    tapex: 'Free standard software — no annual fee',
-    sprint: '≈ A$1,200 per year licence',
-  },
-  {
-    dimension: 'Resisted sprint load',
-    tapex: '0–20 kgf continuous, up to 90 kgf with accessories',
-    sprint: 'Up to 20 kgf (Gear 1)',
-  },
-  {
-    dimension: 'Overspeed sprints',
-    tapex: 'Up to 14 m/s with the overspeed module',
-    sprint: 'Up to 14 m/s with overspeed module',
-  },
-  {
-    dimension: 'Data capture',
-    tapex: '50–1000 Hz, stored on your team tablet',
-    sprint: '5–1000 Hz, cloud / third-party servers',
-  },
-  {
-    dimension: 'Data ownership',
-    tapex: 'Full control on your tablet — no cloud risk',
-    sprint: 'Cloud / remote third-party servers',
-  },
-  {
-    dimension: 'Setup time',
-    tapex: '≈ 5 minutes',
-    sprint: '≈ 30 minutes',
-  },
-  {
-    dimension: 'Multi-device deployment',
-    tapex: 'One tablet manages multiple units',
-    sprint: 'Limited scalability',
-  },
-  {
-    dimension: 'Best for',
-    tapex: 'Multi-device teams, clubs & academies',
-    sprint: 'Elite research programs',
-  },
-]
-
 export default function TApexVs1080Section() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const inView = useInView(titleRef, { once: true, margin: '-10% 0px' })
-  const tableRef = useRef<HTMLDivElement>(null)
-  const tableInView = useInView(tableRef, { once: true, margin: '-5% 0px' })
+  const closeRef = useRef<HTMLDivElement>(null)
+  const closeInView = useInView(closeRef, { once: true, margin: '-5% 0px' })
 
   return (
     <section id="vs-1080" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
@@ -201,121 +153,13 @@ export default function TApexVs1080Section() {
           </motion.div>
         </div>
 
-        {/* Comparison intro */}
-        <motion.p
-          className="font-display font-bold t-feature leading-snug mb-8 max-w-3xl mx-auto"
-          style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.4rem)', textAlign: 'justify', textAlignLast: 'center' }}
-          initial={{ opacity: 0, y: 16 }}
-          animate={tableInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          For programs that need more than a narrow sprint tool, the difference becomes clear.
-        </motion.p>
-
-        {/* Comparison table */}
-        <div ref={tableRef}>
-          {/* ── MOBILE: stacked cards (three text columns are unreadable at
-              phone width) ──────────────────────────────────────────────── */}
-          <div className="md:hidden space-y-3">
-            {ROWS.map((row, i) => (
-              <motion.div
-                key={row.dimension}
-                className="border border-apex-line/40 bg-apex-panel/40 overflow-hidden"
-                initial={{ opacity: 0, y: 12 }}
-                animate={tableInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.4, delay: 0.06 + i * 0.04 }}
-              >
-                {/* Dimension heading */}
-                <div className="px-4 py-2.5 bg-apex-panel/70 border-b border-apex-line/40">
-                  <span className="text-[10px] font-mono text-apex-grey-dim tracking-[0.18em] uppercase">{row.dimension}</span>
-                </div>
-                {/* T-APEX — highlighted */}
-                <div className="px-4 py-3 flex items-start gap-2.5" style={{ background: 'rgba(0,174,239,0.06)', borderLeft: '2px solid #00AEEF' }}>
-                  <svg className="w-3.5 h-3.5 text-apex-blue flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                  <div>
-                    <span className="block text-[9px] font-mono text-apex-blue tracking-[0.16em] uppercase mb-0.5">T-APEX</span>
-                    <p className="font-body text-[12.5px] leading-relaxed" style={{ color: 'rgba(244,244,246,0.92)' }}>{row.tapex}</p>
-                  </div>
-                </div>
-                {/* 1080 Sprint 2 */}
-                <div className="px-4 py-3 border-t border-apex-line/30">
-                  <span className="block text-[9px] font-mono text-apex-grey-dim tracking-[0.16em] uppercase mb-0.5">1080 Sprint 2</span>
-                  <p className="text-apex-grey font-body text-[12.5px] leading-relaxed">{row.sprint}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* ── DESKTOP: 3 aligned columns ─────────────────────────────────── */}
-          <div className="hidden md:block">
-          {/* Column headers */}
-          <motion.div
-            className="grid grid-cols-[1.1fr,1.4fr,1.4fr] gap-0"
-            initial={{ opacity: 0 }}
-            animate={tableInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="px-5 py-4 bg-apex-panel/60 border border-apex-line/50 border-r-0">
-              <span className="text-[9px] font-mono text-apex-grey-dim tracking-[0.22em] uppercase">Dimension</span>
-            </div>
-            <div
-              className="px-5 py-4 border"
-              style={{ background: 'rgba(0,174,239,0.08)', borderColor: 'rgba(0,174,239,0.3)', borderTop: '2px solid #00AEEF', borderRight: 'none' }}
-            >
-              <Image src="/tapexlogo.webp" alt="T-APEX" width={377} height={100} className="h-10 sm:h-12 w-auto object-contain" style={{ mixBlendMode: 'screen' }} loading="lazy" />
-            </div>
-            <div className="px-5 py-4 bg-apex-panel/40 border border-apex-line/40">
-              <span className="text-[9px] font-mono text-apex-grey-dim tracking-[0.22em] uppercase">1080 Sprint 2</span>
-            </div>
-          </motion.div>
-
-          {/* Rows */}
-          {ROWS.map((row, i) => (
-            <motion.div
-              key={row.dimension}
-              className="grid grid-cols-[1.1fr,1.4fr,1.4fr] gap-0"
-              initial={{ opacity: 0 }}
-              animate={tableInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4, delay: 0.1 + i * 0.06 }}
-            >
-              {/* Dimension */}
-              <div className="px-5 py-4 bg-apex-panel/60 border border-t-0 border-apex-line/50 border-r-0 flex items-start">
-                <span className="text-apex-white font-display font-semibold text-[14px] tracking-wide leading-snug">
-                  {row.dimension}
-                </span>
-              </div>
-
-              {/* T-Apex (highlighted) */}
-              <div
-                className="px-5 py-4 flex items-start gap-2.5 border border-t-0"
-                style={{ background: 'rgba(0,174,239,0.05)', borderColor: 'rgba(0,174,239,0.22)', borderRight: 'none' }}
-              >
-                <div className="flex-shrink-0 mt-0.5">
-                  <svg className="w-3.5 h-3.5 text-apex-blue" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                </div>
-                <p className="font-body text-[14px] leading-relaxed" style={{ color: 'rgba(244,244,246,0.9)' }}>
-                  {row.tapex}
-                </p>
-              </div>
-
-              {/* 1080 Sprint 2 */}
-              <div className="px-5 py-4 bg-apex-panel/30 border border-t-0 border-apex-line/40 flex items-start">
-                <p className="text-apex-grey font-body text-[14px] leading-relaxed">{row.sprint}</p>
-              </div>
-            </motion.div>
-          ))}
-          </div>
-        </div>
-
-        {/* Closing paragraph */}
+        {/* Closing paragraph (the comparison table that used to sit above it
+            now lives in ComparisonSection) */}
         <motion.div
+          ref={closeRef}
           className="mt-7 md:mt-12 max-w-3xl"
           initial={{ opacity: 0, y: 16 }}
-          animate={tableInView ? { opacity: 1, y: 0 } : {}}
+          animate={closeInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
           <p className="text-apex-grey font-body leading-relaxed mb-4"
@@ -335,7 +179,7 @@ export default function TApexVs1080Section() {
           className="mt-10 p-8 md:p-10 border border-apex-blue/25"
           style={{ borderRadius: 0, background: 'rgba(0,174,239,0.05)', borderTop: '2px solid #00AEEF' }}
           initial={{ opacity: 0, y: 14 }}
-          animate={tableInView ? { opacity: 1, y: 0 } : {}}
+          animate={closeInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           {/* Centred on phones — justify spreads the short lines into ugly word

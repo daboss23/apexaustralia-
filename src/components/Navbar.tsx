@@ -10,7 +10,7 @@ const NAV_LINKS = [
   { label: 'How It Works', href: '#how' },
   { label: 'The Machine', href: '#product' },
   { label: 'Every Code', href: '#sports' },
-  { label: 'vs 1080', href: '#vs-1080' },
+  { label: 'vs 1080', href: '#comparison' },
   { label: 'Included', href: '#whats-included' },
   { label: 'Order', href: '#order' },
   { label: 'FAQ', href: '#faq' },
