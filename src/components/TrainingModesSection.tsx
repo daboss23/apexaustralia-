@@ -2,7 +2,6 @@
 
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { DEMO_HREF } from '@/lib/site'
 import { GlowCard } from '@/components/ui/spotlight-card'
 import LazyVideo from '@/components/LazyVideo'
 
@@ -247,7 +246,7 @@ export default function TrainingModesSection() {
           ))}
         </div>
 
-        {/* Closing banner + CTAs — same Inter/bold/white + blue-emphasis
+        {/* Closing banner — same Inter/bold/white + blue-emphasis
             convention as the site's other closing lines. */}
         <motion.div
           className="mt-12 md:mt-20 text-center"
@@ -256,31 +255,13 @@ export default function TrainingModesSection() {
           transition={{ duration: 0.7, delay: 0.5 }}
         >
           <p
-            className="font-display font-black text-apex-white leading-tight max-w-3xl mx-auto mb-7"
-            style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.35rem)' }}
+            className="font-display font-black text-apex-white leading-tight max-w-4xl mx-auto"
+            style={{ fontSize: 'clamp(1.25rem, 2.3vw, 1.75rem)' }}
           >
-            Three training modes, one machine. No swapping kit between blocks — just a{' '}
+            Three training modes, one machine. No swapping kit between blocks, just a{' '}
             <span className="text-apex-blue">single Adaptive Resistance Intelligence system</span>{' '}
             that covers the whole speed program.
           </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href="#order"
-              className="cta-glow font-display font-bold tracking-wide uppercase text-[14px] px-8 py-4 min-h-[48px] inline-flex items-center justify-center"
-              style={{ borderRadius: 0 }}
-            >
-              Order Your T-APEX
-            </a>
-            <a
-              href={DEMO_HREF}
-              className="font-mono text-[12px] tracking-[0.2em] uppercase text-apex-blue border border-apex-blue/40 hover:border-apex-blue hover:bg-apex-blue/10 transition-colors duration-300 px-7 py-4 min-h-[48px] inline-flex items-center justify-center gap-2"
-              style={{ borderRadius: 0 }}
-            >
-              Talk To An Expert
-              <span aria-hidden="true">→</span>
-            </a>
-          </div>
         </motion.div>
       </div>
     </section>
