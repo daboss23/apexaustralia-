@@ -7,18 +7,17 @@ import TestimonialSlider from './TestimonialSlider'
 import SpecComparisonModal from './SpecComparisonModal'
 import { HEADLINE_SPECS, SPEC_TAKEAWAYS } from '@/lib/spec-comparison'
 
-// Lead with what everyone does, then the things only T-Apex does — the
-// contrast (✓✓ → ✓✗) is what makes the table persuasive.
-const ADVANTAGES: { label: string; others: boolean }[] = [
-  { label: 'Applies resistance & assistance', others: true },
-  { label: 'Portable, gym-floor ready', others: true },
-  { label: 'Supports speed & strength work', others: true },
-  { label: 'Adapts load in real time, mid-rep', others: false },
-  { label: 'Up to 1000Hz force & velocity telemetry', others: false },
-  { label: '150 levels of precision resistance', others: false },
-  { label: 'Live, in-session feedback', others: false },
-  { label: 'Objective, data-driven programming', others: false },
-  { label: 'One system across every code', others: false },
+// T-APEX vs 1080 Sprint 2 — the buying decision, row by row.
+const ROWS: { label: string; apex: string; other: string }[] = [
+  { label: 'Price', apex: 'From A$9,450 — A$9,990 with the Overspeed module', other: '≈ A$30,000 + annual software fees' },
+  { label: 'Software subscription', apex: 'Free standard software — no annual fee', other: '≈ A$1,200 per year licence' },
+  { label: 'Resisted sprint load', apex: '0–20 kgf continuous, up to 90 kgf with accessories', other: 'Up to 20 kgf (Gear 1)' },
+  { label: 'Overspeed sprints', apex: 'Up to 14 m/s with the overspeed module', other: 'Up to 14 m/s with overspeed module' },
+  { label: 'Data capture', apex: '50–1000 Hz, stored on your team tablet', other: '5–1000 Hz, cloud / third-party servers' },
+  { label: 'Data ownership', apex: 'Full control on your tablet — no cloud risk', other: 'Cloud / remote third-party servers' },
+  { label: 'Setup time', apex: '≈ 5 minutes', other: '≈ 30 minutes' },
+  { label: 'Multi-device deployment', apex: 'One tablet manages multiple units', other: 'Limited scalability' },
+  { label: 'Best for', apex: 'Multi-device teams, clubs & academies', other: 'Elite research programs' },
 ]
 
 // Section-scoped palette — premium engineering, technology-first.
@@ -31,7 +30,6 @@ const C = {
   sub: '#8B8B8B',
 }
 
-const ROW = 'h-[58px] sm:h-[64px]'
 const HEAD = 'h-[92px]'
 
 const Check = ({ className = '', style }: { className?: string; style?: React.CSSProperties }) => (
@@ -39,12 +37,6 @@ const Check = ({ className = '', style }: { className?: string; style?: React.CS
     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
   </svg>
 )
-const Cross = ({ className = '', style }: { className?: string; style?: React.CSSProperties }) => (
-  <svg className={className} style={style} fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" aria-hidden="true">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-  </svg>
-)
-
 export default function ComparisonSection() {
   const titleRef = useRef<HTMLDivElement>(null)
   const tableRef = useRef<HTMLDivElement>(null)
@@ -54,7 +46,7 @@ export default function ComparisonSection() {
   const specInView = useInView(specRef, { once: true, margin: '-10% 0px' })
   const [specsOpen, setSpecsOpen] = useState(false)
 
-  const last = ADVANTAGES.length - 1
+  const last = ROWS.length - 1
 
   return (
     <section id="comparison" className="relative py-16 md:py-36 overflow-hidden" style={{ background: C.bg }}>
@@ -110,141 +102,77 @@ export default function ComparisonSection() {
           animate={tableInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          {/* ── MOBILE: legible stacked rows (labels full-width, aligned
-              check/cross columns with headers) ───────────────────────────── */}
+          {/* ── MOBILE: one block per row, T-APEX answer then 1080's ───────── */}
           <div className="md:hidden">
-            {/* Column headers */}
-            <div className="flex items-stretch px-1 pb-2.5">
-              <div className="flex-1" />
-              <div className="w-[52px] text-center">
-                <span className="font-mono text-[9px] tracking-[0.12em] uppercase font-semibold" style={{ color: C.blue }}>T-APEX</span>
-              </div>
-              <div className="w-[52px] text-center">
-                <span className="font-mono text-[9px] tracking-[0.12em] uppercase" style={{ color: C.sub }}>Others</span>
-              </div>
+            <div className="flex items-center justify-between px-1 pb-3">
+              <Image src="/apexaustralialogo.webp" alt="T-APEX" width={362} height={96} className="h-9 w-auto object-contain" />
+              <span className="font-mono text-[10px] tracking-[0.16em] uppercase" style={{ color: C.sub }}>vs 1080 Sprint 2</span>
             </div>
-
-            {ADVANTAGES.map((a) => {
-              const apexOnly = !a.others
-              return (
-                <div
-                  key={a.label}
-                  className="flex items-center border-b"
-                  style={{
-                    borderColor: C.border,
-                    background: apexOnly ? 'linear-gradient(90deg, rgba(0,174,239,0.05), transparent 60%)' : undefined,
-                  }}
-                >
-                  <div className="flex-1 py-3.5 pr-2 pl-1">
-                    <span className="font-body text-[13px] leading-snug" style={{ color: C.text }}>{a.label}</span>
-                  </div>
-                  {/* T-APEX — always a check; red-glow halo on the apex-only rows */}
-                  <div className="w-[52px] flex justify-center py-3.5">
-                    <span
-                      className="flex items-center justify-center w-7 h-7 rounded-full"
-                      style={{
-                        background: 'rgba(255,255,255,0.06)',
-                        border: '1px solid rgba(255,255,255,0.12)',
-                        boxShadow: apexOnly ? '0 0 14px -2px rgba(214,31,38,0.5)' : undefined,
-                      }}
-                    >
-                      <Check className="w-4 h-4" style={{ color: '#fff' }} />
-                    </span>
-                  </div>
-                  {/* Conventional tools */}
-                  <div className="w-[52px] flex justify-center py-3.5">
-                    {a.others ? (
-                      <span className="flex items-center justify-center w-7 h-7 rounded-full" style={{ border: `1px solid ${C.border}` }}>
-                        <Check className="w-4 h-4" style={{ color: C.sub }} />
-                      </span>
-                    ) : (
-                      <span className="flex items-center justify-center w-7 h-7 rounded-full" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                        <Cross className="w-3.5 h-3.5" style={{ color: '#55555c' }} />
-                      </span>
-                    )}
-                  </div>
+            {ROWS.map((r) => (
+              <div key={r.label} className="border-b py-4 px-1" style={{ borderColor: C.border }}>
+                <div className="font-display font-semibold text-[14px] mb-2" style={{ color: C.text }}>{r.label}</div>
+                <div className="flex items-start gap-2.5 mb-1.5">
+                  <Check className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: C.blue }} />
+                  <span className="font-body text-[14px] leading-snug" style={{ color: C.text }}>{r.apex}</span>
                 </div>
-              )
-            })}
-          </div>
-
-          {/* ── DESKTOP: 3 aligned columns ─────────────────────────────────── */}
-          <div className="hidden md:grid grid-cols-[minmax(0,1.7fr)_1fr_1fr] items-stretch">
-          {/* COLUMN 1 — advantage labels */}
-          <div className="flex flex-col">
-            <div className={HEAD} aria-hidden="true" />
-            {ADVANTAGES.map((a) => (
-              <div key={a.label} className={`flex items-center ${ROW} px-1 sm:px-4 border-b`} style={{ borderColor: C.border }}>
-                <span className="font-body text-[13px] sm:text-[15px] leading-snug" style={{ color: C.text }}>{a.label}</span>
+                <div className="flex items-start gap-2.5">
+                  <span className="font-mono text-[9px] tracking-[0.1em] uppercase mt-1 w-4 flex-shrink-0" style={{ color: C.sub }}>1080</span>
+                  <span className="font-body text-[13px] leading-snug pl-1.5" style={{ color: C.sub }}>{r.other}</span>
+                </div>
               </div>
             ))}
           </div>
 
-          {/* COLUMN 2 — T-APEX: premium graphite-glass telemetry panel */}
-          <div
-            className="relative overflow-hidden"
-            style={{
-              background: '#11151B',
-              border: '1px solid rgba(228,232,237,0.14)',
-              borderLeft: '1px solid rgba(0,174,239,0.45)',
-              boxShadow: '-1px 0 0 rgba(0,174,239,0.25), 0 30px 60px -30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05)',
-            }}
-          >
-            {/* Carbon-fibre weave */}
-            <div className="carbon-weave absolute inset-0 opacity-[0.5] pointer-events-none" aria-hidden="true" />
-            {/* Thin electric-blue top edge glow */}
-            <div className="absolute top-0 left-5 right-5 h-px pointer-events-none" style={{ background: `linear-gradient(90deg, transparent, ${C.blue}, transparent)`, boxShadow: `0 0 12px ${C.blue}` }} />
-            {/* Soft blue inner sheen, top */}
-            <div className="absolute inset-x-0 top-0 h-24 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(0,174,239,0.08), transparent)' }} aria-hidden="true" />
+          {/* ── DESKTOP: 3 columns; the T-APEX column is the graphite-glass
+              panel. One grid row per spec so wrapped text keeps rows aligned. */}
+          <div className="hidden md:block relative">
+            {/* T-APEX panel — spans the middle column behind every row */}
+            <div
+              className="absolute inset-y-0 overflow-hidden pointer-events-none"
+              style={{
+                left: 'calc(100% * 1.5 / 3.9)', width: 'calc(100% * 1.2 / 3.9)',
+                background: '#11151B',
+                border: '1px solid rgba(228,232,237,0.14)',
+                borderLeft: '1px solid rgba(0,174,239,0.45)',
+                boxShadow: '-1px 0 0 rgba(0,174,239,0.25), 0 30px 60px -30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05)',
+              }}
+              aria-hidden="true"
+            >
+              <div className="carbon-weave absolute inset-0 opacity-[0.5]" />
+              <div className="absolute top-0 left-5 right-5 h-px" style={{ background: `linear-gradient(90deg, transparent, ${C.blue}, transparent)`, boxShadow: `0 0 12px ${C.blue}` }} />
+              <div className="absolute inset-x-0 top-0 h-24" style={{ background: 'linear-gradient(180deg, rgba(0,174,239,0.08), transparent)' }} />
+            </div>
 
-            <div className="relative flex flex-col h-full">
-              {/* Header — logo */}
+            <div className="relative grid grid-cols-[1.5fr_1.2fr_1.2fr]">
+              {/* Header row */}
+              <div className={HEAD} aria-hidden="true" />
               <div className={`${HEAD} flex items-center justify-center px-3`}>
                 <Image src="/apexaustralialogo.webp" alt="T-APEX" width={362} height={96} className="h-12 sm:h-16 w-auto object-contain" />
               </div>
-              {/* Rows — white checks */}
-              {ADVANTAGES.map((a, i) => (
-                <div
-                  key={a.label}
-                  className={`flex items-center justify-center ${ROW} ${i === last ? '' : 'border-b'}`}
-                  style={{ borderColor: C.border }}
-                >
-                  <span
-                    className="flex items-center justify-center w-7 h-7 rounded-full"
-                    style={{
-                      background: 'rgba(255,255,255,0.06)',
-                      border: '1px solid rgba(255,255,255,0.12)',
-                      boxShadow: a.others ? undefined : '0 0 14px -2px rgba(214,31,38,0.45)',
-                    }}
-                  >
-                    <Check className="w-4 h-4" style={{ color: a.others ? C.text : '#fff' }} />
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* COLUMN 3 — conventional tools */}
-          <div className="flex flex-col">
-            <div className={`${HEAD} flex items-end justify-center pb-5 text-center`}>
-              <span className="font-display font-semibold leading-tight" style={{ fontSize: 'clamp(0.8rem, 1.4vw, 1rem)', color: C.sub }}>
-                Conventional<br />Tools
-              </span>
-            </div>
-            {ADVANTAGES.map((a) => (
-              <div key={a.label} className={`flex items-center justify-center ${ROW} border-b`} style={{ borderColor: C.border }}>
-                {a.others ? (
-                  <span className="flex items-center justify-center w-7 h-7 rounded-full" style={{ border: `1px solid ${C.border}` }}>
-                    <Check className="w-4 h-4" style={{ color: C.sub }} />
-                  </span>
-                ) : (
-                  <span className="flex items-center justify-center w-7 h-7 rounded-full" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                    <Cross className="w-3.5 h-3.5" style={{ color: '#55555c' }} />
-                  </span>
-                )}
+              <div className={`${HEAD} flex items-end justify-center pb-5 text-center`}>
+                <span className="font-display font-semibold leading-tight" style={{ fontSize: 'clamp(0.8rem, 1.4vw, 1rem)', color: C.sub }}>
+                  1080<br />Sprint 2
+                </span>
               </div>
-            ))}
-          </div>
+
+              {ROWS.map((r, i) => {
+                const edge = i === last ? '' : 'border-b'
+                return (
+                  <div key={r.label} className="contents">
+                    <div className={`flex items-center min-h-[64px] py-4 px-4 ${edge}`} style={{ borderColor: C.border }}>
+                      <span className="font-body text-[15px] leading-snug" style={{ color: C.text }}>{r.label}</span>
+                    </div>
+                    <div className={`flex items-center gap-3 min-h-[64px] py-4 px-5 ${edge}`} style={{ borderColor: C.border }}>
+                      <Check className="w-4 h-4 flex-shrink-0" style={{ color: C.blue }} />
+                      <span className="font-body text-[14px] leading-snug" style={{ color: C.text }}>{r.apex}</span>
+                    </div>
+                    <div className={`flex items-center min-h-[64px] py-4 px-5 ${edge}`} style={{ borderColor: C.border }}>
+                      <span className="font-body text-[14px] leading-snug" style={{ color: C.sub }}>{r.other}</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </motion.div>
 
