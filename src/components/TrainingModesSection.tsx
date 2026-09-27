@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { DEMO_HREF } from '@/lib/site'
 import { GlowCard } from '@/components/ui/spotlight-card'
+import LazyVideo from '@/components/LazyVideo'
 
 /* ── One System, Multiple Ways To Train ───────────────────────────────────────
    Sits between the multi-sport section and the "MORE THAN A SPRINT RESISTANCE
@@ -18,7 +19,13 @@ import { GlowCard } from '@/components/ui/spotlight-card'
    falls back to an engineered HUD plate so the section never ships with a
    broken frame or an empty box. Drop the three photos in and they take over —
    no code change needed. `object-cover` frames them, so the source aspect
-   ratio doesn't have to match. ────────────────────────────────────────────── */
+   ratio doesn't have to match.
+
+   A card can also carry a clip: set `video` and it plays
+   `public/training-modes/<id>.mp4` through <LazyVideo/> (loads near the
+   viewport, pauses off screen), with `<id>.webp` as its poster (a representative frame). The clips are
+   pre-cut to the 4:5 frame with a follow-pan that keeps the athlete in shot —
+   see the README. ─────────────────────────────────────────────────────────── */
 
 type Mode = {
   id: string
@@ -28,6 +35,8 @@ type Mode = {
   /** Accent: red = resistance / output, blue = the technology signal. */
   accent: string
   alt: string
+  /** Plays `/training-modes/<id>.mp4` instead of the still. */
+  video?: boolean
 }
 
 const MODES: Mode[] = [
@@ -48,6 +57,7 @@ const MODES: Mode[] = [
       'Load applied on the angles the game is actually played on — cuts, decelerations and change of direction trained under control.',
     accent: '#D61F26',
     alt: 'Athlete training change of direction against angled T-APEX resistance',
+    video: true,
   },
   {
     id: 'overspeed-training',
@@ -57,6 +67,7 @@ const MODES: Mode[] = [
       'Assistance instead of resistance. Athletes hold speeds above their own ceiling long enough for the nervous system to learn them.',
     accent: '#00AEEF',
     alt: 'Sprinter running assisted overspeed reps on a track',
+    video: true,
   },
 ]
 
@@ -78,7 +89,14 @@ function ModeCard({ mode, i, inView }: { mode: Mode; i: number; inView: boolean 
         className="overflow-hidden border border-apex-line bg-apex-panel"
         style={{ aspectRatio: '4 / 5' }}
       >
-        {!failed ? (
+        {mode.video ? (
+          <LazyVideo
+            src={`/training-modes/${mode.id}.mp4`}
+            poster={`/training-modes/${mode.id}.webp`}
+            aria-label={mode.alt}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-[900ms] ease-out md:group-hover:scale-[1.04]"
+          />
+        ) : !failed ? (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={`/training-modes/${mode.id}.webp`}
@@ -112,6 +130,16 @@ function ModeCard({ mode, i, inView }: { mode: Mode; i: number; inView: boolean 
               }}
             />
           </div>
+        )}
+
+        {/* Footage is far brighter than the stills — shade the top edge so the
+            MODE index stays readable over it. */}
+        {mode.video && (
+          <div
+            className="absolute inset-x-0 top-0 h-1/4 pointer-events-none"
+            style={{ background: 'linear-gradient(180deg, rgba(5,5,5,0.7), transparent)' }}
+            aria-hidden="true"
+          />
         )}
 
         {/* Legibility scrim under the title */}

@@ -26,3 +26,12 @@ Filenames must match the `id` values in `MODES` in the component exactly.
   together and the section sits mid-page.
 - A dark scrim covers the bottom half of the frame for the title, so keep the
   athlete weighted to the **upper two thirds**.
+
+## Video cards
+
+`directional-resistance` and `overspeed-training` play clips instead
+(`video: true` in `MODES`): `<id>.mp4` plays, `<id>.webp` is its poster (a
+representative frame). The sources were 3:2 landscape, so each clip is pre-cut to the
+4:5 frame at 720×900 with a smooth follow-pan that keeps the athlete in shot
+(object-cover's fixed centre crop lost him on the cut / the run-in). No
+audio, ~0.9 MB each.

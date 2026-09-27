@@ -62,8 +62,9 @@ flow) lives there as comments. Note: `TechnologySection.tsx` is imported as
 between `SportsSection` and `TApexVs1080Section`) uses the same drop-in media
 convention as `public/sports/`: each of its three cards loads
 `public/training-modes/<id>.webp` and falls back to an engineered HUD plate if
-the file is absent, so photos can be added with no code change. See
-`public/training-modes/README.md`. Its three cards are `GlowCard`s
+the file is absent, so photos can be added with no code change. Cards with
+`video: true` play `<id>.mp4` instead (via `LazyVideo`, `<id>.webp` as poster),
+pre-cut to 4:5 with a follow-pan. See `public/training-modes/README.md`. Its three cards are `GlowCard`s
 (`src/components/ui/spotlight-card.tsx`) — the border lights up in the card's
 own accent where the cursor is. Pass `glowColor` the brand red or blue; the
 component is generic, so reuse it rather than re-rolling the effect.
