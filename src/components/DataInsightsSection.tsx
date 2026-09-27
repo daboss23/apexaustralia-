@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import Image from 'next/image'
 import { useIsMobile } from './useIsMobile'
-import LazyVideo from './LazyVideo'
+import SeamlessVideo from './SeamlessVideo'
 
 // Small inline glyphs for the report tabs.
 const ICONS: Record<string, React.ReactNode> = {
@@ -175,11 +175,14 @@ export default function DataInsightsSection() {
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           {/* 6.9 MB and two-thirds of the way down the page — lazy, or it eats
-              the mobile connection before anyone has seen the hero. */}
-          <LazyVideo
-            src="/data-report.mp4"
-            className="block w-full h-auto origin-center scale-[1.02]"
-          />
+              the mobile connection before anyone has seen the hero.
+              <SeamlessVideo/> is lazy too, and dissolves the loop seam (the
+              clip ends on the machine and restarts on the tablet — a hard cut
+              otherwise). It fills a positioned box, so the box carries the
+              clip's own 1920x1064 aspect. */}
+          <div className="relative w-full" style={{ aspectRatio: '1920 / 1064' }}>
+            <SeamlessVideo src="/data-report.mp4" className="origin-center scale-[1.02]" fade={0.9} />
+          </div>
 
           {/* Overall darkening scrim — same tint depth as the top hero banner */}
           <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(5,5,8,0.45)' }} />
