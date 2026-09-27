@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type Props = {
   /** Video source (served from /public). */
@@ -25,6 +25,8 @@ type Props = {
    * is how the caller says "this is a placeholder, don't spend the bandwidth".
    */
   still?: boolean
+  /** Start loading this far outside the viewport. */
+  rootMargin?: string
 }
 
 /**
@@ -41,6 +43,12 @@ type Props = {
  * The two layers are wrapped in an `isolate`d box, so their internal z-indexing
  * never escapes — any overlay the parent paints after this component stays on
  * top. Falls back to a plain looping video under `prefers-reduced-motion`.
+ *
+ * Lazy, like <LazyVideo/>: neither layer gets a `src` until the box is within
+ * `rootMargin` of the viewport, and the whole loop — both layers and the rAF
+ * that drives the dissolve — pauses whenever the box is off screen, then picks
+ * up where it left off. A hero at the top of the page is on screen at mount, so
+ * it still starts at once; it just stops decoding once it's scrolled past.
  */
 export default function SeamlessVideo({
   src,
@@ -50,15 +58,53 @@ export default function SeamlessVideo({
   playbackRate = 1,
   poster,
   still = false,
+  rootMargin = '400px',
 }: Props) {
+  const wrapRef = useRef<HTMLDivElement>(null)
   const aRef = useRef<HTMLVideoElement>(null)
   const bRef = useRef<HTMLVideoElement>(null)
+  // Latches true the first time the box comes near the viewport — the src gate.
+  const [near, setNear] = useState(false)
 
   useEffect(() => {
-    if (still) return
+    if (still || near) return
+    const el = wrapRef.current
+    if (!el) return
+    // No IntersectionObserver (very old browser): just load it.
+    if (typeof IntersectionObserver === 'undefined') {
+      setNear(true)
+      return
+    }
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) setNear(true)
+    }, { rootMargin })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [still, near, rootMargin])
+
+  useEffect(() => {
+    if (still || !near) return
+    const wrap = wrapRef.current
     const a = aRef.current
     const b = bRef.current
-    if (!a || !b) return
+    if (!wrap || !a || !b) return
+
+    // Runs the loop while on screen, parks it while off. Called by the
+    // visibility observer below; `run` and `park` are set per mode.
+    let run = () => {}
+    let park = () => {}
+    const watch = () => {
+      if (typeof IntersectionObserver === 'undefined') {
+        run()
+        return () => park()
+      }
+      const io = new IntersectionObserver(([e]) => (e.isIntersecting ? run() : park()))
+      io.observe(wrap)
+      return () => {
+        io.disconnect()
+        park()
+      }
+    }
 
     a.playbackRate = playbackRate
     b.playbackRate = playbackRate
@@ -68,8 +114,9 @@ export default function SeamlessVideo({
       b.style.opacity = '0'
       a.loop = true
       a.style.opacity = '1'
-      a.play().catch(() => {})
-      return
+      run = () => { a.play().catch(() => {}) }
+      park = () => a.pause()
+      return watch()
     }
 
     let active = a
@@ -114,11 +161,22 @@ export default function SeamlessVideo({
     }
 
     a.currentTime = 0
-    a.play().catch(() => {})
-    raf = requestAnimationFrame(tick)
-
-    return () => cancelAnimationFrame(raf)
-  }, [src, fade, playbackRate, still])
+    let running = false
+    run = () => {
+      if (running) return
+      running = true
+      active.play().catch(() => {})
+      if (swapping) incoming.play().catch(() => {})
+      raf = requestAnimationFrame(tick)
+    }
+    park = () => {
+      running = false
+      cancelAnimationFrame(raf)
+      a.pause()
+      b.pause()
+    }
+    return watch()
+  }, [src, fade, playbackRate, still, near])
 
   const layer = `absolute inset-0 w-full h-full object-cover ${className}`
 
@@ -134,25 +192,25 @@ export default function SeamlessVideo({
   }
 
   return (
-    <div className="absolute inset-0 overflow-hidden" style={{ isolation: 'isolate' }} aria-hidden="true">
+    <div ref={wrapRef} className="absolute inset-0 overflow-hidden" style={{ isolation: 'isolate' }} aria-hidden="true">
       <video
         ref={aRef}
-        src={src}
+        {...(near ? { src } : {})}
         poster={poster}
         muted
         playsInline
-        preload="auto"
+        preload={near ? 'auto' : 'none'}
         tabIndex={-1}
         className={layer}
         style={{ opacity: 1, objectPosition }}
       />
       <video
         ref={bRef}
-        src={src}
+        {...(near ? { src } : {})}
         poster={poster}
         muted
         playsInline
-        preload="auto"
+        preload={near ? 'auto' : 'none'}
         tabIndex={-1}
         className={layer}
         style={{ opacity: 0, objectPosition }}

@@ -2,58 +2,7 @@
 
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import LazyVideo from './LazyVideo'
-
-const SOLUTION_PILLARS = [
-  {
-    label: 'Precision Loading',
-    tag: 'Control',
-    body: 'Apply resistance and assistance with fine control across acceleration, deceleration, change of direction, and movement-specific work.',
-  },
-  {
-    label: 'Adaptive Response',
-    tag: 'Intelligence',
-    body: 'Resistance designed to respond to athlete movement and intent — a more responsive loading environment than a fixed, preset stimulus.',
-  },
-  {
-    label: 'Multi-Phase Utility',
-    tag: 'Versatility',
-    body: 'One system across speed development, force production, control work, progressive reconditioning, and controlled return-to-play.',
-  },
-]
-
-// ─── Pillar card (presentational) ─────────────────────────────────────────────
-
-function PillarCard({ pillar, side = 'right' }: { pillar: typeof SOLUTION_PILLARS[0]; side?: 'left' | 'right' }) {
-  const isLeft = side === 'left'
-  return (
-    <div className={`flex items-start gap-3 ${isLeft ? 'flex-row-reverse' : 'flex-row'}`}>
-      {/* Merge point — glowing dot + thin fading line, identical to the
-          "Engineered like nothing else" callouts. Points toward the unit. */}
-      <div className={`flex items-center gap-1.5 flex-shrink-0 mt-1 ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}>
-        <div className="w-1.5 h-1.5 rounded-full bg-apex-blue" style={{ boxShadow: '0 0 8px #00AEEF' }} />
-        <div
-          className="w-8 h-px"
-          style={{ background: isLeft ? 'linear-gradient(90deg, #00AEEF, transparent)' : 'linear-gradient(270deg, #00AEEF, transparent)' }}
-        />
-      </div>
-
-      {/* Label — slim, box-less */}
-      <div className={`min-w-0 ${isLeft ? 'text-right' : 'text-left'}`}>
-        <span className="block text-[8px] font-mono tracking-[0.24em] text-apex-blue uppercase mb-1.5">
-          {pillar.tag}
-        </span>
-        <h3
-          className="font-display font-bold text-apex-white leading-snug mb-2"
-          style={{ fontSize: 'clamp(0.95rem, 1.4vw, 1.15rem)' }}
-        >
-          {pillar.label}
-        </h3>
-        <p className="text-apex-grey font-body text-[13px] leading-relaxed">{pillar.body}</p>
-      </div>
-    </div>
-  )
-}
+import SeamlessVideo from './SeamlessVideo'
 
 // ─── Solution section ─────────────────────────────────────────────────────────
 
@@ -68,7 +17,7 @@ export default function SolutionSection() {
   const filmInView = useInView(filmRef, { once: true, margin: '-10% 0px' })
 
   return (
-    <section ref={sectionRef} id="solution" className="relative bg-apex-black py-16 md:py-36 overflow-hidden">
+    <section ref={sectionRef} id="solution" className="relative bg-apex-black pt-16 md:pt-36 pb-6 md:pb-12 overflow-hidden">
       {/* Top rule — draws on as the system comes online */}
       <motion.div
         className="absolute top-0 left-0 right-0 h-px pointer-events-none origin-center"
@@ -229,7 +178,10 @@ export default function SolutionSection() {
           to edge, a tint scrim, then a top/bottom vignette that reaches solid
           #050505 before the clip's edge so no hard video outline shows. The
           sides are feathered too, so the frame has no edge anywhere.
-          hero-banner.mp4 is the phone hero's clip — one file, one cache entry. */}
+          hero-banner.mp4 is the phone hero's clip — one file, one cache entry.
+          Its last frame doesn't match its first, so it loops through
+          <SeamlessVideo/> (a dissolve at the seam, not a cut), which is lazy
+          and pauses off screen just like <LazyVideo/>. */}
       <motion.div
         ref={filmRef}
         className="relative w-full mt-12 md:mt-20 overflow-hidden aspect-[16/10] md:aspect-video"
@@ -237,11 +189,7 @@ export default function SolutionSection() {
         animate={filmInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       >
-        <LazyVideo
-          src="/hero-banner.mp4"
-          aria-label="T-Apex adaptive resistance unit in motion"
-          className="absolute inset-0 w-full h-full object-cover object-[50%_45%]"
-        />
+        <SeamlessVideo src="/hero-banner.mp4" objectPosition="50% 45%" fade={0.9} />
 
         {/* Overall darkening scrim — same tint depth as the hero banner */}
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(5,5,8,0.35)' }} />
@@ -257,22 +205,6 @@ export default function SolutionSection() {
           style={{ background: 'linear-gradient(90deg, #050505 0%, transparent 16%, transparent 84%, #050505 100%)' }}
         />
       </motion.div>
-
-      <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
-        {/* Pillars beneath the film */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10 mt-4 md:mt-2">
-          {SOLUTION_PILLARS.map((pillar, i) => (
-            <motion.div
-              key={pillar.label}
-              initial={{ opacity: 0, y: 18 }}
-              animate={filmInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.65, delay: 0.3 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <PillarCard pillar={pillar} side="right" />
-            </motion.div>
-          ))}
-        </div>
-      </div>
     </section>
   )
 }
