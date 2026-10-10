@@ -181,7 +181,7 @@ mostly square (`borderRadius: 0`). All animation respects
 
 Static export → `out/`, hosted on **Vercel**. Merging to `main` publishes the
 production (live) site. Feature work happens on `claude/*` branches via PRs.
-Live site: **https://apexaustralia.vercel.app/**
+Live site: **https://www.tapexaustralia.com.au/**
 
 ## Scrolling, overlays and links — use the shared helpers
 

@@ -35,6 +35,8 @@ const jetbrains = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.tapexaustralia.com.au'),
+  alternates: { canonical: '/' },
   title: 'T-APEX Australia | Intelligent Resistance & Overspeed Training',
   description:
     'Performance without limits. T-Apex is an intelligent resistance and overspeed training system with real-time force and velocity data — for elite coaching, performance, and rehabilitation. From A$9,450, shipped free Australia-wide. Led by Olympic-level sprint coach Piero Sacchetta.',
@@ -53,6 +55,9 @@ export const metadata: Metadata = {
     title: 'T-APEX Australia | Adaptive Resistance Intelligence',
     description: 'An intelligent resistance training system for elite performance facilities — speed, force, control, athlete progress, and return-to-play.',
     type: 'website',
+    url: '/',
+    siteName: 'T-APEX Australia',
+    locale: 'en_AU',
   },
 }
 

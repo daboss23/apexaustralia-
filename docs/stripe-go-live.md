@@ -52,5 +52,5 @@ moving (a code change, not a setting).
 - **A webhook** on `checkout.session.completed` to push orders into a CRM or
   warehouse automatically. Not needed to take payments: the dashboard and the
   email notifications cover it.
-- **`NEXT_PUBLIC_SITE_URL`** once there's a custom domain, so Stripe always
+- **`NEXT_PUBLIC_SITE_URL`** = `https://www.tapexaustralia.com.au` (the custom domain), so Stripe always
   returns buyers there.
